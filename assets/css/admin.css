@@ -1,0 +1,23 @@
+.question {
+	
+}
+.children {
+	border-top: 1px solid black;
+	width: 80%;
+}
+
+.rules {
+	border-top: 1px solid black;
+	width: 500px;
+	margin: 3px 0px 30px 0px;
+}
+
+.question {
+	clear: left;
+}
+	
+.OphCoTherapyapplication_DecisionTreeNodeRule {
+	float: left;
+	border: 1px dotted black;
+	width: 100px;
+}
