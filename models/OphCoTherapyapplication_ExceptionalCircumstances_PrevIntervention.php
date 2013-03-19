@@ -1,5 +1,4 @@
-<?php
-/**
+<?php /**
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
@@ -18,17 +17,11 @@
  */
 
 /**
- * This is the model class for table "et_ophcotherapya_exceptional".
+ * This is the model class for table "et_ophcotherapya_exceptional_interventions".
  *
  * The followings are the available columns in table:
  * @property string $id
- * @property integer $event_id
- * @property integer $standard_intervention_exists
- * @property string $details
- * @property integer $interventions_id
- * @property string $description
- * @property integer $patient_factors
- * @property string $patient_factor_details
+ * @property string $name
  *
  * The followings are the available model relations:
  *
@@ -37,13 +30,10 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Inteventions $inteventions
  */
 
-class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEventTypeElement
+class OphCoTherapyapplication_PrevIntervention extends BaseActiveRecord
 {
-	public $service;
-
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -58,7 +48,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 	 */
 	public function tableName()
 	{
-		return 'et_ophcotherapya_exceptional';
+		return 'ophcotherapya_exceptional_previntervention';
 	}
 
 	/**
@@ -69,11 +59,11 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details, ', 'safe'),
-			array('standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details, ', 'required'),
+			array('date, treatment_id, stopreason_id', 'safe'),
+			array('date, treatment_id, stopreason_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details, ', 'safe', 'on' => 'search'),
+			array('id, date, treatment_id, stopreason_id', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -85,13 +75,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'intervention' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'intervention_id'),
-			'previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id'),
+			'exceptionalcircumstances' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'circumstances_id'),
+			'treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'treatment_id'),
+			'stop_reason' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_StopReason', 'stopreason_id'),
 		);
 	}
 
@@ -102,14 +88,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 	{
 		return array(
 			'id' => 'ID',
-			'event_id' => 'Event',
-			'standard_intervention_exists' => 'Standard Intervention Exists',
-			'details' => 'Details and standard algorithm of care',
-			'intervention_id' => 'Intervention',
-			'description' => 'Description',
-			'patient_factors' => 'Patient Factors',
-			'patient_factor_details' => 'Details',
-			'previousinterventions' => 'Previous Interventions',
+			'stop_reason' => 'Reason for stopping',
 		);
 	}
 
@@ -125,20 +104,19 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('event_id', $this->event_id, true);
-		$criteria->compare('standard_intervention_exists', $this->standard_intervention_exists);
-		$criteria->compare('details', $this->details);
-		$criteria->compare('interventions_id', $this->interventions_id);
-		$criteria->compare('description', $this->description);
-		$criteria->compare('patient_factors', $this->patient_factors);
-		$criteria->compare('patient_factor_details', $this->patient_factor_details);
-		
+		$criteria->compare('name', $this->name, true);
+
 		return new CActiveDataProvider(get_class($this), array(
-			'criteria' => $criteria,
-		));
+				'criteria' => $criteria,
+			));
 	}
 
-
+	/**
+	 * Set default values for forms on create
+	 */
+	public function setDefaultOptions()
+	{
+	}
 
 	protected function beforeSave()
 	{
@@ -147,7 +125,6 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 
 	protected function afterSave()
 	{
-
 		return parent::afterSave();
 	}
 
