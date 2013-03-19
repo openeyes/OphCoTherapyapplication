@@ -45,14 +45,8 @@ class AdminController extends Controller
 		
 		return parent::beforeAction($action);
 	}
-
-	public function actionViewDecisionTrees() {
-		$dataProvider=new CActiveDataProvider('OphCoTherapyapplication_DecisionTree');
-		$this->render('list',array(
-			'dataProvider'=>$dataProvider,
-			'title'=>'Decision Trees',
-		));
-	}
+	
+	// Treatment actions
 	
 	public function actionViewTreatments() {
 		$dataProvider=new CActiveDataProvider('OphCoTherapyapplication_Treatment');
@@ -62,7 +56,7 @@ class AdminController extends Controller
 		));
 	}
 	
-	public function actionUpdateTreatment($id) {
+	public function actionUpdateOphCoTherapyapplication_Treatment($id) {
 		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int)$id);
 		
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
@@ -81,30 +75,30 @@ class AdminController extends Controller
 		));
 	}
 	
-	public function actionDecisionTreeEdit($flowId) {
+	public function actionCreateOphCoTherapyapplication_Treatment() {
+		$model = new OphCoTherapyapplication_Treatment();
 		
-		$this->render('assessmentflowedit');
-	}
-
-	public function actionCreateDecisionTree() {
-		$model = new OphCoTherapyapplication_DecisionTree();
-		
-		if (isset($_POST['OphCoTherapyapplication_DecisionTree'])) {
+		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
 			// do the actual create
-			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTree'];
+			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
 			
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTree','create', serialize($model->attributes));
-				Yii::app()->user->setFlash('success', 'Decision Tree created');
+				Audit::add('OphCoTherapyapplication_Treatment','create', serialize($model->attributes));
+				Yii::app()->user->setFlash('success', 'Treatment created');
 				
-				$this->redirect(array('viewdecisiontree','id'=>$model->id));
+				$this->redirect(array('viewtreatments'));
 			}
 		}
-		
-		$this->render('form_OphCoTherapyapplication_DecisionTree',array(
-				'model'=>$model,
+	}
+	
+	// decision tree actions
+	
+	public function actionViewDecisionTrees() {
+		$dataProvider=new CActiveDataProvider('OphCoTherapyapplication_DecisionTree');
+		$this->render('list',array(
+				'dataProvider'=>$dataProvider,
+				'title'=>'Decision Trees',
 		));
-		
 	}
 	
 	public function actionViewDecisionTree($id) {
@@ -126,6 +120,29 @@ class AdminController extends Controller
 				'node' => $node
 		));
 	}
+	
+	public function actionCreateOphCoTherapyapplication_DecisionTree() {
+		$model = new OphCoTherapyapplication_DecisionTree();
+	
+		if (isset($_POST['OphCoTherapyapplication_DecisionTree'])) {
+			// do the actual create
+			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTree'];
+				
+			if ($model->save()) {
+				Audit::add('OphCoTherapyapplication_DecisionTree','create', serialize($model->attributes));
+				Yii::app()->user->setFlash('success', 'Decision Tree created');
+	
+				$this->redirect(array('viewdecisiontree','id'=>$model->id));
+			}
+		}
+	
+		$this->render('form_OphCoTherapyapplication_DecisionTree',array(
+				'model'=>$model,
+		));
+	
+	}
+	
+	// decision tree node actions
 	
 	public function actionCreateDecisionTreeNode($id) {
 		$tree = OphCoTherapyapplication_DecisionTree::model()->findByPk((int)$id);

@@ -16,11 +16,14 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
-
 ?>
-
-<div class="view">
-
-<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/updateOphCoTherapyapplication_Treatment/', array('id'=> $data->id)) ?>"><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>: <?php echo $data->name ?></a>
-	
+<div id="OphCoTherapyapplication_ComplianceCalculator">
+	<?php if ($element->treatment && $element->treatment->decisiontree) {?>
+	<div>We have a tree</div>
+	<?php } else {?>
+	<div>Please select a treatment to determine compliance</div>
+	<?php } ?>
+	<div id="compliant_1" style="display: none;">NICE compliant</div>
+	<div id="compliant_0" style="display: none;">NICE NON-compliant</div>
+	<?php echo $form->hiddenInput($element, 'nice_compliance')?>
 </div>

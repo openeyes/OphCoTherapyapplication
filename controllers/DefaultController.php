@@ -19,6 +19,7 @@
 
 class DefaultController extends BaseEventTypeController {
 	public function actionCreate() {
+		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
 		parent::actionCreate();
 	}
 
@@ -32,5 +33,25 @@ class DefaultController extends BaseEventTypeController {
 
 	public function actionPrint($id) {
 		parent::actionPrint($id);
+	}
+	
+	public function actionGetDecisionTree() {
+		$treatment = OphCoTherapyapplication_Treatment::model()->findByPk((int)@$_GET['treatment_id']);
+		$element = new Element_OphCoTherapyapplication_PatientSuitability();
+		$element->treatment = $treatment;
+		
+		$form = Yii::app()->getWidgetFactory()->createWidget($this,'BaseEventTypeCActiveForm',array(
+				'id' => 'clinical-create',
+				'enableAjaxValidation' => false,
+				'htmlOptions' => array('class' => 'sliding'),
+		));
+		
+		// NEED TO WORK OUT what we should initialise here (and in the form for patient suitability)
+		// so that we can set the right values for this form.
+		$this->renderPartial(
+				'form_OphCoTherapyapplication_DecisionTree',
+				array('element' => $element, 'form' => $form),
+				false, false
+				);
 	}
 }

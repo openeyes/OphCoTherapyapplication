@@ -22,6 +22,7 @@ $this->renderPartial('_menu_main');
 
 <h1><?php echo $title ? $title : "Therapy Application Admin" ?></h1>
 
+<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/create' . $dataProvider->modelClass); ?>">Add New</a>
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'list_' . $dataProvider->modelClass,

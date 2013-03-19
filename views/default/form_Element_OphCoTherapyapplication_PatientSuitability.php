@@ -25,7 +25,39 @@
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
 	<h4 class="elementTypeName"><?php echo $element->elementType->name; ?></h4>
 
-	<?php echo $form->dropDownList($element, 'treatment_id', CHtml::listData(OphCoTherapyapplication_Treatment::model()->findAll(array('condition' => 'available=:avail', 'params' => array(':avail' => true), 'order'=> 'display_order asc')),'id','name'),array('empty'=>'- Please select -'))?>
+	<?php 
+	// only want treatments that are marked as available, and have been configured 
+	// with a decision tree for determining compliance
+	$criteria = new CDbCriteria();
+	$criteria->addCondition('available = :avail');
+	$criteria->addCondition('decisiontree_id IS NOT NULL');
+	$criteria->params = array(':avail' => true);
+	$criteria->order = 'display_order asc';
+	
+	$treatments = OphCoTherapyapplication_Treatment::model()->findAll($criteria);
+	
+	$html_options = array(
+			'options' => array(),
+			'empty'=>'- Please select -',
+	);
+	foreach ($treatments as $treatment) {
+		$html_options['options'][(string)$treatment->id] = array('data-treeid' => $treatment->decisiontree_id);
+	}
+	
+		
+	echo $form->dropDownList($element, 'treatment_id', CHtml::listData($treatments,'id','name'),$html_options)?>
 	<?php echo $form->datePicker($element, 'angiogram_baseline_date', array('maxDate' => 'today'), array('style'=>'width: 110px;'))?>
-	<?php echo $form->radioBoolean($element, 'nice_compliance')?>
+	
+	<div id="nice_compliance" class="eventDetail">
+		<div class="label">NICE Compliance</div>
+		<div class="data">
+			<?php $this->renderPartial(
+				'form_OphCoTherapyapplication_DecisionTree',
+				array('element' => $element, 'data' => $data, 'form' => $form),
+				false, false
+			)?>	
+		
+		</div>
+		
+	</div>
 </div>

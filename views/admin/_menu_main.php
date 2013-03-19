@@ -19,6 +19,6 @@
 
 $this->menu=array(
 		array('label'=>'Manage Treatments', 'url'=>array('viewTreatments')),
-		array('label'=>'Create Decision Tree', 'url'=>array('createDecisionTree')),
+		array('label'=>'Manage Decision Trees', 'url'=>array('viewDecisionTrees')),
 );
 ?>
