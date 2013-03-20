@@ -83,6 +83,18 @@ class OphCoTherapyapplication_DecisionTreeNodeRule extends BaseActiveRecord {
 		return CHtml::encode(@$this->COMPARATORS[$this->parent_check]);
 	}
 	
+	/*
+	 * Works out a full abstract definition of the rule.
+	*
+	* @return array - associative array of details of the rule
+	*/
+	public function getDefinition() {
+		return array(
+			'parent_check' => $this->parent_check,
+			'parent_check_value' => $this->parent_check_value,
+		);
+	}
+	
 	public function checkValue($val) 
 	{
 		//TODO: cast $val and $this->parent_check_val to the same datatype for accurate comparisons

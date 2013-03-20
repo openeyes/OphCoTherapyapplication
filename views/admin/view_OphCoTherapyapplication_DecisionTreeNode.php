@@ -28,7 +28,7 @@ if ($model->rules) {
 
 	<br />
 	<b>Rules</b>
-	<div class="rules">
+	<div class="rules curvybox white">
 		<?php foreach ($model->rules as $rule) {
 			$this->renderPartial('view_OphCoTherapyapplication_DecisionTreeNodeRule', array(
 					'model' => $rule,

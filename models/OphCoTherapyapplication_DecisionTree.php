@@ -46,6 +46,16 @@ class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
 	}
 	
 	/**
+	 * @return array relational rules.
+	 */
+	public function relations()
+	{
+		return array(
+				'nodes' => array(self::HAS_MANY, 'OphCoTherapyapplication_DecisionTreeNode', 'decisiontree_id'),
+		);
+	}
+	
+	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
@@ -65,4 +75,13 @@ class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->find($criteria);
 		return $node;
 	}
+	
+	public function getDefinition() {
+		$definition = array();
+		if ($root = $this->getRootNode()) {
+			$definition['root_id'] = $root->id;
+		}
+		return $definition;
+	}
+	
 }

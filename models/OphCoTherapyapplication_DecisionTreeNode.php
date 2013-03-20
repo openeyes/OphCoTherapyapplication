@@ -102,6 +102,35 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	}
 	
 	/*
+	 * Works out a full abstract definition of the node.
+	 * 
+	 * @return array - associative array of details of the node
+	 */
+	public function getDefinition() {
+		// return a definition of the node
+		$defn = array();
+		$defn['id']         = $this->id;
+		$defn['question']   = $this->question;
+		$defn['outcome_id'] = $this->outcome_id;
+		$defn['parent_id']  = $this->parent_id;
+		$defn['rules'] = array();
+		foreach ($this->rules as $rule) {
+			$defn['rules'][] = $rule->getDefinition();
+		}
+		
+		return $defn;
+	}
+	
+	/*
+	 * Works out the default value for this node, and returns it for use in forms
+	 * 
+	 * @return string default response value
+	 */
+	public function getDefaultValue() {
+		return null;
+	}
+	
+	/*
 	* outcome being set implies that no other attributes should be set for the node
 	*/
 	public function outcomeValidation($attribute) {

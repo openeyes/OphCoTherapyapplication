@@ -17,13 +17,31 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div id="OphCoTherapyapplication_ComplianceCalculator">
+<?php 
+$decisiontree = null;
+if ($element->treatment && $element->treatment->decisiontree) {
+	$decisiontree = $element->treatment->decisiontree;
+}
+?>
+
+<div id="OphCoTherapyapplication_ComplianceCalculator"<?php if ($decisiontree) { echo " data-defn='" . CJSON::encode($decisiontree->getDefinition()) . "'"; }?>>
 	<?php if ($element->treatment && $element->treatment->decisiontree) {?>
-	<div>We have a tree</div>
+	<div>
+	<?php foreach ($element->treatment->decisiontree->nodes as $node) { ?>
+		<div class="dt-node" id="node_<?php echo $node->id ?>" style="display: none;" data-defn='<?php echo CJSON::encode($node->getDefinition()); ?>'>
+		<?php if ($node->question) {?>
+		<!--  TODO: check responsetype and render appropriate form element type -->
+			<div class="label"><?php echo $node->question ?></div>
+			<div class="data"><input type="text" name="OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $node->getDefaultValue(); ?>" /></div>
+		<?php } ?>
+		</div>
+	<?php } ?>
+	</div>
 	<?php } else {?>
 	<div>Please select a treatment to determine compliance</div>
 	<?php } ?>
-	<div id="compliant_1" style="display: none;">NICE compliant</div>
-	<div id="compliant_0" style="display: none;">NICE NON-compliant</div>
+	<?php foreach (OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll() as $outcome) { ?>
+		<div id="outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome"><?php echo $outcome->name; ?></div>
+	<?php }?>
 	<?php echo $form->hiddenInput($element, 'nice_compliance')?>
 </div>

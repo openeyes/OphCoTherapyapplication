@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="OphCoTherapyapplication_DecisionTreeNodeRule">
+<div class="OphCoTherapyapplication_DecisionTreeNodeRule curvybox blueborder" style="width: 200px;">
 <?php echo $model->displayParentCheck() . ' ' . $model->parent_check_value ?>
 <br />
 [<a href="#">Edit</a> | <a href="#">Delete</a>]

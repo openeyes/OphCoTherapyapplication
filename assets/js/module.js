@@ -16,27 +16,137 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-function ComplianceCalculator(properties) {
+function ComplianceCalculator(elem, properties) {
+	
+	this._elem = elem;
 	this._properties = properties;
+	this._nodes = {};
+	this._nodes_by_parent = {};
 	
-	this.update = update;
-	
-	function update() {
-		// go through the values of the form, and show the relevant form elements
-		// and possibly outcome
-		console.log('updating');
-	}
+	this.init()
 }
 
-function OphCoTherapyapplication_ComplianceCalculator_init() {
-	calc_obj = new ComplianceCalculator({
-		container: $('#OphCoTherapyapplication_ComplianceCalculator'),
+ComplianceCalculator.prototype.init = function()
+{
+	var self = this;
+	if (this._elem.data('defn')) {
+		self._root_node_id = this._elem.data('defn').root_id;
+	}
+	else {
+		console.log('ERROR: need root id');
+	}
+	
+	
+	self._elem.find('.dt-node').each(function() {
+		var defn = $(this).data('defn');
+		self._nodes[defn.id] = $(this).data('defn');
+		if (defn.parent_id) {
+			if (self._nodes_by_parent[defn.parent_id]) {
+				self._nodes_by_parent[defn.parent_id].push(defn.id);
+			}
+			else {
+				self._nodes_by_parent[defn.parent_id] = [defn.id];
+			}
+		}
 	});
+	
+	self.showNode(self._root_node_id);
+};
+
+ComplianceCalculator.prototype.showOutcome = function(outcome_id)
+{
+	this._elem.find('div.outcome').hide();
+	this._elem.find('#outcome_' + outcome_id).show();
+	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val(outcome_id);
+}
+
+ComplianceCalculator.prototype.showNode = function(node_id)	
+{
+	this._elem.find('#node_' + node_id).show();
+	if (this._nodes[node_id].outcome_id) {
+		this.showOutcome(this._nodes[node_id].outcome_id);
+	}
+	else {
+		this.checkNode(node_id);
+	}
+};
+
+ComplianceCalculator.prototype.checkNode = function(node_id)
+{
+	var node_elem = this._elem.find('#node_' + node_id);
+	var node_defn = this._nodes[node_id];
+	if (node_defn.question) {
+		// has a value to check against
+		// TODO: need to vary this selector depending on the type of form input is used for the node
+		// at the moment assuming all are input
+		var value = node_elem.find('input').val();
+		// TODO: if the value is null, then we need to hide children
+		
+		if (value.length && value != node_elem.data('prev-val')) {
+			node_elem.data('prev-val', value);
+			// go through each child node to see if it has rules that match the value
+			// if it does, show it. 
+			if (this._nodes_by_parent[node_id]) {
+				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
+					var child_id = this._nodes_by_parent[node_id][i];
+					if (this.checkNodeRule(child_id, value)) {
+						this.showNode(child_id);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+};
+
+ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
+	if (this._nodes[node_id]['rules'].length) {
+		var res = true;
+		
+		for (var i = 0; i < this._nodes[node_id]['rules'].length; i++) {
+			var cmp =  this._nodes[node_id]['rules'][i]['parent_check'];
+			var chk_val = this._nodes[node_id]['rules'][i]['parent_check_value'];
+			switch (cmp)
+			{
+				case "eq":
+					res = (res && value == chk_val) ? true : false;
+					break;
+				case "lt":
+					res = (res && value < chk_val) ? true : false;
+					break;
+				case "gt":
+					res = (res && value > chk_val) ? true : false;
+					break;
+				default:
+					res = false;
+			}
+		}
+		return res;
+	}
+	else {
+		// if there are no rules on the node, then it is considered to be the default child node and so should return true
+		return true;
+	}
+};
+
+ComplianceCalculator.prototype.update = function update() 
+{
+	// go through the values of the form, and show the relevant form elements
+	// and possibly outcome
+	console.log('updating');
+	this.checkNode(this._root_node_id);
+}
+	
+
+function OphCoTherapyapplication_ComplianceCalculator_init() {
+	calc_obj = new ComplianceCalculator($('#OphCoTherapyapplication_ComplianceCalculator'), {});
 	$('#OphCoTherapyapplication_ComplianceCalculator').data('calc_obj', calc_obj);
 	calc_obj.update();
 }
 
 function OphCoTherapyapplication_ComplianceCalculator_update() {
+	console.log('boom');
 	$('#OphCoTherapyapplication_ComplianceCalculator').data('calc_obj').update();
 }
 $(document).ready(function() {
@@ -114,7 +224,7 @@ $(document).ready(function() {
 	});
 	
 	// various inputs that we need to react to changes on for the compliance calculator
-	$('#OphCoTherapyapplication_ComplianceCalculator').delegate('input select', 'change', function() {
+	$('#nice_compliance').delegate('input', 'change', function() {
 		OphCoTherapyapplication_ComplianceCalculator_update();
 	});
 	
