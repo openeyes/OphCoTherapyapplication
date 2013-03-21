@@ -72,6 +72,7 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'Integer','datatype'=> 'int'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'string','datatype'=> 'str'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'choice','datatype'=> 'ch'));
+		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'yes/no','datatype'=> 'bool'));
 		
 		$this->createTable('ophcotherapya_decisiontreenode', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',

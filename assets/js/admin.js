@@ -85,4 +85,29 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	
+	$('#OphCoTherapyapplication_adminform .response_type').delegate('select', 'change', function(e) {
+		var selected = $(this).val();
+		var dt;
+		
+		$(this).find('option').each(function() {
+	    	if ($(this).val() == selected) {
+	    		dt = $(this).data('datatype');
+	    		return false;
+	    	}
+	    });
+		
+		var template = $('#template_default_value_' + dt).html();
+		if (!template) {
+			template = $('#template_default_value_default').html();
+		}
+		
+		var data = {
+			"name" : "OphCoTherapyapplication_DecisionTreeNode[default_value]",
+			"id" : "OphCoTherapyapplication_DecisionTreeNode_default_value",
+		};
+		var inp = Mustache.render(template, data);
+		$('#OphCoTherapyapplication_DecisionTreeNode_default_value').replaceWith(inp);
+		e.preventDefault();
+	});
+	
 });

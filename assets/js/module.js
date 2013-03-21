@@ -53,6 +53,9 @@ ComplianceCalculator.prototype.init = function()
 	self.showNode(self._root_node_id);
 };
 
+/*
+ * internal method that to show the appropriate outcome and set the form value when an outcome is reached
+ */
 ComplianceCalculator.prototype.showOutcome = function(outcome_id)
 {
 	this._elem.find('div.outcome').hide();
@@ -60,9 +63,13 @@ ComplianceCalculator.prototype.showOutcome = function(outcome_id)
 	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val(outcome_id);
 }
 
+/*
+ * show the specified node - the node is then checked to see whether an outcome should be shown, or a child node
+ */
 ComplianceCalculator.prototype.showNode = function(node_id)	
 {
 	this._elem.find('#node_' + node_id).show();
+	// TODO: this should probably be part of checkNode
 	if (this._nodes[node_id].outcome_id) {
 		this.showOutcome(this._nodes[node_id].outcome_id);
 	}
@@ -71,6 +78,9 @@ ComplianceCalculator.prototype.showNode = function(node_id)
 	}
 };
 
+/*
+ * check the given node to determine if a child should be shown because it has an answer
+ */
 ComplianceCalculator.prototype.checkNode = function(node_id)
 {
 	var node_elem = this._elem.find('#node_' + node_id);
@@ -79,10 +89,16 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 		// has a value to check against
 		// TODO: need to vary this selector depending on the type of form input is used for the node
 		// at the moment assuming all are input
-		var value = node_elem.find('input').val();
-		// TODO: if the value is null, then we need to hide children
+		var value = undefined;
+		if (node_elem.find('select').length) {
+			value = node_elem.find('select option:selected').val();
+		}
+		else {
+			value = node_elem.find('input').val();
+		}
 		
-		if (value.length && value != node_elem.data('prev-val')) {
+		// TODO: if the value is null, then we need to hide children
+		if (value !== undefined && value.length && value != node_elem.data('prev-val')) {
 			node_elem.data('prev-val', value);
 			// go through each child node to see if it has rules that match the value
 			// if it does, show it. 
@@ -130,12 +146,15 @@ ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
 	}
 };
 
-ComplianceCalculator.prototype.update = function update() 
+ComplianceCalculator.prototype.update = function update(node_id) 
 {
 	// go through the values of the form, and show the relevant form elements
 	// and possibly outcome
 	console.log('updating');
-	this.checkNode(this._root_node_id);
+	if (!node_id) {
+		node_id = this._root_node_id;
+	}
+	this.checkNode(node_id);
 }
 	
 
@@ -145,9 +164,10 @@ function OphCoTherapyapplication_ComplianceCalculator_init() {
 	calc_obj.update();
 }
 
-function OphCoTherapyapplication_ComplianceCalculator_update() {
-	console.log('boom');
-	$('#OphCoTherapyapplication_ComplianceCalculator').data('calc_obj').update();
+function OphCoTherapyapplication_ComplianceCalculator_update(elem) {
+	var node = elem.parents('.dt-node');
+	var id = node.data('defn').id;
+	$('#OphCoTherapyapplication_ComplianceCalculator').data('calc_obj').update(id);
 }
 $(document).ready(function() {
 	// standard stuff
@@ -224,8 +244,8 @@ $(document).ready(function() {
 	});
 	
 	// various inputs that we need to react to changes on for the compliance calculator
-	$('#nice_compliance').delegate('input', 'change', function() {
-		OphCoTherapyapplication_ComplianceCalculator_update();
+	$('#nice_compliance').delegate('input, select', 'change', function() {
+		OphCoTherapyapplication_ComplianceCalculator_update($(this));
 	});
 	
 });

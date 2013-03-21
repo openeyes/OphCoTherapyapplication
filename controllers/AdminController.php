@@ -21,6 +21,12 @@ class AdminController extends ModuleAdminController
 {
 	public $defaultAction = "ViewDecisionTrees";
 	
+	private function popupCloseAndRedirect($redirect) {
+		$this->render('popupcloseandredirect', array(
+				'url' => $redirect,
+		));
+	}
+	
 	// Treatment actions
 	public function actionViewTreatments() {
 		$dataProvider=new CActiveDataProvider('OphCoTherapyapplication_Treatment');
@@ -135,13 +141,12 @@ class AdminController extends ModuleAdminController
 			if ($parent) {
 				$model->parent_id = $parent->id;
 			}
-			error_log(print_r($model->attributes,true));
-			
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTreeNode','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree node created');
 				
-				$this->redirect(array('viewdecisiontree', 'id'=>$id));
+				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
 			}
 			
 		}
@@ -153,6 +158,8 @@ class AdminController extends ModuleAdminController
 	}
 	
 	public function actionUpdateDecisionTreeNode($id) {
+		$this->layout = "//layouts/admin_popup";
+		
 		$model = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int)$id);
 		
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNode'])) {
@@ -160,12 +167,13 @@ class AdminController extends ModuleAdminController
 			
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTreeNode', 'update', serialize($model->attributes));
+				Yii::app()->user->setFlash('success', 'Decision Tree node updated');
 				
-				$this->redirect(array('viewdecisiontree', 'id'=>$model->decisiontree_id));
+				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
 			}
 		}
 		
-		$this->renderPartial('update', array(
+		$this->render('update', array(
 				'model' => $model,
 		));
 	}
@@ -174,6 +182,7 @@ class AdminController extends ModuleAdminController
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int)$id);
 		
 		$model = new OphCoTherapyapplication_DecisionTreeNodeRule();
+		$model->node = $node;
 		
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNodeRule'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
@@ -190,6 +199,26 @@ class AdminController extends ModuleAdminController
 		$this->renderPartial('create', array(
 			'model' => $model,
 			'node' => $node,
+		));
+	}
+	
+	public function actionUpdateDecisionTreeNodeRule($id) {
+		$model = OphCoTherapyapplication_DecisionTreeNodeRule::model()->findByPk((int)$id);
+	
+		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNodeRule'])) {
+			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
+				
+			if ($model->save()) {
+				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'create', serialize($model->attributes));
+				Yii::app()->user->setFlash('success', 'Decision Tree Node Rule updated');
+	
+				$this->redirect(array('viewdecisiontree', 'id' => $node->decisiontree_id, 'node_id' => $model->node->id));
+			}
+		}
+	
+		$this->renderPartial('create', array(
+				'model' => $model,
+				'node' => $node,
 		));
 	}
 	

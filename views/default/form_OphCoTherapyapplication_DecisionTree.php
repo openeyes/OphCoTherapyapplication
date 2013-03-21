@@ -32,7 +32,20 @@ if ($element->treatment && $element->treatment->decisiontree) {
 		<?php if ($node->question) {?>
 		<!--  TODO: check responsetype and render appropriate form element type -->
 			<div class="label"><?php echo $node->question ?></div>
-			<div class="data"><input type="text" name="OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $node->getDefaultValue(); ?>" /></div>
+			<div class="data">
+			<?php $def_val = $node->getDefaultValue(); 
+			if ($node->response_type->datatype == 'bool') { ?>
+				<select name="OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]">
+					<option>- Please select-</option>
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</select>
+			<?php 
+			} else {
+			?>
+				<input type="text" name="OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $node->getDefaultValue(); ?>" />
+			<?php }?>
+			</div>
 		<?php } ?>
 		</div>
 	<?php } ?>

@@ -30,7 +30,18 @@
 
 <div class="row parent_check_value">
 	<?php echo $form->labelEx($model,'parent_check_value'); ?>
-	<?php echo $form->textField($model,'parent_check_value',array('size'=>60,'maxlength'=>16)); ?>
+	<?php if ($model->node->parent->response_type && $model->node->parent->response_type->datatype = 'bool') {
+		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
+				array('name' => get_class($model) . '[parent_check_value]',
+						'id' => get_class($model) . '_parent_check_value'
+				));
+		} else {
+			$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_default',
+					array('name' => get_class($model) . '[parent_check_value]',
+							'id' => get_class($model) . '_parent_check_value'
+					));
+		}	
+	?>
 	<?php echo $form->error($model,'parent_check_value'); ?>
 </div>
 
