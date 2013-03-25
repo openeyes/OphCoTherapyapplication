@@ -47,4 +47,23 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 		return 'ophcotherapya_decisiontreenode_responsetype';
 	}
 
+	public function validRuleComparators() 
+	{
+		if ($this->datatype == 'int') {
+			return array('eq','lt', 'lte', 'gt', 'gte');
+		} else {
+			return array('eq');
+		}
+	}
+	
+	public function ruleLimit() {
+		if (in_array($this->datatype, array('int', 'str')) ) {
+			return null;
+		}
+		else if ($this->datatype == 'bool') {
+			return 2;
+		}
+		// TODO: implement for choice 'ch' response type
+	}
+	
 }

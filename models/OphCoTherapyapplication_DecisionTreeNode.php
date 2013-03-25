@@ -86,19 +86,38 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 		);
 	}
 	
+	/*
+	 * Can only have children for question nodes, not outcomes
+	 */
 	public function canAddChild() {
 		if ($this->outcome) {
 			return false;
 		}
+		if ($this->response_type->datatype == 'bool') {
+			if (count($this->children) >= 2) {
+				return false;
+			}
+		}
 		return true;
 	}
 	
-	public function getNextNode($val)
-	{
-		// get the nodes that have this node as a parent
+	/*
+	 * @return bool - whether a rule can be added to this node or not. 
+	 */
+	public function canAddRule() {
+		// if it's the root node, there are no rules to define for it.
+		if (!$this->parent) {
+			return false;
+		}
 		
-		// for each of those nodes, check the rules to see if they apply
-		// and return it if they do
+		// check the parent response type, and the number of rules already extant
+		// if there is room for another one, return true
+		if ($limit = $this->parent->response_type->ruleLimit()) {
+			if ($limit <= count($this->rules) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/*

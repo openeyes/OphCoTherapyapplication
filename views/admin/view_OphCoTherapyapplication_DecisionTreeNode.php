@@ -20,15 +20,14 @@
 <div class="OphCoTherapyapplication_DecisionTreeNode">
 <?php if ($model->parent) {
 ?>
-	<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree/') . '/'. $model->decisiontree_id . '?node_id=' . $model->parent_id ?>" class="view_parent">Parent</a>
+	<div><a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree/') . '/'. $model->decisiontree_id . '?node_id=' . $model->parent_id ?>" class="view_parent">&lt;&lt; Parent</a></div>
 <?php 
 }
 if ($model->rules) {
 ?>
 
-	<br />
-	<b>Rules</b>
-	<div class="rules curvybox white">
+	<div class="rules curvybox blue">
+		<h4>Rules</h4>
 		<?php foreach ($model->rules as $rule) {
 			$this->renderPartial('view_OphCoTherapyapplication_DecisionTreeNodeRule', array(
 					'model' => $rule,
@@ -38,43 +37,56 @@ if ($model->rules) {
 <?php 
 }
 ?>
-<?php if ($model->question) { ?>
-	<div class="question">
-	<b>Question:</b><?php echo $model->question; ?>
-	</div>
-	<div class="response">
-	<b>Response Type</b>
-	<?php echo $model->response_type->label ?>
-	</div>
-<?php } elseif ($model->outcome) { ?>
-<div class="outcome">
-	<b>Outcome</b>
-	<?php echo $model->outcome->name ?>
-	</div>
-<?php } ?>
-<a href="#" class="edit_node" data-node_id="<?php echo $model->id ?>">Edit</a>
-<?php if ($model->canAddChild() ) {?>
-	| <a href="#" class="add_node" data-dt_id="<?php echo $model->decisiontree_id ?>" data-parent_id="<?php echo $model->id?>">Add child</a>
-<?php } ?>
-<?php if ($model->parent) {?> 
-	| <a href="#" class="add_rule" data-node_id="<?php echo $model->id ?>">Add rule</a>
+<?php if ($model->canAddRule()) {?>
+<div> 
+	<a href="#" class="add_rule" data-node_id="<?php echo $model->id ?>">Add rule</a>
+</div>
 <?php } ?>
 
+<div class="node curvybox white">
+<?php if ($model->question) { ?>
+		<div class="question">
+		<b>Question:</b><?php echo $model->question; ?>
+		</div>
+		<div class="response">
+		<b>Response Type</b>
+		<?php echo $model->response_type->label ?>
+		</div>
+	<?php } elseif ($model->outcome) { ?>
+	<div class="outcome">
+		<b>Outcome</b>
+		<?php echo $model->outcome->name ?>
+		</div>
+	<?php } ?>
+<a href="#" class="edit_node" data-node_id="<?php echo $model->id ?>">Edit</a>
+</div>
 <?php 
 if ($model->children){
 ?>
-	<ul class="children">
+<div class="children curvybox blue">
+	<h4>Children	</h4>
 	<?php foreach ($model->children as $child) {
 	?>
-		<li class="child">
-			<?php foreach ($child->rules as $rule) { echo ' [' . $rule->displayParentCheck() . ' ' . $rule->parent_check_value . ']'; } ?>:
+		<div class="child curvybox">
+			<?php 
+			if ($child->rules) {
+				foreach ($child->rules as $rule) { echo ' [' . $rule->displayParentCheck() . ' ' . $rule->parent_check_value . ']'; } 
+			} else {
+				echo '[DEFAULT]';
+			}	
+			?>:
 			<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree/') . '/' . $model->decisiontree_id . '?node_id=' . $child->id ?>"><?php echo $child->question ? $child->question : $child->outcome->name ?></a>
-		</li>
+		</div>
 	<?php 
 	}?>
-	</ul>
+</div>
 <?php 
 }
 ?>
+<div>
+<?php if ($model->canAddChild() ) {?>
+<a href="#" class="add_node" data-dt_id="<?php echo $model->decisiontree_id ?>" data-parent_id="<?php echo $model->id?>">Add child</a>
+<?php } ?>
+</div>
 
 </div>

@@ -30,7 +30,7 @@
 
 <div class="row parent_check_value">
 	<?php echo $form->labelEx($model,'parent_check_value'); ?>
-	<?php if ($model->node->parent->response_type && $model->node->parent->response_type->datatype = 'bool') {
+	<?php if ($model->node->parent->response_type && $model->node->parent->response_type->datatype == 'bool') {
 		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
 				array('name' => get_class($model) . '[parent_check_value]',
 						'id' => get_class($model) . '_parent_check_value'

@@ -101,7 +101,7 @@ ComplianceCalculator.prototype.hideNode = function(node_id)
 		
 		// hide the children
 		if (this._nodes_by_parent[node_id]) {
-			for (var i =0; this._nodes_by_parent[node_id].length; i++) {
+			for (var i =0; i < this._nodes_by_parent[node_id].length; i++) {
 				this.hideNode(this._nodes_by_parent[node_id][i]);
 			}
 		}
@@ -134,17 +134,20 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 			// if it's an actual value
 			if (value !== undefined && value.length) {
 				// go through each child node to see if it has rules that match the value
-				// if it does, show it. 
+				// if it does, show it.
+				notMatched = true;
 				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
 					var child_id = this._nodes_by_parent[node_id][i];
-					if (this.checkNodeRule(child_id, value)) {
+					if (this.checkNodeRule(child_id, value) && notMatched) {
 						this.showNode(child_id);
-						break;
+						notMatched = false;
+					}
+					else {
+						this.hideNode(child_id);
 					}
 				}
 			}
 			else {
-				console.log('hiding');
 				// hide the child nodes
 				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
 					var child_id = this._nodes_by_parent[node_id][i];
@@ -190,7 +193,6 @@ ComplianceCalculator.prototype.update = function update(node_id)
 {
 	// go through the values of the form, and show the relevant form elements
 	// and possibly outcome
-	console.log('updating');
 	if (!node_id) {
 		node_id = this._root_node_id;
 	}
