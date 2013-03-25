@@ -64,6 +64,15 @@ ComplianceCalculator.prototype.showOutcome = function(outcome_id)
 }
 
 /*
+ * internal method to hide outcome and reset the form value
+ */
+ComplianceCalculator.prototype.hideOutcome = function()
+{
+	this._elem.find('div.outcome').hide();
+	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val('');
+}
+
+/*
  * show the specified node - the node is then checked to see whether an outcome should be shown, or a child node
  */
 ComplianceCalculator.prototype.showNode = function(node_id)	
@@ -75,6 +84,27 @@ ComplianceCalculator.prototype.showNode = function(node_id)
 	}
 	else {
 		this.checkNode(node_id);
+	}
+};
+
+/*
+ * hide the specified node - will hide its children as well
+ */
+ComplianceCalculator.prototype.hideNode = function(node_id)	
+{
+	if (this._elem.find('#node_' + node_id).is(":visible") ) {
+		this._elem.find('#node_' + node_id).hide();
+		// TODO: check if this is an outcome, and unset the outcome field for the form.
+		if (this._nodes[node_id]['outcome_id']) {
+			this.hideOutcome();
+		}
+		
+		// hide the children
+		if (this._nodes_by_parent[node_id]) {
+			for (var i =0; this._nodes_by_parent[node_id].length; i++) {
+				this.hideNode(this._nodes_by_parent[node_id][i]);
+			}
+		}
 	}
 };
 
@@ -91,24 +121,34 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 		// at the moment assuming all are input
 		var value = undefined;
 		if (node_elem.find('select').length) {
-			value = node_elem.find('select option:selected').val();
+			value = node_elem.find('select').val();
 		}
 		else {
 			value = node_elem.find('input').val();
 		}
 		
-		// TODO: if the value is null, then we need to hide children
-		if (value !== undefined && value.length && value != node_elem.data('prev-val')) {
+		// if the value has changed and the node has children
+		if (value != node_elem.data('prev-val') && this._nodes_by_parent[node_id]) {
+			// set the store of the previous value
 			node_elem.data('prev-val', value);
-			// go through each child node to see if it has rules that match the value
-			// if it does, show it. 
-			if (this._nodes_by_parent[node_id]) {
+			// if it's an actual value
+			if (value !== undefined && value.length) {
+				// go through each child node to see if it has rules that match the value
+				// if it does, show it. 
 				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
 					var child_id = this._nodes_by_parent[node_id][i];
 					if (this.checkNodeRule(child_id, value)) {
 						this.showNode(child_id);
 						break;
 					}
+				}
+			}
+			else {
+				console.log('hiding');
+				// hide the child nodes
+				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
+					var child_id = this._nodes_by_parent[node_id][i];
+					this.hideNode(child_id);
 				}
 			}
 		}

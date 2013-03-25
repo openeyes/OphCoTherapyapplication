@@ -36,7 +36,7 @@ if ($element->treatment && $element->treatment->decisiontree) {
 			<?php $def_val = $node->getDefaultValue(); 
 			if ($node->response_type->datatype == 'bool') { ?>
 				<select name="OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]">
-					<option>- Please select-</option>
+					<option value="">- Please select-</option>
 					<option value="0">No</option>
 					<option value="1">Yes</option>
 				</select>
