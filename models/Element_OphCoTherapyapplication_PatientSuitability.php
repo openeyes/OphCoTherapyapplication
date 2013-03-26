@@ -79,8 +79,6 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
 			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
 			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
@@ -88,6 +86,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'treatment_id'),
+			'responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id'),
 		);
 	}
 
@@ -143,6 +142,42 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 	protected function beforeValidate()
 	{
 		return parent::beforeValidate();
+	}
+	
+	public function updateDecisionTreeResponses($update_responses) {
+		$current_responses = array();
+		$save_responses = array();
+		foreach ($this->responses as $curr_resp) {
+			$current_responses[$curr_resp->node_id] = $curr_resp;
+		}
+				
+		// go through each node response, if there isn't one for this element,
+		// create it and store for saving
+		// if there is, check if the value is the same ... if it has changed
+		// update and store for saving, otherwise remove from the current responses array
+		// anything left in current responses at the end is ripe for deleting
+		foreach ($update_responses as $node_id => $value) {
+			if (!array_key_exists($node_id, $current_responses)) {
+				$s = new OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse();
+				$s->attributes = array('patientsuit_id' => $this->id, 'node_id' => $node_id, 'value' => $value);
+				$save_responses[] = $s;
+			} else {
+				if ($current_responses[$node_id]->value != $value) {
+					$current_responses[$node_id]->value = $value;
+					$save_responses[] = $current_responses[$node_id];
+					unset($current_responses[$node_id]);
+				}
+			}
+		}
+		// save what needs saving
+		foreach ($save_responses as $save) {
+			$save->save();
+		}
+		// delete the rest
+		foreach ($current_responses as $curr) {
+			$curr->delete();
+		}
+		
 	}
 }
 ?>

@@ -18,12 +18,31 @@
  */
 
 class DefaultController extends BaseEventTypeController {
+
+	/*
+	protected function setPOSTManyToMany($element) {
+		if (get_class($element) == 'Element_OphCoTherapyapplication_PatientSuitability') {
+			// process responses:
+			$responses = array();
+			
+			foreach (@$_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse'] as $node_id => $response) {
+				$resp = new OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse();
+				$resp->node_id = $node_id;
+				$resp->value = $response;
+				$responses[] = $resp;
+			}
+			$element->responses = $responses;
+		}
+	}
+	*/
+	
 	public function actionCreate() {
 		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
 		parent::actionCreate();
 	}
 
 	public function actionUpdate($id) {
+		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
 		parent::actionUpdate($id);
 	}
 
@@ -54,4 +73,56 @@ class DefaultController extends BaseEventTypeController {
 				false, false
 				);
 	}
-}
+	
+	public function getNodeResponseValue($element, $node_id) {
+		if (isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse']) ) {
+			// responses have been posted, so should operate off the value for this node.
+			return @$_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse'][$node_id];
+		}
+		foreach ($element->responses as $response) {
+			if ($response->node_id == $node_id) {
+				return $response->value;
+			}
+		}
+		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk($node_id);
+		return $node->getDefaultValue($element);
+	}
+	
+	/*
+	 * similar to setPOSTManyToMany, but will actually call methods on the elements that will create database entries
+	* should be called on create and update.
+	*
+	*/
+	protected function storePOSTManyToMany($elements) {
+		foreach ($elements as $el) {
+			if (get_class($el) == 'Element_OphCoTherapyapplication_PatientSuitability') {
+				$el->updateDecisionTreeResponses(isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse']) ? 
+						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse'] : 
+						array());
+				
+			}
+		}
+	}
+	
+	/*
+	 * ensures Many Many fields processed for elements
+	*/
+	public function createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId) {
+		if ($id = parent::createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
+			// create has been successful, store many to many values
+			$this->storePOSTManyToMany($elements);
+		}
+		return $id;
+	}
+	
+	/*
+	 * ensures Many Many fields processed for elements
+	*/
+	public function updateElements($elements, $data, $event) {
+		if ($response = parent::updateElements($elements, $data, $event)) {
+			// update has been successful, now need to deal with many to many changes
+			$this->storePOSTManyToMany($elements);
+		}
+		return $response;
+	}
+} 

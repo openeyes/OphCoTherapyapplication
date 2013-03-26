@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphCoTherapyapplication_DecisionTreeNodeResponse extends BaseActiveRecord {
+class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecord {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -32,8 +32,24 @@ class OphCoTherapyapplication_DecisionTreeNodeResponse extends BaseActiveRecord 
 	 */
 	public function tableName()
 	{
-		return 'ophcotherapya_decisiontreenoderesponse';
+		return 'ophcotherapya_patientsuit_decisiontreenoderesponse';
 	}
-
-
+	
+	/**
+	 * @return array validation rules for model attributes.
+	 */
+	public function rules()
+	{
+		return array(
+				array('patientsuit_id, node_id, value', 'safe'),
+		);
+	}
+	
+	public function relations()
+	{
+		return array(
+			'patientsuitability' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_PatientSuitability', 'patientsuit_id'),
+			'node' => array(self::HAS_ONE, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
+		);
+	}
 }

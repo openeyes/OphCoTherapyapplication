@@ -31,8 +31,8 @@
 			<td><span class="big"><?php echo CHtml::encode($element->details)?></span></td>
 		</tr>
 		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('inteventions_id'))?></td>
-			<td><span class="big"><?php echo $element->inteventions ? $element->inteventions->name : 'None'?></span></td>
+			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('intervention_id'))?></td>
+			<td><span class="big"><?php echo $element->intervention ? $element->intervention->name : 'None'?></span></td>
 		</tr>
 		<tr>
 			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('description'))?></td>

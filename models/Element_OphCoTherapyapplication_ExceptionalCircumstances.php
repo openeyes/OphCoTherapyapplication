@@ -90,7 +90,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'intervention' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'intervention_id'),
+			'intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'intervention_id'),
 			'previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id'),
 		);
 	}

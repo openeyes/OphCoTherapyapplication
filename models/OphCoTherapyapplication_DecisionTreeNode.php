@@ -141,11 +141,11 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	}
 	
 	/*
-	 * Works out the default value for this node, and returns it for use in forms
+	 * Works out the default value for this node, based on the provided Element_OphCoTherapyapplication_PatientSuitability object.
 	 * 
 	 * @return string default response value
 	 */
-	public function getDefaultValue() {
+	public function getDefaultValue($element) {
 		return null;
 	}
 	

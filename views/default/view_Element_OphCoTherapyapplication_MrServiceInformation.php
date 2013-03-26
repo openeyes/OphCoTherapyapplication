@@ -24,7 +24,7 @@
 	<tbody>
 		<tr>
 			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?></td>
-			<td><span class="big"><?php echo $element->consultant ? $element->consultant->getName() : 'None'?></span></td>
+			<td><span class="big"><?php echo $element->consultant ? $element->consultant->name : 'None'?></span></td>
 		</tr>
 	</tbody>
 </table>

@@ -36,7 +36,6 @@ ComplianceCalculator.prototype.init = function()
 		console.log('ERROR: need root id');
 	}
 	
-	
 	self._elem.find('.dt-node').each(function() {
 		var defn = $(this).data('defn');
 		self._nodes[defn.id] = $(this).data('defn');
@@ -55,34 +54,42 @@ ComplianceCalculator.prototype.init = function()
 
 /*
  * internal method that to show the appropriate outcome and set the form value when an outcome is reached
+ * stores the source_node_id against the outcome to keep track of what node is defining the outcome
  */
-ComplianceCalculator.prototype.showOutcome = function(outcome_id)
+ComplianceCalculator.prototype.showOutcome = function(outcome_id, source_node_id)
 {
-	this._elem.find('div.outcome').hide();
-	this._elem.find('#outcome_' + outcome_id).show();
+	var node_elem = this._elem.find('#outcome_' + outcome_id); 
+	this._elem.find('div.outcome').hide().each(function() {$(this).data('source-node-id', null); });
+	node_elem.show().data('source-node-id', source_node_id);
 	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val(outcome_id);
 }
 
 /*
- * internal method to hide outcome and reset the form value
+ * internal method to hide outcome and reset the form value - will only hide the outcome if the source_node_id matches
+ * the data attribute on the outcome being hidden (the outcome may now be being displayed because of a different source
+ * node)
  */
-ComplianceCalculator.prototype.hideOutcome = function()
+ComplianceCalculator.prototype.hideOutcome = function(outcome_id, source_node_id)
 {
-	this._elem.find('div.outcome').hide();
-	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val('');
+	var node_elem = this._elem.find('#outcome_' + outcome_id); 
+	if (node_elem.is(":visible") && node_elem.data('source-node-id') == source_node_id) {
+		node_elem.hide();
+		node_elem.data('source-node-id', null);
+		this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val('');
+	}
+	
 }
 
 /*
- * show the specified node - the node is then checked to see whether an outcome should be shown, or a child node
+ * show the specified node - if the node is an outcome then we show the outcome result, otherwise display node and check children or a child node
  */
 ComplianceCalculator.prototype.showNode = function(node_id)	
 {
-	this._elem.find('#node_' + node_id).show();
-	// TODO: this should probably be part of checkNode
 	if (this._nodes[node_id].outcome_id) {
-		this.showOutcome(this._nodes[node_id].outcome_id);
+		this.showOutcome(this._nodes[node_id].outcome_id, node_id);
 	}
 	else {
+		this._elem.find('#node_' + node_id).show();
 		this.checkNode(node_id);
 	}
 };
@@ -92,12 +99,15 @@ ComplianceCalculator.prototype.showNode = function(node_id)
  */
 ComplianceCalculator.prototype.hideNode = function(node_id)	
 {
-	if (this._elem.find('#node_' + node_id).is(":visible") ) {
-		this._elem.find('#node_' + node_id).hide();
-		// TODO: check if this is an outcome, and unset the outcome field for the form.
-		if (this._nodes[node_id]['outcome_id']) {
-			this.hideOutcome();
-		}
+	// clear the outcome if this was defining what the outcome was
+	if (this._nodes[node_id]['outcome_id']) {
+		this.hideOutcome(this._nodes[node_id]['outcome_id'], node_id);
+	}
+	var node_elem = this._elem.find('#node_' + node_id);
+	if (node_elem.is(":visible") ) {
+		node_elem.hide();
+		// remove prev value attribute so that this node will be checked fresh if it is redisplayed
+		node_elem.data('prev-val',null);
 		
 		// hide the children
 		if (this._nodes_by_parent[node_id]) {
@@ -117,8 +127,6 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 	var node_defn = this._nodes[node_id];
 	if (node_defn.question) {
 		// has a value to check against
-		// TODO: need to vary this selector depending on the type of form input is used for the node
-		// at the moment assuming all are input
 		var value = undefined;
 		if (node_elem.find('select').length) {
 			value = node_elem.find('select').val();
@@ -282,13 +290,18 @@ $(document).ready(function() {
 			}
 		})
 		
-		
 	});
 	
 	// various inputs that we need to react to changes on for the compliance calculator
 	$('#nice_compliance').delegate('input, select', 'change', function() {
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
 	});
+	
+	if ($('#Element_OphCoTherapyapplication_PatientSuitability_treatment_id').val().length) {
+		// there should be a tree to initialise given that a treatment has been chosen
+		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
+		OphCoTherapyapplication_ComplianceCalculator_init();
+	}
 	
 });
 
