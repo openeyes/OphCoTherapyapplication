@@ -297,7 +297,7 @@ $(document).ready(function() {
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
 	});
 	
-	if ($('#Element_OphCoTherapyapplication_PatientSuitability_treatment_id').val().length) {
+	if ($('#Element_OphCoTherapyapplication_PatientSuitability_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init();
