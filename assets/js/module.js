@@ -20,6 +20,7 @@ function ComplianceCalculator(elem, properties) {
 	
 	this._elem = elem;
 	this._properties = properties;
+	this._side = properties.side;
 	this._nodes = {};
 	this._nodes_by_parent = {};
 	
@@ -58,10 +59,10 @@ ComplianceCalculator.prototype.init = function()
  */
 ComplianceCalculator.prototype.showOutcome = function(outcome_id, source_node_id)
 {
-	var node_elem = this._elem.find('#outcome_' + outcome_id); 
+	var node_elem = this._elem.find('#' + this._side + '_outcome_' + outcome_id); 
 	this._elem.find('div.outcome').hide().each(function() {$(this).data('source-node-id', null); });
 	node_elem.show().data('source-node-id', source_node_id);
-	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val(outcome_id);
+	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_' + this._side + '_nice_compliance').val(node_elem.data('comp-val'));
 }
 
 /*
@@ -71,11 +72,11 @@ ComplianceCalculator.prototype.showOutcome = function(outcome_id, source_node_id
  */
 ComplianceCalculator.prototype.hideOutcome = function(outcome_id, source_node_id)
 {
-	var node_elem = this._elem.find('#outcome_' + outcome_id); 
+	var node_elem = this._elem.find('#' + this._side + '_outcome_' + outcome_id); 
 	if (node_elem.is(":visible") && node_elem.data('source-node-id') == source_node_id) {
 		node_elem.hide();
 		node_elem.data('source-node-id', null);
-		this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_nice_compliance').val('');
+		this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_' + this._side + '_nice_compliance').val('');
 	}
 	
 }
@@ -89,7 +90,7 @@ ComplianceCalculator.prototype.showNode = function(node_id)
 		this.showOutcome(this._nodes[node_id].outcome_id, node_id);
 	}
 	else {
-		this._elem.find('#node_' + node_id).show();
+		this._elem.find('#' + this._side + '_node_' + node_id).show();
 		this.checkNode(node_id);
 	}
 };
@@ -103,7 +104,7 @@ ComplianceCalculator.prototype.hideNode = function(node_id)
 	if (this._nodes[node_id]['outcome_id']) {
 		this.hideOutcome(this._nodes[node_id]['outcome_id'], node_id);
 	}
-	var node_elem = this._elem.find('#node_' + node_id);
+	var node_elem = this._elem.find('#' + this._side + '_node_' + node_id);
 	if (node_elem.is(":visible") ) {
 		node_elem.hide();
 		// remove prev value attribute so that this node will be checked fresh if it is redisplayed
@@ -123,7 +124,7 @@ ComplianceCalculator.prototype.hideNode = function(node_id)
  */
 ComplianceCalculator.prototype.checkNode = function(node_id)
 {
-	var node_elem = this._elem.find('#node_' + node_id);
+	var node_elem = this._elem.find('#' + this._side + '_node_' + node_id);
 	var node_defn = this._nodes[node_id];
 	if (node_defn.question) {
 		// has a value to check against
@@ -143,6 +144,7 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 			if (value !== undefined && value.length) {
 				// go through each child node to see if it has rules that match the value
 				// if it does, show it.
+				// FIXME: ensure we check nodes with rules before we check any without
 				notMatched = true;
 				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
 					var child_id = this._nodes_by_parent[node_id][i];
@@ -208,17 +210,20 @@ ComplianceCalculator.prototype.update = function update(node_id)
 }
 	
 
-function OphCoTherapyapplication_ComplianceCalculator_init() {
-	calc_obj = new ComplianceCalculator($('#OphCoTherapyapplication_ComplianceCalculator'), {});
-	$('#OphCoTherapyapplication_ComplianceCalculator').data('calc_obj', calc_obj);
+function OphCoTherapyapplication_ComplianceCalculator_init(side) {
+	calc_obj = new ComplianceCalculator($('#OphCoTherapyapplication_ComplianceCalculator_' + side), {'side': side});
+	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj', calc_obj);
 	calc_obj.update();
 }
 
 function OphCoTherapyapplication_ComplianceCalculator_update(elem) {
 	var node = elem.parents('.dt-node');
 	var id = node.data('defn').id;
-	$('#OphCoTherapyapplication_ComplianceCalculator').data('calc_obj').update(id);
+	var side = node.closest('.side').data('side');
+	
+	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj').update(id);
 }
+
 $(document).ready(function() {
 	// standard stuff
 	handleButton($('#et_save'),function() {
@@ -260,15 +265,19 @@ $(document).ready(function() {
 	});
 	
 	// handle treatment selection when editing
-	$('#event_content').delegate('#Element_OphCoTherapyapplication_PatientSuitability_treatment_id', 'change', function() {
-		selected = $(this).val();
+	$('#event_content').delegate('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id, ' +
+			'#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id', 'change', function() {
+		var selected = $(this).val();
+		var side = $(this).closest('.side').data('side');
+		
 		$(this).find('option').each( function() {
 			if ($(this).val() == selected) {
 				// this is the option that has been switched to
 				if ($(this).attr('data-treeid')) {
 					var params = {
 						'patient_id': OE_patient_id,
-						'treatment_id': $(this).val()
+						'treatment_id': $(this).val(),
+						'side': side
 					};
 					
 					//TODO: check if there are any answers on a current tree
@@ -278,8 +287,8 @@ $(document).ready(function() {
 						'url': decisiontree_url + '?' + $.param(params),
 						'success': function(html) {
 							if (html.length > 0) {
-								$('#OphCoTherapyapplication_ComplianceCalculator').replaceWith(html);
-								OphCoTherapyapplication_ComplianceCalculator_init();
+								$('#OphCoTherapyapplication_ComplianceCalculator_' + side).replaceWith(html);
+								OphCoTherapyapplication_ComplianceCalculator_init(side);
 							}
 						}
 					});
@@ -293,14 +302,24 @@ $(document).ready(function() {
 	});
 	
 	// various inputs that we need to react to changes on for the compliance calculator
-	$('#nice_compliance').delegate('input, select', 'change', function() {
+	console.log('setting up change');
+	$('#nice_compliance_left, #nice_compliance_right').delegate('input, select', 'change', function() {
+		console.log('yo');
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
 	});
 	
-	if ($('#Element_OphCoTherapyapplication_PatientSuitability_treatment_id').val()) {
+	console.log('should be done');
+	
+	if ($('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
-		OphCoTherapyapplication_ComplianceCalculator_init();
+		OphCoTherapyapplication_ComplianceCalculator_init('left');
+	}
+	
+	if ($('#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id').val()) {
+		// there should be a tree to initialise given that a treatment has been chosen
+		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
+		OphCoTherapyapplication_ComplianceCalculator_init('right');
 	}
 	
 });

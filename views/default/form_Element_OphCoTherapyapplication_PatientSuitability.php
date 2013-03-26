@@ -39,25 +39,34 @@
 	$html_options = array(
 			'options' => array(),
 			'empty'=>'- Please select -',
+			'nowrapper' => true,
 	);
 	foreach ($treatments as $treatment) {
 		$html_options['options'][(string)$treatment->id] = array('data-treeid' => $treatment->decisiontree_id);
 	}
-	
-		
-	echo $form->dropDownList($element, 'treatment_id', CHtml::listData($treatments,'id','name'),$html_options)?>
-	<?php echo $form->datePicker($element, 'angiogram_baseline_date', array('maxDate' => 'today'), array('style'=>'width: 110px;'))?>
-	
-	<div id="nice_compliance" class="eventDetail">
-		<div class="label">NICE Compliance</div>
-		<div class="data">
-			<?php $this->renderPartial(
-				'form_OphCoTherapyapplication_DecisionTree',
-				array('element' => $element, 'data' => $data, 'form' => $form),
-				false, false
-			)?>	
-		
+	?>
+	<div class="cols2 clearfix">
+		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
+		<div class="side left eventDetail<?php if(!$element->hasRight()) { ?> inactive<?php } ?>" data-side="right">
+			<div class="activeForm">
+				<a href="#" class="removeSide">-</a>
+				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
+					array('side' => 'right', 'element' => $element, 'form' => $form, 'treatments' => $treatments, 'treat_opts' => $html_options, 'data' => $data)); ?>
+			</div>
+			<div class="inactiveForm">
+				<a href="#">Add right side</a>
+			</div>
 		</div>
-		
+		<div class="side right eventDetail<?php if(!$element->hasLeft()) { ?> inactive<?php } ?>" data-side="left">
+			<div class="activeForm">
+				<a href="#" class="removeSide">-</a>
+				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
+					array('side' => 'left', 'element' => $element, 'form' => $form, 'treatments' => $treatments, 'treat_opts' => $html_options, 'data' => $data)); ?>
+			</div>
+			<div class="inactiveForm">
+				<a href="#">Add left side</a>
+			</div>
+		</div>
+
 	</div>
 </div>

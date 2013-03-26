@@ -7,3 +7,31 @@
 .outcome {
 	font-size: 1.2em;
 }
+
+.cols2 div.elementField {
+	padding-bottom: 5px;
+}
+
+.cols2 div.elementField div.label {
+	font-size: 15px;
+	width: 170px !important;
+	display: inline-block !important;
+	
+}
+
+.cols2 div.elementField div.data div {
+	display: inline-block;
+	
+}
+
+#OphCoTherapyapplication_ComplianceCalculator div {
+	display: inline-block;
+}
+
+.eventDetail .aligned {
+	clear: both;
+}
+
+.eventDetail .data {
+	font-size: 15px;
+}

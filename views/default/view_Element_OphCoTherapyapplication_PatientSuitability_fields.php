@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -16,41 +16,19 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+?>
 
-/**
- * This is the model class for table "ophcotherapya_decisiontreenodeoutcome".
- *
- * An outcome is an endpoint for a decision tree. The label is what is displayed to the user, the type is a coded value for use
- * in the system to make decisions about functional behaviour.
- *
- * @property integer $id The outcome id
- * @property string $label The displayed label for this outcome
- * @property string $outcome_type The coded type of this outcome
- *
- **/
+<div class="eventDetail aligned">
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_treatment_id') ?>:</div>
+	<div class="data"><?php echo $element[$side . '_treatment']->name ?></div>
+</div>
 
-class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecord {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
-	
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_decisiontreeoutcome';
-	}
+<div class="eventDetail aligned">
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_angiogram_baseline_date') ?>:</div>
+	<div class="data"><?php echo CHtml::encode($element->NHSDate($side . '_angiogram_baseline_date'))?></div>
+</div>
 
-	public function isCompliant() {
-		if ($this->outcome_type == 'COMP') {
-			return true;
-		}
-		return false;
-	}
-}
+<div class="eventDetail aligned">
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_nice_compliance') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_nice_compliance'} ? 'Yes' : 'No'?></div>
+</div>

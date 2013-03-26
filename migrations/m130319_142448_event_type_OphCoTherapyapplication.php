@@ -192,8 +192,8 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		// --- ELEMENT TYPE ENTRIES ---
 
 		// create an element_type entry for this element type name if one doesn't already exist
-		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'TherapyDiagnosis',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'TherapyDiagnosis','class_name' => 'Element_OphCoTherapyapplication_Therapydiagnosis', 'event_type_id' => $event_type['id'], 'display_order' => 1));
+		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Diagnosis',':eventTypeId'=>$event_type['id']))->queryRow()) {
+			$this->insert('element_type', array('name' => 'Diagnosis','class_name' => 'Element_OphCoTherapyapplication_Therapydiagnosis', 'event_type_id' => $event_type['id'], 'display_order' => 1));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'TherapyDiagnosis'))->queryRow();
@@ -222,13 +222,16 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Exceptional Circumstances'))->queryRow();
 
-
+		// create the DR Grading table
+		$both_eyes_id = Eye::model()->find("name = 'Both'")->id;
 
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_therapydiag', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'event_id' => 'int(10) unsigned NOT NULL',
-				'diagnosis_id' => 'int(10) unsigned NOT NULL', // Diagnosis
+				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
+				'left_diagnosis_id' => 'int(10) unsigned', // Left Diagnosis
+				'right_diagnosis_id' => 'int(10) unsigned', // Right Diagnosis
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -237,11 +240,15 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `et_ophcotherapya_therapydiag_lmui_fk` (`last_modified_user_id`)',
 				'KEY `et_ophcotherapya_therapydiag_cui_fk` (`created_user_id`)',
 				'KEY `et_ophcotherapya_therapydiag_ev_fk` (`event_id`)',
-				'KEY `et_ophcotherapya_therapydiag_diagnosis_id_fk` (`diagnosis_id`)',
+				'KEY `et_ophcotherapya_therapydiag_ldiagnosis_id_fk` (`left_diagnosis_id`)',
+				'KEY `et_ophcotherapya_therapydiag_rdiagnosis_id_fk` (`right_diagnosis_id`)',
+				'KEY `et_ophcotherapya_therapydiag_eye_id_fk` (`eye_id`)',
 				'CONSTRAINT `et_ophcotherapya_therapydiag_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_therapydiag_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_therapydiag_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
-				'CONSTRAINT `et_ophcotherapya_therapydiag_diagnosis_id_fk` FOREIGN KEY (`diagnosis_id`) REFERENCES `disorder` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_therapydiag_ldiagnosis_id_fk` FOREIGN KEY (`left_diagnosis_id`) REFERENCES `disorder` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_therapydiag_rdiagnosis_id_fk` FOREIGN KEY (`right_diagnosis_id`) REFERENCES `disorder` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_therapydiag_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)'
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		// element lookup table ophcotherapya_treatment
@@ -278,9 +285,13 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->createTable('et_ophcotherapya_patientsuit', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'event_id' => 'int(10) unsigned NOT NULL',
-				'treatment_id' => 'int(10) unsigned NOT NULL', // Treatment
-				'angiogram_baseline_date' => 'date DEFAULT NULL', // Angiogram Baseline Date
-				'nice_compliance' => 'tinyint(1) unsigned NOT NULL DEFAULT 0', // NICE Compliance
+				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
+				'left_treatment_id' => 'int(10) unsigned', // Treatment
+				'left_angiogram_baseline_date' => 'date DEFAULT NULL', // Angiogram Baseline Date
+				'left_nice_compliance' => 'tinyint(1) unsigned', // NICE Compliance
+				'right_treatment_id' => 'int(10) unsigned', // Treatment
+				'right_angiogram_baseline_date' => 'date DEFAULT NULL', // Angiogram Baseline Date
+				'right_nice_compliance' => 'tinyint(1) unsigned', // NICE Compliance
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -289,16 +300,21 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `et_ophcotherapya_patientsuit_lmui_fk` (`last_modified_user_id`)',
 				'KEY `et_ophcotherapya_patientsuit_cui_fk` (`created_user_id`)',
 				'KEY `et_ophcotherapya_patientsuit_ev_fk` (`event_id`)',
-				'KEY `ophcotherapya_treatment_fk` (`treatment_id`)',
+				'KEY `et_ophcotherapya_patientsuit_ltreatment_fk` (`left_treatment_id`)',
+				'KEY `et_ophcotherapya_patientsuit_rtreatment_fk` (`right_treatment_id`)',
+				'KEY `et_ophcotherapya_patientsuit_eye_id_fk` (`eye_id`)',
 				'CONSTRAINT `et_ophcotherapya_patientsuit_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_patientsuit_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_patientsuit_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
-				'CONSTRAINT `ophcotherapya_treatment_fk` FOREIGN KEY (`treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_patientsuit_ltreatment_fk` FOREIGN KEY (`left_treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_patientsuit_rtreatment_fk` FOREIGN KEY (`right_treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_patientsuit_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		$this->createTable('ophcotherapya_patientsuit_decisiontreenoderesponse', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'patientsuit_id' => 'int(10) unsigned NOT NULL',
+				'patientsuit_side' => 'tinyint(1) NOT NULL', 
 				'node_id' => 'int(10) unsigned NOT NULL',
 				'value' => 'varchar(16) NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',

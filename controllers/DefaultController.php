@@ -19,22 +19,17 @@
 
 class DefaultController extends BaseEventTypeController {
 
-	/*
-	protected function setPOSTManyToMany($element) {
-		if (get_class($element) == 'Element_OphCoTherapyapplication_PatientSuitability') {
-			// process responses:
-			$responses = array();
-			
-			foreach (@$_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse'] as $node_id => $response) {
-				$resp = new OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse();
-				$resp->node_id = $node_id;
-				$resp->value = $response;
-				$responses[] = $resp;
-			}
-			$element->responses = $responses;
+	protected function beforeAction($action)
+	{
+		if (!Yii::app()->getRequest()->getIsAjaxRequest() && !(in_array($action->id,$this->printActions())) ) {
+			Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl('css/spliteventtype.css'));
+			Yii::app()->getClientScript()->registerScriptFile(Yii::app()->createUrl('js/spliteventtype.js'));
 		}
+		
+		$res = parent::beforeAction($action);
+	
+		return $res;
 	}
-	*/
 	
 	public function actionCreate() {
 		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
@@ -57,7 +52,14 @@ class DefaultController extends BaseEventTypeController {
 	public function actionGetDecisionTree() {
 		$treatment = OphCoTherapyapplication_Treatment::model()->findByPk((int)@$_GET['treatment_id']);
 		$element = new Element_OphCoTherapyapplication_PatientSuitability();
-		$element->treatment = $treatment;
+		
+		$side = @$_GET['side'];
+		if (!in_array($side, array('left', 'right'))) {
+			throw Exception('Invalid side argument');
+		}
+
+		$element->{$side . '_treatment'} = $treatment;
+		
 		
 		$form = Yii::app()->getWidgetFactory()->createWidget($this,'BaseEventTypeCActiveForm',array(
 				'id' => 'clinical-create',
@@ -69,23 +71,23 @@ class DefaultController extends BaseEventTypeController {
 		// so that we can set the right values for this form.
 		$this->renderPartial(
 				'form_OphCoTherapyapplication_DecisionTree',
-				array('element' => $element, 'form' => $form),
+				array('element' => $element, 'form' => $form, 'side' => $side),
 				false, false
 				);
 	}
 	
-	public function getNodeResponseValue($element, $node_id) {
-		if (isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse']) ) {
+	public function getNodeResponseValue($element, $side, $node_id) {
+		if (isset($_POST['Element_OphCoTherapyapplication_PatientSuitability'][$side . '_DecisionTreeResponse']) ) {
 			// responses have been posted, so should operate off the value for this node.
-			return @$_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse'][$node_id];
+			return @$_POST['Element_OphCoTherapyapplication_PatientSuitability'][$side . '_DecisionTreeResponse'][$node_id];
 		}
-		foreach ($element->responses as $response) {
+		foreach ($element->{$side . '_responses'} as $response) {
 			if ($response->node_id == $node_id) {
 				return $response->value;
 			}
 		}
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk($node_id);
-		return $node->getDefaultValue($element);
+		return $node->getDefaultValue($side, $element);
 	}
 	
 	/*
@@ -96,8 +98,13 @@ class DefaultController extends BaseEventTypeController {
 	protected function storePOSTManyToMany($elements) {
 		foreach ($elements as $el) {
 			if (get_class($el) == 'Element_OphCoTherapyapplication_PatientSuitability') {
-				$el->updateDecisionTreeResponses(isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse']) ? 
-						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['DecisionTreeResponse'] : 
+				$el->updateDecisionTreeResponses(Element_OphCoTherapyapplication_PatientSuitability::LEFT, 
+						isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse']) ? 
+						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse'] : 
+						array());
+				$el->updateDecisionTreeResponses(Element_OphCoTherapyapplication_PatientSuitability::RIGHT,
+						isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse']) ?
+						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse'] :
 						array());
 				
 			}

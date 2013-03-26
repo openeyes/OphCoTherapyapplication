@@ -24,6 +24,37 @@
 	data-element-type-name="<?php echo $element->elementType->name?>"
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
 	<h4 class="elementTypeName"><?php echo $element->elementType->name; ?></h4>
-
-	<?php echo $form->dropDownList($element, 'diagnosis_id', CHtml::listData($element->getTherapyDisorders(),'id','term'),array('empty'=>'- Please select -'))?>
+	
+	<div class="cols2 clearfix">
+		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
+		<div
+			class="side left eventDetail<?php if(!$element->hasRight()) { ?> inactive<?php } ?>"
+			data-side="right">
+			<div class="activeForm">
+				<a href="#" class="removeSide">-</a>
+					<div class="label"><?php echo $element->getAttributeLabel('right_diagnosis_id'); ?></div>
+					<div class="data"><?php echo $form->dropDownList($element, 'right_diagnosis_id', CHtml::listData($element->getTherapyDisorders(),'id','term'),array('empty'=>'- Please select -', 'nowrapper' => true))?></div>
+			</div>
+			<div class="inactiveForm">
+				<a href="#">Add right side</a>
+			</div>
+		</div>
+	
+		<div
+			class="side right eventDetail<?php if(!$element->hasLeft()) { ?> inactive<?php } ?>"
+			data-side="left">
+			<div class="activeForm">
+				<a href="#" class="removeSide">-</a>
+				<div class="data">
+					<div class="label"><?php echo $element->getAttributeLabel('left_diagnosis_id'); ?></div>
+					<div class="data"><?php echo $form->dropDownList($element, 'left_diagnosis_id', CHtml::listData($element->getTherapyDisorders(),'id','term'),array('empty'=>'- Please select -', 'nowrapper' => true))?></div>
+					
+				</div>
+			</div>
+			<div class="inactiveForm">
+				<a href="#">Add left side</a>
+			</div>
+		</div>
+	
+	</div>
 </div>

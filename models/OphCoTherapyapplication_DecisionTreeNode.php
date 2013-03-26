@@ -145,7 +145,7 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	 * 
 	 * @return string default response value
 	 */
-	public function getDefaultValue($element) {
+	public function getDefaultValue($side, $element) {
 		return null;
 	}
 	

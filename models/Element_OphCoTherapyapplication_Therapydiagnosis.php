@@ -35,7 +35,7 @@
  * @property Disorder $diagnosis
  */
 
-class Element_OphCoTherapyapplication_Therapydiagnosis extends BaseEventTypeElement
+class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeElement
 {
 	public $service;
 
@@ -64,12 +64,17 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends BaseEventTypeElem
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, diagnosis_id, ', 'safe'),
-			array('diagnosis_id, ', 'required'),
+			array('event_id, left_diagnosis_id, right_diagnosis_id, eye_id', 'safe'),
+			array('left_diagnosis_id', 'requiredIfSide', 'side' => 'left'),
+			array('right_diagnosis_id', 'requiredIfSide', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, diagnosis_id, ', 'safe', 'on' => 'search'),
+			array('id, event_id, left_diagnosis_id, right_diagnosis_id, eye_id', 'safe', 'on' => 'search'),
 		);
+	}
+	
+	public function sidedFields() {
+		return array('diagnosis_id');
 	}
 	
 	/**
@@ -85,7 +90,9 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends BaseEventTypeElem
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'diagnosis' => array(self::BELONGS_TO, 'Disorder', 'diagnosis_id'),
+			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
+			'left_diagnosis' => array(self::BELONGS_TO, 'Disorder', 'left_diagnosis_id'),
+			'right_diagnosis' => array(self::BELONGS_TO, 'Disorder', 'right_diagnosis_id'),
 		);
 	}
 
@@ -97,7 +104,8 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends BaseEventTypeElem
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-			'diagnosis_id' => 'Diagnosis',
+			'left_diagnosis_id' => 'Diagnosis',
+			'right_diagnosis_id' => 'Diagnosis',
 		);
 	}
 
@@ -114,7 +122,8 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends BaseEventTypeElem
 
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('event_id', $this->event_id, true);
-		$criteria->compare('diagnosis_id', $this->diagnosis_id);
+		$criteria->compare('left_diagnosis_id', $this->left_diagnosis_id);
+		$criteria->compare('right_diagnosis_id', $this->right_diagnosis_id);
 		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,

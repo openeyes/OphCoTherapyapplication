@@ -19,22 +19,24 @@
 ?>
 <?php 
 $decisiontree = null;
-if ($element->treatment && $element->treatment->decisiontree) {
-	$decisiontree = $element->treatment->decisiontree;
+$treatment = $element->{$side . '_treatment'};
+
+if ($treatment && $treatment->decisiontree) {
+	$decisiontree = $treatment->decisiontree;
 }
 ?>
 
-<div id="OphCoTherapyapplication_ComplianceCalculator"<?php if ($decisiontree) { echo " data-defn='" . CJSON::encode($decisiontree->getDefinition()) . "'"; }?>>
-	<?php if ($element->treatment && $element->treatment->decisiontree) {?>
+<div id="OphCoTherapyapplication_ComplianceCalculator_<?php echo $side ?>"<?php if ($decisiontree) { echo " data-defn='" . CJSON::encode($decisiontree->getDefinition()) . "'"; }?>>
+	<?php if ($decisiontree) {?>
 		<div>
-		<?php foreach ($element->treatment->decisiontree->nodes as $node) { ?>
-			<div class="dt-node" id="node_<?php echo $node->id ?>" style="display: none;" data-defn='<?php echo CJSON::encode($node->getDefinition()); ?>'>
+		<?php foreach ($decisiontree->nodes as $node) { ?>
+			<div class="dt-node" id="<?php echo $side; ?>_node_<?php echo $node->id ?>" style="display: none;" data-defn='<?php echo CJSON::encode($node->getDefinition()); ?>'>
 			<?php if ($node->question) {?>
 				<div class="label"><?php echo $node->question ?></div>
 				<div class="data">
-				<?php $val = $this->getNodeResponseValue($element, $node->id); 
+				<?php $val = $this->getNodeResponseValue($element, $side, $node->id); 
 				if ($node->response_type->datatype == 'bool') { ?>
-					<select name="Element_OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]">
+					<select name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]">
 						<option value="">- Please select-</option>
 						<option value="0" <?php if ($val == '0') { echo "selected"; }?>>No</option>
 						<option value="1" <?php if ($val == '1') { echo "selected"; }?>>Yes</option>
@@ -42,7 +44,7 @@ if ($element->treatment && $element->treatment->decisiontree) {
 				<?php 
 				} else {
 				?>
-					<input type="text" name="Element_OphCoTherapyapplication_PatientSuitability[DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $val; ?>" />
+					<input type="text" name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $val; ?>" />
 				<?php }?>
 				</div>
 			<?php } ?>
@@ -53,7 +55,8 @@ if ($element->treatment && $element->treatment->decisiontree) {
 		<div>Please select a treatment to determine compliance</div>
 	<?php } ?>
 	<?php foreach (OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll() as $outcome) { ?>
-		<div id="outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome"><?php echo $outcome->name; ?></div>
+		<div id="<?php echo $side; ?>_outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome" 
+			data-comp-val="<?php echo $outcome->isCompliant() ? "1" : "0";?>" ><?php echo $outcome->name; ?></div>
 	<?php }?>
-	<?php echo $form->hiddenInput($element, 'nice_compliance')?>
+	<?php echo $form->hiddenInput($element, $side . '_nice_compliance')?>
 </div>

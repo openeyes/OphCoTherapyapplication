@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -16,41 +16,27 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+?>
 
-/**
- * This is the model class for table "ophcotherapya_decisiontreenodeoutcome".
- *
- * An outcome is an endpoint for a decision tree. The label is what is displayed to the user, the type is a coded value for use
- * in the system to make decisions about functional behaviour.
- *
- * @property integer $id The outcome id
- * @property string $label The displayed label for this outcome
- * @property string $outcome_type The coded type of this outcome
- *
- **/
+<div class="elementField">
+<div class="label"><?php echo $element->getAttributeLabel($side . '_treatment_id'); ?></div>
+<div class="data"><?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts); ?></div>
+</div>
 
-class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecord {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+<div class="elementField">
+<div class="label"><?php echo $element->getAttributeLabel($side . '_angiogram_baseline_date'); ?></div>
+<div class="data"><?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array('style'=>'width: 110px;', 'nowrapper' => true))?></div>
+</div>
+
+<div id="nice_compliance_<?php echo $side?>" class="elementField">
+	<div class="label">NICE Compliance</div>
+	<div class="data">
+		<?php $this->renderPartial(
+			'form_OphCoTherapyapplication_DecisionTree',
+			array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),
+			false, false
+		)?>	
 	
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_decisiontreeoutcome';
-	}
-
-	public function isCompliant() {
-		if ($this->outcome_type == 'COMP') {
-			return true;
-		}
-		return false;
-	}
-}
+	</div>
+	
+</div>

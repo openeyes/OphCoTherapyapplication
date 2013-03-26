@@ -23,9 +23,12 @@
  * The followings are the available columns in table:
  * @property string $id
  * @property integer $event_id
- * @property integer $treatment_id
- * @property string $angiogram_baseline_date
- * @property integer $nice_compliance
+ * @property integer $left_treatment_id
+ * @property integer $right_treatment_id
+ * @property string $left_angiogram_baseline_date
+ * @property string $right_angiogram_baseline_date
+ * @property boolean $left_nice_compliance
+ * @property boolean $right_nice_compliance
  *
  * The followings are the available model relations:
  *
@@ -34,13 +37,17 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
- * @property OphCoTherapyapplication_Treatment $treatment
+ * @property OphCoTherapyapplication_Treatment $left_treatment
+ * @property OphCoTherapyapplication_Treatment $right_treatment
+ * @property Eye $eye
  */
 
-class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeElement
+class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeElement
 {
 	public $service;
-
+	const LEFT = 0;
+	const RIGHT = 1;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -66,11 +73,12 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, treatment_id, angiogram_baseline_date, nice_compliance, ', 'safe'),
-			array('treatment_id, angiogram_baseline_date, nice_compliance, ', 'required'),
+			array('event_id, eye_id, left_treatment_id, left_angiogram_baseline_date, left_nice_compliance, right_treatment_id, right_angiogram_baseline_date, right_nice_compliance,', 'safe'),
+			array('left_treatment_id, left_angiogram_baseline_date, left_nice_compliance', 'requiredIfSide', 'side' => 'left'),
+			array('right_treatment_id, right_angiogram_baseline_date, right_nice_compliance', 'requiredIfSide', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, treatment_id, angiogram_baseline_date, nice_compliance, ', 'safe', 'on' => 'search'),
+			array('id, event_id, eye_id, left_treatment_id, left_angiogram_baseline_date, left_nice_compliance, right_treatment_id, right_angiogram_baseline_date, right_nice_compliance', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -84,9 +92,13 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'treatment_id'),
-			'responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id'),
+			'usermodified'    => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
+			'left_treatment'  => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'left_treatment_id'),
+			'right_treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'right_treatment_id'),
+			// TODO - use appropriate statics for these values
+			'left_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'left_responses.patientsuit_side = ' . $this::LEFT),
+			'right_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'right_responses.patientsuit_side = ' . $this::RIGHT),
 		);
 	}
 
@@ -98,9 +110,12 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-			'treatment_id' => 'Treatment',
-			'angiogram_baseline_date' => 'Angiogram Baseline Date',
-			'nice_compliance' => 'NICE Compliance',
+			'left_treatment_id' => 'Treatment',
+			'left_angiogram_baseline_date' => 'Angiogram Baseline Date',
+			'left_nice_compliance' => 'NICE Compliance',
+			'right_treatment_id' => 'Treatment',
+			'right_angiogram_baseline_date' => 'Angiogram Baseline Date',
+			'right_nice_compliance' => 'NICE Compliance',
 		);
 	}
 
@@ -144,10 +159,20 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 		return parent::beforeValidate();
 	}
 	
-	public function updateDecisionTreeResponses($update_responses) {
+	public function updateDecisionTreeResponses($side, $update_responses) {
 		$current_responses = array();
 		$save_responses = array();
-		foreach ($this->responses as $curr_resp) {
+		if ($side == $this::LEFT) {
+			$responses = $this->left_responses;
+		}
+		elseif ($side == $this::RIGHT) {
+			$responses = $this->right_responses;
+		}
+		else {
+			throw Exception("Invalid side value");
+		}
+		
+		foreach ($responses as $curr_resp) {
 			$current_responses[$curr_resp->node_id] = $curr_resp;
 		}
 				
@@ -159,7 +184,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends BaseEventTypeEl
 		foreach ($update_responses as $node_id => $value) {
 			if (!array_key_exists($node_id, $current_responses)) {
 				$s = new OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse();
-				$s->attributes = array('patientsuit_id' => $this->id, 'node_id' => $node_id, 'value' => $value);
+				$s->attributes = array('patientsuit_id' => $this->id, 'patientsuit_side' => $side, 'node_id' => $node_id, 'value' => $value);
 				$save_responses[] = $s;
 			} else {
 				if ($current_responses[$node_id]->value != $value) {
