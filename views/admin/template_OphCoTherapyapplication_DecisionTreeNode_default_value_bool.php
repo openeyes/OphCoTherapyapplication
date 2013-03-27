@@ -17,9 +17,13 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-
+<?php 
+if (!$val) {
+	$val = null;
+}
+?>
 <select name="<?php echo $name ?>" id="<?php echo $id ?>">
 	<option>- Please select -</option>
-	<option value="0">No</option>
-	<option value="1">Yes</option>
+	<option value="0" <?php if ($val == '0') { echo 'selected'; } ?>>No</option>
+	<option value="1" <?php if ($val == '1') { echo 'selected'; } ?>>Yes</option>
 </select>

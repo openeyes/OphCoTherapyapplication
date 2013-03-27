@@ -72,14 +72,18 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 	 * if the response types expand greatly, then it will be worth expanding 
 	 * this functionality to have choices defined in models
 	 */
-	public function getChoices() {
-		if ($this->datatype == 'bool') {
+	public function getChoices($datatype = null) {
+		if ($datatype == null) {
+			$datatype = $this->datatype;
+		}
+		
+		if ($datatype == 'bool') {
 			return array(
 				'0' => 'No',
 				'1' => 'Yes',
 			);
 		}
-		elseif ($this->datatype == 'va') {
+		elseif ($datatype == 'va') {
 			return array(
 				'94' => '6/5',
 				'90' => '6/6',

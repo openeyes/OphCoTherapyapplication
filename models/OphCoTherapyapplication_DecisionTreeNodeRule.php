@@ -83,6 +83,21 @@ class OphCoTherapyapplication_DecisionTreeNodeRule extends BaseActiveRecord {
 		return CHtml::encode(@$this->COMPARATORS[$this->parent_check]);
 	}
 	
+	/**
+	 * generate the display value of the parent check value on this rule
+	 * 
+	 * @return string display value
+	 */
+	public function displayParentCheckValue() {
+		if ($choices = $this->node->parent->response_type->getChoices()) {
+			if (key_exists($this->parent_check_value, $choices)) {
+				return $choices[$this->parent_check_value];
+			}
+		}
+		// default to just displaying the check value
+		return $this->parent_check_value;
+	}
+	
 	/*
 	 * Works out a full abstract definition of the rule.
 	*

@@ -17,8 +17,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="OphCoTherapyapplication_DecisionTreeNodeRule curvybox blueborder" style="width: 200px;">
-	<?php echo $model->displayParentCheck() . ' ' . $model->displayParentCheckValue() ?>
-	<br />
-	[<a href="#" class="edit_rule" data-rule_id="<?php echo $model->id ?>">Edit</a> | <a href="#">Delete</a>]
-</div>
+<select name="<?php echo $name ?>" id="<?php echo $id ?>">
+	<option>- Please select -</option>
+	<?php foreach (OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->getChoices('va') as $id => $label) { ?>
+		<option value="<?php echo $id; ?>" <?php if ($val == $id) { echo "selected"; }?>><?php echo $label; ?></option>
+	<?php } ?>
+</select>

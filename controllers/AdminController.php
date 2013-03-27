@@ -209,16 +209,16 @@ class AdminController extends ModuleAdminController
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
 				
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'create', serialize($model->attributes));
+				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree Node Rule updated');
 	
-				$this->redirect(array('viewdecisiontree', 'id' => $node->decisiontree_id, 'node_id' => $model->node->id));
+				$this->redirect(array('viewdecisiontree', 'id' => $model->node->decisiontree_id, 'node_id' => $model->node->id));
 			}
 		}
 	
 		$this->renderPartial('create', array(
 				'model' => $model,
-				'node' => $node,
+				'node' => $model->node,
 		));
 	}
 	

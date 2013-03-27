@@ -70,7 +70,7 @@ if ($model->children){
 		<div class="child curvybox">
 			<?php 
 			if ($child->rules) {
-				foreach ($child->rules as $rule) { echo ' [' . $rule->displayParentCheck() . ' ' . $rule->parent_check_value . ']'; } 
+				foreach ($child->rules as $rule) { echo ' [' . $rule->displayParentCheck() . ' ' . $rule->displayParentCheckValue() . ']'; } 
 			} else {
 				echo '[DEFAULT]';
 			}	
