@@ -30,7 +30,7 @@
 
 <div id="nice_compliance_<?php echo $side?>" class="elementField">
 	<div class="label">NICE Compliance</div>
-	<div class="data">
+	<div class="data compliance-container">
 		<?php $this->renderPartial(
 			'form_OphCoTherapyapplication_DecisionTree',
 			array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),

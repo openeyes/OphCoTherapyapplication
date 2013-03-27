@@ -42,7 +42,7 @@
 			'nowrapper' => true,
 	);
 	foreach ($treatments as $treatment) {
-		$html_options['options'][(string)$treatment->id] = array('data-treeid' => $treatment->decisiontree_id);
+		$html_options['options'][(string)$treatment->id] = array('data-treeid' => $treatment->decisiontree_id, 'data-contraindications' => $treatment->contraindications_required);
 	}
 	?>
 	<div class="cols2 clearfix">

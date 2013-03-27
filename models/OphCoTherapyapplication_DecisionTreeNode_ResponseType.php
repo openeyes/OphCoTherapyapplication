@@ -66,4 +66,33 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 		// TODO: implement for choice 'ch' response type
 	}
 	
+	/*
+	 * return choice options for response types that have them
+	 * Note that this is hard coded for now to reduce admin overhead etc
+	 * if the response types expand greatly, then it will be worth expanding 
+	 * this functionality to have choices defined in models
+	 */
+	public function getChoices() {
+		if ($this->datatype == 'bool') {
+			return array(
+				'0' => 'No',
+				'1' => 'Yes',
+			);
+		}
+		elseif ($this->datatype == 'va') {
+			return array(
+				'94' => '6/5',
+				'90' => '6/6',
+				'81' => '6/9',
+				'75' => '6/12',
+				'66' => '6/18',
+				'60' => '6/24',
+				'51' => '6/36',
+				'40' => '6/60',
+				'25' => '3/60',
+			);
+		}
+		return null;
+	}
+	
 }

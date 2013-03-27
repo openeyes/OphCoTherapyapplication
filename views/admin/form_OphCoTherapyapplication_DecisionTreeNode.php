@@ -36,7 +36,14 @@
 
 	<div class="row default_function">
 		<?php echo $form->labelEx($model,'default_function'); ?>
-		<?php echo $form->textField($model,'default_function',array('size'=>60,'maxlength'=>64)); ?>
+		
+		<?php 
+		$func_list = array();
+		foreach ($model->getDefaultFunctions() as $func) {
+			$func_list[$func] = $func;
+		}
+			
+		echo $form->dropdownlist($model, 'default_function', $func_list, array('empty' => '- Please select -')); ?>
 		<?php echo $form->error($model,'default_function'); ?>
 	</div>
 

@@ -2,10 +2,12 @@
 
 .dt-node {
 	margin-bottom: 10px;
+	display: inline-block;
 }
 
 .outcome {
 	font-size: 1.2em;
+	display: inline-block;
 }
 
 .cols2 div.elementField {
@@ -34,4 +36,13 @@
 
 .eventDetail .data {
 	font-size: 15px;
+}
+
+.compliance-container {
+	width: 320px;
+	float: right;
+}
+
+.compliance-container div.data {
+	float:left;
 }

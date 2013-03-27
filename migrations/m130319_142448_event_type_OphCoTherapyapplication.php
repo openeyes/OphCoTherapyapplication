@@ -71,8 +71,8 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'Integer','datatype'=> 'int'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'string','datatype'=> 'str'));
-		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'choice','datatype'=> 'ch'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'yes/no','datatype'=> 'bool'));
+		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'Visual Acuity','datatype'=> 'va'));
 		
 		$this->createTable('ophcotherapya_decisiontreenode', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -258,6 +258,7 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'decisiontree_id' => 'int(10) unsigned',
 				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'available' => 'boolean DEFAULT True',
+				'contraindications_required' => 'boolean NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -271,15 +272,13 @@ class m130319_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_treatment_dti_fk` FOREIGN KEY (`decisiontree_id`) REFERENCES `ophcotherapya_decisiontree` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('ophcotherapya_treatment',array('name'=>'Avastin','display_order'=>1));
-		$this->insert('ophcotherapya_treatment',array('name'=>'Eylea','display_order'=>2));
-		$this->insert('ophcotherapya_treatment',array('name'=>'Lucentis','display_order'=>3));
-		$this->insert('ophcotherapya_treatment',array('name'=>'Macugen','display_order'=>4));
-		$this->insert('ophcotherapya_treatment',array('name'=>'PDT','display_order'=>5));
-		$this->insert('ophcotherapya_treatment',array('name'=>'Ozurdex','display_order'=>6));
-		$this->insert('ophcotherapya_treatment',array('name'=>'Intravitreal triamcinolone','display_order'=>7));
-
-
+		$this->insert('ophcotherapya_treatment',array('name'=>'Avastin','display_order'=>1, 'contraindications_required' => true));
+		$this->insert('ophcotherapya_treatment',array('name'=>'Eylea','display_order'=>2, 'contraindications_required' => true));
+		$this->insert('ophcotherapya_treatment',array('name'=>'Lucentis','display_order'=>3, 'contraindications_required' => true));
+		$this->insert('ophcotherapya_treatment',array('name'=>'Macugen','display_order'=>4, 'contraindications_required' => true));
+		$this->insert('ophcotherapya_treatment',array('name'=>'PDT','display_order'=>5, 'contraindications_required' => false));
+		$this->insert('ophcotherapya_treatment',array('name'=>'Ozurdex','display_order'=>6, 'contraindications_required' => false));
+		$this->insert('ophcotherapya_treatment',array('name'=>'Intravitreal triamcinolone','display_order'=>7, 'contraindications_required' => false));
 
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_patientsuit', array(

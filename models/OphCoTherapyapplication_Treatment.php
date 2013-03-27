@@ -24,6 +24,7 @@
  * @property string $id
  * @property string $name
  * @property boolean $available
+ * @property boolean $contraindications_required
  * @property integer $decisiontree_id
  * 
  * The followings are the available model relations:
@@ -60,11 +61,11 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, decisiontree_id, available', 'safe'),
-			array('name', 'required'),
+			array('name, decisiontree_id, available, contraindications_required', 'safe'),
+			array('name, contraindications_required', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, available', 'safe', 'on' => 'search'),
+			array('id, name, available, contraindications_required', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -91,7 +92,8 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 			'id' => 'ID',
 			'name' => 'Name',
 			'decisiontree_id' => 'Decision Tree',
-			'available' => 'Available'
+			'available' => 'Available',
+			'contraindications_required' => 'Needs Contraindications Element'
 		);
 	}
 

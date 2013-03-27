@@ -86,6 +86,11 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 		);
 	}
 	
+	public function getDefaultFunctions()
+	{
+		return array('bestVisualAcuityForEye');
+	}
+	
 	/*
 	 * Can only have children for question nodes, not outcomes
 	 */
@@ -141,12 +146,21 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	}
 	
 	/*
-	 * Works out the default value for this node, based on the provided Element_OphCoTherapyapplication_PatientSuitability object.
+	 * Works out the default value for this node, based on the provided $patient
 	 * 
 	 * @return string default response value
 	 */
-	public function getDefaultValue($side, $element) {
-		return null;
+	public function getDefaultValue($side, $patient) {
+		if ($this->default_value) {
+			return $this->default_value;
+		}
+		elseif ($this->default_function) {
+			// call the appropriate default function
+			return $this->{$this->default_function}($side, $patient);
+		}
+		else {
+			return null;
+		}
 	}
 	
 	/*
@@ -174,5 +188,17 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 		if ($this->default_function && $this->default_value) {
 			$this->addError($attribute, 'Cannot have two default values for node response');
 		}
+	}
+	
+	/*
+	 * returns the best visual acuity record for the given the $side of the given $patient
+	 * 
+	 * @return integer $visualacuity
+	 */
+	public function bestVisualAcuityForEye($side, $patient) {
+		if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
+			return ($best = $api->getBestVisualAcuity($patient, $side, false)) ? $best->value : null;
+		}
+		return null;	
 	}
 }

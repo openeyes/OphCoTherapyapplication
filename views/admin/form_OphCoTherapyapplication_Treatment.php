@@ -41,3 +41,8 @@
 	<?php echo $form->error($model,'available'); ?>
 </div>
 
+<div class="row">
+	<?php echo $form->labelEx($model, 'contraindications_required')?>
+	<?php echo $form->radioButtonList($model, 'contraindications_required', array(1 => 'Yes', 0 => 'No'), array('separator' => '&nbsp;')); ?>
+	<?php echo $form->error($model,'contraindications_required'); ?>
+</div>

@@ -50,7 +50,14 @@ class DefaultController extends BaseEventTypeController {
 	}
 	
 	public function actionGetDecisionTree() {
-		$treatment = OphCoTherapyapplication_Treatment::model()->findByPk((int)@$_GET['treatment_id']);
+		
+		if (!$this->patient = Patient::model()->findByPk((int)@$_GET['patient_id'])) {
+			throw new CHttpException(403, 'Invalid patient_id.');
+		}
+		if (!$treatment = OphCoTherapyapplication_Treatment::model()->findByPk((int)@$_GET['treatment_id']) ) {
+			throw new CHttpException(403, 'Invalid treatment_id.');
+		}
+		
 		$element = new Element_OphCoTherapyapplication_PatientSuitability();
 		
 		$side = @$_GET['side'];
@@ -87,7 +94,8 @@ class DefaultController extends BaseEventTypeController {
 			}
 		}
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk($node_id);
-		return $node->getDefaultValue($side, $element);
+		error_log($this->patient->id);
+		return $node->getDefaultValue($side, $this->patient);
 	}
 	
 	/*

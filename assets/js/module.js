@@ -36,7 +36,7 @@ ComplianceCalculator.prototype.init = function()
 	else {
 		console.log('ERROR: need root id');
 	}
-	
+	// build up a store of the decision tree node hierarchy
 	self._elem.find('.dt-node').each(function() {
 		var defn = $(this).data('defn');
 		self._nodes[defn.id] = $(this).data('defn');
@@ -145,15 +145,33 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 				// go through each child node to see if it has rules that match the value
 				// if it does, show it.
 				// FIXME: ensure we check nodes with rules before we check any without
-				notMatched = true;
+				var notMatched = true;
+				var default_node_id = null;
 				for (var i = 0; i < this._nodes_by_parent[node_id].length; i++) {
 					var child_id = this._nodes_by_parent[node_id][i];
-					if (this.checkNodeRule(child_id, value) && notMatched) {
-						this.showNode(child_id);
-						notMatched = false;
+					if (!this._nodes[child_id]['rules'].length) {
+						default_node_id = child_id;
 					}
 					else {
-						this.hideNode(child_id);
+						if (this.checkNodeRule(child_id, value) && notMatched) {
+							this.showNode(child_id);
+							notMatched = false;
+						}
+						else {
+							this.hideNode(child_id);
+						}
+					}
+				}
+				
+				if (default_node_id != null) {
+					// there was a node without rules (indicating a default child)
+					if (notMatched) {
+						// show the default
+						this.showNode(default_node_id);
+					}
+					else {
+						// hide the default
+						this.hideNode(default_node_id);
 					}
 				}
 			}
@@ -184,8 +202,14 @@ ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
 				case "lt":
 					res = (res && value < chk_val) ? true : false;
 					break;
+				case "lte":
+					res = (res && value <= chk_val) ? true : false;
+					break;
 				case "gt":
 					res = (res && value > chk_val) ? true : false;
+					break;
+				case "gte":
+					res = (res && value >= chk_val) ? true : false;
 					break;
 				default:
 					res = false;
@@ -222,6 +246,40 @@ function OphCoTherapyapplication_ComplianceCalculator_update(elem) {
 	var side = node.closest('.side').data('side');
 	
 	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj').update(id);
+}
+
+function _getContraindicationsFromSide(side) {
+	if ($('#Element_OphCoTherapyapplication_PatientSuitability_' + side + '_treatment_id').is(':visible')) {
+		var tr = $('#Element_OphCoTherapyapplication_PatientSuitability_' + side + '_treatment_id').val();
+		var ci = null;
+		$('#Element_OphCoTherapyapplication_PatientSuitability_' +side+'_treatment_id').find('option').each( function() {
+			if ($(this).val() == tr) {
+				if ($(this).data('contraindications')) {
+					ci = true;
+				}
+				else {
+					ci = false;
+				}
+				// finish
+				return false;
+			}
+		});
+		return ci;
+	}
+	// nothing for this side, so no need for contraindications.
+	return false;
+}
+
+function OphCoTherapyapplication_ContraIndications_check() {
+	var lt = _getContraindicationsFromSide('left');
+	var rt = _getContraindicationsFromSide('right');
+	if (lt || rt) {
+		$('.Element_OphCoTherapyapplication_RelativeContraindications').show();
+	}
+	else {
+		$('.Element_OphCoTherapyapplication_RelativeContraindications').hide();
+	}
+	
 }
 
 $(document).ready(function() {
@@ -270,6 +328,8 @@ $(document).ready(function() {
 		var selected = $(this).val();
 		var side = $(this).closest('.side').data('side');
 		
+		OphCoTherapyapplication_ContraIndications_check();
+		
 		$(this).find('option').each( function() {
 			if ($(this).val() == selected) {
 				// this is the option that has been switched to
@@ -302,24 +362,25 @@ $(document).ready(function() {
 	});
 	
 	// various inputs that we need to react to changes on for the compliance calculator
-	console.log('setting up change');
 	$('#nice_compliance_left, #nice_compliance_right').delegate('input, select', 'change', function() {
-		console.log('yo');
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
 	});
-	
-	console.log('should be done');
+	$('#nice_compliance_left, #nice_compliance_right').delegate('input', 'keyup', function() {
+		OphCoTherapyapplication_ComplianceCalculator_update($(this));
+	});
 	
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init('left');
+		OphCoTherapyapplication_ContraIndications_check('left');
 	}
 	
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init('right');
+		OphCoTherapyapplication_ContraIndications_check('right');
 	}
 	
 });

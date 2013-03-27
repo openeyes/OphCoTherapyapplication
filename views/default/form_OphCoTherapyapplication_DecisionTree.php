@@ -42,6 +42,14 @@ if ($treatment && $treatment->decisiontree) {
 						<option value="1" <?php if ($val == '1') { echo "selected"; }?>>Yes</option>
 					</select>
 				<?php 
+				} elseif ($node->response_type->datatype == 'va') {?>
+					<select name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]">
+						<option value="">- Please select-</option>
+						<?php foreach ($node->response_type->getChoices() as $id => $label) { ?>
+							<option value="<?php echo $id; ?>" <?php if ($val == $id) { echo "selected"; }?>><?php echo $label; ?></option>
+						<?php } ?>
+					</select>
+				<?php 
 				} else {
 				?>
 					<input type="text" name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $val; ?>" />
