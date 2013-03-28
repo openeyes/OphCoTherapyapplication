@@ -42,6 +42,7 @@ class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord {
 	{
 		return array(
 				'disorder' => array(self::BELONGS_TO, 'Disorder', 'disorder_id'),
+				'disorder_categories' => array(self::MANY_MANY, 'OphCoTherapyapplication_Disorder_Category', 'ophcotherapya_therapydisorder_category(therapydisorder_id,category_id)'),
 		);
 	}
 	

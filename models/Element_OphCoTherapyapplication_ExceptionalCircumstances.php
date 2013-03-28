@@ -23,12 +23,18 @@
  * The followings are the available columns in table:
  * @property string $id
  * @property integer $event_id
- * @property integer $standard_intervention_exists
- * @property string $details
- * @property integer $interventions_id
- * @property string $description
- * @property integer $patient_factors
- * @property string $patient_factor_details
+ * @property boolean $left_standard_intervention_exists
+ * @property string $left_details
+ * @property integer $left_intervention_id
+ * @property string $left_description
+ * @property integer $left_patient_factors
+ * @property string $left_patient_factor_details
+ * @property boolean $right_standard_intervention_exists
+ * @property string $right_details
+ * @property integer $right_intervention_id
+ * @property string $right_description
+ * @property integer $right_patient_factors
+ * @property string $right_patient_factor_details
  *
  * The followings are the available model relations:
  *
@@ -37,10 +43,11 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Inteventions $inteventions
+ * @property array(OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention) $left_previnterventions
+ * @property array(OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention) $right_previnterventions
  */
 
-class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEventTypeElement
+class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEventTypeElement
 {
 	public $service;
 
@@ -69,11 +76,18 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details, ', 'safe'),
-			array('standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details, ', 'required'),
+			array('event_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
+					'left_patient_factor_details, right_standard_intervention_exists, right_details, right_intervention_id, right_description, ' . 
+					'right_patient_factors, right_patient_factor_details', 'safe'),
+			array('left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, left_patient_factor_details,', 
+					'requiredIfSide', 'left'),
+			array('right_standard_intervention_exists, right_details, right_intervention_id, right_description, right_patient_factors, right_patient_factor_details,',
+					'requiredIfSide', 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details, ', 'safe', 'on' => 'search'),
+			array('id, event_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
+					'left_patient_factor_details, right_standard_intervention_exists, right_details, right_intervention_id, right_description, ' . 
+					'right_patient_factors, right_patient_factor_details', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -90,11 +104,19 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'intervention_id'),
-			'previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id'),
+			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
+			'left_intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'left_intervention_id'),
+			'left_previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id', 
+					'on' => 'left_previousinterventions.exceptional_side = ' . SplitEventTypeElement::LEFT),
+			'right_previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
+					'on' => 'right_previousinterventions.exceptional_side = ' . SplitEventTypeElement::RIGHT),
 		);
 	}
 
+	public function sidedFields() {
+		return array('standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details');
+	}
+	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -103,13 +125,20 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends BaseEvent
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-			'standard_intervention_exists' => 'Standard Intervention Exists',
-			'details' => 'Details and standard algorithm of care',
-			'intervention_id' => 'Intervention',
-			'description' => 'Description',
-			'patient_factors' => 'Patient Factors',
-			'patient_factor_details' => 'Details',
-			'previousinterventions' => 'Previous Interventions',
+			'left_standard_intervention_exists' => 'Standard Intervention Exists',
+			'left_details' => 'Details and standard algorithm of care',
+			'left_intervention_id' => 'Intervention',
+			'left_description' => 'Description',
+			'left_patient_factors' => 'Patient Factors',
+			'left_patient_factor_details' => 'Details',
+			'left_previousinterventions' => 'Previous Interventions',
+			'right_standard_intervention_exists' => 'Standard Intervention Exists',
+			'right_details' => 'Details and standard algorithm of care',
+			'right_intervention_id' => 'Intervention',
+			'right_description' => 'Description',
+			'right_patient_factors' => 'Patient Factors',
+			'right_patient_factor_details' => 'Details',
+			'right_previousinterventions' => 'Previous Interventions',
 		);
 	}
 

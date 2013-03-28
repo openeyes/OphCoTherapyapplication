@@ -25,10 +25,38 @@
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
 	<h4 class="elementTypeName"><?php echo $element->elementType->name; ?></h4>
 
-	<?php echo $form->radioBoolean($element, 'standard_intervention_exists')?>
-	<?php echo $form->textArea($element, 'details', array('rows' => 4, 'cols' => 80))?>
-	<?php echo $form->radioButtons($element, 'intervention_id', 'et_ophcotherapya_exceptional_intervention')?>
-	<?php echo $form->textArea($element, 'description', array('rows' => 4, 'cols' => 80))?>
-	<?php echo $form->radioBoolean($element, 'patient_factors')?>
-	<?php echo $form->textArea($element, 'patient_factor_details', array('rows' => 4, 'cols' => 80))?>
+	<div class="cols2 clearfix">
+		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
+		<div
+			class="side left eventDetail<?php if(!$element->hasRight()) { ?> inactive<?php } ?>"
+			data-side="right">
+			<div class="activeForm">
+				<a href="#" class="removeSide">-</a>
+				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
+					array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+			</div>
+			<div class="inactiveForm">
+				<a href="#">Add right side</a>
+			</div>
+		</div>
+	
+		<div
+			class="side right eventDetail<?php if(!$element->hasLeft()) { ?> inactive<?php } ?>"
+			data-side="left">
+			<div class="activeForm">
+				<a href="#" class="removeSide">-</a>
+				
+				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
+					array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+				
+			</div>
+			<div class="inactiveForm">
+				<a href="#">Add left side</a>
+			</div>
+		</div>
+	
+	</div>
+	
+	
+	
 </div>

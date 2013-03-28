@@ -45,8 +45,6 @@
 class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeElement
 {
 	public $service;
-	const LEFT = 0;
-	const RIGHT = 1;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -97,8 +95,8 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 			'left_treatment'  => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'left_treatment_id'),
 			'right_treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'right_treatment_id'),
 			// TODO - use appropriate statics for these values
-			'left_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'left_responses.patientsuit_side = ' . $this::LEFT),
-			'right_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'right_responses.patientsuit_side = ' . $this::RIGHT),
+			'left_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'left_responses.patientsuit_side = ' . SplitEventTypeElement::LEFT),
+			'right_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'right_responses.patientsuit_side = ' . SplitEventTypeElement::RIGHT),
 		);
 	}
 

@@ -27,6 +27,9 @@ function ComplianceCalculator(elem, properties) {
 	this.init()
 }
 
+/*
+ * Initialises the ComplianceCalculator object, storing node definitions from data attributes and showing the root node
+ */
 ComplianceCalculator.prototype.init = function()
 {
 	var self = this;
@@ -187,6 +190,10 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 	
 };
 
+/*
+ * Checks the rules for the node of the given node id against the value. Returns
+ * true if the node should be shown according to the rules
+ */
 ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
 	if (this._nodes[node_id]['rules'].length) {
 		var res = true;
@@ -223,31 +230,44 @@ ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
 	}
 };
 
+/* go through the values of the form, and show the relevant form elements
+ * and possibly outcome
+ */
 ComplianceCalculator.prototype.update = function update(node_id) 
 {
-	// go through the values of the form, and show the relevant form elements
-	// and possibly outcome
+
 	if (!node_id) {
 		node_id = this._root_node_id;
 	}
 	this.checkNode(node_id);
 }
 	
-
+/*
+ * initialise a compliance calculator object for the side provided
+ */
 function OphCoTherapyapplication_ComplianceCalculator_init(side) {
 	calc_obj = new ComplianceCalculator($('#OphCoTherapyapplication_ComplianceCalculator_' + side), {'side': side});
 	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj', calc_obj);
 	calc_obj.update();
 }
 
+/*
+ * Should be called when the decision tree form changes. The form element that has changed
+ * is used to then tell the ComplianceCalculator for the tree what point it should update from.
+ */
 function OphCoTherapyapplication_ComplianceCalculator_update(elem) {
 	var node = elem.parents('.dt-node');
 	var id = node.data('defn').id;
 	var side = node.closest('.side').data('side');
 	
 	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj').update(id);
+	
+	OphCoTherapyapplication_ExceptionalCircumstances_check();
 }
 
+/*
+ * determines if the treatment for the specified side requires the contraindications form or not.
+ */
 function _getContraindicationsFromSide(side) {
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_' + side + '_treatment_id').is(':visible')) {
 		var tr = $('#Element_OphCoTherapyapplication_PatientSuitability_' + side + '_treatment_id').val();
@@ -270,6 +290,9 @@ function _getContraindicationsFromSide(side) {
 	return false;
 }
 
+/* 
+ * show or hide the contraindications form depending on if it is needed or not.
+ */
 function OphCoTherapyapplication_ContraIndications_check() {
 	var lt = _getContraindicationsFromSide('left');
 	var rt = _getContraindicationsFromSide('right');
@@ -279,7 +302,42 @@ function OphCoTherapyapplication_ContraIndications_check() {
 	else {
 		$('.Element_OphCoTherapyapplication_RelativeContraindications').hide();
 	}
+}
+
+function _isCompliant(side) {
+	if ($('#nice_compliance_' + side).is(':visible')) {
+		// this side is showing
+		var compliant = $('#Element_OphCoTherapyapplication_PatientSuitability_' + side + '_nice_compliance').val();
+		if (compliant.length == 0) {
+			return null;
+		}
+		else if (compliant == '0') {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	return null;
+}
+
+function OphCoTherapyapplication_ExceptionalCircumstances_check() {
+	var lt = _isCompliant('left');
+	var rt = _isCompliant('right');
 	
+	if (lt != null && !lt) {
+		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.right').removeClass('inactive');
+	}
+	else {
+		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.right').addClass('inactive');
+	}
+	
+	if (rt != null && !rt) {
+		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.left').removeClass('inactive');
+	}
+	else {
+		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.left').addClass('inactive');
+	}
 }
 
 $(document).ready(function() {
@@ -373,16 +431,17 @@ $(document).ready(function() {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init('left');
-		OphCoTherapyapplication_ContraIndications_check('left');
+		OphCoTherapyapplication_ContraIndications_check();
 	}
 	
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init('right');
-		OphCoTherapyapplication_ContraIndications_check('right');
+		OphCoTherapyapplication_ContraIndications_check();
 	}
 	
+	OphCoTherapyapplication_ExceptionalCircumstances_check();
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }

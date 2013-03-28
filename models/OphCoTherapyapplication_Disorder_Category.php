@@ -18,20 +18,11 @@
  */
 
 /**
- * Stores the responses for given decision tree nodes for Patient Suitability element
- * 
- * @property string id
- * @property string patientsuit_id
- * @property string node_id
- * @property string value
- * 
- * The following model relations exist
- * 
- * @property Element_OphCoTherapyapplication_PatientSuitablity patientsuitability
- * @property OphCoTherapyapplication_DecisionTreeNode node
+ * Enables categorisation of the disorders so that default selection of choices can be made in the decision tree depending on what diagnosis
+ * has been made for a given eye
  */
-
-class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecord {
+ 
+class OphCoTherapyapplication_Disorder_Category extends BaseActiveRecord {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -40,13 +31,23 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'ophcotherapya_patientsuit_decisiontreenoderesponse';
+		return 'ophcotherapya_disorder_category';
+	}
+
+	/**
+	 * @return array relational rules.
+	 */
+	public function relations()
+	{
+		return array(
+				'therapydisorders' => array(self::MANY_MANY, 'OphCoTherapyapplication_TherapyDisorder', 'ophcotherapya_therapydisorder_category(category_id,therapydisorder_id)'),
+		);
 	}
 	
 	/**
@@ -55,15 +56,11 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 	public function rules()
 	{
 		return array(
-				array('patientsuit_id, node_id, side, value', 'safe'),
+				array('label', 'safe'),
+				array('label', 'required'),
+				// The following rule is used by search().
+				// Please remove those attributes that should not be searched.
+				array('id, label', 'safe', 'on' => 'search'),
 		);
-	}
-	
-	public function relations()
-	{
-		return array(
-			'patientsuitability' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_PatientSuitability', 'patientsuit_id'),
-			'node' => array(self::HAS_ONE, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
-		);
-	}
+	}	
 }
