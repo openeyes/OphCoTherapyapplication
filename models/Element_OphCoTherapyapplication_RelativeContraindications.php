@@ -142,5 +142,13 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 	{
 		return parent::beforeValidate();
 	}
+	
+	public function eventTreatment() {
+		if ($this->event_id) {
+			$suit = Element_OphCoTherapyapplication_PatientSuitability::model()->find(array('event_id' => $this->event_id));
+			return $suit->treatment;
+		}
+		return null;
+	}
 }
 ?>

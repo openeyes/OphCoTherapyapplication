@@ -18,12 +18,12 @@
  */
 ?>
 	
-	<div class="elementField">
+	<div class="elementField standard_intervention_exists">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_exists'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array('nowrapper' => true))?></div>
 	</div>
 	
-	<div class="elementField">
+	<div class="elementField"<?php if (!$element->{$side . '_standard_intervention_exists'}) { echo ' style="display: none;"'; } ?>>
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_details'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_details', array('rows' => 4, 'cols' => 50, 'nowrapper' => true))?></div>
 	</div>
@@ -35,12 +35,12 @@
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 50, 'nowrapper' => true))?></div>
 	</div>
-	<div class="elementField">
+	<div class="elementField patient_factors">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factors'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_patient_factors', array('nowrapper' => true))?></div>
 	</div>
 	
-	<div class="elementField">
+	<div class="elementField"<?php if (!$element->{$side . '_patient_factors'}) { echo ' style="display: none;"'; } ?>>
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 50, 'nowrapper' => true))?></div>
 	</div>

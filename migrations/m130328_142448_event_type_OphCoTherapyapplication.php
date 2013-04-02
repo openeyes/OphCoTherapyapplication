@@ -408,6 +408,7 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->createTable('et_ophcotherapya_exceptional_intervention', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'description_label' => 'varchar(128) COLLATE utf8_bin NOT NULL',
 				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
@@ -420,8 +421,8 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Additional','display_order'=>1));
-		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Deviation','display_order'=>2));
+		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Additional', 'description_label' => 'Indicate how the patient fits into the standard algorithm', 'display_order'=>1));
+		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Deviation','description_label' => 'What are the exceptional circumstances making the standard algorithm of care inappropriate', 'display_order'=>2));
 		
 		// create the table for this element type: Element_OphCoTherapyapplication_ExceptionalCircumstances
 		$this->createTable('et_ophcotherapya_exceptional', array(

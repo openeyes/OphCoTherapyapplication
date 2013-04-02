@@ -31,12 +31,11 @@
 			class="side left eventDetail<?php if(!$element->hasRight()) { ?> inactive<?php } ?>"
 			data-side="right">
 			<div class="activeForm">
-				<a href="#" class="removeSide">-</a>
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
 					array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 			</div>
 			<div class="inactiveForm">
-				<a href="#">Add right side</a>
+				Only required if Patient Suitability is Non-Compliant
 			</div>
 		</div>
 	
@@ -44,14 +43,12 @@
 			class="side right eventDetail<?php if(!$element->hasLeft()) { ?> inactive<?php } ?>"
 			data-side="left">
 			<div class="activeForm">
-				<a href="#" class="removeSide">-</a>
-				
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
 					array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 				
 			</div>
 			<div class="inactiveForm">
-				<a href="#">Add left side</a>
+				Only required if Patient Suitability is Non-Compliant
 			</div>
 		</div>
 	

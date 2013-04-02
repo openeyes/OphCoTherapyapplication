@@ -79,10 +79,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			array('event_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
 					'left_patient_factor_details, right_standard_intervention_exists, right_details, right_intervention_id, right_description, ' . 
 					'right_patient_factors, right_patient_factor_details', 'safe'),
-			array('left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, left_patient_factor_details,', 
-					'requiredIfSide', 'left'),
-			array('right_standard_intervention_exists, right_details, right_intervention_id, right_description, right_patient_factors, right_patient_factor_details,',
-					'requiredIfSide', 'right'),
+			array('left_standard_intervention_exists, left_intervention_id, left_description, left_patient_factors, left_patient_factor_details,', 
+					'requiredIfSide', 'side' => 'left'),
+			array('right_standard_intervention_exists, right_intervention_id, right_description, right_patient_factors, right_patient_factor_details,',
+					'requiredIfSide', 'side' => 'right'),
+			array('left_details', 'standardInterventionExists', 'side' => 'left'),
+			array('right_details', 'standardInterventionExists', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
@@ -106,6 +108,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
 			'left_intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'left_intervention_id'),
+			'right_intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'right_intervention_id'),
 			'left_previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id', 
 					'on' => 'left_previousinterventions.exceptional_side = ' . SplitEventTypeElement::LEFT),
 			'right_previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
@@ -122,7 +125,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function attributeLabels()
 	{
-		return array(
+		$labels = array(
 			'id' => 'ID',
 			'event_id' => 'Event',
 			'left_standard_intervention_exists' => 'Standard Intervention Exists',
@@ -133,13 +136,21 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_patient_factor_details' => 'Details',
 			'left_previousinterventions' => 'Previous Interventions',
 			'right_standard_intervention_exists' => 'Standard Intervention Exists',
+			'right_description' => 'Description',
 			'right_details' => 'Details and standard algorithm of care',
 			'right_intervention_id' => 'Intervention',
-			'right_description' => 'Description',
 			'right_patient_factors' => 'Patient Factors',
 			'right_patient_factor_details' => 'Details',
 			'right_previousinterventions' => 'Previous Interventions',
 		);
+		foreach(array('left', 'right') as $side) {
+			if ($this->{$side . '_intervention'}) {
+				$labels[$side . '_description'] = $this->{$side . '_intervention'}->description_label;
+			}
+		}
+		
+		return $labels;
+		
 	}
 
 	/**
@@ -183,6 +194,17 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	protected function beforeValidate()
 	{
 		return parent::beforeValidate();
+	}
+	
+	/*
+	 * check that the standard intervention description is given if the element is flagged appropriately
+	 */
+	public function standardInterventionExists($attribute, $params) {
+		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
+			if ($this->{$params['side'] . '_standard_intervention_exists'} && $this->$attribute == null) {
+				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
+			}
+		}
 	}
 }
 ?>

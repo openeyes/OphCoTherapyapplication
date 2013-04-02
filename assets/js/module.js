@@ -304,6 +304,19 @@ function OphCoTherapyapplication_ContraIndications_check() {
 	}
 }
 
+// check whether the patient suitability elements should be shown for the given eye side
+function OphCoTherapyapplication_PatientSuitability_check(side) {
+	if ($('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis_id').is(":visible") &&
+			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis_id').val()) {
+		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
+	}
+	else {
+		hideSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
+	}
+	
+	OphCoTherapyapplication_ExceptionalCircumstances_check(side);
+}
+
 function _isCompliant(side) {
 	if ($('#nice_compliance_' + side).is(':visible')) {
 		// this side is showing
@@ -321,23 +334,86 @@ function _isCompliant(side) {
 	return null;
 }
 
-function OphCoTherapyapplication_ExceptionalCircumstances_check() {
-	var lt = _isCompliant('left');
-	var rt = _isCompliant('right');
+// check whether the exceptional circumstances elements should be shown for the given eye side
+function OphCoTherapyapplication_ExceptionalCircumstances_check(side) {
+	var compliant = _isCompliant(side);
 	
-	if (lt != null && !lt) {
-		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.right').removeClass('inactive');
-	}
-	else {
-		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.right').addClass('inactive');
+	var display_side = 'right';
+	if (side == 'right') {
+		display_side = 'left';
 	}
 	
-	if (rt != null && !rt) {
-		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.left').removeClass('inactive');
+	if (compliant != null && !compliant) {
+		showSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);
 	}
 	else {
-		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('.side.left').addClass('inactive');
+		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);	}
+
+}
+
+/**
+ * Given a dom element, will try to determine the side that the element is on for split elements
+ * TODO: move to base js
+ */
+function getSplitElementSide(el) {
+	// Get side (if set)
+	var side = null;
+	if (el.closest('[data-side]').length) {
+		side = el.closest('[data-side]').attr('data-side');
 	}
+	return side;
+}
+
+function showSplitElementSide(cls, side) {
+	var other_side = 'left';
+	var side_val = 2; // Right in db
+	
+	if (side == 'left') {
+		other_side = 'right';
+		side_val = 1; // Left in db
+	}
+	var display_side = other_side;
+	
+	$('.' + cls).find('.side.' + display_side).removeClass('inactive');
+	// side for data is the opposite side for display ...
+	if ($('.' + cls).find('.side.' + side).hasClass('inactive')) {
+		// the other side is not visible, so can set the input value to that of the side being shown
+		$('.' + cls).find('input.sideField').each(function() {
+			$(this).val(side_val);
+		});
+	}
+	else {
+		// both sides are visible
+		$('.' + cls).find('input.sideField').each(function() {
+			$(this).val('3');
+		});
+	}
+}
+
+function hideSplitElementSide(cls, side) {
+	var other_side = 'left';
+	var other_side_val = 1; // Left in db
+	
+	if (side == 'left') {
+		other_side = 'right';
+		other_side_val = 2; // Right in db
+	}
+	var display_side = other_side;
+	$('.' + cls).find('.side.' + display_side).addClass('inactive');
+	// side for data is the opposite side for display ...
+	if ($('.' + cls).find('.side.' + side).hasClass('inactive')) {
+		// the other side is not visible, so need to set the eye value to null
+		$('.' + cls).find('input.sideField').each(function() {
+			$(this).val('');
+		});
+	}
+	else {
+		// the other side is visible
+		$('.' + cls).find('input.sideField').each(function() {
+			$(this).val(other_side_val);
+		});
+	}
+	
 }
 
 $(document).ready(function() {
@@ -380,11 +456,18 @@ $(document).ready(function() {
 		}
 	});
 	
+	$('.Element_OphCoTherapyapplication_Therapydiagnosis').delegate('#Element_OphCoTherapyapplication_Therapydiagnosis_right_diagnosis_id, ' +
+			'#Element_OphCoTherapyapplication_Therapydiagnosis_left_diagnosis_id', 'change', function() {
+		var side = getSplitElementSide($(this));
+		
+		OphCoTherapyapplication_PatientSuitability_check(side);
+	})
+	
 	// handle treatment selection when editing
 	$('#event_content').delegate('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id, ' +
 			'#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id', 'change', function() {
 		var selected = $(this).val();
-		var side = $(this).closest('.side').data('side');
+		var side = getSplitElementSide($(this));
 		
 		OphCoTherapyapplication_ContraIndications_check();
 		
@@ -407,6 +490,7 @@ $(document).ready(function() {
 							if (html.length > 0) {
 								$('#OphCoTherapyapplication_ComplianceCalculator_' + side).replaceWith(html);
 								OphCoTherapyapplication_ComplianceCalculator_init(side);
+								OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 							}
 						}
 					});
@@ -422,9 +506,14 @@ $(document).ready(function() {
 	// various inputs that we need to react to changes on for the compliance calculator
 	$('#nice_compliance_left, #nice_compliance_right').delegate('input, select', 'change', function() {
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
+		var side = getSplitElementSide($(this)); 
+		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 	});
+	
 	$('#nice_compliance_left, #nice_compliance_right').delegate('input', 'keyup', function() {
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
+		var side = getSplitElementSide($(this)); 
+		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 	});
 	
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id').val()) {
@@ -441,7 +530,61 @@ $(document).ready(function() {
 		OphCoTherapyapplication_ContraIndications_check();
 	}
 	
-	OphCoTherapyapplication_ExceptionalCircumstances_check();
+	// show/hide the standard interventions element
+	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.standard_intervention_exists input', 'change', function() {
+		var side = getSplitElementSide($(this));
+		
+		if ($(this).val() == '1') {
+			
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_details').closest('.elementField').show();
+		}
+		else {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_details').closest('.elementField').hide();
+		}
+	});
+	
+	// show/hide the patient factors element
+	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.patient_factors input', 'change', function() {
+		var side = getSplitElementSide($(this));
+		
+		if ($(this).val() == '1') {
+			
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').closest('.elementField').show();
+		}
+		else {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').closest('.elementField').hide();
+		}
+	});
+	
+	// check whether we need to be showing the other elements
+	OphCoTherapyapplication_PatientSuitability_check('left');
+	OphCoTherapyapplication_PatientSuitability_check('right');
+	OphCoTherapyapplication_ExceptionalCircumstances_check('left');
+	OphCoTherapyapplication_ExceptionalCircumstances_check('right');
+	
+	// extend the removal behaviour for diagnosis to affect the dependent elements
+	$(this).delegate('#event_content .side .activeForm a.removeSide', 'click', function(e) {
+		side = getSplitElementSide($(this));
+		var other_side = 'left';
+		if (side == 'left') {
+			other_side = 'right';
+		}
+		hideSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
+		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);
+		// if the other side has been revealed by this, need to check whether the dependent elements should also be shown.
+		OphCoTherapyapplication_PatientSuitability_check(other_side);
+		OphCoTherapyapplication_ContraIndications_check();
+		OphCoTherapyapplication_ExceptionalCircumstances_check(other_side);
+	});
+	
+	// extend the adding behaviour for diagnosis to affect dependent elements
+	$(this).delegate('#event_content .side .inactiveForm a', 'click', function(e) {
+		side = getSplitElementSide($(this));
+		OphCoTherapyapplication_PatientSuitability_check(side);
+		OphCoTherapyapplication_ContraIndications_check();
+		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
+	});
+	
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }
