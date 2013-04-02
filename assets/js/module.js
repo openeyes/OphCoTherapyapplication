@@ -543,6 +543,21 @@ $(document).ready(function() {
 		}
 	});
 	
+	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.intervention input', 'change', function() {
+		var side = getSplitElementSide($(this));
+		
+		if ($(this).val()) {
+			if ($(this).data('description-label')) {
+				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').find('.label').text($(this).data('description-label'));
+			}
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').show();
+		}
+		else {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').hide();
+		}
+		
+	});
+	
 	// show/hide the patient factors element
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.patient_factors input', 'change', function() {
 		var side = getSplitElementSide($(this));

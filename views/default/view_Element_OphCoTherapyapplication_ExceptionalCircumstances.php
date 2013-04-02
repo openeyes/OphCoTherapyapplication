@@ -20,31 +20,21 @@
 
 <h4 class="elementTypeName"><?php echo $element->elementType->name?></h4>
 
-<table class="subtleWhite normalText">
-	<tbody>
-		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('standard_intervention_exists'))?>:</td>
-			<td><span class="big"><?php echo $element->standard_intervention_exists ? 'Yes' : 'No'?></span></td>
-		</tr>
-		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('details'))?></td>
-			<td><span class="big"><?php echo CHtml::encode($element->details)?></span></td>
-		</tr>
-		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('intervention_id'))?></td>
-			<td><span class="big"><?php echo $element->intervention ? $element->intervention->name : 'None'?></span></td>
-		</tr>
-		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('description'))?></td>
-			<td><span class="big"><?php echo CHtml::encode($element->description)?></span></td>
-		</tr>
-		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('patient_factors'))?>:</td>
-			<td><span class="big"><?php echo $element->patient_factors ? 'Yes' : 'No'?></span></td>
-		</tr>
-		<tr>
-			<td width="30%"><?php echo CHtml::encode($element->getAttributeLabel('patient_factor_details'))?></td>
-			<td><span class="big"><?php echo CHtml::encode($element->patient_factor_details)?></span></td>
-		</tr>
-	</tbody>
-</table>
+<div class="cols2 clearfix">
+	<div class="left eventDetail">
+		<?php if($element->hasRight()) {
+			$this->renderPartial('view_' . get_class($element) . '_fields',
+				array('side' => 'right', 'element' => $element));
+		} else { ?>
+		Not recorded
+		<?php } ?>
+	</div>
+	<div class="right eventDetail">
+		<?php if($element->hasLeft()) {
+			$this->renderPartial('view_' . get_class($element) . '_fields',
+				array('side' => 'left', 'element' => $element));
+		} else { ?>
+		Not recorded
+		<?php } ?>
+	</div>
+</div>

@@ -25,15 +25,26 @@
 	
 	<div class="elementField"<?php if (!$element->{$side . '_standard_intervention_exists'}) { echo ' style="display: none;"'; } ?>>
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_details'); ?></div>
-		<div class="data"><?php echo $form->textArea($element, $side . '_details', array('rows' => 4, 'cols' => 50, 'nowrapper' => true))?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
-	<div class="elementField">
+	
+	<?php 
+		$opts = array('nowrapper' => true, 
+			'options' => array()				
+		);
+		foreach (Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll() as $intervention) {
+			$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label);
+		}
+			
+	?>
+		
+	<div class="elementField intervention">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
-		<div class="data"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, false, false, false, false, array('nowrapper' => true))?></div>
+		<div class="data"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, false, false, false, false, $opts)?></div>
 	</div>
-	<div class="elementField">
+	<div class="elementField" <?php if (!$element->{$side . '_intervention_id'}) { echo ' style="display: none;"'; } ?>>
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
-		<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 50, 'nowrapper' => true))?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 	<div class="elementField patient_factors">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factors'); ?></div>
@@ -42,6 +53,6 @@
 	
 	<div class="elementField"<?php if (!$element->{$side . '_patient_factors'}) { echo ' style="display: none;"'; } ?>>
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details'); ?></div>
-		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 50, 'nowrapper' => true))?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 	

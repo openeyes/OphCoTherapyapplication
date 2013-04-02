@@ -76,15 +76,17 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
+			array('event_id, eye_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
 					'left_patient_factor_details, right_standard_intervention_exists, right_details, right_intervention_id, right_description, ' . 
 					'right_patient_factors, right_patient_factor_details', 'safe'),
-			array('left_standard_intervention_exists, left_intervention_id, left_description, left_patient_factors, left_patient_factor_details,', 
+			array('left_standard_intervention_exists, left_intervention_id, left_description, left_patient_factors,', 
 					'requiredIfSide', 'side' => 'left'),
-			array('right_standard_intervention_exists, right_intervention_id, right_description, right_patient_factors, right_patient_factor_details,',
+			array('right_standard_intervention_exists, right_intervention_id, right_description, right_patient_factors,',
 					'requiredIfSide', 'side' => 'right'),
-			array('left_details', 'standardInterventionExists', 'side' => 'left'),
-			array('right_details', 'standardInterventionExists', 'side' => 'right'),
+			array('left_details', 'requiredIfStandardInterventionExists', 'side' => 'left'),
+			array('right_details', 'requiredIfStandardInterventionExists', 'side' => 'right'),
+			array('left_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'left'),
+			array('right_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, left_standard_intervention_exists, left_details, left_intervention_id, left_description, left_patient_factors, ' .
@@ -117,7 +119,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	public function sidedFields() {
-		return array('standard_intervention_exists, details, intervention_id, description, patient_factors, patient_factor_details');
+		return array('standard_intervention_exists', 'details', 'intervention_id', 'description', 'patient_factors', 'patient_factor_details');
 	}
 	
 	/**
@@ -133,14 +135,14 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_intervention_id' => 'Intervention',
 			'left_description' => 'Description',
 			'left_patient_factors' => 'Patient Factors',
-			'left_patient_factor_details' => 'Details',
+			'left_patient_factor_details' => 'Patient Factor Details',
 			'left_previousinterventions' => 'Previous Interventions',
 			'right_standard_intervention_exists' => 'Standard Intervention Exists',
 			'right_description' => 'Description',
 			'right_details' => 'Details and standard algorithm of care',
 			'right_intervention_id' => 'Intervention',
 			'right_patient_factors' => 'Patient Factors',
-			'right_patient_factor_details' => 'Details',
+			'right_patient_factor_details' => 'Patient Factor Details',
 			'right_previousinterventions' => 'Previous Interventions',
 		);
 		foreach(array('left', 'right') as $side) {
@@ -199,9 +201,17 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	/*
 	 * check that the standard intervention description is given if the element is flagged appropriately
 	 */
-	public function standardInterventionExists($attribute, $params) {
+	public function requiredIfStandardInterventionExists($attribute, $params) {
 		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
 			if ($this->{$params['side'] . '_standard_intervention_exists'} && $this->$attribute == null) {
+				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
+			}
+		}
+	}
+	
+	public function requiredIfPatientFactors($attribute, $params) {
+		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
+			if ($this->{$params['side'] . '_patient_factors'} && $this->$attribute == null) {
 				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
 			}
 		}
