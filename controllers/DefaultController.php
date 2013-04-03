@@ -94,7 +94,7 @@ class DefaultController extends BaseEventTypeController {
 			}
 		}
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk($node_id);
-		error_log($this->patient->id);
+		
 		return $node->getDefaultValue($side, $this->patient);
 	}
 	
