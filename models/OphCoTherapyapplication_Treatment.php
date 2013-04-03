@@ -61,11 +61,11 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, decisiontree_id, available, contraindications_required', 'safe'),
-			array('name, contraindications_required', 'required'),
+			array('drug_id decisiontree_id, available, contraindications_required', 'safe'),
+			array('drug_id contraindications_required', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, available, contraindications_required', 'safe', 'on' => 'search'),
+			array('id, drug_id, available, contraindications_required', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -78,6 +78,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'decisiontree' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTree', 'decisiontree_id'),
+			'drug' => array(self::BELONGS_TO, 'Element_OphTrIntravitrealinjection_Treatment_Drug', 'drug_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
@@ -90,7 +91,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Name',
+			'drug_id' => 'Drug',
 			'decisiontree_id' => 'Decision Tree',
 			'available' => 'Available',
 			'contraindications_required' => 'Needs Contraindications Element'
@@ -137,5 +138,10 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	{
 		return parent::beforeValidate();
 	}
+	
+	protected function getName() {
+		return $this->drug->name;
+	}
+	
 }
 ?>

@@ -29,12 +29,12 @@
 	// only want treatments that are marked as available, and have been configured 
 	// with a decision tree for determining compliance
 	$criteria = new CDbCriteria();
-	$criteria->addCondition('available = :avail');
+	$criteria->addCondition('drug.available = :avail');
 	$criteria->addCondition('decisiontree_id IS NOT NULL');
 	$criteria->params = array(':avail' => true);
-	$criteria->order = 'display_order asc';
+	//$criteria->order = 'display_order asc';
 	
-	$treatments = OphCoTherapyapplication_Treatment::model()->findAll($criteria);
+	$treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->findAll($criteria);
 	
 	$html_options = array(
 			'options' => array(),

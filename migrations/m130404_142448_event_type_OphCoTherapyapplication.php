@@ -17,9 +17,12 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
+class m130404_142448_event_type_OphCoTherapyapplication extends CDbMigration
 {
 	public function up() {
+		if (!Yii::app()->hasModule('OphTrIntravitrealinjection')) {
+			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
+		}
 		
 		// decision tree table creation
 		$this->createTable('ophcotherapya_decisiontree', array(
@@ -285,12 +288,11 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		// element lookup table ophcotherapya_treatment
+		// NOTE dependency on the ophtrintravitinjection_treatment_drug table and therefore the OphTrIntravitinjection module
 		$this->createTable('ophcotherapya_treatment', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
-				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'drug_id' => 'int(10) unsigned NOT NULL',
 				'decisiontree_id' => 'int(10) unsigned',
-				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
-				'available' => 'boolean DEFAULT True',
 				'contraindications_required' => 'boolean NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
@@ -300,11 +302,15 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `ophcotherapya_treatment_lmui_fk` (`last_modified_user_id`)',
 				'KEY `ophcotherapya_treatment_cui_fk` (`created_user_id`)',
 				'KEY `ophcotherapya_treatment_dti_fk` (`decisiontree_id`)',
+				'KEY `ophcotherapya_treatment_dri_fk` (`drug_id`)',
 				'CONSTRAINT `ophcotherapya_treatment_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_treatment_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_treatment_dti_fk` FOREIGN KEY (`decisiontree_id`) REFERENCES `ophcotherapya_decisiontree` (`id`)',
+				'CONSTRAINT `ophcotherapya_treatment_dri_fk` FOREIGN KEY (`drug_id`) REFERENCES `ophtrintravitinjection_treatment_drug` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
+		// TODO: loop through injection drugs and create treatment objects
+		/*
 		$this->insert('ophcotherapya_treatment',array('name'=>'Avastin','display_order'=>1, 'contraindications_required' => true));
 		$this->insert('ophcotherapya_treatment',array('name'=>'Eylea','display_order'=>2, 'contraindications_required' => true));
 		$this->insert('ophcotherapya_treatment',array('name'=>'Lucentis','display_order'=>3, 'contraindications_required' => true));
@@ -312,7 +318,8 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->insert('ophcotherapya_treatment',array('name'=>'PDT','display_order'=>5, 'contraindications_required' => false));
 		$this->insert('ophcotherapya_treatment',array('name'=>'Ozurdex','display_order'=>6, 'contraindications_required' => false));
 		$this->insert('ophcotherapya_treatment',array('name'=>'Intravitreal triamcinolone','display_order'=>7, 'contraindications_required' => false));
-
+		*/
+		
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_patientsuit', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',

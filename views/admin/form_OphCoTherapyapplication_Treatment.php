@@ -24,21 +24,15 @@
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row">
-	<?php echo $form->labelEx($model,'name'); ?>
-	<?php echo $form->textField($model,'name',array('size'=>40,'maxlength'=>40)); ?>
-	<?php echo $form->error($model,'name'); ?>
+	<?php echo $form->labelEx($model, 'drug')?>
+	<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(Element_OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -'))?>
+	<?php echo $form->error($model,'drug'); ?>
 </div>
 
 <div class="row">
 	<?php echo $form->labelEx($model, 'decisiontree_id')?>
 	<?php echo $form->dropdownlist($model, 'decisiontree_id', CHtml::listData(OphCoTherapyapplication_DecisionTree::model()->findAll(),'id','name'),array('empty'=>'- Please select -'))?>
 	<?php echo $form->error($model,'decisiontree_id'); ?>
-</div>
-
-<div class="row">
-	<?php echo $form->labelEx($model, 'available')?>
-	<?php echo $form->checkBox($model, 'available')?>
-	<?php echo $form->error($model,'available'); ?>
 </div>
 
 <div class="row">

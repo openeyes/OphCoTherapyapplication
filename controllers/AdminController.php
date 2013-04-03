@@ -30,6 +30,7 @@ class AdminController extends ModuleAdminController
 	// Treatment actions
 	public function actionViewTreatments() {
 		$dataProvider=new CActiveDataProvider('OphCoTherapyapplication_Treatment');
+		
 		$this->render('list',array(
 				'dataProvider'=>$dataProvider,
 				'title'=>'Treatments',
@@ -69,6 +70,10 @@ class AdminController extends ModuleAdminController
 				$this->redirect(array('viewtreatments'));
 			}
 		}
+		
+		$this->render('create', array(
+				'model' => $model,
+		));
 	}
 	
 	// decision tree actions

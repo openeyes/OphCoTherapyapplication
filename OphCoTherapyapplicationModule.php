@@ -38,6 +38,7 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 		$this->setImport(array(
 			'OphCoTherapyapplication.models.*',
 			'OphCoTherapyapplication.components.*',
+			'OphTrIntravitrealinjection.models.*',
 		));
 		
 		$this->moduleShortSuffix = "TherapyA";
