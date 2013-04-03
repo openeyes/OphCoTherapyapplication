@@ -95,11 +95,15 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 			'left_treatment'  => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'left_treatment_id'),
 			'right_treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'right_treatment_id'),
 			// TODO - use appropriate statics for these values
-			'left_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'left_responses.patientsuit_side = ' . SplitEventTypeElement::LEFT),
-			'right_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'right_responses.patientsuit_side = ' . SplitEventTypeElement::RIGHT),
+			'left_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'left_responses.eye_id = ' . SplitEventTypeElement::LEFT),
+			'right_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'right_responses.eye_id = ' . SplitEventTypeElement::RIGHT),
 		);
 	}
 
+	public function sidedFields() {
+		return array('treatment_id', 'angiogram_baseline_date', 'nice_compliance');
+	}
+	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -157,6 +161,11 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		return parent::beforeValidate();
 	}
 	
+	public function contraindicationsRequired() {
+		return ($this->left_treatment && $this->left_treatment->contraindications_required) ||
+		($this->right_treatment && $this->right_treatment->contraindications_required);
+	}
+	
 	public function updateDecisionTreeResponses($side, $update_responses) {
 		$current_responses = array();
 		$save_responses = array();
@@ -182,7 +191,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		foreach ($update_responses as $node_id => $value) {
 			if (!array_key_exists($node_id, $current_responses)) {
 				$s = new OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse();
-				$s->attributes = array('patientsuit_id' => $this->id, 'patientsuit_side' => $side, 'node_id' => $node_id, 'value' => $value);
+				$s->attributes = array('patientsuit_id' => $this->id, 'eye_id' => $side, 'node_id' => $node_id, 'value' => $value);
 				$save_responses[] = $s;
 			} else {
 				if ($current_responses[$node_id]->value != $value) {

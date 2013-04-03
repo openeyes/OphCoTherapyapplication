@@ -346,7 +346,7 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->createTable('ophcotherapya_patientsuit_decisiontreenoderesponse', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'patientsuit_id' => 'int(10) unsigned NOT NULL',
-				'patientsuit_side' => 'tinyint(1) NOT NULL', 
+				'eye_id' => 'int(10) unsigned NOT NULL', 
 				'node_id' => 'int(10) unsigned NOT NULL',
 				'value' => 'varchar(16) NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -354,12 +354,14 @@ class m130328_142448_event_type_OphCoTherapyapplication extends CDbMigration
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'PRIMARY KEY (`id`)',
-				'KEY `ophcotherapya_patientsuit_flownoderesponse_lmui_fk` (`last_modified_user_id`)',
-				'KEY `ophcotherapya_patientsuit_flownoderesponse_cui_fk` (`created_user_id`)',
-				'KEY `ophcotherapya_patientsuit_flownoderesponse_psi_fk` (`patientsuit_id`)',
-				'CONSTRAINT `et_ophcotherapya_patientsuit_flownoderesponse_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
-				'CONSTRAINT `et_ophcotherapya_patientsuit_flownoderesponse_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
-				'CONSTRAINT `ophcotherapya_patientsuit_flownoderesponse_psi_fk` FOREIGN KEY (`patientsuit_id`) REFERENCES `et_ophcotherapya_patientsuit` (`id`)',
+				'KEY `ophcotherapya_patientsuit_dtnoderesponse_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophcotherapya_patientsuit_dtnoderesponse_cui_fk` (`created_user_id`)',
+				'KEY `ophcotherapya_patientsuit_dtnoderesponse_psi_fk` (`patientsuit_id`)',
+				'KEY `ophcotherapya_patientsuit_dtnoderesponse_eye_id_fk` (`eye_id`)',
+				'CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_psi_fk` FOREIGN KEY (`patientsuit_id`) REFERENCES `et_ophcotherapya_patientsuit` (`id`)',
+				'CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		// create the table for this element type: et_modulename_elementtypename

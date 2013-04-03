@@ -143,10 +143,12 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 		return parent::beforeValidate();
 	}
 	
-	public function eventTreatment() {
+	public function eventPatientSuitability() {
 		if ($this->event_id) {
-			$suit = Element_OphCoTherapyapplication_PatientSuitability::model()->find(array('event_id' => $this->event_id));
-			return $suit->treatment;
+			$criteria = new CDbCriteria;
+			$criteria->compare('event_id',$this->event_id);
+			
+			return Element_OphCoTherapyapplication_PatientSuitability::model()->find($criteria);
 		}
 		return null;
 	}

@@ -49,6 +49,51 @@ class DefaultController extends BaseEventTypeController {
 		parent::actionPrint($id);
 	}
 	
+	public function getDefaultElements($action, $event_type_id=false, $event=false) {
+		$elements = parent::getDefaultElements($action, $event_type_id, $event);
+		
+		if ($action == 'create' && empty($_POST)) { 
+			// set any calculated defaults on the elements
+			foreach ($elements as $element) {
+				if (get_class($element) == 'Element_OphCoTherapyapplication_Therapydiagnosis') {
+					// get the list of valid diagnosis codes
+					$valid_disorders = OphCoTherapyapplication_TherapyDisorder::model()->findAll();
+					$vd_ids = array();
+					foreach ($valid_disorders as $vd) {
+						$vd_ids[] = $vd->disorder_id;
+					}
+					
+					$ep = $this->episode;
+					
+					// foreach eye,
+					foreach (array(SplitEventTypeElement::LEFT, SplitEventTypeElement::RIGHT) as $eye_id) {
+
+						$prefix = $eye_id == SplitEventTypeElement::LEFT ? 'left' : 'right';
+						// check if the episode diagnosis applies
+						if ($ep && ($ep->eye_id == $eye_id || $ep->eye_id == 3) && in_array($ep->disorder_id, $vd_ids)) {
+							$element->{$prefix . '_diagnosis_id'} = $ep->disorder_id;
+						}
+						// otherwise get ordered list of diagnoses for the eye in this episode, and check
+						else {
+							if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
+								$disorders = $api->getOrderedDisorders($this->patient);
+								foreach ($disorders as $disorder) {
+									if ( ($disorder['eye_id'] == $eye_id || $disorder['eye_id'] == 3) && in_array($disorder['disorder_id'], $vd_ids)) {
+										$element->{$prefix . '_diagnosis_id'} = $disorder['disorder_id'];
+										break;
+									}
+								}
+							}
+						}
+					}
+					
+				} // end Therapydiagnosis setup
+			}
+		}
+		return $elements;
+		
+	}
+	
 	public function actionGetDecisionTree() {
 		
 		if (!$this->patient = Patient::model()->findByPk((int)@$_GET['patient_id'])) {
@@ -120,12 +165,43 @@ class DefaultController extends BaseEventTypeController {
 	}
 	
 	/*
+	 * strip elements out that the data does not  have an eye_id for
+	 * 
+	 * @param array(Element) list of elements
+	 * @param array() associative array of data for elements (typically $_POST)
+	 * 
+	 */
+	private function filterElementsByData($elements, $data) {
+		$required_elements = array();
+		foreach ($elements as $element) {
+			if ($element->hasAttribute('eye_id') && !$data[get_class($element)]['eye_id']) {
+				continue;
+			}
+			$required_elements[] = $element;
+		}
+		
+		return $required_elements;
+	}
+	
+	/*
+	 * extending parent behaviour to drop the elements not needed if the eye_id is not defined
+	 * (note this is relying on the web interface to have behaved correctly to set this value according
+	 * to the behaviour rules)
+	 * 
+	 */
+	protected function validatePOSTElements($elements) {
+		return parent::validatePOSTElements($this->filterElementsByData($elements, $_POST));
+	}
+	
+	/*
 	 * ensures Many Many fields processed for elements
 	*/
 	public function createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId) {
-		if ($id = parent::createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
+		$req_elements = $this->filterElementsByData($elements, $data);
+		
+		if ($id = parent::createElements($req_elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
 			// create has been successful, store many to many values
-			$this->storePOSTManyToMany($elements);
+			$this->storePOSTManyToMany($req_elements);
 		}
 		return $id;
 	}
@@ -134,7 +210,9 @@ class DefaultController extends BaseEventTypeController {
 	 * ensures Many Many fields processed for elements
 	*/
 	public function updateElements($elements, $data, $event) {
-		if ($response = parent::updateElements($elements, $data, $event)) {
+		$req_elements = $this->filterElementsByData($elements, $data);
+		
+		if ($response = parent::updateElements($req_elements, $data, $event)) {
 			// update has been successful, now need to deal with many to many changes
 			$this->storePOSTManyToMany($elements);
 		}

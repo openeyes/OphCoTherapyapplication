@@ -22,6 +22,7 @@
  * 
  * @property string id
  * @property string patientsuit_id
+ * @property string eye_id
  * @property string node_id
  * @property string value
  * 
@@ -29,6 +30,7 @@
  * 
  * @property Element_OphCoTherapyapplication_PatientSuitablity patientsuitability
  * @property OphCoTherapyapplication_DecisionTreeNode node
+ * @property Eye eye
  */
 
 class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecord {
@@ -55,7 +57,7 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 	public function rules()
 	{
 		return array(
-				array('patientsuit_id, node_id, side, value', 'safe'),
+				array('patientsuit_id, node_id, eye_id, value', 'safe'),
 		);
 	}
 	
@@ -63,6 +65,8 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 	{
 		return array(
 			'patientsuitability' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_PatientSuitability', 'patientsuit_id'),
+			// note that this should only ever be a side, not both
+			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
 			'node' => array(self::HAS_ONE, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
 		);
 	}

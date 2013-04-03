@@ -19,7 +19,7 @@
 ?>
 
 <div class="element <?php echo $element->elementType->class_name?>"
-	<?php if (!$element->eventTreatment() || !$element->eventTreatment()->contraindications_required) { echo 'style="display:none;"'; } ?>
+	<?php if (!$element->eventPatientSuitability() || !$element->eventPatientSuitability()->contraindicationsRequired()) { echo 'style="display:none;"'; } ?>
 	data-element-type-id="<?php echo $element->elementType->id?>"
 	data-element-type-class="<?php echo $element->elementType->class_name?>"
 	data-element-type-name="<?php echo $element->elementType->name?>"
