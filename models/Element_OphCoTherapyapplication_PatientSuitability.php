@@ -205,15 +205,16 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 				if ($current_responses[$node_id]->value != $value) {
 					$current_responses[$node_id]->value = $value;
 					$save_responses[] = $current_responses[$node_id];
-					unset($current_responses[$node_id]);
 				}
+				// don't want to delete this, so remove from list which we use later to delete
+				unset($current_responses[$node_id]);
 			}
 		}
 		// save what needs saving
 		foreach ($save_responses as $save) {
 			$save->save();
 		}
-		// delete the rest
+		// delete any that are no longer relevant
 		foreach ($current_responses as $curr) {
 			$curr->delete();
 		}
