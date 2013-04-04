@@ -134,9 +134,12 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('event_id', $this->event_id, true);
-		$criteria->compare('treatment_id', $this->treatment_id);
-		$criteria->compare('angiogram_baseline_date', $this->angiogram_baseline_date);
-		$criteria->compare('nice_compliance', $this->nice_compliance);
+		$criteria->compare('left_treatment_id', $this->left_treatment_id);
+		$criteria->compare('left_angiogram_baseline_date', $this->left_angiogram_baseline_date);
+		$criteria->compare('left_nice_compliance', $this->left_nice_compliance);
+		$criteria->compare('right_treatment_id', $this->right_treatment_id);
+		$criteria->compare('right_angiogram_baseline_date', $this->right_angiogram_baseline_date);
+		$criteria->compare('right_nice_compliance', $this->right_nice_compliance);
 		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,
@@ -161,6 +164,11 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		return parent::beforeValidate();
 	}
 	
+	/*
+	 * if either the left or right treatment requires the contraindications to be provided, returns true. otherwise returns false
+	 * 
+	 * @return boolean $required
+	 */
 	public function contraindicationsRequired() {
 		return ($this->left_treatment && $this->left_treatment->contraindications_required) ||
 		($this->right_treatment && $this->right_treatment->contraindications_required);

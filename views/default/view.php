@@ -19,9 +19,10 @@
 ?>
 
 <?php
-	$this->breadcrumbs=array($this->module->id);
 	$this->header();
 ?>
+
+<?php  $this->renderPartial('//patient/event_actions'); ?>
 
 <h3 class="withEventIcon" style="background:transparent url(<?php echo $this->assetPath?>/img/medium.png) center left no-repeat;"><?php echo $this->event_type->name?></h3>
 

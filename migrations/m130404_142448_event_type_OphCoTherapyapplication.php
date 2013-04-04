@@ -258,7 +258,7 @@ class m130404_142448_event_type_OphCoTherapyapplication extends CDbMigration
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Exceptional Circumstances'))->queryRow();
 
-		// create the DR Grading table
+		// get the id for both eyes
 		$both_eyes_id = Eye::model()->find("name = 'Both'")->id;
 
 		// create the table for this element type: et_modulename_elementtypename

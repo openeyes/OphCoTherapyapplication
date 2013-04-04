@@ -19,6 +19,7 @@
 
 class DefaultController extends BaseEventTypeController {
 
+	// TODO: check this is in line with Jamie's change circa 3rd April 2013
 	protected function beforeAction($action)
 	{
 		if (!Yii::app()->getRequest()->getIsAjaxRequest() && !(in_array($action->id,$this->printActions())) ) {
