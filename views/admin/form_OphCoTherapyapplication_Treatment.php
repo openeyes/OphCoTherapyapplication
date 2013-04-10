@@ -25,7 +25,7 @@
 
 <div class="row">
 	<?php echo $form->labelEx($model, 'drug')?>
-	<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(Element_OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -'))?>
+	<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -'))?>
 	<?php echo $form->error($model,'drug'); ?>
 </div>
 
