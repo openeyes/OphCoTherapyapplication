@@ -78,7 +78,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'decisiontree' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTree', 'decisiontree_id'),
-			'drug' => array(self::BELONGS_TO, 'Element_OphTrIntravitrealinjection_Treatment_Drug', 'drug_id'),
+			'drug' => array(self::BELONGS_TO, 'OphTrIntravitrealinjection_Treatment_Drug', 'drug_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);

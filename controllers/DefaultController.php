@@ -152,6 +152,8 @@ class DefaultController extends BaseEventTypeController {
 	protected function storePOSTManyToMany($elements) {
 		foreach ($elements as $el) {
 			if (get_class($el) == 'Element_OphCoTherapyapplication_PatientSuitability') {
+				// note we don't do this in POST Validation as we don't need to validate the values of the decision tree selection
+				// this is really just for record keeping - we are mainly interested in whether or not it's got compliance value
 				$el->updateDecisionTreeResponses(Element_OphCoTherapyapplication_PatientSuitability::LEFT, 
 						isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse']) ? 
 						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse'] : 
