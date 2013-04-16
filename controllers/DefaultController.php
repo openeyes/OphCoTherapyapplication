@@ -64,24 +64,28 @@ class DefaultController extends BaseEventTypeController {
 						$vd_ids[] = $vd->disorder_id;
 					}
 					
-					$ep = $this->episode;
+					$episode = $this->episode;
 					
-					// foreach eye,
-					foreach (array(SplitEventTypeElement::LEFT, SplitEventTypeElement::RIGHT) as $eye_id) {
-
-						$prefix = $eye_id == SplitEventTypeElement::LEFT ? 'left' : 'right';
-						// check if the episode diagnosis applies
-						if ($ep && ($ep->eye_id == $eye_id || $ep->eye_id == 3) && in_array($ep->disorder_id, $vd_ids)) {
-							$element->{$prefix . '_diagnosis_id'} = $ep->disorder_id;
-						}
-						// otherwise get ordered list of diagnoses for the eye in this episode, and check
-						else {
-							if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
-								$disorders = $api->getOrderedDisorders($this->patient);
-								foreach ($disorders as $disorder) {
-									if ( ($disorder['eye_id'] == $eye_id || $disorder['eye_id'] == 3) && in_array($disorder['disorder_id'], $vd_ids)) {
-										$element->{$prefix . '_diagnosis_id'} = $disorder['disorder_id'];
-										break;
+					if ($episode) {
+						$element->eye_id = $episode->eye_id;
+						
+						// foreach eye
+						foreach (array(SplitEventTypeElement::LEFT, SplitEventTypeElement::RIGHT) as $eye_id) {
+							$prefix = $eye_id == SplitEventTypeElement::LEFT ? 'left' : 'right';
+							// check if the episode diagnosis applies
+							if ( ($episode->eye_id == $eye_id || $episode->eye_id == SplitEventTypeElement::BOTH) 
+								&& in_array($episode->disorder_id, $vd_ids) ) {
+								$element->{$prefix . '_diagnosis_id'} = $episode->disorder_id;
+							}
+							// otherwise get ordered list of diagnoses for the eye in this episode, and check
+							else {
+								if ($api = Yii::app()->moduleAPI->get('OphCiExamination'))  {
+									$disorders = $api->getOrderedDisorders($this->patient, $episode);
+									foreach ($disorders as $disorder) {
+										if ( ($disorder['eye_id'] == $eye_id || $disorder['eye_id'] == 3) && in_array($disorder['disorder_id'], $vd_ids)) {
+											$element->{$prefix . '_diagnosis_id'} = $disorder['disorder_id'];
+											break;
+										}
 									}
 								}
 							}
