@@ -46,6 +46,51 @@
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
+	
+	<div class="elementField">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?></div>
+		<div class="data">
+			<table>
+				<thead>
+					<th>Date</th>
+					<th>Treatment</th>
+					<th>Reason For Stopping</th>
+				</thead>
+				<tbody>
+					<?php
+						if (empty($_POST)) {
+							$previnterventions = $element->{$side . '_previnterventions'};
+						} else {
+							$previnterventions = array();
+							if (isset($_POST[get_class($element)][$side . '_previnterventions'])) {
+								foreach ($_POST[get_class($element)][$side . '_previnterventions'] as $attrs) {
+									$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
+									$prev->attributes = $attrs;
+									$previnterventions[] = $prev;
+								}
+							}
+						}
+						
+						$key = 0;
+						foreach ($previnterventions as $prev) {
+							$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
+								'key' => $key,
+								'previntervention' => $prev,
+								'side' => $side,
+								'element_name' => get_class($element),
+								'form' => $form,
+							));
+							$key++;
+						}
+					?>
+				</tbody>				
+			</table>
+			<button class="addPrevintervention classy green mini" type="button">
+				<span class="button-span button-span-green">Add</span>
+			</button>
+		</div>
+	</div>
+	
 	<div class="elementField patient_factors">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factors'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_patient_factors', array('nowrapper' => true))?></div>

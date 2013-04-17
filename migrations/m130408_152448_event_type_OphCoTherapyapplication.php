@@ -495,10 +495,10 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->createTable('ophcotherapya_exceptional_previntervention', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'exceptional_id' => 'int(10) unsigned NOT NULL',
-				'exceptional_side' => 'tinyint(1) NOT NULL',
+				'exceptional_side_id' => 'tinyint(1) NOT NULL',
 				'treatment_id' => 'int(10) unsigned NOT NULL', // treatment
 				'stopreason_id' => 'int(10) unsigned NOT NULL', // stop reason
-				'date' => 'datetime NOT NULL',
+				'treatment_date' => 'datetime NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',

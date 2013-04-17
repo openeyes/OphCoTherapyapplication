@@ -99,6 +99,11 @@ class DefaultController extends BaseEventTypeController {
 		
 	}
 	
+	/**
+	 * ajax action to retrieve a specific decision tree (which can then be populated with appropriate default values
+	 * 
+	 * @throws CHttpException
+	 */
 	public function actionGetDecisionTree() {
 		
 		if (!$this->patient = Patient::model()->findByPk((int)@$_GET['patient_id'])) {
@@ -133,6 +138,14 @@ class DefaultController extends BaseEventTypeController {
 				);
 	}
 	
+	/**
+	 * works out the node response value for the given node id on the element. Basically allows us to check for
+	 * submitted values, values stored against the element from being saved, or working out a default value if applicable
+	 * 
+	 * @param Element_OphCoTherapyapplication_PatientSuitability $element
+	 * @param string $side
+	 * @param integer $node_id
+	 */
 	public function getNodeResponseValue($element, $side, $node_id) {
 		if (isset($_POST['Element_OphCoTherapyapplication_PatientSuitability'][$side . '_DecisionTreeResponse']) ) {
 			// responses have been posted, so should operate off the value for this node.
@@ -146,6 +159,86 @@ class DefaultController extends BaseEventTypeController {
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk($node_id);
 		
 		return $node->getDefaultValue($side, $this->patient);
+	}
+	
+	/**
+	 * process the POST data for previous interventions for the given side
+	 * 
+	 * @param Element_OphCoTherapyapplication_ExceptionCircumstances $element
+	 * @param string $side
+	 */
+	private function _POSTPrevinterventions($element, $side) {
+		if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_previnterventions']) ) {
+			$previnterventions = array();
+			foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_previnterventions'] as $idx => $attributes) {
+				// we have 1 or more entries that are just indexed by a counter. They may or may not already be in the db
+				// but at this juncture we don't care, we just want to create a previous intervention for this side and attach to
+				// the element
+				$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
+				$prev->attributes = Helper::convertNHS2MySQL($attributes);
+				if ($side == 'left') {
+					$prev->exceptional_side_id = SplitEventTypeElement::LEFT;
+				}
+				else {
+					$prev->exceptional_side_id = SplitEventTypeElement::RIGHT;
+				}
+				$previnterventions[] = $prev;
+			}
+			$element->{$side . '_previnterventions'} = $previnterventions;
+		}
+	} 
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEventTypeController::setPOSTManyToMany()
+	 */
+	protected function setPOSTManyToMany($element) {
+		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
+			$this->_POSTPrevinterventions($element, 'left');
+			$this->_POSTPrevinterventions($element, 'right');
+		}
+	}
+	
+	/**
+	* strip elements out that the data does not  have an eye_id for
+	*
+	* @param array(Element) list of elements
+	* @param array() associative array of data for elements (typically $_POST)
+	*
+	*/
+	private function filterElementsByData($elements, $data) {
+		$required_elements = array();
+		foreach ($elements as $element) {
+			if ($element->hasAttribute('eye_id') && !$data[get_class($element)]['eye_id']) {
+				continue;
+			}
+			$required_elements[] = $element;
+		}
+	
+		return $required_elements;
+	}
+	
+	/**
+	* extending parent behaviour to drop the elements not needed if the eye_id is not defined
+	* (note this is relying on the web interface to have behaved correctly to set this value according
+	* to the behaviour rules)
+	*
+	*/
+	protected function validatePOSTElements($elements) {
+		return parent::validatePOSTElements($this->filterElementsByData($elements, $_POST));
+	}
+	
+	/*
+	 * ensures Many Many fields processed for elements
+	*/
+	public function createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId) {
+		$req_elements = $this->filterElementsByData($elements, $data);
+	
+		if ($id = parent::createElements($req_elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
+			// create has been successful, store many to many values
+			$this->storePOSTManyToMany($req_elements);
+		}
+		return $id;
 	}
 	
 	/*
@@ -167,50 +260,18 @@ class DefaultController extends BaseEventTypeController {
 						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse'] :
 						array());
 				
+			} 
+			else if (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
+				$el->updatePreviousInterventions(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT, 
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_previnterventions']) ?
+						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_previnterventions']) :
+						array());
+				$el->updatePreviousInterventions(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_previnterventions']) ?
+						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_previnterventions']) :
+						array());
 			}
 		}
-	}
-	
-	/*
-	 * strip elements out that the data does not  have an eye_id for
-	 * 
-	 * @param array(Element) list of elements
-	 * @param array() associative array of data for elements (typically $_POST)
-	 * 
-	 */
-	private function filterElementsByData($elements, $data) {
-		$required_elements = array();
-		foreach ($elements as $element) {
-			if ($element->hasAttribute('eye_id') && !$data[get_class($element)]['eye_id']) {
-				continue;
-			}
-			$required_elements[] = $element;
-		}
-		
-		return $required_elements;
-	}
-	
-	/*
-	 * extending parent behaviour to drop the elements not needed if the eye_id is not defined
-	 * (note this is relying on the web interface to have behaved correctly to set this value according
-	 * to the behaviour rules)
-	 * 
-	 */
-	protected function validatePOSTElements($elements) {
-		return parent::validatePOSTElements($this->filterElementsByData($elements, $_POST));
-	}
-	
-	/*
-	 * ensures Many Many fields processed for elements
-	*/
-	public function createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId) {
-		$req_elements = $this->filterElementsByData($elements, $data);
-		
-		if ($id = parent::createElements($req_elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
-			// create has been successful, store many to many values
-			$this->storePOSTManyToMany($req_elements);
-		}
-		return $id;
 	}
 	
 	/*

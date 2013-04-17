@@ -54,6 +54,16 @@
 	
 	</div>
 	
-	
-	
 </div>
+
+<script id="previntervention_template" type="text/html">
+	<?php
+	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
+			'key' => '{{key}}',
+			'side' => '{{side}}',
+			'element_name' => get_class($element),
+			'form' => $form,
+			'previntervention' => new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention(),
+	));
+	?>
+</script>

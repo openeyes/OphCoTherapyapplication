@@ -111,10 +111,11 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
 			'left_intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'left_intervention_id'),
 			'right_intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'right_intervention_id'),
-			'left_previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id', 
-					'on' => 'left_previousinterventions.exceptional_side = ' . SplitEventTypeElement::LEFT),
-			'right_previousinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
-					'on' => 'right_previousinterventions.exceptional_side = ' . SplitEventTypeElement::RIGHT),
+			'previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id'),
+			'left_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id', 
+					'on' => 'left_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::LEFT),
+			'right_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
+					'on' => 'right_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::RIGHT),
 		);
 	}
 
@@ -136,14 +137,14 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_description' => 'Description',
 			'left_patient_factors' => 'Patient Factors',
 			'left_patient_factor_details' => 'Patient Factor Details',
-			'left_previousinterventions' => 'Previous Interventions',
+			'left_previnterventions' => 'Previous Interventions',
 			'right_standard_intervention_exists' => 'Standard Intervention Exists',
 			'right_description' => 'Description',
 			'right_details' => 'Details and standard algorithm of care',
 			'right_intervention_id' => 'Intervention',
 			'right_patient_factors' => 'Patient Factors',
 			'right_patient_factor_details' => 'Patient Factor Details',
-			'right_previousinterventions' => 'Previous Interventions',
+			'right_previnterventions' => 'Previous Interventions',
 		);
 		foreach(array('left', 'right') as $side) {
 			if ($this->{$side . '_intervention'}) {
@@ -214,6 +215,50 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			if ($this->{$params['side'] . '_patient_factors'} && $this->$attribute == null) {
 				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
 			}
+		}
+	}
+	
+	/**
+	 * set the previous interventions for the specified side
+	 * 
+	 * @param integer $side - SplitEventTypeElement::LEFT or SplitEventTypeElement::RIGHT
+	 * @param array $interventions - array of arrays(treatment_id, stopreason_id, (optional) id)
+	 */
+	public function updatePreviousInterventions($side, $interventions) {
+		$curr_by_id = array();
+		$save = array();
+		
+		// note we operate on previnterventions relation here, so that we avoid any custom assignment 
+		// that might have taken place for the purposes of validation 
+		// TODO: when looking at OE-2927 it might be better if we update the interventions in a different way
+		// where the changes are stored when set for validation, and then afterSave is used to do the actual database changes
+		foreach ($this->previnterventions as $curr) {
+			if ($curr->exceptional_side_id == $side) {
+				$curr_by_id[$curr->id] = $curr;
+			}
+		}
+		
+		foreach ($interventions as $intervention) {
+			if (isset($intervention['id'])) {
+				$curr_by_id[$intervention['id']]->attributes = $intervention;
+				$save[] = $curr_by_id[$intervention['id']];
+				unset($curr_by_id[$intervention['id']]);
+			} 
+			else {
+				$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
+				$prev->attributes = $intervention;
+				$prev->exceptional_id = $this->id;
+				$prev->exceptional_side_id = $side;
+				$save[] = $prev;
+			}
+		}
+		
+		foreach ($save as $s) {
+			$s->save();
+		}
+		
+		foreach ($curr_by_id as $id => $del) {
+			$del->delete();
 		}
 	}
 }

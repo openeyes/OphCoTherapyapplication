@@ -21,18 +21,20 @@
  *
  * The followings are the available columns in table:
  * @property string $id
- * @property string $name
+ * @property integer $exceptional_id
+ * @property integer $exceptional_side_id
+ * @property date $treatment_date
+ * @property integer $treatment_id
+ * @property integer $stopreason_id
  *
  * The followings are the available model relations:
  *
- * @property ElementType $element_type
- * @property EventType $eventType
- * @property Event $event
- * @property User $user
- * @property User $usermodified
+ * @property Element_OphCoTherapyapplication_ExceptionalCircumstances $exceptionalcircumstances
+ * @property OphCoTherapyapplication_Treatment $treatment
+ * @property OphCoTherapyapplication_StopReason $stop_reason
  */
 
-class OphCoTherapyapplication_PrevIntervention extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -59,11 +61,11 @@ class OphCoTherapyapplication_PrevIntervention extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('date, treatment_id, stopreason_id', 'safe'),
-			array('date, treatment_id, stopreason_id', 'required'),
+			array('treatment_date, treatment_id, stopreason_id', 'safe'),
+			array('treatment_date, treatment_id, stopreason_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, date, treatment_id, stopreason_id', 'safe', 'on' => 'search'),
+			array('id, treatment_date, treatment_id, stopreason_id', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -77,7 +79,7 @@ class OphCoTherapyapplication_PrevIntervention extends BaseActiveRecord
 		return array(
 			'exceptionalcircumstances' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'circumstances_id'),
 			'treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'treatment_id'),
-			'stop_reason' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_StopReason', 'stopreason_id'),
+			'stopreason' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason', 'stopreason_id'),
 		);
 	}
 
@@ -88,7 +90,9 @@ class OphCoTherapyapplication_PrevIntervention extends BaseActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'stop_reason' => 'Reason for stopping',
+			'treatment_date' => 'Date',
+			'treatment_id' => 'Treatment',
+			'stopreason_id' => 'Reason for stopping',
 		);
 	}
 
@@ -105,6 +109,7 @@ class OphCoTherapyapplication_PrevIntervention extends BaseActiveRecord
 
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('name', $this->name, true);
+		$criteria->compare('date', $this->date, true);
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,

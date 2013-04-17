@@ -350,6 +350,28 @@ function OphCoTherapyapplication_ExceptionalCircumstances_check(side) {
 		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);	}
 }
 
+
+function OphCoTherapyapplication_previntervention_getNextKey(side) {
+	var keys = $('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .previousintervention').map(function(index, el) {
+		return parseInt($(el).attr('data-key'));
+	}).get();
+	// ensure we start at zero
+	keys.push(-1);
+	return Math.max.apply(null, keys) + 1;
+}
+
+function OphCoTherapyapplication_addPrevintervention(side) {
+	var template = $('#previntervention_template').html();
+	var data = {
+		"key" : OphCoTherapyapplication_previntervention_getNextKey(side),
+		"side" : side,
+	};
+	var form = Mustache.render(template, data);
+	var table = $('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .[data-side="' + side + '"] table');
+	$('tbody', table).append(form);
+}
+
+
 $(document).ready(function() {
 	// standard stuff
 	handleButton($('#et_save'),function() {
@@ -490,6 +512,19 @@ $(document).ready(function() {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').hide();
 		}
 		
+	});
+	
+	// Manage previous interventions in exceptional circumstances element
+	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePrevintervention', 'click', function(e) {
+		var block = $(this).closest('.data');
+		$(this).closest('tr').remove();
+		e.preventDefault();
+	});
+
+	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .addPrevintervention', 'click', function(e) {
+		var side = getSplitElementSide($(this));
+		OphCoTherapyapplication_addPrevintervention(side);
+		e.preventDefault();
 	});
 	
 	// show/hide the patient factors element
