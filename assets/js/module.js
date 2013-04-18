@@ -369,6 +369,10 @@ function OphCoTherapyapplication_addPrevintervention(side) {
 	var form = Mustache.render(template, data);
 	var table = $('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .[data-side="' + side + '"] table');
 	$('tbody', table).append(form);
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_previnterventions_" + data.key + "_treatment_date").datepicker({
+		'maxDate': 'today',
+		'showAnim': 'fold',
+		'dateFormat': nhs_date_format});
 }
 
 

@@ -32,13 +32,18 @@ class DefaultController extends BaseEventTypeController {
 		return $res;
 	}
 	
-	public function actionCreate() {
+	public function addEditJSVars() {
 		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
+		$this->jsVars['nhs_date_format'] = Helper::NHS_DATE_FORMAT_JS;
+	}
+	
+	public function actionCreate() {
+		$this->addEditJSVars();
 		parent::actionCreate();
 	}
 
 	public function actionUpdate($id) {
-		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
+		$this->addEditJSVars();
 		parent::actionUpdate($id);
 	}
 
