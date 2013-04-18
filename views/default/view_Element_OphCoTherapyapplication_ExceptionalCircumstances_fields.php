@@ -36,6 +36,34 @@
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_description') ?>:</div>
 	<div class="data"><?php echo $element->{$side . '_description'} ?></div>
 </div>
+
+<?php if ($element->{$side . '_previnterventions'} ) { ?>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?>:</div>
+		<div class="data">
+			<table>
+				<tr>
+					<th class="previntervention-date">Date</th>
+					<th class="previntervention-treatment">Treatment</th>
+					<th class="previntervention-reason">Reason for Stopping</th>
+				</tr>
+		<?php 
+			foreach ($element->{$side . '_previnterventions'} as $previntervention) {
+				?>
+				<tr>
+					<td><?php echo Helper::convertMySQL2NHS($previntervention->treatment_date) ?></td>
+					<td><?php echo $previntervention->treatment->drug->name ?></td>
+					<td><?php echo $previntervention->stopreason->name ?></td>
+				</tr>
+				<?php 				
+			}
+		?>
+			</table>
+
+		</div>
+	</div>
+<?php } ?>
+
 <div class="eventDetail aligned">
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factors') ?>:</div>
 	<div class="data"><?php echo $element->{$side . '_patient_factors'} ? 'Yes' : 'No'?></div>

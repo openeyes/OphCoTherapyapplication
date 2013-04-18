@@ -46,3 +46,11 @@
 .compliance-container div.data {
 	float:left;
 }
+
+th.previntervention-date {
+	width: 80px;
+}
+
+th.previntervention-treatment {
+	width: 90px;
+}
