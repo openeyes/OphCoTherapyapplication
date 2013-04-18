@@ -23,5 +23,14 @@ return array(
 			'Treatments' => '/OphCoTherapyapplication/admin/viewTreatments',
 			'Decision Trees' => '/OphCoTherapyapplication/admin/viewDecisionTrees',
 		),
+		'OphCoTherapyapplication_applicant_email' => 'armd@nhs.net',
+		'OphCoTherapyapplication_chief_pharmacist' => 'Toby James
+Chief Pharmacist
+Pharmacy Department
+Moorfields Eye Hospital NHS Foundation Trust
+City Road, London, EC1V 2PD
+(Must be copied into all drug related correspondence)',
+		'OphCoTherapyapplication_chief_pharmacist_contact' => 'Tel: 0207-566-2366
+Toby.James@moorfields.nhs.uk (not secure)'
 	),
 );

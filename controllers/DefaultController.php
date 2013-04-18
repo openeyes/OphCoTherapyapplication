@@ -22,6 +22,7 @@ class DefaultController extends BaseEventTypeController {
 	// TODO: check this is in line with Jamie's change circa 3rd April 2013
 	protected function beforeAction($action)
 	{
+		error_log($action->id);
 		if (!Yii::app()->getRequest()->getIsAjaxRequest() && !(in_array($action->id,$this->printActions())) ) {
 			Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl('css/spliteventtype.css'));
 			Yii::app()->getClientScript()->registerScriptFile(Yii::app()->createUrl('js/spliteventtype.js'));
@@ -30,6 +31,10 @@ class DefaultController extends BaseEventTypeController {
 		$res = parent::beforeAction($action);
 	
 		return $res;
+	}
+	
+	public function printActions() {
+		return array('print', 'processApplication');
 	}
 	
 	public function addEditJSVars() {
@@ -53,6 +58,48 @@ class DefaultController extends BaseEventTypeController {
 
 	public function actionPrint($id) {
 		parent::actionPrint($id);
+	}
+	
+	public function actionProcessApplication() {
+		if (isset($_REQUEST['event_id'])) {
+			$event = Event::model()->findByPk((int)$_REQUEST['event_id']);
+			$this->layout = '//layouts/pdf';
+			
+			$pdf = new OETCPDF();
+			$pdf->setAuthor('OpenEyes');
+			$pdf->setTitle('Therapy Application');
+			$pdf->SetSubject('Therapy Application');
+			
+			// TODO: fix this so that we do for both sides
+			$diagnosis = Element_OphCoTherapyapplication_Therapydiagnosis::model()->find('event_id = ?', array($event->id));
+			if ($diagnosis->hasLeft()) {
+				$side = 'left';
+			}
+			else {
+				$side = 'right';
+			}
+			
+			$body = $this->render('../pdf/form_noncompliant', array(
+				'patient' => $event->episode->patient,
+				'event' => $event,
+				'side' => $side,
+				'diagnosis' => $diagnosis,
+				'service_info' => Element_OphCoTherapyapplication_MrServiceInformation::model()->find('event_id = ?', array($event->id)),
+				'exceptional' => Element_OphCoTherapyapplication_ExceptionalCircumstances::model()->find('event_id = ?', array($event->id)),
+				), true);
+			
+			$letter = new OELetter();
+			$letter->setBarcode("E:" . $event->id);
+			$letter->addBody($body);
+			$letter->render($pdf);
+			
+			$pdf->Output($pdf->getDocref().".pdf", "I");
+			
+			
+		}
+		else {
+			throw new CHttpException('400', 'Invalid request');
+		}
 	}
 	
 	public function getDefaultElements($action, $event_type_id=false, $event=false) {
