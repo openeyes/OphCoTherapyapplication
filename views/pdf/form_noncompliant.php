@@ -225,7 +225,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<td>
 			Eye affected: <?php echo $side ?><br />
 			Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term ?><br />
-			Visual Acuity: <?php echo $va = $exam_api->getLetterVisualAcuity($patient, $event->episode, $side) ? $va : "Not measured"; ?><br />
+			Visual Acuity: <?php echo ($va = $exam_api->getLetterVisualAcuity($patient, $event->episode, $side)) ? $va : "Not measured"; ?><br />
 			OCT Thickness: TBD
 			</td>
 		</tr>
