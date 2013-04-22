@@ -27,10 +27,9 @@ body {
 .header {
 	width: 650px;
 	background-color: #ccffff;
-	border-left: 1px solid #999;
-	border-right: 1px solid #999;
-	border-top: 1px solid #999;
-	margin-left: 10px;
+	border-style: solid solid none solid;
+	border-color: #999 #999 #999 #999;
+	border-width: 1px 1px 0px 1px;
 }
 
 table.layout {
@@ -42,6 +41,11 @@ table.layout th,
 table.layout td {
 	border: 1px solid #999;
 }
+
+table.layout tr {
+	nobr: true;
+}
+
 td.row-title {
 	background-color: #ccffcc;
 	width: 180px;
@@ -65,7 +69,9 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 
 <h1>Individual Treatment Funding Request Form</h1>
 
-<h2>Contact Information</h2>
+<div class="header">
+<h2>&nbsp;Contact Information</h2>
+</div>
 <table class="layout">
 	<tbody>
 		<tr>
@@ -206,9 +212,11 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 	</tbody>	
 </table>
 
+<tcpdf method="AddPage" />
+
 <div class="header">
-<h2>Intervention Requested</h2>
-NB: Intervention refers to requested treatment, investigation, etc)
+<h2>&nbsp;Intervention Requested</h2>
+<p>NB: Intervention refers to requested treatment, investigation, etc)</p>
 </div>
 <table class="layout">
 	<tbody>
@@ -223,11 +231,45 @@ NB: Intervention refers to requested treatment, investigation, etc)
 		</tr>
 		<tr>
 			<td class="row-title">7. Details of intevention (for which funding is requested)</td>
-			<td></td>
+			<td>
+			<table class="inner">
+				<tr>
+					<th>Name of intervention:</th>
+					<td>TBD</td>
+				</tr>
+				<tr>
+					<th>Dose and frequency:</th>
+					<td>TBD</td>
+				</tr>
+				<tr>
+					<th>Route of administration:</th>
+					<td>TBD</td>
+				</tr>
+			</table>
+			</td>
 		</tr>
 		<tr>
 			<td class="row-title">8. Costing information</td>
-			<td></td>
+			<td>
+				<table class="inner">
+					<tr>
+						<th>Anticpated monthly cost, or cost per cycle (inc VAT) (Seek advice from Pharmacy)</th>
+						<td>TBD</td>
+					</tr>
+					<tr>
+						<th>Related monitoring costs</th>
+						<td>TBD</td>
+					</tr>
+					<tr>
+						<th>Related monitoring frequency</th>
+						<td>TBD</td>
+					</tr>
+					<tr>
+						<th>Any other additional on costs including reasons</th>
+						<td>NIL</td>
+					</tr>
+				</table>
+			</td>
 		</tr>
 		<tr>
 			<td class="row-title">9. (a) Planned duration of intervention?<br /><br />
@@ -271,9 +313,35 @@ NB: Intervention refers to requested treatment, investigation, etc)
 		</tr>
 		<tr>
 			<td class="row-title">13. In case of intervention for NON-CANCER</td>
-			<td>TBD</td>
+			<td>
+			<table class="inner">
+				<tr>
+					<th>Please indicate whether the intervention is for:
+					<ul>
+					<li>Adjuvant / Neoadjuvant</li>
+					<li>1st line relapse (or metastatic)</li>
+					<li>2nd line relapse</li>
+					<li>Other (please specify)</li>
+					</ul>
+					</th>
+					<td>Not applicable</td>
+				</tr>
+				<tr>
+					<th>What is the WHO performance status?</th>
+					<td>Not applicable</td>
+				</tr>
+				<tr>
+					<th>How advanced is the cancer? (stage)</th>
+					<td>Not applicable</td>
+				</tr>
+				<tr>
+					<th>Describe any metastases:</th>
+					<td>Not applicable</td>
+				</tr>
+			</table>
+			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">14. Summary of previous intervention(s) this patient has received for the condition.<br />
 * Reasons for stopping may include: 
 	<ul>
@@ -282,7 +350,38 @@ NB: Intervention refers to requested treatment, investigation, etc)
 	<li>Disease progression</li>
 	<li>Adverse effects/poorly tolerated</li>
 	</ul></td>
-			<td>TBD</td>
+			<td>
+			<?php 
+			if ($exceptional->{$side . '_previnterventions'}) {
+				?>
+				<table>
+					<thead>
+					<tr>
+						<th>Dates</th>
+						<th>Intervention</th>
+						<th>Reason for stopping / Response acheived</th>
+					</tr>
+					</thead>
+					<tbody>
+				<?php 
+				foreach ($exceptional->{$side . '_previnterventions'} as $previntervention) {
+					?>
+					<tr>
+						<td><?php echo Helper::convertDate2NHS($previntervention->treatment_date) ?></td>
+						<td><?php echo $previntervention->treatment->name ?></td>
+						<td><?php echo $previntervention->stopreason->name ?></td>
+					</tr>
+					<?php 	
+				}
+				?>
+					</tbody>
+				</table>
+				<?php
+			} else {	
+				echo "None";
+			}
+			?>
+			</td>
 		</tr>
 		<tr>
 			<td class="row-title">15. Anticipated Start Date</td>
@@ -290,5 +389,68 @@ NB: Intervention refers to requested treatment, investigation, etc)
 4 Weeks.</td>
 		</tr>
 			
+	</tbody>
+</table>
+
+<div class="header">
+<h2>&nbsp;Clinical Evidence</h2>
+</div>
+<table class="layout">
+	<tbody>
+		<tr>
+			<td class="row-title">16. Is requested intervention licensed in the UK for use in the requested indication? NO.</td>
+			<td>If No, is it licensed for use in another indication: YES.</td>
+		</tr>
+		<tr>
+			<td class="row-title">17. Has the Trust Drugs and Therapeutics Committee or equivalent Committee approved the requested intervention for use? (if drug or medical device)</td>
+			<td>If No, Committee Chair or Chief Pharmacist who approved?<br />
+			Evidence must be supplied e.g. D&amp;TC minutes, Chairs actions, etc<br /> 
+			<b>NB: the PCT cannot consider the case in the absence of this evidence.</b><br /><br />
+			YES.</td>
+		</tr>
+		<tr>
+			<td class="row-title">18. In case of intervention for CANCER has it been approved by any of the following:</td>
+			<td>Mark as appropriate:
+			<ol>
+			<li>N/A</li>
+			<li>London Cancer Drugs Group</li>
+			<li>London Cancer prioritisation process (LCP)</li>
+			</ol> 
+(Not applicable)</td>
+		</tr>
+		<tr>
+			<td class="row-title">19. Give details of National, Cancer Network or Local Guidelines/ recommendations or other published data supporting the use of the requested intervention for this condition?</td>
+			<td>PUBLISHED trials/data<br />
+(Full published papers, rather than abstracts, should be submitted, unless the application relates to the use of an intervention in a rare disease where published data are not available. Electronic copies of the papers/web links for peer-reviewed papers must be supplied, where available.)<br /><br />
+(Please see attached papers and supporting documents.)</td>
+		</tr>
+		<tr>
+			<td class="row-title">20. What is the anticipated benefit of the intervention compared to the standard?</td>
+			<td>In case of intervention for cancer please provide details of expected survival benefit.<br /> 
+(Not applicable)</td>
+		</tr>
+		<tr>
+			<td class="row-title">21. What is the anticipated toxicity of the intervention for this patient?</td>
+			<td>TBD</td>
+		</tr>
+		<tr>
+			<td class="row-title">22. Are there any patient factors (clinical or personal) that need to be considered?</td>
+			<td><?php  
+				if ($exceptional->{$side . '_patient_factors'}) {
+					echo $exceptional->{$side . '_patient_factor_details'};
+				}
+				else {
+					echo "No";
+				}
+			?></td>
+		</tr>
+		<tr>
+			<td class="row-title">Date form completed:</td>
+			<td><?php echo $event->NHSDate('last_modified_date') ?></td>
+		</tr>
+		<tr>
+			<td class="row-title">Trust reference number</td>
+			<td>&nbsp;</td>
+		</tr>	
 	</tbody>
 </table>
