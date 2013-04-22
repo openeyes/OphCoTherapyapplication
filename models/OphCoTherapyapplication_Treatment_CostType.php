@@ -16,26 +16,37 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
-?>
 
-<div class="report curvybox white">
-	<div class="admin">
-	<?php 
-	$form=$this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'OphCoTherapyapplication_adminform',
-		'enableAjaxValidation'=>false,
-	)); 
+class OphCoTherapyapplication_Treatment_CostType extends BaseActiveRecord {
+	/**
+	 * Returns the static model of the specified AR class.
+	 * @return the static model class
+	 */
+	public static function model($className = __CLASS__)
+	{
+		return parent::model($className);
+	}
 	
-	$this->renderPartial('form_' . get_class($model), array(
-			'model' => $model,
-			'form' => $form,
-	));
-	?>
+	/**
+	 * @return string the associated database table name
+	 */
+	public function tableName()
+	{
+		return 'ophcotherapya_treatment_cost_type';
+	}
 	
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
+	/**
+	 * @return array validation rules for model attributes.
+	 */
+	public function rules()
+	{
+		return array(
+				array('name', 'safe'),
+				array('name', 'required'),
+				// The following rule is used by search().
+				// Please remove those attributes that should not be searched.
+				array('id, name', 'safe', 'on' => 'search'),
+		);
+	}
 	
-	<?php $this->endWidget(); ?>
-	</div>
-</div>
+}

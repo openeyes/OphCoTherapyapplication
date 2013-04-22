@@ -235,15 +235,15 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<table class="inner">
 				<tr>
 					<th>Name of intervention:</th>
-					<td>TBD</td>
+					<td><?php echo $treatment->intervention_name ?></td>
 				</tr>
 				<tr>
 					<th>Dose and frequency:</th>
-					<td>TBD</td>
+					<td><?php echo $treatment->dose_and_frequency ?></td>
 				</tr>
 				<tr>
 					<th>Route of administration:</th>
-					<td>TBD</td>
+					<td><?php echo $treatment->administration_route ?></td>
 				</tr>
 			</table>
 			</td>
@@ -254,15 +254,15 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				<table class="inner">
 					<tr>
 						<th>Anticpated monthly cost, or cost per cycle (inc VAT) (Seek advice from Pharmacy)</th>
-						<td>TBD</td>
+						<td>&pound;<?php echo $treatment->displayCost ?></td>
 					</tr>
 					<tr>
 						<th>Related monitoring costs</th>
-						<td>TBD</td>
+						<td>Outpatient follow up appointment at national tariff<br />FFA: &pound;71</td>
 					</tr>
 					<tr>
 						<th>Related monitoring frequency</th>
-						<td>TBD</td>
+						<td><?php echo $treatment->displayMonitoringFrequency ?></td>
 					</tr>
 					<tr>
 						<th>Any other additional on costs including reasons</th>
@@ -276,13 +276,13 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 (b) How will you monitor the effectiveness of the intervention?<br />	
 (c) What are the criteria for stopping treatment<br /><br /><br /><br />
 (d) What would you consider to be a successful outcome for this intervention in this patient?</td>
-			<td>TBD<br /><br />
-			Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG<br /><br />
-			1. Failure of treatment indicated by persistent deterioration in visual acuity<br />
+			<td>(a)<?php echo $treatment->duration ?><br /><br />
+			(b) Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG<br /><br />
+			(c) 1. Failure of treatment indicated by persistent deterioration in visual acuity<br />
 2. Absence of disease activity<br />
 3. Adverse effects related to the drug<br />
 4. Hypersensitivity to the drug<br /><br />
-1. Stabilisation / improvement in visual acuity<br />
+(d) 1. Stabilisation / improvement in visual acuity<br />
 2. Resolution of subretinal fluid on OCT<br />
 3. Absence of leak on FFA/ICG
 			</td>
@@ -295,15 +295,15 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<td class="row-title">11. (a) Is there a standard intervention at this stage?<br /><br />
 (b) Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?<br /><br />
 (c) What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
-			<td>
+			<td>(a) 
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
 					echo $exceptional->{$side . '_details'};
 				} else {
 					echo "No current standard deviation<br />";
 				}?>
-				<hr />
-				&nbsp;<br />Intervention is: <?php echo $exceptional->{$side . '_intervention'}->name?><br />
-				<?php echo $exceptional->{$side . '_description'} ?>
+				
+				<br /><br />(b) Intervention is: <?php echo $exceptional->{$side . '_intervention'}->name?><br />
+				(c) <?php echo $exceptional->{$side . '_description'} ?>
 				
 			</td>
 		</tr>
@@ -431,7 +431,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">21. What is the anticipated toxicity of the intervention for this patient?</td>
-			<td>TBD</td>
+			<td><?php echo nl2br($treatment->toxicity) ?></td>
 		</tr>
 		<tr>
 			<td class="row-title">22. Are there any patient factors (clinical or personal) that need to be considered?</td>

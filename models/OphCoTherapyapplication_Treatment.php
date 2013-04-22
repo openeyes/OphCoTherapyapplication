@@ -26,10 +26,21 @@
  * @property boolean $available
  * @property boolean $contraindications_required
  * @property integer $decisiontree_id
+ * @property string $intervention_name
+ * @property string $dose_and_frequency
+ * @property string $administration_route
+ * @property integer $cost
+ * @property integer $cost_type_id
+ * @property integer $monitoring_frequency
+ * @property integer $monitoring_frequency_period_id
+ * @property string $duration
+ * @property string $toxicity
  * 
  * The followings are the available model relations:
  *
  * @property OphCoTherapyapplication_DecisionTree $decisiontree
+ * @property OphCoTherapyapplication_Treatment_CostType $cost_type
+ * @property Period $monitoring_frequency_period
  * @property User $user
  * @property User $usermodified
  */
@@ -61,8 +72,12 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('drug_id decisiontree_id, available, contraindications_required', 'safe'),
-			array('drug_id contraindications_required', 'required'),
+			array('drug_id decisiontree_id, available, contraindications_required, decisiontree_id, intervention_name, 
+					dose_and_frequency, administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id, 
+					duration, toxicity', 'safe'),
+			array('drug_id contraindications_required, intervention_name, dose_and_frequency, 
+					administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id, 
+					duration, toxicity', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, drug_id, available, contraindications_required', 'safe', 'on' => 'search'),
@@ -79,6 +94,8 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return array(
 			'decisiontree' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTree', 'decisiontree_id'),
 			'drug' => array(self::BELONGS_TO, 'OphTrIntravitrealinjection_Treatment_Drug', 'drug_id'),
+			'cost_type' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment_CostType', 'cost_type_id'),
+			'monitoring_frequency_period' => array(self::BELONGS_TO, 'Period', 'monitoring_frequency_period_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
@@ -143,5 +160,12 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return $this->drug->name;
 	}
 	
+	public function getDisplayCost() {
+		return $this->cost . " per "  . $this->cost_type->name;
+	}
+	
+	public function getDisplayMonitoringFrequency() {
+		return "Every " . $this->monitoring_frequency . " " . $this->monitoring_frequency_period->name;
+	}
 }
 ?>

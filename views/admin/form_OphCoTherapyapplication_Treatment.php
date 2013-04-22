@@ -23,20 +23,33 @@
 
 <?php echo $form->errorSummary($model); ?>
 
-<div class="row">
-	<?php echo $form->labelEx($model, 'drug')?>
-	<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -'))?>
-	<?php echo $form->error($model,'drug'); ?>
+<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -'))?>
+
+<?php echo $form->dropdownlist($model, 'decisiontree_id', CHtml::listData(OphCoTherapyapplication_DecisionTree::model()->findAll(),'id','name'),array('empty'=>'- Please select -'))?>
+
+<?php echo $form->radioBoolean($model, 'contraindications_required', array(1 => 'Yes', 0 => 'No'), array('separator' => '&nbsp;')); ?>
+
+<hr />
+
+<?php echo $form->textfield($model, 'intervention_name') ?>
+
+<?php echo $form->textField($model, 'dose_and_frequency') ?>
+
+<?php echo $form->textField($model, 'administration_route') ?>
+
+<div id="div_OphCoTherapyapplication_Treatment_cost">
+	<div class="label">Cost:</div>
+	<div class="data" style="display: inline-block">
+	<?php echo $form->textField($model, 'cost',  array('nowrapper' => true))?> per <?php echo $form->dropDownList($model, 'cost_type_id', CHtml::listData(OphCoTherapyapplication_Treatment_CostType::model()->findAll(), 'id', 'name'), array('nowrapper' => true)) ?>
+	</div>
 </div>
 
-<div class="row">
-	<?php echo $form->labelEx($model, 'decisiontree_id')?>
-	<?php echo $form->dropdownlist($model, 'decisiontree_id', CHtml::listData(OphCoTherapyapplication_DecisionTree::model()->findAll(),'id','name'),array('empty'=>'- Please select -'))?>
-	<?php echo $form->error($model,'decisiontree_id'); ?>
+<div id="div_OphCoTherapyapplication_Treatment_monitoring">
+	<div class="label">Monitoring Frequency:</div>
+	<div class="data" style="display: inline-block">
+	Every <?php echo $form->textField($model, 'monitoring_frequency',  array('nowrapper' => true))?> <?php echo $form->dropDownList($model, 'monitoring_frequency_period_id', CHtml::listData(Period::model()->findAll(), 'id', 'name'), array('nowrapper' => true)) ?>
+	</div>
 </div>
 
-<div class="row">
-	<?php echo $form->labelEx($model, 'contraindications_required')?>
-	<?php echo $form->radioButtonList($model, 'contraindications_required', array(1 => 'Yes', 0 => 'No'), array('separator' => '&nbsp;')); ?>
-	<?php echo $form->error($model,'contraindications_required'); ?>
-</div>
+<?php echo $form->textArea($model, 'duration', array('rows' => 4, 'cols' => 40)) ?>
+<?php echo $form->textArea($model, 'toxicity', array('rows' => 6, 'cols' => 60)) ?>

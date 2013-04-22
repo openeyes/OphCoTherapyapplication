@@ -24,6 +24,7 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
 		
+		
 		// decision tree table creation
 		$this->createTable('ophcotherapya_decisiontree', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -260,7 +261,7 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		// get the id for both eyes
 		$both_eyes_id = Eye::model()->find("name = 'Both'")->id;
-
+		
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_therapydiag', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -287,6 +288,24 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_therapydiag_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)'
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
+		// element lookup table et_ophcotherapya_exceptional_intervention
+		$this->createTable('ophcotherapya_treatment_cost_type', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_treatment_cost_type_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_treatment_cost_type_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `et_ophcotherapya_treatment_cost_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_treatment_cost_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+		
+		$this->insert('ophcotherapya_treatment_cost_type',array('name'=>'Month'));
+		$this->insert('ophcotherapya_treatment_cost_type',array('name'=>'Injection'));
+		
 		// element lookup table ophcotherapya_treatment
 		// NOTE dependency on the ophtrintravitinjection_treatment_drug table and therefore the OphTrIntravitinjection module
 		$this->createTable('ophcotherapya_treatment', array(
@@ -294,6 +313,15 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'drug_id' => 'int(10) unsigned NOT NULL',
 				'decisiontree_id' => 'int(10) unsigned',
 				'contraindications_required' => 'boolean NOT NULL',
+				'intervention_name' => 'varchar(128) NOT NULL',
+				'dose_and_frequency' => 'varchar(256) NOT NULL',
+				'administration_route' => 'varchar(256) NOT NULL',
+				'cost' => 'int(10) unsigned not null',
+				'cost_type_id' => 'int(10) unsigned NOT NULL',
+				'monitoring_frequency' => 'int(10) unsigned NOT NULL',
+				'monitoring_frequency_period_id' => 'int(10) unsigned NOT NULL',
+				'duration' => 'varchar(512) NOT NULL',
+				'toxicity' => 'text NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -303,10 +331,14 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `ophcotherapya_treatment_cui_fk` (`created_user_id`)',
 				'KEY `ophcotherapya_treatment_dti_fk` (`decisiontree_id`)',
 				'KEY `ophcotherapya_treatment_dri_fk` (`drug_id`)',
+				'KEY `ophcotherapya_treatment_ct_fk` (`cost_type_id`)',
+				'KEY `ophcotherapya_treatment_mfp_fk` (`monitoring_frequency_period_id`)',
 				'CONSTRAINT `ophcotherapya_treatment_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_treatment_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_treatment_dti_fk` FOREIGN KEY (`decisiontree_id`) REFERENCES `ophcotherapya_decisiontree` (`id`)',
 				'CONSTRAINT `ophcotherapya_treatment_dri_fk` FOREIGN KEY (`drug_id`) REFERENCES `ophtrintravitinjection_treatment_drug` (`id`)',
+				'CONSTRAINT `ophcotherapya_treatment_ct_fk` FOREIGN KEY (`cost_type_id`) REFERENCES `ophcotherapya_treatment_cost_type` (`id`)',
+				'CONSTRAINT `ophcotherapya_treatment_mfp_fk` FOREIGN KEY (`monitoring_frequency_period_id`) REFERENCES `period` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		// TODO: loop through injection drugs and create treatment objects
@@ -543,6 +575,8 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->dropTable('et_ophcotherapya_exceptional_intervention');
 
 		$this->dropTable('ophcotherapya_treatment');
+		
+		$this->dropTable('ophcotherapya_treatment_cost_type');
 
 		// --- delete event entries ---
 		$event_type = $this->dbConnection->createCommand()->select('id')->from('event_type')->where('class_name=:class_name', array(':class_name'=>'OphCoTherapyapplication'))->queryRow();

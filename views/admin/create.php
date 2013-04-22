@@ -18,22 +18,28 @@
  */
 ?>
 
-<div class="form">
-<?php 
-$form=$this->beginWidget('CActiveForm', array(
-	'id'=>'OphCoTherapyapplication_adminform',
-	'enableAjaxValidation'=>false,
-)); 
+<div class="report curvybox white">
 
-$this->renderPartial('form_' . get_class($model), array(
-		'model' => $model,
-		'form' => $form,
-));
-?>
+	<div class="admin">
+	<?php 
+	$form=$this->beginWidget('BaseEventTypeCActiveForm', array(
+		'id'=>'OphCoTherapyapplication_adminform',
+		'enableAjaxValidation'=>false,
+	)); 
+	
+	?>
+	<?php 
+	$this->renderPartial('form_' . get_class($model), array(
+			'model' => $model,
+			'form' => $form,
+	));
+	?>
+	
+	<div class="row buttons">
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	</div>
+	
+	<?php $this->endWidget(); ?>
+	</div>
 
-<div class="row buttons">
-	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-</div>
-
-<?php $this->endWidget(); ?>
 </div>

@@ -78,12 +78,14 @@ class DefaultController extends BaseEventTypeController {
 			else {
 				$side = 'right';
 			}
+			$suitability = Element_OphCoTherapyapplication_PatientSuitability::model()->find('event_id = ?', array($event->id));
 			
 			$body = $this->render('../pdf/form_noncompliant', array(
 				'patient' => $event->episode->patient,
 				'event' => $event,
 				'side' => $side,
 				'diagnosis' => $diagnosis,
+				'treatment' => $suitability->{$side . '_treatment'},
 				'service_info' => Element_OphCoTherapyapplication_MrServiceInformation::model()->find('event_id = ?', array($event->id)),
 				'exceptional' => Element_OphCoTherapyapplication_ExceptionalCircumstances::model()->find('event_id = ?', array($event->id)),
 				), true);
