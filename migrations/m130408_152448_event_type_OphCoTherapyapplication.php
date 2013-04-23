@@ -230,34 +230,42 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Diagnosis',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'Diagnosis','class_name' => 'Element_OphCoTherapyapplication_Therapydiagnosis', 'event_type_id' => $event_type['id'], 'display_order' => 1));
+			$this->insert('element_type', array('name' => 'Diagnosis','class_name' => 'Element_OphCoTherapyapplication_Therapydiagnosis', 'event_type_id' => $event_type['id'], 'display_order' => 10));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'TherapyDiagnosis'))->queryRow();
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Patient Suitability',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'Patient Suitability','class_name' => 'Element_OphCoTherapyapplication_PatientSuitability', 'event_type_id' => $event_type['id'], 'display_order' => 1));
+			$this->insert('element_type', array('name' => 'Patient Suitability','class_name' => 'Element_OphCoTherapyapplication_PatientSuitability', 'event_type_id' => $event_type['id'], 'display_order' => 15));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Patient Suitability'))->queryRow();
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Relative ContraIndications',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'Relative ContraIndications','class_name' => 'Element_OphCoTherapyapplication_RelativeContraindications', 'event_type_id' => $event_type['id'], 'display_order' => 1));
+			$this->insert('element_type', array('name' => 'Relative ContraIndications','class_name' => 'Element_OphCoTherapyapplication_RelativeContraindications', 'event_type_id' => $event_type['id'], 'display_order' =>20));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Relative ContraIndications'))->queryRow();
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'MR Service Information',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'MR Service Information','class_name' => 'Element_OphCoTherapyapplication_MrServiceInformation', 'event_type_id' => $event_type['id'], 'display_order' => 1));
+			$this->insert('element_type', array('name' => 'MR Service Information','class_name' => 'Element_OphCoTherapyapplication_MrServiceInformation', 'event_type_id' => $event_type['id'], 'display_order' => 30));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'MR Service Information'))->queryRow();
+		
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Exceptional Circumstances',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'Exceptional Circumstances','class_name' => 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'event_type_id' => $event_type['id'], 'display_order' => 1));
+			$this->insert('element_type', array('name' => 'Exceptional Circumstances','class_name' => 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'event_type_id' => $event_type['id'], 'display_order' => 40));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Exceptional Circumstances'))->queryRow();
+		
+		// create an element_type entry for this element type name if one doesn't already exist
+		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Application Email',':eventTypeId'=>$event_type['id']))->queryRow()) {
+			$this->insert('element_type', array('name' => 'Application Email','class_name' => 'Element_OphCoTherapyapplication_Email', 'event_type_id' => $event_type['id'], 'display_order' => 50, 'default' => false, 'required' => false));
+		}
+		// select the element_type_id for this element type name
+		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Application Email'))->queryRow();
 
 		// get the id for both eyes
 		$both_eyes_id = Eye::model()->find("name = 'Both'")->id;
@@ -548,6 +556,28 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_exceptional_previntervention_sri_fk` FOREIGN KEY (`stopreason_id`) REFERENCES `ophcotherapya_exceptional_previntervention_stopreason` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 		
+		// create the table for this element type: et_modulename_elementtypename
+		$this->createTable('et_ophcotherapya_email', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'event_id' => 'int(10) unsigned NOT NULL',
+				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
+				'left_email_text' => 'text',
+				'left_application' => 'varchar(256)', //TODO: integrate with File Asset object (TBD)
+				'right_email_text' => 'text',
+				'right_application' => 'varchar(256)', //TODO: integrate with File Asset object (TBD)
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_email_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_email_cui_fk` (`created_user_id`)',
+				'KEY `et_ophcotherapya_email_ev_fk` (`event_id`)',
+				'CONSTRAINT `et_ophcotherapya_email_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+		
 	}
 
 	public function down() {
@@ -563,7 +593,8 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->dropTable('et_ophcotherapya_relativecon');
 
 
-
+		$this->dropTable('et_ophcotherapya_email');
+		
 		$this->dropTable('et_ophcotherapya_mrservicein');
 
 

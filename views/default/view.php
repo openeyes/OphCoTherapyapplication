@@ -23,6 +23,8 @@
 ?>
 
 <?php 
+$this->renderPartial('//base/_messages');
+
 $this->event_actions[] = EventAction::link('Submit Application',
 				Yii::app()->createUrl($this->event->eventType->class_name.'/default/processApplication/?event_id='.$this->event->id));
 ?>
