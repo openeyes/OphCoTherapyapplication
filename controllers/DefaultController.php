@@ -111,7 +111,9 @@ class DefaultController extends BaseEventTypeController {
 					$episode = $this->episode;
 					
 					if ($episode) {
-						$element->eye_id = $episode->eye_id;
+						if ($episode->eye_id) {
+							$element->eye_id = $episode->eye_id;
+						}
 						
 						// foreach eye
 						foreach (array(SplitEventTypeElement::LEFT, SplitEventTypeElement::RIGHT) as $eye_id) {

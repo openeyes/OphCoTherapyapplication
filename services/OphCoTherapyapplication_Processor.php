@@ -21,6 +21,8 @@ class OphCoTherapyapplication_Processor {
 	private $events_by_id = array();
 	private $controller = false;
 	
+	private $_viewpath = false;
+	
 	private function getEvent($event_id) {
 		if (!isset($this->events_by_id[$event_id])) {
 			
@@ -62,6 +64,14 @@ class OphCoTherapyapplication_Processor {
 		return $this->controller;
 	}
 	
+	protected function getViewPath() {
+		if (!$this->_viewpath) {
+			$module = Yii::app()->getModule('OphCoTherapyapplication');
+			$this->_viewpath = $module->getViewPath() . DIRECTORY_SEPARATOR . 'email';
+		}
+		return $this->_viewpath;
+	}
+	
 	public function canProcessEvent($event_id) {
 		$elements = $this->getEvent($event_id);
 		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
@@ -73,9 +83,6 @@ class OphCoTherapyapplication_Processor {
 	}
 	
 	protected function generatePDFForSide($data, $side) {
-		// NOTE this will need to change if we extract it from the controller
-		$this->layout = '//layouts/pdf';
-			
 		$pdf = new OETCPDF();
 		$pdf->setAuthor('OpenEyes');
 		$pdf->setTitle('Therapy Application');
@@ -90,8 +97,14 @@ class OphCoTherapyapplication_Processor {
 		
 		$controller = $this->getController();
 		
-		$module = Yii::app()->getModule('OphCoTherapyapplication');
-		$view = $module->getViewPath() . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . 'form_noncompliant.php';
+		if ($data['suitability']->{$side . "_nice_compliance"}) {
+			$file = 'pdf_compliant.php';
+		}
+		else {
+			$file = 'pdf_noncompliant.php';
+		}
+		
+		$view = $this->getViewPath() . DIRECTORY_SEPARATOR . $file;
 		$body = $controller->renderInternal($view, $template_data, true);
 		
 		$letter = new OELetter();
@@ -109,11 +122,25 @@ class OphCoTherapyapplication_Processor {
 	}
 	
 	protected function generateEmailForSide($data, $side) {
-		// TODO: need to decide if we want look at how we're doing the macro definitions of this,
-		// for short code substitution (which might be rather cool, all in all), or if we just want
-		// to hard code a string for now (I prefer the former, but maybe that's a progression)
+		$template_data = array();
+		foreach ($data as $k => $v) {
+			$template_data[$k] = $v;
+		}
+		$template_data['side'] = $side;
+		$template_data['treatment'] = $template_data['suitability']->{$side . '_treatment'};
 		
-		return "email text for the " . $side . " side";
+		if ($data['suitability']->{$side . '_nice_compliance'}) {
+			$file = 'email_compliant.php';
+		}
+		else {
+			$file = 'email_noncompliant.php';
+		}
+		
+		$view = $this->getViewPath() . DIRECTORY_SEPARATOR . $file;
+		$controller = $this->getController();
+		
+		return $controller->renderInternal($view, $template_data, true);
+		
 	}
 	
 	public function processEvent($event_id) {
@@ -130,8 +157,10 @@ class OphCoTherapyapplication_Processor {
 				'diagnosis' => $event_data['elements']['Element_OphCoTherapyapplication_Therapydiagnosis'],
 				'suitability' => $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability'],
 				'service_info' => $event_data['elements']['Element_OphCoTherapyapplication_MrServiceInformation'],
-				'exceptional' => $event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'],
 		);
+		if (isset($event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'])) {
+			$data['exceptional'] = $event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'];
+		}
 		
 		$email_el = new Element_OphCoTherapyapplication_Email();
 		$email_el->event_id = $event_id;
