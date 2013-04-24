@@ -82,7 +82,20 @@ class DefaultController extends BaseEventTypeController {
 	}
 	
 	public function getDefaultElements($action, $event_type_id=false, $event=false) {
-		$elements = parent::getDefaultElements($action, $event_type_id, $event);
+		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
+		
+		// clear out the email element as we don't want to display or edit it
+		if (in_array($action, array('create', 'edit'))) {
+			$elements = array();
+			foreach ($all_elements as $element) {
+				if (get_class($element) != 'Element_OphCoTherapyapplication_Email') {
+					$elements[] = $element;
+				}
+			}
+		}
+		else {
+			$elements = $all_elements;
+		}
 		
 		if ($action == 'create' && empty($_POST)) { 
 			// set any calculated defaults on the elements

@@ -126,7 +126,9 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		));
 	}
 
-
+	public function isEditable() {
+		return false;
+	}
 
 	protected function beforeSave()
 	{
@@ -146,24 +148,36 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	
 	protected function sendEmailForSide($side)
 	{
-		$mail = new PHPMailer();
-		$mail->AddAddress('mike.smith@camc-ltd.co.uk', 'Mike Smith');
-		$mail->SetFrom('info@openeyes.org.uk', 'OpenEyes');
-		$mail->Subject = 'Therapy Application';
-		$mail->MsgHTML($this->{$side . '_email_text'});
-		$mail->AddAttachment($this->{$side . '_application'});
-		$mail->Send();
+		$message = Yii::app()->mailer->newMessage();
+		$message->setSubject('Therapy Application');
+		$message->setFrom(array('info@openeyes.org.uk' => 'OpenEyes'));
+		$message->setTo(array('mike.smith@camc-ltd.co.uk' => 'Mike Smith'));
+		
+		$message->setBody($this->{$side . '_email_text'});
+		$message->attach(Swift_Attachment::fromPath($this->{$side . '_application'}) );
+		
+		if (Yii::app()->mailer->sendMessage($message)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public function sendEmail()
 	{
+		$success = true;
 		if ($this->hasLeft()) {
-			$this->sendEmailForSide('left');
+			$success = $this->sendEmailForSide('left');
 		}
-		if ($this->hasRight()) {
-			$this->sendEmailForSide('right');
+		if ($success && $this->hasRight()) {
+			$success = $this->sendEmailForSide('right');
 		}
-		$this->save();
+		if ($success) {
+			// save it to mark the element as modified, which indicates last sent date
+			$this->save();
+		}
+		return $success;
 	}
 }
 ?>

@@ -10,3 +10,7 @@ Dependencies
 
 1. Requires OphTrIntravitrealinjection
 
+Elements
+========
+
+The Element_OphCoTherapyapplication_Email class is an element that is created by the processing of the application. As such it is not an element that should be directly edited.

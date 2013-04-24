@@ -23,7 +23,7 @@
 
 <?php echo $form->errorSummary($model); ?>
 
-<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -'))?>
+<?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData(OphTrIntravitrealinjection_Treatment_Drug::model()->findAll(), 'id', 'name'), array('empty' => '- Please select -', 'class' => 'clearfix'))?>
 
 <?php echo $form->dropdownlist($model, 'decisiontree_id', CHtml::listData(OphCoTherapyapplication_DecisionTree::model()->findAll(),'id','name'),array('empty'=>'- Please select -'))?>
 

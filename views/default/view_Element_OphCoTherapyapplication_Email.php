@@ -18,19 +18,7 @@
  */
 ?>
 
-<h4 class="elementTypeName"><?php echo $element->elementType->name?></h4>
-
-<div class="eventDetail clearfix">
-	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('cerebrovascular_accident'))?>:</div>
-	<div class="data"><?php echo $element->cerebrovascular_accident ? 'Yes' : 'No'?></div>
-</div>
-
-<div class="eventDetail">
-	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('ischaemic_attack'))?>:</div>
-	<div class="data"><?php echo $element->ischaemic_attack ? 'Yes' : 'No'?></div>
-</div>
-
-<div class="eventDetail">
-	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('myocardial_infarction'))?>:</div>
-	<div class="data"><?php echo $element->myocardial_infarction ? 'Yes' : 'No'?></div>
+<div class="metaData">
+Application sent by <span class="user"><?php echo $element->user->fullname ?></span> on <?php echo $element->NHSDate('created_date') ?>
+		at <?php echo date('H:i', strtotime($element->created_date)) ?>
 </div>
