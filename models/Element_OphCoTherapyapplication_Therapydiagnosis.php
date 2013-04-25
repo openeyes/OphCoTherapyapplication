@@ -23,7 +23,8 @@
  * The followings are the available columns in table:
  * @property string $id
  * @property integer $event_id
- * @property integer $diagnosis_id
+ * @property integer $left_diagnosis_id
+ * @property integer $right_diagnosis_id 
  *
  * The followings are the available model relations:
  *
@@ -32,7 +33,8 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
- * @property Disorder $diagnosis
+ * @property Disorder $left_diagnosis
+ * @property Disorder $right_diagnosis
  */
 
 class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeElement

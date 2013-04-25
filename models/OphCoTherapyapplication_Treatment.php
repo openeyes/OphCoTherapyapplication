@@ -26,6 +26,7 @@
  * @property boolean $available
  * @property boolean $contraindications_required
  * @property integer $decisiontree_id
+ * @property string $template_code
  * @property string $intervention_name
  * @property string $dose_and_frequency
  * @property string $administration_route
@@ -72,7 +73,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('drug_id decisiontree_id, available, contraindications_required, decisiontree_id, intervention_name, 
+			array('drug_id decisiontree_id, available, contraindications_required, decisiontree_id, template_code, intervention_name, 
 					dose_and_frequency, administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id, 
 					duration, toxicity', 'safe'),
 			array('drug_id contraindications_required, intervention_name, dose_and_frequency, 

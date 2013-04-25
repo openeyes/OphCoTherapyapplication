@@ -225,7 +225,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<td>
 			Eye affected: <?php echo $side ?><br />
 			Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term ?><br />
-			Visual Acuity: <?php echo ($va = $exam_api->getLetterVisualAcuity($patient, $event->episode, $side)) ? $va : "Not measured"; ?><br />
+			Visual Acuity: <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuity($patient, $event->episode, $side)) ) ? $va : "Not measured"; ?><br />
 			OCT Thickness: TBD
 			</td>
 		</tr>
@@ -309,12 +309,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">12. In case of intervention for CANCER</td>
-			<td>N/A</td>
-		</tr>
-		<tr>
-			<td class="row-title">13. In case of intervention for NON-CANCER</td>
-			<td>
-			<table class="inner">
+			<td><table class="inner">
 				<tr>
 					<th>Please indicate whether the intervention is for:
 					<ul>
@@ -337,6 +332,17 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				<tr>
 					<th>Describe any metastases:</th>
 					<td>Not applicable</td>
+				</tr>
+			</table></td>
+		</tr>
+		<tr>
+			<td class="row-title">13. In case of intervention for NON-CANCER</td>
+			<td>
+			<table class="inner">
+				<tr>
+					<th>What is the patient's clinical severity? (Where possible use standard scoring systems e.g. WHO, DAS scores, walk test, cardiac index etc)</th>
+					<td>Visual Acuity in the affected eye is: 
+					<?php echo ($exam_api && ($va = $exam_api->getBestVisualAcuity($patient, $event->episode, $side)) ) ? $va : "Not measured"; ?></td>
 				</tr>
 			</table>
 			</td>

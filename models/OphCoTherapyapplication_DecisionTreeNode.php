@@ -150,13 +150,13 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	 * 
 	 * @return string default response value
 	 */
-	public function getDefaultValue($side, $patient) {
+	public function getDefaultValue($side, $patient, $episode) {
 		if ($this->default_value) {
 			return $this->default_value;
 		}
-		elseif ($this->default_function) {
+		elseif ($this->default_function && $episode) {
 			// call the appropriate default function
-			return $this->{$this->default_function}($side, $patient);
+			return $this->{$this->default_function}($side, $patient, $episode);
 		}
 		else {
 			return null;
@@ -195,9 +195,9 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	 * 
 	 * @return integer $visualacuity
 	 */
-	public function bestVisualAcuityForEye($side, $patient) {
+	public function bestVisualAcuityForEye($side, $patient, $episode) {
 		if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
-			return ($best = $api->getBestVisualAcuity($patient, $side, false)) ? $best->value : null;
+			return ($best = $api->getBestVisualAcuity($patient, $episode, $side, false)) ? $best->value : null;
 		}
 		return null;	
 	}

@@ -102,7 +102,7 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 			'myocardial_infarction' => 'Myocardial Infarction',
 		);
 	}
-
+	
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -151,6 +151,29 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 			return Element_OphCoTherapyapplication_PatientSuitability::model()->find($criteria);
 		}
 		return null;
+	}
+	
+	/**
+	 * the list of attributes on this email that are fields for contraindication
+	 *
+	 * @return multitype:string
+	 */
+	public function contraindicationFields()
+	{
+		return array(
+				'cerebrovascular_accident',
+				'ischaemic_attack',
+				'myocardial_infarction'
+		);
+	}
+	
+	public function hasAny() {
+		foreach ($this->contraindicationFields() as $fld) {
+			if ($this->$fld) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
 ?>

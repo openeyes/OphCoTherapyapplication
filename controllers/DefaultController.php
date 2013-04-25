@@ -84,8 +84,8 @@ class DefaultController extends BaseEventTypeController {
 	public function getDefaultElements($action, $event_type_id=false, $event=false) {
 		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
 		
-		// clear out the email element as we don't want to display or edit it
 		if (in_array($action, array('create', 'edit'))) {
+			// clear out the email element as we don't want to display or edit it
 			$elements = array();
 			foreach ($all_elements as $element) {
 				if (get_class($element) != 'Element_OphCoTherapyapplication_Email') {
@@ -204,7 +204,7 @@ class DefaultController extends BaseEventTypeController {
 		}
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk($node_id);
 		
-		return $node->getDefaultValue($side, $this->patient);
+		return $node->getDefaultValue($side, $this->patient, $this->episode);
 	}
 	
 	/**
@@ -245,44 +245,13 @@ class DefaultController extends BaseEventTypeController {
 		}
 	}
 	
-	/**
-	* strip elements out that the data does not  have an eye_id for
-	*
-	* @param array(Element) list of elements
-	* @param array() associative array of data for elements (typically $_POST)
-	*
-	*/
-	private function filterElementsByData($elements, $data) {
-		$required_elements = array();
-		foreach ($elements as $element) {
-			if ($element->hasAttribute('eye_id') && !$data[get_class($element)]['eye_id']) {
-				continue;
-			}
-			$required_elements[] = $element;
-		}
-	
-		return $required_elements;
-	}
-	
-	/**
-	* extending parent behaviour to drop the elements not needed if the eye_id is not defined
-	* (note this is relying on the web interface to have behaved correctly to set this value according
-	* to the behaviour rules)
-	*
-	*/
-	protected function validatePOSTElements($elements) {
-		return parent::validatePOSTElements($this->filterElementsByData($elements, $_POST));
-	}
-	
 	/*
 	 * ensures Many Many fields processed for elements
 	*/
 	public function createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId) {
-		$req_elements = $this->filterElementsByData($elements, $data);
-	
-		if ($id = parent::createElements($req_elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
+		if ($id = parent::createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
 			// create has been successful, store many to many values
-			$this->storePOSTManyToMany($req_elements);
+			$this->storePOSTManyToMany($elements);
 		}
 		return $id;
 	}
@@ -324,9 +293,7 @@ class DefaultController extends BaseEventTypeController {
 	 * ensures Many Many fields processed for elements
 	*/
 	public function updateElements($elements, $data, $event) {
-		$req_elements = $this->filterElementsByData($elements, $data);
-		
-		if ($response = parent::updateElements($req_elements, $data, $event)) {
+		if ($response = parent::updateElements($elements, $data, $event)) {
 			// update has been successful, now need to deal with many to many changes
 			$this->storePOSTManyToMany($elements);
 		}

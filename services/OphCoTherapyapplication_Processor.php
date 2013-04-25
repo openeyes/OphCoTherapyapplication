@@ -98,27 +98,38 @@ class OphCoTherapyapplication_Processor {
 		$controller = $this->getController();
 		
 		if ($data['suitability']->{$side . "_nice_compliance"}) {
-			$file = 'pdf_compliant.php';
+			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_compliant';
 		}
 		else {
-			$file = 'pdf_noncompliant.php';
+			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_noncompliant';
 		}
 		
-		$view = $this->getViewPath() . DIRECTORY_SEPARATOR . $file;
-		$body = $controller->renderInternal($view, $template_data, true);
+		if ($template_data['treatment']->template_code) {
+			$specific = $file . "_" . $template_data['treatment']->template_code . ".php";
+			if (file_exists($specific)) {
+				$file = $specific;
+			}
+			else {
+				$file .= ".php";
+			}
+		}
 		
-		$letter = new OELetter();
-		$letter->setBarcode("E:" . $data['event']->id);
-		$letter->addBody($body);
-		$letter->render($pdf);
-		
-		// TODO, need to fix this to save to a better location
-		// TODO: when we have the file management stuff, this should be creating a File object to
-		// store the PDF ...
-		$filename = Yii::app()->basePath."/fileassets/".$pdf->getDocref().".pdf";
-		$pdf->Output($filename, "F");
-		
-		return $filename;
+		if (file_exists($file)) {
+			$body = $controller->renderInternal($file, $template_data, true);
+			
+			$letter = new OELetter();
+			$letter->setBarcode("E:" . $data['event']->id);
+			$letter->addBody($body);
+			$letter->render($pdf);
+			
+			// TODO, need to fix this to save to a better location
+			// TODO: when we have the file management stuff, this should be creating a File object to
+			// store the PDF ...
+			$filename = Yii::app()->basePath."/fileassets/".$pdf->getDocref().".pdf";
+			$pdf->Output($filename, "F");
+			
+			return $filename;
+		}
 	}
 	
 	protected function generateEmailForSide($data, $side) {
@@ -157,6 +168,7 @@ class OphCoTherapyapplication_Processor {
 				'diagnosis' => $event_data['elements']['Element_OphCoTherapyapplication_Therapydiagnosis'],
 				'suitability' => $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability'],
 				'service_info' => $event_data['elements']['Element_OphCoTherapyapplication_MrServiceInformation'],
+				'contraindications' => @$event_data['elements']['Element_OphCoTherapyapplication_Relativecontraindications'],
 		);
 		if (isset($event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'])) {
 			$data['exceptional'] = $event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'];
@@ -168,12 +180,16 @@ class OphCoTherapyapplication_Processor {
 		$email_el->eye_id = $data['diagnosis']->eye_id;
 		
 		if ($data['diagnosis']->hasLeft()) {
-			$email_el->left_application = $this->generatePDFForSide($data, 'left');
+			if ($file = $this->generatePDFForSide($data, 'left')) {
+				$email_el->left_application = $file;
+			}
 			$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
 		}
 		
 		if ($data['diagnosis']->hasRight()) {
-			$email_el->right_application = $this->generatePDFForSide($data, 'right');
+			if ($file = $this->generatePDFForSide($data, 'right')) {
+				$email_el->right_application = $file;
+			}
 			$email_el->right_email_text = $this->generateEmailForSide($data,'right');
 		}
 		

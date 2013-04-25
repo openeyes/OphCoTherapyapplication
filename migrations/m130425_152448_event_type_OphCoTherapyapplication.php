@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
+class m130425_152448_event_type_OphCoTherapyapplication extends CDbMigration
 {
 	public function up() {
 		if (!Yii::app()->hasModule('OphTrIntravitrealinjection')) {
@@ -242,7 +242,7 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Patient Suitability'))->queryRow();
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Relative ContraIndications',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'Relative ContraIndications','class_name' => 'Element_OphCoTherapyapplication_RelativeContraindications', 'event_type_id' => $event_type['id'], 'display_order' =>20));
+			$this->insert('element_type', array('name' => 'Relative ContraIndications','class_name' => 'Element_OphCoTherapyapplication_RelativeContraindications', 'event_type_id' => $event_type['id'], 'required' => false, 'display_order' =>20));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Relative ContraIndications'))->queryRow();
@@ -255,7 +255,7 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Exceptional Circumstances',':eventTypeId'=>$event_type['id']))->queryRow()) {
-			$this->insert('element_type', array('name' => 'Exceptional Circumstances','class_name' => 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'event_type_id' => $event_type['id'], 'display_order' => 40));
+			$this->insert('element_type', array('name' => 'Exceptional Circumstances','class_name' => 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'event_type_id' => $event_type['id'], 'required' => false, 'display_order' => 40));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Exceptional Circumstances'))->queryRow();
@@ -321,6 +321,7 @@ class m130408_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'drug_id' => 'int(10) unsigned NOT NULL',
 				'decisiontree_id' => 'int(10) unsigned',
 				'contraindications_required' => 'boolean NOT NULL',
+				'template_code' => 'varchar(8)',
 				'intervention_name' => 'varchar(128) NOT NULL',
 				'dose_and_frequency' => 'varchar(256) NOT NULL',
 				'administration_route' => 'varchar(256) NOT NULL',

@@ -29,6 +29,9 @@
 
 <?php echo $form->radioBoolean($model, 'contraindications_required', array(1 => 'Yes', 0 => 'No'), array('separator' => '&nbsp;')); ?>
 
+<?php echo $form->textField($model, 'template_code') ?>
+<span class="info">The template code is used to determine what form is attached to application email. Leave blank for the default behaviour.</span>
+
 <hr />
 
 <?php echo $form->textfield($model, 'intervention_name') ?>

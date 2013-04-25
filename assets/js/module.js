@@ -57,7 +57,7 @@ ComplianceCalculator.prototype.init = function()
 };
 
 /*
- * internal method that to show the appropriate outcome and set the form value when an outcome is reached
+ * internal method to show the appropriate outcome and set the form value when an outcome is reached
  * stores the source_node_id against the outcome to keep track of what node is defining the outcome
  */
 ComplianceCalculator.prototype.showOutcome = function(outcome_id, source_node_id)
@@ -298,9 +298,13 @@ function OphCoTherapyapplication_ContraIndications_check() {
 	var rt = _getContraindicationsFromSide('right');
 	if (lt || rt) {
 		$('.Element_OphCoTherapyapplication_RelativeContraindications').show();
+		// enable form elements (in case they were disabled)
+		$('.Element_OphCoTherapyapplication_RelativeContraindications').find('input, select, textarea').each(function() { $(this).removeAttr('disabled')});
 	}
 	else {
 		$('.Element_OphCoTherapyapplication_RelativeContraindications').hide();
+		// disable form elements so they are not submitted and saved
+		$('.Element_OphCoTherapyapplication_RelativeContraindications').find('input, select, textarea').each(function() { $(this).attr('disabled', 'disabled')});
 	}
 }
 
@@ -338,16 +342,24 @@ function _isCompliant(side) {
 function OphCoTherapyapplication_ExceptionalCircumstances_check(side) {
 	var compliant = _isCompliant(side);
 	
-	var display_side = 'right';
+	var other_side = 'right';
 	if (side == 'right') {
-		display_side = 'left';
+		other_side = 'left';
 	}
 	
 	if (compliant != null && !compliant) {
 		showSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);
+		// enable form elements (in case this is the first side to be shown)
+		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('input, select, textarea').each(function() { $(this).removeAttr('disabled')});
 	}
 	else {
-		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);	}
+		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);	
+		// check if the other side is visible
+		// if it isn't disable the form elements
+		if ($('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('div.side.' + side).hasClass('inactive')) {
+			$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('input, select, textarea').each(function() { $(this).attr('disabled', 'disabled') });
+		}
+	}
 }
 
 

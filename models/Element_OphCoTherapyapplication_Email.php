@@ -154,7 +154,9 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		$message->setTo(array('mike.smith@camc-ltd.co.uk' => 'Mike Smith'));
 		
 		$message->setBody($this->{$side . '_email_text'});
-		$message->attach(Swift_Attachment::fromPath($this->{$side . '_application'}) );
+		if ($this->{$side . '_application'}) {
+			$message->attach(Swift_Attachment::fromPath($this->{$side . '_application'}) );
+		}
 		
 		if (Yii::app()->mailer->sendMessage($message)) {
 			return true;
