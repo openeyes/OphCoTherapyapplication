@@ -43,6 +43,24 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 		));
 		
 		$this->moduleShortSuffix = "TherapyA";
+		
+		// check for required configuration variables
+		$missing_config = array();
+		foreach (array('OphCoTherapyapplication_sender_email', 
+				'OphCoTherapyapplication_compliant_recipient_email',
+				'OphCoTherapyapplication_noncompliant_recipient_email',
+				'OphCoTherapyapplication_applicant_email',
+				'OphCoTherapyapplication_chief_pharmacist',
+				'OphCoTherapyapplication_chief_pharmacist_contact',
+				) as $required_config) {
+			
+			if (!isset(Yii::app()->params[$required_config])) {
+				$missing_config[] = $required_config;
+			}
+		}
+		if (count($missing_config)) {
+			throw new Exception('Missing required configuration variables for ' . $this->getName() . ': ' . implode(", ", $missing_config));
+		}
 	}
 
 	public function beforeControllerAction($controller, $action) {

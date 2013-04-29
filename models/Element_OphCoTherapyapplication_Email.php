@@ -42,7 +42,10 @@
 class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 {
 	public $service;
-
+	
+	// internal store to related Element_OphCoTherapyapplication_PatientSuitability object
+	protected $_suitability;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -146,12 +149,25 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		return parent::beforeValidate();
 	}
 	
+	/**
+	 * sends the application for email for the specified side. Returns boolean to indicate email 
+	 * success or failure
+	 * 
+	 * @param string $side
+	 * @return boolean
+	 */
 	protected function sendEmailForSide($side)
 	{
 		$message = Yii::app()->mailer->newMessage();
 		$message->setSubject('Therapy Application');
-		$message->setFrom(array('info@openeyes.org.uk' => 'OpenEyes'));
-		$message->setTo(array('mike.smith@camc-ltd.co.uk' => 'Mike Smith'));
+		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
+		
+		if ($this->isSideCompliant($side)) {
+			$message->setTo(Yii::app()->params['OphCoTherapyapplication_compliant_recipient_email']);
+		}
+		else {
+			$message->setTo(Yii::app()->params['OphCoTherapyapplication_noncompliant_recipient_email']);
+		}
 		
 		$message->setBody($this->{$side . '_email_text'});
 		if ($this->{$side . '_application'}) {
@@ -166,6 +182,33 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		}
 	}
 	
+	/**
+	 * Determines if the given side is a compliant application or not
+	 * 
+	 * NOTE: if we wind up with an event object, this should make use of that rather than performing its 
+	 * own query on a sibling element
+	 * 
+	 * @param string $side
+	 * @return boolean
+	 */
+	protected function isSideCompliant($side) {
+		if (!$this->_suitability) {
+			$criteria = new CDbCriteria;
+			$criteria->compare('event_id',$this->event_id);
+			$this->_suitability = Element_OphCoTherapyapplication_PatientSuitability::model()->find($criteria);
+		}
+		if ( ($side == 'left' && !$this->_suitability->hasLeft()) || 
+			($side == 'right' && !$this->_suitability->hasRight()) ) {
+			throw new Exception("cannot determine compatibility for invalid side");
+		}
+		return $this->_suitability->{$side . '_nice_compliance'};
+	}
+	
+	/**
+	 * Actually send the email(s) for the application. Returns success/failure flag
+	 * 
+	 * @return boolean
+	 */
 	public function sendEmail()
 	{
 		$success = true;

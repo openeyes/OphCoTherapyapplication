@@ -19,10 +19,17 @@
 
 class OphCoTherapyapplication_Processor {
 	private $events_by_id = array();
-	private $controller = false;
+	private $controller = null;
 	
-	private $_viewpath = false;
+	private $_viewpath = null;
 	
+	/**
+	 * wrapper for crude caching of event data by id - might need a flushing mechanism if this class gets wider
+	 * usage to manage the events in this module
+	 * 
+	 * @param unknown $event_id
+	 * @return multitype:
+	 */
 	private function getEvent($event_id) {
 		if (!isset($this->events_by_id[$event_id])) {
 			
@@ -52,6 +59,11 @@ class OphCoTherapyapplication_Processor {
 		return $this->events_by_id[$event_id];
 	}
 	
+	/**
+	 * get a controller class for use with rendering etc
+	 * 
+	 * @return CController $controller
+	 */
 	protected function getController() {
 		if (!$this->controller) {
 			if (isset(Yii::app()->controller)) {
@@ -64,6 +76,11 @@ class OphCoTherapyapplication_Processor {
 		return $this->controller;
 	}
 	
+	/**
+	 * get the view path for email templates
+	 * 
+	 * @return string
+	 */
 	protected function getViewPath() {
 		if (!$this->_viewpath) {
 			$module = Yii::app()->getModule('OphCoTherapyapplication');
@@ -72,6 +89,12 @@ class OphCoTherapyapplication_Processor {
 		return $this->_viewpath;
 	}
 	
+	/**
+	 * determine if the the event can be processed for application
+	 * 
+	 * @param unknown $event_id
+	 * @return boolean
+	 */
 	public function canProcessEvent($event_id) {
 		$elements = $this->getEvent($event_id);
 		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
@@ -140,7 +163,7 @@ class OphCoTherapyapplication_Processor {
 		$template_data['side'] = $side;
 		$template_data['treatment'] = $template_data['suitability']->{$side . '_treatment'};
 		
-		if ($data['suitability']->{$side . '_nice_compliance'}) {
+		if ($this->eventSideIsCompliant($data['event']->id, $side)) {
 			$file = 'email_compliant.php';
 		}
 		else {
@@ -154,6 +177,26 @@ class OphCoTherapyapplication_Processor {
 		
 	}
 	
+	/**
+	 * determine if the side of the event is compliant
+	 * 
+	 * @param unknown $event_id
+	 * @param unknown $side
+	 */
+	public function eventSideIsCompliant($event_id, $side) {
+		$event_data = $this->getEvent($event_id);
+		// TODO: check that the side is relevant for the application
+		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->{$side . '_nice_compliance'};
+	}
+	
+	/**
+	 * processes the application for the event with id $event_id returns a boolean to indicate whether this was successful
+	 * or not.
+	 * 
+	 * @param integer $event_id
+	 * @throws Exception
+	 * @return boolean
+	 */
 	public function processEvent($event_id) {
 		$event_data = $this->getEvent($event_id);
 		if (isset($elements['Element_OphCoTherapyapplication_Email'])) {
