@@ -20,5 +20,5 @@
 <div class="OphCoTherapyapplication_DecisionTreeNodeRule curvybox blueborder" style="width: 200px;">
 	<?php echo $model->displayParentCheck() . ' ' . $model->displayParentCheckValue() ?>
 	<br />
-	[<a href="#" class="edit_rule" data-rule_id="<?php echo $model->id ?>">Edit</a> | <a href="#">Delete</a>]
+	[<a href="#" class="edit_rule" data-rule_id="<?php echo $model->id ?>">Edit</a> | Delete]
 </div>

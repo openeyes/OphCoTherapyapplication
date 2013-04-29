@@ -18,7 +18,7 @@
  */
 ?>
 <?php 
-if (!$val) {
+if (!isset($val) ) {
 	$val = null;
 }
 ?>

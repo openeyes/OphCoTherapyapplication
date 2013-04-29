@@ -22,33 +22,35 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<div class="row question">
-		<?php echo $form->labelEx($model,'question'); ?>
-		<?php echo $form->textField($model,'question',array('size'=>60,'maxlength'=>256)); ?>
+	<div class="row question eventDetail">
+		<div class="label"><?php echo $form->labelEx($model,'question'); ?></div>
+		<div class="data"><?php echo $form->textField($model,'question',array('size'=>40,'maxlength'=>256, 'nowrapper' => true)); ?></div>
 		<?php echo $form->error($model,'question'); ?>
 	</div>
 
-	<div class="row outcome">
-		<?php echo $form->labelEx($model,'outcome_id'); ?>
-		<?php echo $form->dropdownlist($model,'outcome_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll(),'id','name'),array('empty'=>'- Please select -')); ?>
+	<div class="row outcome eventDetail">
+		<div class="label"><?php echo $form->labelEx($model,'outcome_id'); ?></div>
+		<div class="data"><?php echo $form->dropdownlist($model,'outcome_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll(),'id','name'),array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
 		<?php echo $form->error($model,'outcome_id'); ?>
 	</div>
 
-	<div class="row default_function">
-		<?php echo $form->labelEx($model,'default_function'); ?>
-		
+	<div class="row default_function  eventDetail">
+		<div class="label"><?php echo $form->labelEx($model,'default_function'); ?></div>
+		<div class="data">
 		<?php 
 		$func_list = array();
 		foreach ($model->getDefaultFunctions() as $func) {
 			$func_list[$func] = $func;
 		}
 			
-		echo $form->dropdownlist($model, 'default_function', $func_list, array('empty' => '- Please select -')); ?>
+		echo $form->dropdownlist($model, 'default_function', $func_list, array('empty' => '- Please select -', 'nowrapper' => true)); ?>
+		</div>
 		<?php echo $form->error($model,'default_function'); ?>
 	</div>
 
-	<div class="row default_value">
-		<?php echo $form->labelEx($model,'default_value'); ?>
+	<div class="row default_value eventDetail">
+		<div class="label"><?php echo $form->labelEx($model,'default_value'); ?></div>
+		<div class="data">
 		<?php 
 			if ($model->response_type && $model->response_type->datatype == 'bool') {
 				$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
@@ -65,22 +67,26 @@
 				));
 			}
 		?>
+		</div>
 		<?php echo $form->error($model,'default_value'); ?>
 	</div>
 
-	<div class="row response_type">
-		<?php echo $form->labelEx($model,'response_type'); ?>
+	<div class="row response_type eventDetail">
+		<div class="label"><?php echo $form->labelEx($model,'response_type'); ?></div>
 		
+		<div class="data">
 		<?php 
 		$html_options = array(
 				'options' => array(),
-				'empty'=>'- Please select -'
+				'empty'=>'- Please select -',
+				'nowrapper' => true
 		);
 		foreach (OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll() as $rt) {
 			$html_options['options'][(string)$rt->id] = array('data-datatype' => $rt->datatype);
 		}
 		
 		echo $form->dropdownlist($model,'response_type_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll(),'id','label'),$html_options); ?>
+		</div>
 		<?php echo $form->error($model,'response_type'); ?>
 	</div>
 </div>

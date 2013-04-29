@@ -87,8 +87,9 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 </tr>
 
 <tr>
-<td colspan="6">[This may be dependent on the decision tree responses]</td>
+<td colspan="6">here we should throw an exception if there is not an appropriate Examination response for an Ozurdex application</td>
 </tr>
+
 <tr>
 <td colspan="6" class="signature">Signature by Trust Chief Pharmacist:<br /><br /><br /></td>
 </tr>

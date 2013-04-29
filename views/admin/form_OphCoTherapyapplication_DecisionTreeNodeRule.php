@@ -22,14 +22,16 @@
 
 <?php echo $form->errorSummary($model); ?>
 
-<div class="row outcome parent_check">
-	<?php echo $form->labelEx($model,'parent_check'); ?>
-	<?php echo $form->dropdownlist($model,'parent_check',$model->COMPARATORS,array('empty'=>'- Please select -')); ?>
+<div class="row outcome parent_check eventDetail">
+	<div class="label"><?php echo $form->labelEx($model,'parent_check'); ?></div>
+	<div class="data"><?php echo $form->dropdownlist($model,'parent_check',$model->COMPARATORS,array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
 	<?php echo $form->error($model,'parent_check'); ?>
 </div>
 
-<div class="row parent_check_value">
-	<?php echo $form->labelEx($model,'parent_check_value');
+<div class="row parent_check_value eventDetail">
+	<div class="label"><?php echo $form->labelEx($model,'parent_check_value');?></div>
+	<div class="data">
+	<?php 
 	$rtype = $model->node->parent->response_type;
 	 
 	if ($rtype && $rtype->datatype == 'bool') {
@@ -52,6 +54,7 @@
 				));
 	}	
 	?>
+	</div>
 	<?php echo $form->error($model,'parent_check_value'); ?>
 </div>
 
