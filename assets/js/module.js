@@ -235,7 +235,6 @@ ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
  */
 ComplianceCalculator.prototype.update = function update(node_id) 
 {
-
 	if (!node_id) {
 		node_id = this._root_node_id;
 	}

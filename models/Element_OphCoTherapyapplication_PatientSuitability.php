@@ -94,7 +94,6 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
 			'left_treatment'  => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'left_treatment_id'),
 			'right_treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'right_treatment_id'),
-			// TODO - use appropriate statics for these values
 			'left_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'left_responses.eye_id = ' . SplitEventTypeElement::LEFT),
 			'right_responses' => array(self::HAS_MANY, 'OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse', 'patientsuit_id', 'on' => 'right_responses.eye_id = ' . SplitEventTypeElement::RIGHT),
 		);

@@ -168,15 +168,12 @@ class DefaultController extends BaseEventTypeController {
 
 		$element->{$side . '_treatment'} = $treatment;
 		
-		
 		$form = Yii::app()->getWidgetFactory()->createWidget($this,'BaseEventTypeCActiveForm',array(
 				'id' => 'clinical-create',
 				'enableAjaxValidation' => false,
 				'htmlOptions' => array('class' => 'sliding'),
 		));
 		
-		// NEED TO WORK OUT what we should initialise here (and in the form for patient suitability)
-		// so that we can set the right values for this form.
 		$this->renderPartial(
 				'form_OphCoTherapyapplication_DecisionTree',
 				array('element' => $element, 'form' => $form, 'side' => $side),

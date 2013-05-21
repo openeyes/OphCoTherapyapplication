@@ -89,6 +89,22 @@ class OphCoTherapyapplication_Processor {
 		return $this->_viewpath;
 	}
 	
+	public function addProcessWarning($event_id, $warning) {
+		if (!isset($this->events_by_id[$event_id]['warnings']) ) {
+			$this->events_by_id[$event_id]['warnings'] = array();
+		}
+		$this->events_by_id[$event_id]['warnings'][] = $warning;
+	}
+	
+	public function getProcessWarnings($event_id) {
+		if (isset($this->events_by_id[$event_id]['warnings'])) {
+			return $this->events_by_id[$event_id]['warnings'];
+		}
+		else {
+			return array();
+		}
+	}
+	
 	/**
 	 * determine if the the event can be processed for application
 	 * 
@@ -96,13 +112,51 @@ class OphCoTherapyapplication_Processor {
 	 * @return boolean
 	 */
 	public function canProcessEvent($event_id) {
-		$elements = $this->getEvent($event_id);
+		$event_data = $this->getEvent($event_id);
+		$elements = $event_data['elements'];
+		$event = $event_data['event'];
 		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
-			return true;
+			// need to determine if the appropriate information has been captured for the relevant eyes in examination
+			if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
+				$mgmt_els = $api->getInjectionManagementComplexInEpisode($event->episode->patient, $event->episode);
+				$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
+				$sides = array();
+				$found_sides = array();
+				if ($el_diag->hasLeft()) {
+					$sides[] = 'left';
+				}
+				if ($el_diag->hasRight()) {
+					$sides[] = 'right';
+				}
+				
+				foreach ($mgmt_els as $el) {
+					foreach ($sides as $side) {
+						if (!in_array($side, $found_sides)) {
+							if ($mgmt_diag = $el->{$side . '_diagnosis_id'} ) {
+								if ($mgmt_diag == $el_diag->{$side . '_diagnosis_id'}) {
+									$found_sides[] = $side;
+								}
+							}
+						}
+					}
+				}
+				
+				if (count($sides) == count($found_sides)) {
+					return true;
+				}
+				else {
+					foreach ($sides as $side) {
+						if (!in_array($side, $found_sides) ) {
+							$this->addProcessWarning($event_id, 'No Injection Management has been created for ' . $side . ' diagnosis ' . $el_diag->{$side . '_diagnosis'}->term);
+						}
+					}
+				}
+				
+			}
 		}
-		else {
-			return false;
-		}
+		
+		return false;
+		
 	}
 	
 	protected function generatePDFForSide($data, $side) {
