@@ -110,7 +110,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return array(
 			'id' => 'ID',
 			'drug_id' => 'Drug',
-			'decisiontree_id' => 'Decision Tree',
+			'decisiontree_id' => 'Default Decision Tree',
 			'available' => 'Available',
 			'contraindications_required' => 'Needs Contraindications Element'
 		);
