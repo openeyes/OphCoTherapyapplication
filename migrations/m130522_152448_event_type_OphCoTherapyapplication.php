@@ -361,28 +361,6 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->insert('ophcotherapya_treatment',array('name'=>'Intravitreal triamcinolone','display_order'=>7, 'contraindications_required' => false));
 		*/
 		
-		$this->createTable('ophcotherapya_treatmentdisorder_decisiontree', array(
-			'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
-			'treatment_id' => 'int(10) unsigned NOT NULL',
-			'disorder_id' => 'int(10) unsigned NOT NULL',
-			'decisiontree_id' => 'int(10) unsigned NOT NULL',
-			'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
-			'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
-			'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
-			'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
-			'PRIMARY KEY (`id`)',
-			'KEY `ophcotherapya_treatmentdisorder_dt_lmui_fk` (`last_modified_user_id`)',
-			'KEY `ophcotherapya_treatmentdisorder_dt_cui_fk` (`created_user_id`)',
-			'KEY `ophcotherapya_treatmentdisorder_dt_ti_fk` (`treatment_id`)',
-			'KEY `ophcotherapya_treatmentdisorder_dt_dis_fk` (`disorder_id`)',
-			'KEY `ophcotherapya_treatmentdisorder_dt_dec_fk` (`decisiontree_id`)',
-			'CONSTRAINT `ophcotherapya_treatmentdisorder_dt_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
-			'CONSTRAINT `ophcotherapya_treatmentdisorder_dt_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
-			'CONSTRAINT `ophcotherapya_treatmentdisorder_dt_ti_fk` FOREIGN KEY (`treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`)',
-			'CONSTRAINT `ophcotherapya_treatmentdisorder_dt_dis_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`)',
-			'CONSTRAINT `ophcotherapya_treatmentdisorder_dt_dec_fk` FOREIGN KEY (`decisiontree_id`) REFERENCES `ophcotherapya_decisiontree` (`id`)',
-		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_patientsuit', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',

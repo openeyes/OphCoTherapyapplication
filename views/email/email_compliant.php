@@ -16,6 +16,9 @@
 * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
+
+$exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+
 ?>
 
 This email was generated from the OpenEyes IVT Application event
@@ -23,20 +26,31 @@ Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getRepor
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
 
+Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term  . "\n" ?>
+<?php 
+if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder($patient, $event->episode, $side, $diagnosis->{$side . '_diagnosis_id'})) {
+	foreach ($exam_info->{$side . '_answers'} as $answer) {
+		echo $answer->question->question . ": ";
+		echo ($answer->answer) ? "Yes\n" : "No\n";
+	}
+	echo "Comments: " . $exam_info->{$side . '_comments'} . "\n";
+}
+?>
+
 Patient Details:
 Full Name: <?php echo $patient->getFullName() . "\n" ?>
 Number:<?php echo $patient->hos_num . "\n" ?>
 NHS Number: <?php echo $patient->nhs_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
 Gender: <?php echo $patient->gender . "\n" ?>
-Address: <?php echo ($address = $patient->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
+Address: <?php echo ($address = $patient->contact->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
 PCT Code: TBD
 PCT Description: TBD
 PCT Address: TBD
 
 GP Details:
 Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : 'Unknown\n'; ?>
-Address: <?php echo ($patient->practice && $patient->practice->address) ? $patient->practice->address->letterLine : 'Unknown'; ?>
+Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?>
 PCT Code: TBD
 PCT Description: TBD
 PCT Address: TBD

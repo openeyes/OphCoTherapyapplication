@@ -118,40 +118,36 @@ class OphCoTherapyapplication_Processor {
 		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
 			// need to determine if the appropriate information has been captured for the relevant eyes in examination
 			if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
-				$mgmt_els = $api->getInjectionManagementComplexInEpisode($event->episode->patient, $event->episode);
 				$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
 				$sides = array();
-				$found_sides = array();
+				$missing_sides = array();
+				
 				if ($el_diag->hasLeft()) {
-					$sides[] = 'left';
+					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->left_diagnosis_id))) {
+						$sides[] = 'left';
+					}
 				}
 				if ($el_diag->hasRight()) {
-					$sides[] = 'right';
-				}
-				
-				foreach ($mgmt_els as $el) {
-					foreach ($sides as $side) {
-						if (!in_array($side, $found_sides)) {
-							if ($mgmt_diag = $el->{$side . '_diagnosis_id'} ) {
-								if ($mgmt_diag == $el_diag->{$side . '_diagnosis_id'}) {
-									$found_sides[] = $side;
-								}
-							}
-						}
+					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->right_diagnosis_id))) {
+						$sides[] = 'right';
 					}
 				}
 				
-				if (count($sides) == count($found_sides)) {
+				foreach ($sides as $side) {
+					if (!$api->getInjectionManagementComplexInEpisodeForDisorder($event->episode->patient, $event->episode, $side, $el_diag->{$side . '_diagnosis_id'})) {
+						$missing_sides[] = $side;
+					}
+				}
+				
+				if (!count($missing_sides)) {
 					return true;
 				}
-				else {
-					foreach ($sides as $side) {
-						if (!in_array($side, $found_sides) ) {
-							$this->addProcessWarning($event_id, 'No Injection Management has been created for ' . $side . ' diagnosis ' . $el_diag->{$side . '_diagnosis'}->term);
-						}
-					}
-				}
 				
+				// log warnings - false falls out at the end
+				foreach ($missing_sides as $missing) {
+					$this->addProcessWarning($event_id, 'No Injection Management has been created for ' . $missing . ' diagnosis ' . $el_diag->{$missing . '_diagnosis'}->term);
+				}
+			
 			}
 		}
 		

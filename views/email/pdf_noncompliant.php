@@ -123,7 +123,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 							<td>
 								<?php echo $patient->getFullName() ?><br />
 								<?php 
-								if ($address = $patient->address) {
+								if ($address = $patient->contact->address) {
 									echo $address->getLetterHtml();
 								}
 								else {
@@ -158,7 +158,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 						</tr>
 						<tr>
 							<th>Registered GP Address</th>
-							<td><?php echo ($patient->practice && $patient->practice->address) ? $patient->practice->address->letterLine : 'Unknown'; ?></td>
+							<td><?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?></td>
 						</tr>
 						<tr>
 							<th>PCT</th>
