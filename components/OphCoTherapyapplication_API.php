@@ -59,4 +59,19 @@ class OphCoTherapyapplication_API extends BaseAPI {
 			
 		}
 	}
+	
+	/**
+	 * returns the side of the most recent application (see SplitEventTypeElement for definition of constants that indicate side or both)
+	 * 
+	 * @param unknown $patient
+	 * @param unknown $episode
+	 * 
+	 * @return int $side
+	 */
+	public function getLatestApplicationSide($patient, $episode) {
+		if ($el = $this->getMostRecentElementInEpisode($episode->id, $this->getEventType()->id, 'Element_OphCoTherapyapplication_Therapydiagnosis')) {
+			return $el->eye_id;
+		}
+	}
+	
 }
