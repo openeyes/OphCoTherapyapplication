@@ -116,17 +116,22 @@ class DefaultController extends BaseEventTypeController {
 						}
 						
 						// foreach eye
+						$exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 						foreach (array(SplitEventTypeElement::LEFT, SplitEventTypeElement::RIGHT) as $eye_id) {
 							$prefix = $eye_id == SplitEventTypeElement::LEFT ? 'left' : 'right';
+							// get specific disorder from injection management				
+							if ($exam_api && $exam_imc = $exam_api->getInjectionManagementComplexInEpisodeForSide($this->patient, $episode, $prefix)) {
+								$element->{$prefix . '_diagnosis_id'} = $exam_imc->{$prefix . '_diagnosis_id'};
+							}
 							// check if the episode diagnosis applies
-							if ( ($episode->eye_id == $eye_id || $episode->eye_id == SplitEventTypeElement::BOTH) 
+							elseif ( ($episode->eye_id == $eye_id || $episode->eye_id == SplitEventTypeElement::BOTH) 
 								&& in_array($episode->disorder_id, $vd_ids) ) {
 								$element->{$prefix . '_diagnosis_id'} = $episode->disorder_id;
 							}
 							// otherwise get ordered list of diagnoses for the eye in this episode, and check
 							else {
-								if ($api = Yii::app()->moduleAPI->get('OphCiExamination'))  {
-									$disorders = $api->getOrderedDisorders($this->patient, $episode);
+								if ($exam_api)  {
+									$disorders = $exam_api->getOrderedDisorders($this->patient, $episode);
 									foreach ($disorders as $disorder) {
 										if ( ($disorder['eye_id'] == $eye_id || $disorder['eye_id'] == 3) && in_array($disorder['disorder_id'], $vd_ids)) {
 											$element->{$prefix . '_diagnosis_id'} = $disorder['disorder_id'];
