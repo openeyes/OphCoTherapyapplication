@@ -144,6 +144,9 @@ class DefaultController extends BaseEventTypeController {
 					}
 					
 				} // end Therapydiagnosis setup
+				elseif (get_class($element) == 'Element_OphCoTherapyapplication_MrServiceInformation') {
+					$element->consultant_id = Yii::app()->session['selected_firm_id'];
+				}
 			}
 		}
 		return $elements;
