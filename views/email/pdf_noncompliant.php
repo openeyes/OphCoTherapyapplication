@@ -98,7 +98,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 						<tr>
 							<th>Telephone No.</th>
 							<td>
-								<?php if ($contact = $diagnosis->user->getContact()) {
+								<?php if ($contact = $diagnosis->user->contact) {
 									echo $contact->primary_phone;
 								} else {
 									echo "Unavailable";
@@ -124,7 +124,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 								<?php echo $patient->getFullName() ?><br />
 								<?php 
 								if ($address = $patient->contact->address) {
-									echo $address->getLetterHtml();
+									echo $address->getLetterLine();
 								}
 								else {
 									echo "Unknown";

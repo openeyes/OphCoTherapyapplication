@@ -186,6 +186,9 @@ class OphCoTherapyapplication_Processor {
 				$file .= ".php";
 			}
 		}
+		else {
+			$file .= ".php";
+		}
 		
 		if (file_exists($file)) {
 			$body = $controller->renderInternal($file, $template_data, true);
@@ -287,8 +290,11 @@ class OphCoTherapyapplication_Processor {
 		}
 		
 		// send email
-		$email_el->save();
-		$email_el->sendEmail();
+		if ($email_el->save()) {
+			$email_el->sendEmail();
+		} else {
+			error_log(print_r($email_el->getErrors(), true));
+		}
 		
 		// do audit
 		

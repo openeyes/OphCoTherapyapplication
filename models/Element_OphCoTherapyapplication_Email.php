@@ -73,8 +73,8 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		return array(
 				array('event_id, eye_id,', 'safe'),
 				array('event_id, eye_id', 'required'),
-				array('left_email_text, left_application','requiredIfSide', 'side' => 'left'),
-				array('right_email_text, right_application','requiredIfSide', 'side' => 'right'),
+				array('left_email_text','requiredIfSide', 'side' => 'left'),
+				array('right_email_text','requiredIfSide', 'side' => 'right'),
 				// The following rule is used by search().
 				// Please remove those attributes that should not be searched.
 				array('id, event_id, eye_id, left_email_text, left_application, right_email_text, right_application', 'safe', 'on' => 'search'),
