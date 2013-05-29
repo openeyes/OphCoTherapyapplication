@@ -198,13 +198,13 @@ class OphCoTherapyapplication_Processor {
 			$letter->addBody($body);
 			$letter->render($pdf);
 			
-			// TODO, need to fix this to save to a better location
-			// TODO: when we have the file management stuff, this should be creating a File object to
-			// store the PDF ...
-			$filename = Yii::app()->basePath."/fileassets/".$pdf->getDocref().".pdf";
-			$pdf->Output($filename, "F");
+			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $data['patient']->hos_num . '.pdf');
+			$pdf->Output($pfile->getPath(), "F");
+			if (!$pfile->save()) {
+				throw new Exception('unable to save protected file');
+			}
 			
-			return $filename;
+			return $pfile;
 		}
 	}
 	
@@ -277,14 +277,14 @@ class OphCoTherapyapplication_Processor {
 		
 		if ($data['diagnosis']->hasLeft()) {
 			if ($file = $this->generatePDFForSide($data, 'left')) {
-				$email_el->left_application = $file;
+				$email_el->left_application_id = $file->id;
 			}
 			$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
 		}
 		
 		if ($data['diagnosis']->hasRight()) {
 			if ($file = $this->generatePDFForSide($data, 'right')) {
-				$email_el->right_application = $file;
+				$email_el->right_application_id = $file->id;
 			}
 			$email_el->right_email_text = $this->generateEmailForSide($data,'right');
 		}
@@ -294,9 +294,10 @@ class OphCoTherapyapplication_Processor {
 			$email_el->sendEmail();
 		} else {
 			error_log(print_r($email_el->getErrors(), true));
+			return false;
 		}
 		
-		// do audit
+		// TODO: do audit
 		
 		return true;
 	}

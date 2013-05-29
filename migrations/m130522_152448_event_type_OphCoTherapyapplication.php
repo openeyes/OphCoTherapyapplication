@@ -563,9 +563,9 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'event_id' => 'int(10) unsigned NOT NULL',
 				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
 				'left_email_text' => 'text',
-				'left_application' => 'varchar(256)', //TODO: integrate with File Asset object (TBD)
+				'left_application_id' => 'int(10) unsigned',
 				'right_email_text' => 'text',
-				'right_application' => 'varchar(256)', //TODO: integrate with File Asset object (TBD)
+				'right_application_id' => 'int(10) unsigned',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -574,9 +574,13 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `et_ophcotherapya_email_lmui_fk` (`last_modified_user_id`)',
 				'KEY `et_ophcotherapya_email_cui_fk` (`created_user_id`)',
 				'KEY `et_ophcotherapya_email_ev_fk` (`event_id`)',
+				'KEY `et_ophcotherapya_email_lai_fk` (`left_application_id`)',
+				'KEY `et_ophcotherapya_email_rai_fk` (`right_application_id`)',
 				'CONSTRAINT `et_ophcotherapya_email_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_lai_fk` FOREIGN KEY (`left_application_id`) REFERENCES `protected_file` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_rai_fk` FOREIGN KEY (`right_application_id`) REFERENCES `protected_file` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 		
 	}
@@ -606,8 +610,6 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		$this->dropTable('et_ophcotherapya_exceptional_intervention');
 		
-		$this->dropTable('ophcotherapya_treatmentdisorder_decisiontree');
-
 		$this->dropTable('ophcotherapya_treatment');
 		
 		$this->dropTable('ophcotherapya_treatment_cost_type');

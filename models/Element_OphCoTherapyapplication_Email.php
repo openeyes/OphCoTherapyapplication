@@ -68,8 +68,6 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
 				array('event_id, eye_id,', 'safe'),
 				array('event_id, eye_id', 'required'),
@@ -77,7 +75,7 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 				array('right_email_text','requiredIfSide', 'side' => 'right'),
 				// The following rule is used by search().
 				// Please remove those attributes that should not be searched.
-				array('id, event_id, eye_id, left_email_text, left_application, right_email_text, right_application', 'safe', 'on' => 'search'),
+				array('id, event_id, eye_id, left_email_text, left_application_id, right_email_text, right_application_id', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -86,8 +84,6 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
 				'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
 				'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
@@ -95,6 +91,8 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 				'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 				'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 				'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
+				'left_application' => array(self::BELONGS_TO, 'ProtectedFile', 'left_application_id'),
+				'right_application' => array(self::BELONGS_TO, 'ProtectedFile', 'right_application_id'),
 		);
 	}
 
@@ -170,8 +168,8 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		}
 		
 		$message->setBody($this->{$side . '_email_text'});
-		if ($this->{$side . '_application'}) {
-			$message->attach(Swift_Attachment::fromPath($this->{$side . '_application'}) );
+		if ($app = $this->{$side . '_application'}) {
+			$message->attach(Swift_Attachment::fromPath($app->getPath())->setFilename($app->name) );
 		}
 		
 		if (Yii::app()->mailer->sendMessage($message)) {
