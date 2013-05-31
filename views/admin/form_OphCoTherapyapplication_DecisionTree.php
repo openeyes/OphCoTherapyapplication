@@ -18,30 +18,4 @@
  */
 ?>
 
-<?php 
-$this->renderPartial('_menu_main');
-?>
-
-<div class="form">
-<?php $form=$this->beginWidget('CActiveForm', array(
-		'id'=>'user-form',
-		'enableAjaxValidation'=>false,
-)); ?>
-
-<h3><?php echo $model->isNewRecord ? 'Create' : 'Edit'; ?> Decision Tree</h3>
-
-<?php echo $form->errorSummary($model); ?>
-
-<div class="row">
-	<?php echo $form->labelEx($model,'name'); ?>
-	<?php echo $form->textField($model,'name',array('size'=>40,'maxlength'=>40)); ?>
-	<?php echo $form->error($model,'name'); ?>
-</div>
-
-<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
-
-<?php $this->endWidget(); ?>
-
-</div><!-- form -->
+<?php echo $form->textField($model,'name',array('size'=>40,'maxlength'=>40)); ?>

@@ -154,7 +154,7 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 	}
 	
 	/**
-	 * the list of attributes on this email that are fields for contraindication
+	 * the list of attributes on this elements that are fields for contraindication
 	 *
 	 * @return multitype:string
 	 */

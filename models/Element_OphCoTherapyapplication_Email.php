@@ -25,10 +25,7 @@
 * @property integer $event_id
 * @property integer $eye_id
 * @property string $left_email_text
-* @property string $left_application
 * @property string $right_email_text
-* @property string $right_application
-*
 * The followings are the available model relations:
 *
 * @property ElementType $element_type
@@ -36,7 +33,10 @@
 * @property Event $event
 * @property User $user
 * @property User $usermodified
-* @property Firm $consultant
+* @property OphCoTherapyapplication_Email_Attachment[] $attachments
+* @property ProtectedFile[] $left_attachments
+* @property ProtectedFile[] $right_attachments
+* 
 */
 
 class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
@@ -91,8 +91,9 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 				'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 				'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 				'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-				'left_application' => array(self::BELONGS_TO, 'ProtectedFile', 'left_application_id'),
-				'right_application' => array(self::BELONGS_TO, 'ProtectedFile', 'right_application_id'),
+				'attachments' => array(self::HAS_MANY, 'OphCoTherapyapplication_Email_Attachment', 'email_id'),
+				'left_attachments' => array(self::HAS_MANY, 'ProtectedFile', 'file_id', 'through' => 'attachments', 'on' => 'attachments.eye_id = ' . SplitEventTypeElement::LEFT),
+				'right_attachments' => array(self::HAS_MANY, 'ProtectedFile', 'file_id', 'through' => 'attachments', 'on' => 'attachments.eye_id = ' . SplitEventTypeElement::RIGHT),
 		);
 	}
 
@@ -168,8 +169,10 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		}
 		
 		$message->setBody($this->{$side . '_email_text'});
-		if ($app = $this->{$side . '_application'}) {
-			$message->attach(Swift_Attachment::fromPath($app->getPath())->setFilename($app->name) );
+		if ($attach = $this->{$side . '_attachments'}) {
+			foreach ($attach as $att) {
+				$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name) );
+			}
 		}
 		
 		if (Yii::app()->mailer->sendMessage($message)) {

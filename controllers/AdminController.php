@@ -121,8 +121,9 @@ class AdminController extends ModuleAdminController
 			}
 		}
 	
-		$this->render('form_OphCoTherapyapplication_DecisionTree',array(
+		$this->render('create',array(
 				'model'=>$model,
+				'title'=>'Decision Tree'
 		));
 	
 	}
@@ -227,4 +228,84 @@ class AdminController extends ModuleAdminController
 		));
 	}
 	
+	// File Collections
+	public function actionViewFileCollections() {
+		$dataProvider=new CActiveDataProvider('OphCoTherapyapplication_FileCollection');
+		$this->render('list',array(
+				'dataProvider'=>$dataProvider,
+				'title'=>'File Collections',
+		));
+	}
+	
+	public function actionViewOphCoTherapyapplication_FileCollection($id) {
+		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int)$id);
+		
+		$this->render('view_' . get_class($model), array(
+				'model' => $model)
+		);
+	}
+	
+	public function actionCreateOphCoTherapyapplication_FileCollection() {
+		$model = new OphCoTherapyapplication_FileCollection();
+		
+		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
+			$model->attributes = $_POST['OphCoTherapyapplication_FileCollection'];
+
+			// validate the model
+			$model->validate();
+			
+			$file_errs = array();
+			$files = array();
+			error_log(print_r(array_keys($_FILES), true));
+			foreach ($_FILES['OphCoTherapyapplication_FileCollection_files']['tmp_name'] as $i => $f) {
+				if (!empty($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i])) {
+					$file_errs[] = "file $i had an error";
+					error_log(print_r($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i], true));
+				}
+				elseif (!empty($f) && is_uploaded_file($f)) {
+					$name = $_FILES['OphCoTherapyapplication_FileCollection_files']['name'][$i];
+					// check the file mimetype
+					if (OphCoTherapyapplication_FileCollection::checkMimeType($f)) {
+						$files[] = array('tmpfile' => $f, 'name' => $name);
+					}
+					else {
+						$model->addError("files", "File $name is not a valid filetype");
+					}
+				}
+			}
+
+			// do the actual create
+			if (!count($model->getErrors()) ) {
+				$pfs = array();
+				foreach ($files as $fdet) {
+					$pf = ProtectedFile::createFromFile($fdet['tmpfile']);
+					$pf->name = $fdet['name'];
+					if ($pf->save()) {
+						$pfs[] = $pf->id;
+					}
+					else {
+						throw new Exception('Could not save file object');
+						Yii::log("couldn't save file object" . print_r($pf->getErrors(), true), 'error');
+					}
+				}
+				
+				if ($model->save()) {
+					
+					$model->updateFiles($pfs);
+					
+					Audit::add('OphCoTherapyapplication_FileCollection','create', serialize($model->attributes));
+					Yii::app()->user->setFlash('success', 'File Collection created');
+					
+					$this->redirect(array('viewfilecollections'));
+				} else {
+					//TODO: delete the files again
+				}
+			}
+		}
+		
+		$this->render('create', array(
+				'model' => $model,
+				'title' => 'File Collection',
+		));
+	}
 }

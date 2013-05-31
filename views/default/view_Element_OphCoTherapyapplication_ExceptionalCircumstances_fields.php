@@ -74,3 +74,12 @@
 		<div class="data"><?php echo $element->{$side . '_patient_factor_details'} ?></div>
 	</div>
 <?php } ?>
+<?php if ($element->{$side . '_filecollections'}) { ?>
+<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>
+		<div class="data"><ul><?php foreach ($element->{$side . '_filecollections'} as $filecoll) { ?>
+		<li><?php echo $filecoll->name ?></li>
+		<?php } ?>
+		</ul></div>
+	</div>
+<?php } ?>

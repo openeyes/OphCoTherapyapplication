@@ -81,6 +81,16 @@ class DefaultController extends BaseEventTypeController {
 		}
 	}
 	
+	public function actionDownloadFileCollection($id) {
+		if ($collection = OphCoTherapyapplication_FileCollection::model()->findByPk((int)$id)) {
+			$pf = $collection->getZipFile();
+			if ($pf) {
+				$this->redirect(Yii::app()->createUrl('ProtectedFile/download', array('id'=>$pf->id) ));
+			}
+		}
+		throw new CHttpException('400', 'File Collection does not exist');
+	}
+	
 	public function getDefaultElements($action, $event_type_id=false, $event=false) {
 		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
 		
@@ -289,6 +299,14 @@ class DefaultController extends BaseEventTypeController {
 				$el->updatePreviousInterventions(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
 						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_previnterventions']) ?
 						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_previnterventions']) :
+						array());
+				$el->updateFileCollections(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_filecollections']) ?
+						$_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_filecollections'] :
+						array());
+				$el->updateFileCollections(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_filecollections']) ?
+						$_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_filecollections'] :
 						array());
 			}
 		}

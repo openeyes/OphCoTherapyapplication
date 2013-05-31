@@ -18,6 +18,7 @@
  */
 ?>
 
+<h3>Create <?php echo $title ?></h3>
 <div class="report curvybox white">
 
 	<div class="admin">
@@ -25,9 +26,15 @@
 	$form=$this->beginWidget('BaseEventTypeCActiveForm', array(
 		'id'=>'OphCoTherapyapplication_adminform',
 		'enableAjaxValidation'=>false,
+		'htmlOptions' => array(
+				'enctype' => 'multipart/form-data'
+		)
 	)); 
 	
 	?>
+	
+	<?php echo $form->errorSummary($model); ?>
+	
 	<?php 
 	$this->renderPartial('form_' . get_class($model), array(
 			'model' => $model,

@@ -23,6 +23,7 @@ return array(
 		'admin_menu' => array(
 			'Treatments' => '/OphCoTherapyapplication/admin/viewTreatments',
 			'Decision Trees' => '/OphCoTherapyapplication/admin/viewDecisionTrees',
+			'File Collections' => '/OphCoTherapyapplication/admin/viewFileCollections',
 		),
 		// The email address that sends therapy applications (key/value pair of address to name)
 		// 'OphCoTherapyapplication_sender_email' => array('email@test.com' => 'Test'),

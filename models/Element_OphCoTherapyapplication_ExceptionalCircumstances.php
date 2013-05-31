@@ -116,6 +116,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 					'on' => 'left_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::LEFT),
 			'right_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
 					'on' => 'right_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::RIGHT),
+			'filecollection_assignments' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment' , 'exceptional_id' ),
+			'left_filecollections' => array(self::HAS_MANY, 'OphCoTherapyapplication_FileCollection', 'collection_id', 'through' => 'filecollection_assignments', 'on' => 'filecollection_assignments.exceptional_side_id = ' . SplitEventTypeElement::LEFT),
+			'right_filecollections' => array(self::HAS_MANY, 'OphCoTherapyapplication_FileCollection', 'collection_id', 'through' => 'filecollection_assignments', 'on' => 'filecollection_assignments.exceptional_side_id = ' . SplitEventTypeElement::RIGHT),
 		);
 	}
 
@@ -138,6 +141,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_patient_factors' => 'Patient Factors',
 			'left_patient_factor_details' => 'Patient Factor Details',
 			'left_previnterventions' => 'Previous Interventions',
+			'left_filecollections' => 'File Sets',
 			'right_standard_intervention_exists' => 'Standard Intervention Exists',
 			'right_description' => 'Description',
 			'right_details' => 'Details and standard algorithm of care',
@@ -145,6 +149,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'right_patient_factors' => 'Patient Factors',
 			'right_patient_factor_details' => 'Patient Factor Details',
 			'right_previnterventions' => 'Previous Interventions',
+			'right_filecollections' => 'File Sets',
 		);
 		foreach(array('left', 'right') as $side) {
 			if ($this->{$side . '_intervention'}) {
@@ -259,6 +264,36 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		
 		foreach ($curr_by_id as $id => $del) {
 			$del->delete();
+		}
+	}
+	
+	public function updateFileCollections($side, $collection_ids) {
+		$curr_by_id = array();
+		$save = array();
+		
+		foreach ($this->filecollection_assignments as $f) {
+			if ($f->exceptional_side_id == $side) {
+				$curr_by_id[$curr->id] = $curr;
+			}
+		}
+		
+		foreach ($collection_ids as $coll_id) {
+			if (!array_key_exists($coll_id, $curr_by_id)) {
+				$ass = new OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment();
+				$ass->attributes = array('exceptional_id' => $this->id, 'exceptional_side_id' => $side, 'collection_id' => $coll_id);
+				$save[] = $ass;
+			}
+			else {
+				unset($curr_by_id[$coll_id]);
+			}
+			
+			foreach ($save as $s) {
+				$s->save();
+			}
+			
+			foreach ($curr_by_id as $curr) {
+				$curr->delete();
+			}
 		}
 	}
 }

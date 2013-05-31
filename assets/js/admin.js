@@ -135,4 +135,15 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	
+	// add file fields for file collection admin
+	$('#div_OphCoTherapyapplication_FileCollection_file').delegate('.addFile', 'click', function(e) {
+		var keys = $('.OphCoTherapyapplication_FileCollection_file').map(function(index, el) {
+			return parseInt($(el).attr('data-key'));
+		}).get();
+		// ensure we start at zero
+		keys.push(-1);
+		var key = Math.max.apply(null, keys) + 1;
+		
+		$('<input type="file" class="OphCoTherapyapplication_FileCollection_file" name="OphCoTherapyapplication_FileCollection_files[' + key + ']" data-key="' + key + '" /><br />').insertBefore($(this));
+	});
 });

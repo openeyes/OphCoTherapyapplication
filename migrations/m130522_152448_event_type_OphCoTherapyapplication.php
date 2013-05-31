@@ -24,6 +24,43 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
 		
+		// file collection table
+		$this->createTable('ophcotherapya_filecoll', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(256) NOT NULL',
+				'zipfile_id' => 'int(10) unsigned',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_filecoll_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_filecoll_cui_fk` (`created_user_id`)',
+				'KEY `et_ophcotherapya_filecoll_zi_fk` (`zipfile_id`)',
+				'CONSTRAINT `et_ophcotherapya_filecoll_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_filecoll_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_filecoll_zi_fk` FOREIGN KEY (`zipfile_id`) REFERENCES `protected_file` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+		
+		// file collection file assignments
+		$this->createTable('ophcotherapya_filecoll_assignment', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'collection_id' => 'int(10) unsigned NOT NULL',
+				'file_id' => 'int(10) unsigned NOT NULL',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_filecollass_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_filecollass_cui_fk` (`created_user_id`)',
+				'KEY `et_ophcotherapya_filecollass_ci_fk` (`collection_id`)',
+				'KEY `et_ophcotherapya_filecollass_fi_fk` (`file_id`)',
+				'CONSTRAINT `et_ophcotherapya_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_filecollass_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 		
 		// decision tree table creation
 		$this->createTable('ophcotherapya_decisiontree', array(
@@ -268,6 +305,7 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Application Email'))->queryRow();
 
 		// get the id for both eyes
+		
 		$both_eyes_id = Eye::model()->find("name = 'Both'")->id;
 		
 		// create the table for this element type: et_modulename_elementtypename
@@ -509,7 +547,28 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_exceptional_rinterventions_fk` FOREIGN KEY (`right_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-
+		
+		// file collection file assignments
+		$this->createTable('ophcotherapya_exceptional_filecoll_assignment', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'exceptional_id' => 'int(10) unsigned NOT NULL',
+				'exceptional_side_id' => 'tinyint(1) NOT NULL',
+				'collection_id' => 'int(10) unsigned NOT NULL',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_except_filecollass_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_except_filecollass_cui_fk` (`created_user_id`)',
+				'KEY `et_ophcotherapya_except_filecollass_ei_fk` (`exceptional_id`)',
+				'KEY `et_ophcotherapya_except_filecollass_ci_fk` (`collection_id`)',
+				'CONSTRAINT `et_ophcotherapya_except_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_except_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+		
 		// lookup table for stopping reasons for previous interventions
 		$this->createTable('ophcotherapya_exceptional_previntervention_stopreason', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -563,9 +622,7 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'event_id' => 'int(10) unsigned NOT NULL',
 				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
 				'left_email_text' => 'text',
-				'left_application_id' => 'int(10) unsigned',
 				'right_email_text' => 'text',
-				'right_application_id' => 'int(10) unsigned',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -574,13 +631,31 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `et_ophcotherapya_email_lmui_fk` (`last_modified_user_id`)',
 				'KEY `et_ophcotherapya_email_cui_fk` (`created_user_id`)',
 				'KEY `et_ophcotherapya_email_ev_fk` (`event_id`)',
-				'KEY `et_ophcotherapya_email_lai_fk` (`left_application_id`)',
-				'KEY `et_ophcotherapya_email_rai_fk` (`right_application_id`)',
 				'CONSTRAINT `et_ophcotherapya_email_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
-				'CONSTRAINT `et_ophcotherapya_email_lai_fk` FOREIGN KEY (`left_application_id`) REFERENCES `protected_file` (`id`)',
-				'CONSTRAINT `et_ophcotherapya_email_rai_fk` FOREIGN KEY (`right_application_id`) REFERENCES `protected_file` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+
+		$this->createTable('ophcotherapya_email_attachment', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'email_id' => 'int(10) unsigned NOT NULL',
+				'eye_id' => 'int(10) unsigned NOT NULL',
+				'file_id' => 'int(10) unsigned NOT NULL',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_email_att_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_email_att_cui_fk` (`created_user_id`)',
+				'KEY `et_ophcotherapya_email_att_ei_fk` (`email_id`)',
+				'KEY `et_ophcotherapya_email_att_eyei_fk` (`eye_id`)',
+				'KEY `et_ophcotherapya_email_att_fi_fk` (`file_id`)',
+				'CONSTRAINT `et_ophcotherapya_email_att_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_att_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`email_id`) REFERENCES `et_ophcotherapya_email` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_att_eyei_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 		
 	}
@@ -597,7 +672,7 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		
 		$this->dropTable('et_ophcotherapya_relativecon');
 
-
+		$this->dropTable('ophcotherapya_email_attachment');
 		$this->dropTable('et_ophcotherapya_email');
 		
 		$this->dropTable('et_ophcotherapya_mrservicein');
@@ -605,6 +680,7 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		$this->dropTable('ophcotherapya_exceptional_previntervention');
 		$this->dropTable('ophcotherapya_exceptional_previntervention_stopreason');
+		$this->dropTable('ophcotherapya_exceptional_filecoll_assignment');
 		$this->dropTable('et_ophcotherapya_exceptional');
 
 
@@ -642,6 +718,10 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		
 		// disorder lookup
 		$this->dropTable('ophcotherapya_therapydisorder');
+		
+		$this->dropTable('ophcotherapya_filecoll_assignment');
+		
+		$this->dropTable('ophcotherapya_filecoll');
 
 		// echo "m000000_000001_event_type_OphCoTherapyapplication does not support migration down.\n";
 		// return false;
