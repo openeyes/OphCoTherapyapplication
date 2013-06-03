@@ -89,9 +89,8 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 	 * @return ProtectedFile
 	 */
 	public function getZipFile() {
-		// TODO only do this once!
 		if (!$this->compressed_file) {
-			
+			// need to generate zip file, and store it with this collection			
 			$pfile = ProtectedFile::createForWriting($this->name . '.zip');
 			
 			$zip = new ZipArchive();
@@ -106,6 +105,7 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 			$zip->close();
 			$pfile->save();
 			
+			// set up relation
 			$this->compressed_file = $pfile;
 			$this->zipfile_id = $pfile->id;
 			
