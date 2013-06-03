@@ -129,6 +129,9 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	}
 
 	public function isEditable() {
+		// the existence of the email element indicates that the application is considered to be complete
+		// so we don't allow it to be edited. This may well become more sophisticated if we start allowing status
+		// change and the like.
 		return false;
 	}
 
