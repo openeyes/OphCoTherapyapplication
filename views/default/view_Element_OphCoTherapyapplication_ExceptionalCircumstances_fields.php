@@ -77,8 +77,9 @@
 <?php if ($element->{$side . '_filecollections'}) { ?>
 <div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>
-		<div class="data"><ul><?php foreach ($element->{$side . '_filecollections'} as $filecoll) { ?>
-		<li><?php echo $filecoll->name ?></li>
+		<div class="data"><ul style="display: inline-block">
+		<?php foreach ($element->{$side . '_filecollections'} as $filecoll) { ?>
+		<li><a href="<?php echo $filecoll->getDownloadURL() ?>"><?php echo $filecoll->name ?></a></li>
 		<?php } ?>
 		</ul></div>
 	</div>

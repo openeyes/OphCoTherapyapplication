@@ -256,7 +256,6 @@ class AdminController extends ModuleAdminController
 			
 			$file_errs = array();
 			$files = array();
-			error_log(print_r(array_keys($_FILES), true));
 			foreach ($_FILES['OphCoTherapyapplication_FileCollection_files']['tmp_name'] as $i => $f) {
 				if (!empty($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i])) {
 					$file_errs[] = "file $i had an error";

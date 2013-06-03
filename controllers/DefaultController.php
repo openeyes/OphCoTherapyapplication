@@ -85,7 +85,7 @@ class DefaultController extends BaseEventTypeController {
 		if ($collection = OphCoTherapyapplication_FileCollection::model()->findByPk((int)$id)) {
 			$pf = $collection->getZipFile();
 			if ($pf) {
-				$this->redirect(Yii::app()->createUrl('ProtectedFile/download', array('id'=>$pf->id) ));
+				$this->redirect($pf->getDownloadURL());
 			}
 		}
 		throw new CHttpException('400', 'File Collection does not exist');

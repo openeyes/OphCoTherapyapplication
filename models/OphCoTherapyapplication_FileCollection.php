@@ -116,6 +116,20 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 	}
 	
 	/**
+	 * return the download url for the compressed file of this collection
+	 * 
+	 * @return string URL
+	 */
+	public function getDownloadURL() {
+		if ($this->compressed_file != null) {
+			return $this->compressed_file->getDownloadURL();
+		}
+		else {
+			return Yii::app()->createURL('OphCoTherapyapplication/Default/DownloadFileCollection', array('id' => $this->id));
+		}
+	}
+	
+	/**
 	 * update the files for this collection.
 	 *
 	 * @param string $side
