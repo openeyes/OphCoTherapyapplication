@@ -91,7 +91,7 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 				'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 				'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 				'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-				'attachments' => array(self::HAS_MANY, 'OphCoTherapyapplication_Email_Attachment', 'email_id'),
+				'attachments' => array(self::HAS_MANY, 'OphCoTherapyapplication_Email_Attachment', 'element_id'),
 				'left_attachments' => array(self::HAS_MANY, 'ProtectedFile', 'file_id', 'through' => 'attachments', 'on' => 'attachments.eye_id = ' . SplitEventTypeElement::LEFT),
 				'right_attachments' => array(self::HAS_MANY, 'ProtectedFile', 'file_id', 'through' => 'attachments', 'on' => 'attachments.eye_id = ' . SplitEventTypeElement::RIGHT),
 		);
@@ -146,6 +146,52 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	protected function beforeValidate()
 	{
 		return parent::beforeValidate();
+	}
+	
+	/**
+	 * abstracted method to update a ManyToMany sided relationship
+	 * TODO: set this as a behaviour that can be attached to the appropriate models and used.
+	 * 
+	 * @param string $side left or right
+	 * @param string $side_relation field that defines which side the m2m model belongs to
+	 * @param unknown $m2m_relation field that holds the relationship to the assignment model of the m2m model
+	 * @param unknown $m2m_model assignment model class for the m2m
+	 * @param unknown $id_fld the id field in the assignment model that relates to the actual m2m model
+	 * @param unknown $ids the ids that the relationship should be set to.
+	 */
+	protected function updateManyToMany($side, $side_relation, $m2m_relation, $m2m_model, $id_fld, $ids) {
+		$curr_by_id = array();
+		$save = array();
+		
+		foreach ($this->$m2m_relation as $c) {
+			if ($c->$side_relation == $side) {
+				$curr_by_id[$c->id] = $c;
+			}
+		}
+		
+		foreach ($ids as $id) {
+			if (!array_key_exists($id, $curr_by_id)) {
+				$ass = new $m2m_model();
+				$ass->attributes = array('element_id' => $this->id, $side_relation => $side, $id_fld => $id);
+				$save[] = $ass;
+			}
+			else {
+				// keep the assignment
+				unset($curr_by_id[$id]);
+			}
+		}
+		
+		foreach ($save as $s) {
+			$s->save();
+		}
+		
+		foreach ($curr_by_id as $curr) {
+			$curr->delete();
+		}
+	}
+	
+	public function updateAttachments($side, $attachment_ids) {
+		$this->updateManyToMany($side, "eye_id", "attachments", "OphCoTherapyapplication_Email_Attachment", "file_id", $attachment_ids);
 	}
 	
 	/**
@@ -225,5 +271,6 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		}
 		return $success;
 	}
+		
 }
 ?>

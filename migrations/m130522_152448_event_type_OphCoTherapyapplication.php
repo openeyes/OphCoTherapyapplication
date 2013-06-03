@@ -638,7 +638,7 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		$this->createTable('ophcotherapya_email_attachment', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
-				'email_id' => 'int(10) unsigned NOT NULL',
+				'element_id' => 'int(10) unsigned NOT NULL',
 				'eye_id' => 'int(10) unsigned NOT NULL',
 				'file_id' => 'int(10) unsigned NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -648,12 +648,12 @@ class m130522_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'PRIMARY KEY (`id`)',
 				'KEY `et_ophcotherapya_email_att_lmui_fk` (`last_modified_user_id`)',
 				'KEY `et_ophcotherapya_email_att_cui_fk` (`created_user_id`)',
-				'KEY `et_ophcotherapya_email_att_ei_fk` (`email_id`)',
+				'KEY `et_ophcotherapya_email_att_ei_fk` (`element_id`)',
 				'KEY `et_ophcotherapya_email_att_eyei_fk` (`eye_id`)',
 				'KEY `et_ophcotherapya_email_att_fi_fk` (`file_id`)',
 				'CONSTRAINT `et_ophcotherapya_email_att_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_att_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
-				'CONSTRAINT `et_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`email_id`) REFERENCES `et_ophcotherapya_email` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_email` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_att_eyei_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');

@@ -251,6 +251,9 @@ class OphCoTherapyapplication_Processor {
 	 * @return boolean
 	 */
 	public function processEvent($event_id) {
+		/*
+		 * because we don't really have an event object, create an associative array with all the appropriate properties
+		 */
 		$event_data = $this->getEvent($event_id);
 		if (isset($elements['Element_OphCoTherapyapplication_Email'])) {
 			throw new Exception('Cannot re-process an event');
@@ -274,23 +277,46 @@ class OphCoTherapyapplication_Processor {
 		$email_el->event_id = $event_id;
 		// set the eye value to that of the diagnosis
 		$email_el->eye_id = $data['diagnosis']->eye_id;
+		$left_attach_ids = array();
+		$right_attach_ids = array();
 		
 		if ($data['diagnosis']->hasLeft()) {
+			
 			if ($file = $this->generatePDFForSide($data, 'left')) {
-				$email_el->left_application_id = $file->id;
+				//$email_el->left_application_id = $file->id;
+				$left_attach_ids[] = $file->id;
+			}
+			if ($data['exceptional'] && $data['exceptional']->hasLeft()) {
+				foreach ($data['exceptional']->left_filecollections as $fc) {
+					$left_attach_ids[] = $fc->getZipFile()->id;
+				}
 			}
 			$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
 		}
 		
 		if ($data['diagnosis']->hasRight()) {
+			
 			if ($file = $this->generatePDFForSide($data, 'right')) {
-				$email_el->right_application_id = $file->id;
+				//$email_el->right_application_id = $file->id;
+				$right_attach_ids[] = $file->id;
 			}
+			if ($data['exceptional'] && $data['exceptional']->hasRight()) {
+				foreach ($data['exceptional']->left_filecollections as $fc) {
+					$right_attach_ids[] = $fc->getZipFile()->id;
+				}
+			}
+			$email_el->updateAttachments(SplitEventTypeElement::RIGHT, $attach_ids);
 			$email_el->right_email_text = $this->generateEmailForSide($data,'right');
 		}
 		
 		// send email
 		if ($email_el->save()) {
+			if (count($left_attach_ids)) {
+				$email_el->updateAttachments(SplitEventTypeElement::LEFT, $left_attach_ids);
+			}
+			if (count($right_attach_ids)) {
+				$email_el->updateAttachments(SplitEventTypeElement::RIGHT, $right_attach_ids);
+			}
 			$email_el->sendEmail();
 		} else {
 			error_log(print_r($email_el->getErrors(), true));

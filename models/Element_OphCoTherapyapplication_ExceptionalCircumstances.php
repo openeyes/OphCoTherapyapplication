@@ -267,6 +267,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		}
 	}
 	
+	/*
+	 * update the file collections to support the exceptional circumstances of this application for the given side
+	 * 
+	 * @param string $side - left or right
+	 * @param int[] $collection_ids - uids of the file collections to be used for this side.
+	 */
 	public function updateFileCollections($side, $collection_ids) {
 		$curr_by_id = array();
 		$save = array();
