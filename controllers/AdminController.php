@@ -53,6 +53,7 @@ class AdminController extends ModuleAdminController
 		
 		$this->render('update', array(
 				'model' => $model,
+				'title'=>'Treatment'
 		));
 	}
 	
@@ -73,6 +74,7 @@ class AdminController extends ModuleAdminController
 		
 		$this->render('create', array(
 				'model' => $model,
+				'title'=>'Treatment'
 		));
 	}
 	

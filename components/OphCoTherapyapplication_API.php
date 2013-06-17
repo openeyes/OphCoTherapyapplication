@@ -69,6 +69,7 @@ class OphCoTherapyapplication_API extends BaseAPI {
 	 * @return int $side
 	 */
 	public function getLatestApplicationSide($patient, $episode) {
+		
 		if ($el = $this->getMostRecentElementInEpisode($episode->id, $this->getEventType()->id, 'Element_OphCoTherapyapplication_Therapydiagnosis')) {
 			return $el->eye_id;
 		}
