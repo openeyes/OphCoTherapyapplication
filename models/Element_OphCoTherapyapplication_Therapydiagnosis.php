@@ -23,8 +23,10 @@
  * The followings are the available columns in table:
  * @property string $id
  * @property integer $event_id
- * @property integer $left_diagnosis_id
- * @property integer $right_diagnosis_id 
+ * @property integer $left_diagnosis1_id
+ * @property integer $right_diagnosis1_id
+ * @property integer $left_diagnosis2_id
+ * @property integer $right_diagnosis2_id 
  *
  * The followings are the available model relations:
  *
@@ -33,8 +35,10 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
- * @property Disorder $left_diagnosis
- * @property Disorder $right_diagnosis
+ * @property Disorder $left_diagnosis1
+ * @property Disorder $right_diagnosis1
+ * @property Disorder $left_diagnosis2
+ * @property Disorder $right_diagnosis2
  */
 
 class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeElement
@@ -66,17 +70,17 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, left_diagnosis_id, right_diagnosis_id, eye_id', 'safe'),
-			array('left_diagnosis_id', 'requiredIfSide', 'side' => 'left'),
-			array('right_diagnosis_id', 'requiredIfSide', 'side' => 'right'),
+			array('event_id, left_diagnosis1_id, left_diagnosis2_id, right_diagnosis1_id, right_diagnosis2_id, eye_id', 'safe'),
+			array('left_diagnosis1_id', 'requiredIfSide', 'side' => 'left'),
+			array('right_diagnosis1_id', 'requiredIfSide', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, left_diagnosis_id, right_diagnosis_id, eye_id', 'safe', 'on' => 'search'),
+			array('id, event_id, left_diagnosis1_id, right_diagnosis1_id, left_diagnosis2_id, right_diagnosis2_id, eye_id', 'safe', 'on' => 'search'),
 		);
 	}
 	
 	public function sidedFields() {
-		return array('diagnosis_id');
+		return array('diagnosis1_id', 'diagnosis2_id');
 	}
 	
 	/**
@@ -93,8 +97,10 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'left_diagnosis' => array(self::BELONGS_TO, 'Disorder', 'left_diagnosis_id'),
-			'right_diagnosis' => array(self::BELONGS_TO, 'Disorder', 'right_diagnosis_id'),
+			'left_diagnosis1' => array(self::BELONGS_TO, 'Disorder', 'left_diagnosis1_id'),
+			'right_diagnosis1' => array(self::BELONGS_TO, 'Disorder', 'right_diagnosis1_id'),
+			'left_diagnosis2' => array(self::BELONGS_TO, 'Disorder', 'left_diagnosis2_id'),
+			'right_diagnosis2' => array(self::BELONGS_TO, 'Disorder', 'right_diagnosis2_id'),
 		);
 	}
 
@@ -106,8 +112,10 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-			'left_diagnosis_id' => 'Diagnosis',
-			'right_diagnosis_id' => 'Diagnosis',
+			'left_diagnosis1_id' => 'Diagnosis',
+			'right_diagnosis1_id' => 'Diagnosis',
+			'left_diagnosis2_id' => 'Secondary To',
+			'right_diagnosis2_id' => 'Secondary To',
 		);
 	}
 
@@ -124,22 +132,23 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('event_id', $this->event_id, true);
-		$criteria->compare('left_diagnosis_id', $this->left_diagnosis_id);
-		$criteria->compare('right_diagnosis_id', $this->right_diagnosis_id);
+		$criteria->compare('left_diagnosis1_id', $this->left_diagnosis1_id);
+		$criteria->compare('right_diagnosis1_id', $this->right_diagnosis1_id);
+		$criteria->compare('left_diagnosis2_id', $this->left_diagnosis2_id);
+		$criteria->compare('right_diagnosis2_id', $this->right_diagnosis2_id);
 		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,
 		));
 	}
 
-	public function getTherapyDisorders() {
-		$disorders = array();
+	public function getLevel1TherapyDiagnoses() {
+		$criteria = new CDbCriteria;
+		// FIXME: MySQL specific condition here
+		$criteria->condition = 'parent_id IS NULL';
+		$criteria->order = 'display_order asc';
 		
-		foreach (OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll(array('order'=> 'display_order asc')) as $d) {
-			$disorders[] = $d->disorder;
-		}
-		
-		return $disorders;
+		return OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria);
 	}
 
 	protected function beforeSave()

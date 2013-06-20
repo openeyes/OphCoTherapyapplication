@@ -123,18 +123,18 @@ class OphCoTherapyapplication_Processor {
 				$missing_sides = array();
 				
 				if ($el_diag->hasLeft()) {
-					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->left_diagnosis_id))) {
+					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->left_diagnosis1_id))) {
 						$sides[] = 'left';
 					}
 				}
 				if ($el_diag->hasRight()) {
-					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->right_diagnosis_id))) {
+					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->right_diagnosis1_id))) {
 						$sides[] = 'right';
 					}
 				}
 				
 				foreach ($sides as $side) {
-					if (!$api->getInjectionManagementComplexInEpisodeForDisorder($event->episode->patient, $event->episode, $side, $el_diag->{$side . '_diagnosis_id'})) {
+					if (!$api->getInjectionManagementComplexInEpisodeForDisorder($event->episode->patient, $event->episode, $side, $el_diag->{$side . '_diagnosis1_id'})) {
 						$missing_sides[] = $side;
 					}
 				}
@@ -145,7 +145,7 @@ class OphCoTherapyapplication_Processor {
 				
 				// log warnings - false falls out at the end
 				foreach ($missing_sides as $missing) {
-					$this->addProcessWarning($event_id, 'No Injection Management has been created for ' . $missing . ' diagnosis ' . $el_diag->{$missing . '_diagnosis'}->term);
+					$this->addProcessWarning($event_id, 'No Injection Management has been created for ' . $missing . ' diagnosis ' . $el_diag->{$missing . '_diagnosis1'}->term);
 				}
 			
 			}

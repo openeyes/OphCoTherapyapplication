@@ -309,8 +309,31 @@ function OphCoTherapyapplication_ContraIndications_check() {
 
 // check whether the patient suitability elements should be shown for the given eye side
 function OphCoTherapyapplication_PatientSuitability_check(side) {
-	if ($('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis_id').is(":visible") &&
-			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis_id').val()) {
+	var el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis1_id');
+	
+	if (el.is(":visible") && el.val()) {
+		var l2_data;
+		el.find('option').each(function() {
+			if ($(this).val() == el.val()) {
+				l2_data = $(this).data('level2');
+				return true;
+			}
+		});
+		
+		if (l2_data) {
+			// need to update the list of options in the level 2 drop down
+			var options = '<option>- Please Select -</option>';
+			for (var i in l2_data) {
+				options += '<option value="' + l2_data[i].id + '">' + l2_data[i].term + '</option>';
+			}
+			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').html(options);
+			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').removeAttr('disabled')
+			$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
+		}
+		else {
+			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').attr('disabled', 'disabled');
+			$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
+		}
 		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
 	}
 	else {
@@ -427,8 +450,8 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('.Element_OphCoTherapyapplication_Therapydiagnosis').delegate('#Element_OphCoTherapyapplication_Therapydiagnosis_right_diagnosis_id, ' +
-			'#Element_OphCoTherapyapplication_Therapydiagnosis_left_diagnosis_id', 'change', function() {
+	$('.Element_OphCoTherapyapplication_Therapydiagnosis').delegate('#Element_OphCoTherapyapplication_Therapydiagnosis_right_diagnosis1_id, ' +
+			'#Element_OphCoTherapyapplication_Therapydiagnosis_left_diagnosis1_id', 'change', function() {
 		var side = getSplitElementSide($(this));
 		
 		OphCoTherapyapplication_PatientSuitability_check(side);

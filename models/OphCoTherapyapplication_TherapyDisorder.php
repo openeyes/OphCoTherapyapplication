@@ -60,4 +60,18 @@ class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord {
 		);
 	}
 	
+	public function getLevel2Disorders() 
+	{
+		$criteria = new CDbCriteria;
+		$criteria->condition = ('parent_id = :pid');
+		$criteria->params = array('pid' => $this->id);
+		$criteria->order = 'display_order asc';
+		$disorders = array();
+		
+		foreach (OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria) as $therapy_disorder) {
+			$disorders[] = $therapy_disorder->disorder;
+		}
+		
+		return $disorders;
+	}
 }

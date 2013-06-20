@@ -19,7 +19,12 @@
 ?>
 
 <div class="eventDetail aligned">
-	<div class="label"><?php echo $element->getAttributeLabel($side . '_diagnosis_id') ?>:</div>
-	<div class="data"><?php echo $element->{$side . '_diagnosis'} ? $element->{$side . '_diagnosis'}->term : 'None'; ?></div>
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_diagnosis1_id') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_diagnosis1'} ? $element->{$side . '_diagnosis1'}->term : 'None'; ?></div>
 </div>
-
+<?php if ($element->{$side . '_diagnosis2_id'}) {?>
+<div class="eventDetail aligned">
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_diagnosis2_id') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_diagnosis2'}->term; ?></div>
+</div>
+<?php } ?>
