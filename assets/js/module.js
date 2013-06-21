@@ -311,26 +311,35 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 	var el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis1_id');
 	
 	if (el.is(":visible") && el.val()) {
-		var l2_data;
-		el.find('option').each(function() {
-			if ($(this).val() == el.val()) {
-				l2_data = $(this).data('level2');
-				return true;
+		var l2_el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id');
+		// check l2 selection needs updating
+		if (l2_el.data('parent_id') != el.val()) {
+			
+			var l2_data;
+			el.find('option').each(function() {
+				if ($(this).val() == el.val()) {
+					l2_data = $(this).data('level2');
+					return true;
+				}
+			});
+			
+			
+			
+			if (l2_data) {
+				// need to update the list of options in the level 2 drop down
+				var options = '<option value="">- Please Select -</option>';
+				for (var i in l2_data) {
+					options += '<option value="' + l2_data[i].id + '">' + l2_data[i].term + '</option>';
+				}
+				$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').html(options);
+				$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
 			}
-		});
-		
-		if (l2_data) {
-			// need to update the list of options in the level 2 drop down
-			var options = '<option value="">- Please Select -</option>';
-			for (var i in l2_data) {
-				options += '<option value="' + l2_data[i].id + '">' + l2_data[i].term + '</option>';
+			else {
+				$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').val('');
+				$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
 			}
-			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').html(options);
-			$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
-		}
-		else {
-			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').val('');
-			$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
+			// store the parent_id on the selector for later checking
+			l2_el.data('parent_id', el.val());
 		}
 		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
 	}
