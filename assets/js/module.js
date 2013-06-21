@@ -261,8 +261,6 @@ function OphCoTherapyapplication_ComplianceCalculator_update(elem) {
 	var side = node.closest('.side').data('side');
 	
 	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj').update(id);
-	
-	OphCoTherapyapplication_ExceptionalCircumstances_check();
 }
 
 /*
@@ -578,13 +576,10 @@ $(document).ready(function() {
 		}
 	});
 	
-	// check whether we need to be showing the other elements
-	/*
-	OphCoTherapyapplication_PatientSuitability_check('left');
-	OphCoTherapyapplication_PatientSuitability_check('right');
+	// check whether we need exceptional circumstances or not
 	OphCoTherapyapplication_ExceptionalCircumstances_check('left');
 	OphCoTherapyapplication_ExceptionalCircumstances_check('right');
-	*/
+	
 	
 	// extend the removal behaviour for diagnosis to affect the dependent elements
 	$(this).delegate('#event_content .side .activeForm a.removeSide', 'click', function(e) {
