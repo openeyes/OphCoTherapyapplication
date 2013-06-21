@@ -72,7 +72,9 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		return array(
 			array('event_id, left_diagnosis1_id, left_diagnosis2_id, right_diagnosis1_id, right_diagnosis2_id, eye_id', 'safe'),
 			array('left_diagnosis1_id', 'requiredIfSide', 'side' => 'left'),
+			array('left_diagnosis2_id', 'requiredIfSecondary', 'dependent' => 'left_diagnosis1_id'),
 			array('right_diagnosis1_id', 'requiredIfSide', 'side' => 'right'),
+			array('right_diagnosis2_id', 'requiredIfSecondary', 'dependent' => 'right_diagnosis1_id'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, left_diagnosis1_id, right_diagnosis1_id, left_diagnosis2_id, right_diagnosis2_id, eye_id', 'safe', 'on' => 'search'),
@@ -165,6 +167,23 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 	protected function beforeValidate()
 	{
 		return parent::beforeValidate();
+	}
+	
+	/*
+	 * check that the standard intervention description is given if the element is flagged appropriately
+	*/
+	public function requiredIfSecondary($attribute, $params) {
+		if ($this->$params['dependent'] && !$this->$attribute) {
+			$criteria = new CDbCriteria;
+			// FIXME: mysql dependent NULL check
+			$criteria->condition = 'disorder_id = :did AND parent_id IS NULL';
+			$criteria->params = array(':did' => $this->$params['dependent']);
+			if ($td = OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->find($criteria)) {
+				if ($td->getLevel2Disorders()) {
+					$this->addError($attribute, $td->disorder->term . " must be secondary to another diagnosis");
+				}
+			}
+		}
 	}
 }
 ?>
