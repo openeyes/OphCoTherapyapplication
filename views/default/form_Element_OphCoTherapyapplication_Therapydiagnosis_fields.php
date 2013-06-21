@@ -27,11 +27,12 @@
 	<div class="data">
 		<?php
 			$l2_attrs =  array('empty'=>'- Please select -', 'nowrapper' => true);
-			
-			if (!array_key_exists($element->{$side . '_diagnosis1_id'}, $l2_disorders)) {
-				$l2_attrs['disabled'] = 'disabled';
+			$l2_opts = array();
+			if (array_key_exists($element->{$side . '_diagnosis1_id'}, $l2_disorders)) {
+				$l2_opts = $l2_disorders[$element->{$side . '_diagnosis1_id'}];
 			}
-			echo $form->dropDownList($element, $side . '_diagnosis2_id', CHtml::listData($l2_disorders,'id','term'),$l2_attrs);
+			
+			echo $form->dropDownList($element, $side . '_diagnosis2_id', CHtml::listData($l2_opts,'id','term'),$l2_attrs);
 		?>
 	</div>
 </div>

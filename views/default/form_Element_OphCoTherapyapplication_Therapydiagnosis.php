@@ -34,8 +34,9 @@ foreach ($l1t_diagnoses as $td) {
 			$jsn_arry[] = array('id' => $l2->id, 'term' => $l2->term);
 		}
 		$l1_options[$td->disorder->id] = array('data-level2' => CJSON::encode($jsn_arry));
+		$l2_disorders[$td->disorder->id] = $td_l2;
 	}
-	$l2_disorders[$td->disorder->id] = $td_l2;
+	
 }
 
 ?>

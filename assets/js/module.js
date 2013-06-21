@@ -328,11 +328,10 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 				options += '<option value="' + l2_data[i].id + '">' + l2_data[i].term + '</option>';
 			}
 			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').html(options);
-			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').removeAttr('disabled')
 			$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').attr('disabled', 'disabled');
+			$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').val('');
 			$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
 		}
 		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
@@ -580,10 +579,12 @@ $(document).ready(function() {
 	});
 	
 	// check whether we need to be showing the other elements
+	/*
 	OphCoTherapyapplication_PatientSuitability_check('left');
 	OphCoTherapyapplication_PatientSuitability_check('right');
 	OphCoTherapyapplication_ExceptionalCircumstances_check('left');
 	OphCoTherapyapplication_ExceptionalCircumstances_check('right');
+	*/
 	
 	// extend the removal behaviour for diagnosis to affect the dependent elements
 	$(this).delegate('#event_content .side .activeForm a.removeSide', 'click', function(e) {
