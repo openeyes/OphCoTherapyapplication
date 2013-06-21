@@ -54,3 +54,25 @@ th.previntervention-date {
 th.previntervention-treatment {
 	width: 90px;
 }
+
+.compliance-container .outcome {
+	padding: 5px;
+	font-size: 20px;
+	border-width: 2px;
+	border-style: solid;
+}
+
+.compliance-container .outcome.unknown {
+	color: #999;
+	border-color: #999;
+}
+
+.compliance-container .outcome.compliant {
+	color: #0c0;
+	border-color: #0c0;
+}
+
+.compliance-container .outcome.non-compliant {
+	color: #f00;
+	border-color: #f00;
+}

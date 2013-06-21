@@ -93,6 +93,7 @@ ComplianceCalculator.prototype.showNode = function(node_id)
 		this.showOutcome(this._nodes[node_id].outcome_id, node_id);
 	}
 	else {
+		this._elem.find('#' + this._side + '_outcome_unknown').show();
 		this._elem.find('#' + this._side + '_node_' + node_id).show();
 		this.checkNode(node_id);
 	}

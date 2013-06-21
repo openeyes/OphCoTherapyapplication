@@ -62,8 +62,9 @@ if ($treatment && $treatment->decisiontree) {
 	<?php } else {?>
 		<div>Please select a treatment to determine compliance</div>
 	<?php } ?>
+		<div id="<?php echo $side; ?>_outcome_unknown" style="display: none;" class="outcome unknown">Unknown</div>
 	<?php foreach (OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll() as $outcome) { ?>
-		<div id="<?php echo $side; ?>_outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome" 
+		<div id="<?php echo $side; ?>_outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome <?php echo $outcome->isCompliant() ? "compliant" : "non-compliant";?>" 
 			data-comp-val="<?php echo $outcome->isCompliant() ? "1" : "0";?>" ><?php echo $outcome->name; ?></div>
 	<?php }?>
 	<?php echo $form->hiddenInput($element, $side . '_nice_compliance')?>
