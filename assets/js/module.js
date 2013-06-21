@@ -309,8 +309,9 @@ function OphCoTherapyapplication_ContraIndications_check() {
 // check whether the patient suitability elements should be shown for the given eye side
 function OphCoTherapyapplication_PatientSuitability_check(side) {
 	var el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis1_id');
-	
+	console.log('balls');
 	if (el.is(":visible") && el.val()) {
+		console.log('boo-ya');
 		var l2_el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id');
 		// check l2 selection needs updating
 		if (l2_el.data('parent_id') != el.val()) {
@@ -616,6 +617,10 @@ $(document).ready(function() {
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }
+
+function testCallback(id, term) {
+	console.log('test' + id + ':' + term);
+}
 
 function eDparameterListener(_drawing) {
 	if (_drawing.selectedDoodle != null) {
