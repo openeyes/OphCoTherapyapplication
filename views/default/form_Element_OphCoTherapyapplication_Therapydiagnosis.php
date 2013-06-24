@@ -19,22 +19,20 @@
 ?>
 
 <?php 
-$l1t_diagnoses = $element->getLevel1TherapyDiagnoses();
-
-$l1_disorders = array();
+$l1_disorders = $element->getLevel1Disorders();
 $l1_options = array();
 $l2_disorders = array();
 
-foreach ($l1t_diagnoses as $td) {
+foreach ($l1_disorders as $disorder) {
 	
-	$l1_disorders[] = $td->disorder;
-	if ($td_l2 = $td->getLevel2Disorders()) {
+	
+	if ($td_l2 = $element->getLevel2Disorders($disorder)) {
 		$jsn_arry = array();
 		foreach ($td_l2 as $l2) {
 			$jsn_arry[] = array('id' => $l2->id, 'term' => $l2->term);
 		}
-		$l1_options[$td->disorder->id] = array('data-level2' => CJSON::encode($jsn_arry));
-		$l2_disorders[$td->disorder->id] = $td_l2;
+		$l1_options[$disorder->id] = array('data-level2' => CJSON::encode($jsn_arry));
+		$l2_disorders[$disorder->id] = $td_l2;
 	}
 	
 }

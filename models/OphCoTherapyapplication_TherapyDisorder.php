@@ -62,7 +62,7 @@ class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord {
 	public function getLevel2Disorders() 
 	{
 		$criteria = new CDbCriteria;
-		$criteria->condition = ('parent_id = :pid');
+		$criteria->condition = 'parent_id = :pid';
 		$criteria->params = array('pid' => $this->id);
 		$criteria->order = 'display_order asc';
 		$disorders = array();

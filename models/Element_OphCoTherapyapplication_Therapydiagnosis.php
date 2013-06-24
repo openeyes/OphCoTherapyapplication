@@ -144,6 +144,7 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		));
 	}
 
+	// TODO: remove
 	public function getLevel1TherapyDiagnoses() {
 		$criteria = new CDbCriteria;
 		// FIXME: MySQL specific condition here
@@ -151,6 +152,61 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		$criteria->order = 'display_order asc';
 		
 		return OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria);
+	}
+	
+	/**
+	 * Get a list of level 1 disorders for this element (appends any level 1 disorder that has been selected for this
+	 * element but aren't part of the default list)
+	 * 
+	 * @return Disorder[]
+	 */
+	public function getLevel1Disorders() {
+		$criteria = new CDbCriteria;
+		$criteria->condition = 'parent_id IS NULL';
+		$criteria->order = 'display_order asc';
+		
+		$therapy_disorders = OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria);
+		
+		$disorders = array();
+		$disorder_ids = array();
+		foreach ($therapy_disorders as $td) {
+			$disorders[] = $td->disorder;
+			$disorder_ids[] = $td->disorder->id;
+		}
+		// if this element has been created with a disorder outside of the standard list, needs to be available in the
+		// list for selection to be maintained
+		foreach (array('left', 'right') as $side) {
+			if ($this->{$side . '_diagnosis1_id'} && !in_array($this->{$side . '_diagnosis1_id'}, $disorder_ids) ) {
+				$disorders[] = $this->{$side . '_diagnosis1'};
+			}
+		}
+		
+		return $disorders;
+	}
+	
+	/**
+	 * retrieve a list of disorders that are defined as level 2 disorders for the given disorder
+	 * @param unknown $therapyDisorder
+	 * @return Disorder[]
+	 */
+	public function getLevel2Disorders($disorder) {
+		$criteria = new CDbCriteria;
+		$criteria->condition = 'parent_id IS NULL AND disorder_id = :did';
+		$criteria->params = array(':did' => $disorder->id);
+		$disorders = array();
+		
+		if ($td = OphCoTherapyapplication_TherapyDisorder::model()->find($criteria)) {
+			$disorders = $td->getLevel2Disorders();
+			foreach(array('left', 'right') as $side) {
+				if ($this->{$side . '_diagnosis1_id'} == $disorder->id 
+					&& $this->{$side . '_diagnosis2'} 
+					&& !in_array($this->{$side . '_diagnosis2'}, $disorders)) {
+					$disorders[] = $this->{$side . '_diagnosis2'};
+				}
+			}
+			
+		}
+		return $disorders;
 	}
 
 	protected function beforeSave()

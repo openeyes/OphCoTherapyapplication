@@ -261,7 +261,6 @@ class AdminController extends ModuleAdminController
 			foreach ($_FILES['OphCoTherapyapplication_FileCollection_files']['tmp_name'] as $i => $f) {
 				if (!empty($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i])) {
 					$file_errs[] = "file $i had an error";
-					error_log(print_r($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i], true));
 				}
 				elseif (!empty($f) && is_uploaded_file($f)) {
 					$name = $_FILES['OphCoTherapyapplication_FileCollection_files']['name'][$i];

@@ -319,7 +319,6 @@ class OphCoTherapyapplication_Processor {
 			}
 			$email_el->sendEmail();
 		} else {
-			error_log(print_r($email_el->getErrors(), true));
 			return false;
 		}
 		
