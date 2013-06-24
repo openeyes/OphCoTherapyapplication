@@ -197,10 +197,14 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		
 		if ($td = OphCoTherapyapplication_TherapyDisorder::model()->find($criteria)) {
 			$disorders = $td->getLevel2Disorders();
+			$dids = array();
+			foreach ($disorders as $d) {
+				$dids[] = $d->id;
+			}
 			foreach(array('left', 'right') as $side) {
 				if ($this->{$side . '_diagnosis1_id'} == $disorder->id 
 					&& $this->{$side . '_diagnosis2'} 
-					&& !in_array($this->{$side . '_diagnosis2'}, $disorders)) {
+					&& !in_array($this->{$side . '_diagnosis2_id'}, $dids)) {
 					$disorders[] = $this->{$side . '_diagnosis2'};
 				}
 			}

@@ -16,7 +16,16 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
+function OphCoTherapyapplication_AddDiagnosis(disorder_id, name) {
+	$('#disorder_id').val(disorder_id);
+	$('#clinical-create').submit();
+}
+
 $(document).ready(function() {
+	$(this).delegate('#add-new', 'click', function() {
+		$('#add-new-form').removeClass('hidden');
+	});
+	
 	$('.OphCoTherapyapplication_DecisionTree').delegate('.add_node', 'click', function(e) {
 		var data = {};
 		data['dt_id'] = $(this).attr('data-dt_id');
@@ -145,5 +154,23 @@ $(document).ready(function() {
 		var key = Math.max.apply(null, keys) + 1;
 		
 		$('<input type="file" class="OphCoTherapyapplication_FileCollection_file" name="OphCoTherapyapplication_FileCollection_files[' + key + ']" data-key="' + key + '" /><br />').insertBefore($(this));
+	});
+	
+	$('.sortable').sortable({
+		update: function(event, ui) {
+			var ids = [];
+			$('div.sortable').children('li').map(function() {
+				ids.push($(this).attr('data-attr-id'));
+			});
+			$.ajax({
+				'type': 'POST',
+				'url': OphCoTherapyapplication_sort_url,
+				'data': {order: ids},
+				'success': function(data) {
+					alert('Re-ordered');
+				}
+			});
+			
+		}
 	});
 });

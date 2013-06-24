@@ -21,6 +21,7 @@ return array(
 	'params' => array(
 		// fixed details for admin functionality
 		'admin_menu' => array(
+			'Diagnoses' => '/OphCoTherapyapplication/admin/viewDiagnoses',
 			'Treatments' => '/OphCoTherapyapplication/admin/viewTreatments',
 			'Decision Trees' => '/OphCoTherapyapplication/admin/viewDecisionTrees',
 			'File Collections' => '/OphCoTherapyapplication/admin/viewFileCollections',
