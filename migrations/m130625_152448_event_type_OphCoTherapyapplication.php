@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class m130620_152448_event_type_OphCoTherapyapplication extends CDbMigration
+class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
 {
 	public function up() {
 		if (!Yii::app()->hasModule('OphTrIntravitrealinjection')) {
