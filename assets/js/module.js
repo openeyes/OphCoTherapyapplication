@@ -309,9 +309,8 @@ function OphCoTherapyapplication_ContraIndications_check() {
 // check whether the patient suitability elements should be shown for the given eye side
 function OphCoTherapyapplication_PatientSuitability_check(side) {
 	var el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis1_id');
-	console.log('balls');
+
 	if (el.is(":visible") && el.val()) {
-		console.log('boo-ya');
 		var l2_el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id');
 		// check l2 selection needs updating
 		if (l2_el.data('parent_id') != el.val()) {
@@ -323,8 +322,6 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 					return true;
 				}
 			});
-			
-			
 			
 			if (l2_data) {
 				// need to update the list of options in the level 2 drop down
@@ -342,9 +339,15 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 			// store the parent_id on the selector for later checking
 			l2_el.data('parent_id', el.val());
 		}
+		else {
+			// show level 2 if its been hidden previously (by selecting none)
+			$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
+		}
 		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
 	}
 	else {
+		// hide level 2 if its shown
+		$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
 		hideSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
 	}
 	
@@ -463,7 +466,7 @@ $(document).ready(function() {
 		var side = getSplitElementSide($(this));
 		
 		OphCoTherapyapplication_PatientSuitability_check(side);
-	})
+	});
 	
 	// handle treatment selection when editing
 	$('#event_content').delegate('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id, ' +
@@ -617,10 +620,6 @@ $(document).ready(function() {
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }
-
-function testCallback(id, term) {
-	console.log('test' + id + ':' + term);
-}
 
 function eDparameterListener(_drawing) {
 	if (_drawing.selectedDoodle != null) {

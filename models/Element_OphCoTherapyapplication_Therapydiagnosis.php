@@ -144,16 +144,6 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		));
 	}
 
-	// TODO: remove
-	public function getLevel1TherapyDiagnoses() {
-		$criteria = new CDbCriteria;
-		// FIXME: MySQL specific condition here
-		$criteria->condition = 'parent_id IS NULL';
-		$criteria->order = 'display_order asc';
-		
-		return OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria);
-	}
-	
 	/**
 	 * Get a list of level 1 disorders for this element (appends any level 1 disorder that has been selected for this
 	 * element but aren't part of the default list)

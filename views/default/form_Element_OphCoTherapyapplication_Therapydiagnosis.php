@@ -19,13 +19,12 @@
 ?>
 
 <?php 
+// build up data structures for the two levels of disorders that are mapped through the therapydisorder lookup
 $l1_disorders = $element->getLevel1Disorders();
 $l1_options = array();
 $l2_disorders = array();
 
 foreach ($l1_disorders as $disorder) {
-	
-	
 	if ($td_l2 = $element->getLevel2Disorders($disorder)) {
 		$jsn_arry = array();
 		foreach ($td_l2 as $l2) {
@@ -34,7 +33,6 @@ foreach ($l1_disorders as $disorder) {
 		$l1_options[$disorder->id] = array('data-level2' => CJSON::encode($jsn_arry));
 		$l2_disorders[$disorder->id] = $td_l2;
 	}
-	
 }
 
 ?>
