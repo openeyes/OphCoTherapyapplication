@@ -131,7 +131,8 @@ class DefaultController extends BaseEventTypeController {
 							$prefix = $eye_id == SplitEventTypeElement::LEFT ? 'left' : 'right';
 							// get specific disorder from injection management				
 							if ($exam_api && $exam_imc = $exam_api->getInjectionManagementComplexInEpisodeForSide($this->patient, $episode, $prefix)) {
-								$element->{$prefix . '_diagnosis1_id'} = $exam_imc->{$prefix . '_diagnosis_id'};
+								$element->{$prefix . '_diagnosis1_id'} = $exam_imc->{$prefix . '_diagnosis1_id'};
+								$element->{$prefix . '_diagnosis2_id'} = $exam_imc->{$prefix . '_diagnosis2_id'};
 							}
 							// check if the episode diagnosis applies
 							elseif ( ($episode->eye_id == $eye_id || $episode->eye_id == SplitEventTypeElement::BOTH) 
