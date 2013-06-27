@@ -204,18 +204,29 @@ class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$cnv_id = Yii::app()->db->getLastInsertID();
 		
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>267718000,'display_order'=>1, 'parent_id' => $cnv_id));
-		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>255025001,'display_order'=>2, 'parent_id' => $cnv_id));
-		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>2532009,'display_order'=>3, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>57190000,'display_order'=>2, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>312950007,'display_order'=>3, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>240740001,'display_order'=>4, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>314269007,'display_order'=>5, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>86103006,'display_order'=>6, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>255024002,'display_order'=>7, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>255025001,'display_order'=>8, 'parent_id' => $cnv_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>2532009,'display_order'=>9, 'parent_id' => $cnv_id));
 		
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>37231002,'display_order'=>2));
 		$mac_id = Yii::app()->db->getLastInsertID();
 		
-		
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>4855003,'display_order'=>1, 'parent_id' => $mac_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>24596005,'display_order'=>2, 'parent_id' => $mac_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>68478007,'display_order'=>3, 'parent_id' => $mac_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>232024000,'display_order'=>4, 'parent_id' => $mac_id));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>276436007,'display_order'=>5, 'parent_id' => $mac_id));
 		
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>312956001,'display_order'=>3));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>313001006,'display_order'=>4));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>360455002,'display_order'=>5));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>128473001,'display_order'=>6));
+		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>78370002,'display_order'=>7));
 		
 		// --- EVENT TYPE ENTRIES ---
 
