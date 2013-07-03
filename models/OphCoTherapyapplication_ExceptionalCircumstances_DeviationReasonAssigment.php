@@ -17,21 +17,21 @@
  */
 
 /**
- * This is the model class for table "et_ophcotherapya_exceptional_interventions".
+ * This is the model class for table "ophcotherapya_exceptional_deviationreason_ass".
  *
  * The followings are the available columns in table:
  * @property string $id
- * @property integer $exceptional_id
- * @property integer $exceptional_side_id
- * @property integer $collection_id
+ * @property integer $element_id
+ * @property integer $side_id
+ * @property integer $deviationreason_id
  *
  * The followings are the available model relations:
  *
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances $exceptionalcircumstances
- * @property OphCoTherapyapplication_FileCollection $collection
+ * @property Element_OphCoTherapyapplication_ExceptionalCircumstances $element
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason $deviationreason
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -47,7 +47,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment 
 	 */
 	public function tableName()
 	{
-		return 'ophcotherapya_exceptional_filecoll_assignment';
+		return 'ophcotherapya_exceptional_deviationreason_ass';
 	}
 
 	/**
@@ -56,8 +56,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment 
 	public function rules()
 	{
 		return array(
-			array('exceptional_id, exceptional_side_id, collection_id', 'safe'),
-			array('exceptional_id, exceptional_side_id, collection_id', 'required'),
+			array('element_id, side_id, deviationreason_id', 'safe'),
+			array('element_id, side_id, deviationreason_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id', 'safe', 'on' => 'search'),
@@ -72,8 +72,10 @@ class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment 
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'exceptionalcircumstances' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'exceptional_id'),
-			'collection' => array(self::BELONGS_TO, 'OphCoTherapyapplication_FileCollection', 'collection_id'),
+			'element' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'element_id'),
+			'deviationreason' => array(self::BELONGS_TO, 
+				'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 
+				'deviationreason_id'),
 		);
 	}
 

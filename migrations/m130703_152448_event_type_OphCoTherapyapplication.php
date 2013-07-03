@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
+class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 {
 	public function up() {
 		if (!Yii::app()->hasModule('OphTrIntravitrealinjection')) {
@@ -478,6 +478,7 @@ class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
 				'description_label' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'is_deviation' => 'boolean NOT NULL DEFAULT false',
 				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
@@ -490,26 +491,103 @@ class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Additional', 'description_label' => 'Indicate how the patient fits into the standard algorithm', 'display_order'=>1));
-		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Deviation','description_label' => 'What are the exceptional circumstances making the standard algorithm of care inappropriate', 'display_order'=>2));
+		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'In addition to the standard (Additional)', 'description_label' => 'Details', 'display_order'=>1));
+		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Instead of the standard (Deviation)','description_label' => 'Details', 'display_order'=>2));
 		
+		$this->createTable('ophcotherapya_exceptional_standardintervention', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'enabled' => 'boolean NOT NULL DEFAULT true',
+				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `ophcotherapya_exceptional_standardintervention_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophcotherapya_exceptional_standardintervention_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `ophcotherapya_exceptional_standardintervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophcotherapya_exceptional_standardintervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+		
+		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Observation', 'display_order'=>1));
+		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Conventional laser', 'display_order'=>2));
+		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Photodynamic therapy with vertoporfin', 'display_order'=>3));
+		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Intravitreal Ozurdex', 'display_order'=>4));
+		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Intravitreal Lucentis', 'display_order'=>5));
+
+		$this->createTable('ophcotherapya_exceptional_deviationreason', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'enabled' => 'boolean NOT NULL DEFAULT true',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `ophcotherapya_exceptional_deviationreason_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophcotherapya_exceptional_deviationreason_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `ophcotherapya_exceptional_deviationreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophcotherapya_exceptional_deviationreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+		
+		$this->insert('ophcotherapya_exceptional_deviationreason',array('name'=>'Contraindication', 'display_order'=>1));
+		$this->insert('ophcotherapya_exceptional_deviationreason',array('name'=>'Side effects', 'display_order'=>2));
+		$this->insert('ophcotherapya_exceptional_deviationreason',array('name'=>'No response', 'display_order'=>3));
+
+		$this->createTable('ophcotherapya_exceptional_startperiod', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
+				'urgent' => 'boolean DEFAULT false',
+				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'enabled' => 'boolean NOT NULL DEFAULT true',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `ophcotherapya_exceptional_startperiod_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophcotherapya_exceptional_startperiod_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `ophcotherapya_exceptional_startperiod_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophcotherapya_exceptional_startperiod_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'4 weeks', 'display_order'=>1));
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'2 weeks', 'urgent' => true, 'display_order'=>2));
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'1 week', 'urgent' => true, 'display_order'=>3));
+
 		// create the table for this element type: Element_OphCoTherapyapplication_ExceptionalCircumstances
 		$this->createTable('et_ophcotherapya_exceptional', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'event_id' => 'int(10) unsigned NOT NULL',
 				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
 				'left_standard_intervention_exists' => 'tinyint(1) unsigned NOT NULL DEFAULT 0', // Standard Intervention Exists
-				'left_details' => 'text DEFAULT \'\'', // Details and standard algorithm of care
+				'left_standard_intervention_id' => 'int(10) unsigned',
+				'left_standard_previous' => 'boolean',
+				'left_condition_rare' => 'boolean',
+				'left_incidence' => 'text',
 				'left_intervention_id' => 'int(10) unsigned', // interventions
 				'left_description' => 'text DEFAULT \'\'', // Description
+				'left_patient_different' => 'text',
+				'left_patient_gain' => 'text',
 				'left_patient_factors' => 'tinyint(1) unsigned', // Patient Factors
 				'left_patient_factor_details' => 'text DEFAULT \'\'', // Details
+				'left_start_period_id' => 'int(10) unsigned',
+				'left_urgency_reason' => 'text',
 				'right_standard_intervention_exists' => 'tinyint(1) unsigned', // Standard Intervention Exists
-				'right_details' => 'text DEFAULT \'\'', // Details and standard algorithm of care
+				'right_standard_intervention_id' => 'int(10) unsigned',
+				'right_standard_previous' => 'boolean',
+				'right_condition_rare' => 'boolean',
+				'right_incidence' => 'text',
 				'right_intervention_id' => 'int(10) unsigned', // interventions
 				'right_description' => 'text DEFAULT \'\'', // Description
+				'right_patient_different' => 'text',
+				'right_patient_gain' => 'text',
 				'right_patient_factors' => 'tinyint(1) unsigned', // Patient Factors
 				'right_patient_factor_details' => 'text DEFAULT \'\'', // Details
+				'right_start_period_id' => 'int(10) unsigned',
+				'right_urgency_reason' => 'text',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -518,17 +596,44 @@ class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'KEY `et_ophcotherapya_exceptional_lmui_fk` (`last_modified_user_id`)',
 				'KEY `et_ophcotherapya_exceptional_cui_fk` (`created_user_id`)',
 				'KEY `et_ophcotherapya_exceptional_ev_fk` (`event_id`)',
+				'KEY `et_ophcotherapya_exceptional_lsi_fk` (`left_standard_intervention_id`)',
 				'KEY `et_ophcotherapya_exceptional_linterventions_fk` (`left_intervention_id`)',
+				'KEY `et_ophcotherapya_exceptional_rsi_fk` (`right_standard_intervention_id`)',
 				'KEY `et_ophcotherapya_exceptional_rinterventions_fk` (`right_intervention_id`)',
 				'KEY `et_ophcotherapya_exceptional_eye_id_fk` (`eye_id`)',
+				'KEY `et_ophcotherapya_exceptional_lspid_fk` (`left_start_period_id`)',
+				'KEY `et_ophcotherapya_exceptional_rspid_fk` (`right_start_period_id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_exceptional_lsi_fk` FOREIGN KEY (`left_standard_intervention_id`) REFERENCES `ophcotherapya_exceptional_standardintervention` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_linterventions_fk` FOREIGN KEY (`left_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_exceptional_rsi_fk` FOREIGN KEY (`right_standard_intervention_id`) REFERENCES `ophcotherapya_exceptional_standardintervention` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_rinterventions_fk` FOREIGN KEY (`right_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`)',
-				'CONSTRAINT `et_ophcotherapya_exceptional_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_exceptional_lspid_fk` FOREIGN KEY (`left_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_exceptional_rspid_fk` FOREIGN KEY (`right_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 		
+		$this->createTable('ophcotherapya_exceptional_deviationreason_ass', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'element_id' => 'int(10) unsigned NOT NULL',
+				'side_id' => 'tinyint(1) NOT NULL',
+				'deviationreason_id' => 'int(10) unsigned NOT NULL',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `et_ophcotherapya_except_devrass_lmui_fk` (`last_modified_user_id`)',
+				'KEY `et_ophcotherapya_except_devrass_cui_fk` (`created_user_id`)',
+				'KEY `et_ophcotherapya_except_devrass_ei_fk` (`element_id`)',
+				'KEY `et_ophcotherapya_except_devrass_ci_fk` (`deviationreason_id`)',
+				'CONSTRAINT `et_ophcotherapya_except_devrass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_except_devrass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_except_devrass_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`)',
+				'CONSTRAINT `et_ophcotherapya_except_devrass_ci_fk` FOREIGN KEY (`deviationreason_id`) REFERENCES `ophcotherapya_exceptional_deviationreason` (`id`)',
+		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+
 		// file collection file assignments
 		$this->createTable('ophcotherapya_exceptional_filecoll_assignment', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -662,8 +767,13 @@ class m130625_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->dropTable('ophcotherapya_exceptional_previntervention');
 		$this->dropTable('ophcotherapya_exceptional_previntervention_stopreason');
 		$this->dropTable('ophcotherapya_exceptional_filecoll_assignment');
+		
+		$this->dropTable('ophcotherapya_exceptional_deviationreason_ass');
 		$this->dropTable('et_ophcotherapya_exceptional');
-
+		$this->dropTable('ophcotherapya_exceptional_standardintervention');
+		
+		$this->dropTable('ophcotherapya_exceptional_deviationreason');
+		$this->dropTable('ophcotherapya_exceptional_startperiod');
 
 		$this->dropTable('et_ophcotherapya_exceptional_intervention');
 		

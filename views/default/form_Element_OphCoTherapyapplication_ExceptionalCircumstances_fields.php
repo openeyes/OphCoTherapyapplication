@@ -23,11 +23,45 @@
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array('nowrapper' => true))?></div>
 	</div>
 	
-	<div class="elementField"<?php if (!$element->{$side . '_standard_intervention_exists'}) { echo ' style="display: none;"'; } ?>>
-		<div class="label"><?php echo $element->getAttributeLabel($side . '_details'); ?></div>
-		<div class="data"><?php echo $form->textArea($element, $side . '_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
-	</div>
-	
+	<span id="<?php echo $side ?>_standard_intervention_details"
+		<?php if (!$element->{$side . '_standard_intervention_exists'}) { 
+			echo ' class="hidden"'; 
+		}?>
+	>
+		<div class="elementField">
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_id'); ?></div>
+			<div class="data">
+				<?php 
+				echo $form->dropDownList(
+					$element, 
+					$side . '_standard_intervention_id', 
+					CHtml::listData($element->getStandardInterventionsForSide($side), 'id', 'name'),
+					array('empty'=>'- Please select -', 'nowrapper' => true)) ?></div>
+		</div>
+
+		<div class="elementField">
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_previous'); ?></div>
+			<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_previous', array('nowrapper' => true))?></div>
+		</div>
+
+		<span id="<?php echo $side; ?>_standard_intervention_not_used"
+			<?php if (!$element->{$side . '_standard_intervention_exists'}
+				|| $element->{$side . '_standard_previous'}) { 
+				echo ' class="hidden"'; 
+			}?>>
+			<div class="elementField">
+				<div class="label"><?php echo $element->getAttributeLabel($side . '_condition_rare'); ?></div>
+				<div class="data"><?php echo $form->radioBoolean($element, $side . '_condition_rare', array('nowrapper' => true))?></div>
+			</div>
+
+			<div class="elementField">
+				<div class="label"><?php echo $element->getAttributeLabel($side . '_incidence'); ?></div>
+				<div class="data"><?php echo $form->textArea($element, $side . '_incidence', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+			</div>
+		</span>
+
+	</span>
+
 	<?php 
 		$opts = array('nowrapper' => true, 
 			'options' => array()				
@@ -42,11 +76,44 @@
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
 		<div class="data"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, false, false, false, false, $opts)?></div>
 	</div>
+
 	<div class="elementField" <?php if (!$element->{$side . '_intervention_id'}) { echo ' style="display: none;"'; } ?>>
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 	
+	<span id="<?php echo $side;?>_deviation_fields"
+		<?php if (!$element->needDeviationReasonForSide($side)) {?>
+		class="hidden"
+		<?php } ?>
+	>
+		<?php 
+			$html_options = array(
+				'options' => array(),	
+				'empty' => '- Please select -',
+				'div_id' =>  get_class($element) . '_' . $side . '_deviationreasons',
+				'label' => $element->getAttributeLabel($side . '_deviationreasons'));
+			
+			echo $form->multiSelectList(
+				$element, 
+				get_class($element) . '[' . $side . '_deviationreasons]', 
+				$side . '_deviationreasons', 'id', 
+				CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'), 
+				array(), 
+				$html_options);
+		?>
+	</span>
+
+	<div class="elementField">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_different'); ?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_patient_different', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+	</div>
+
+	<div class="elementField">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_gain'); ?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_patient_gain', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+	</div>
+
 	<div class="elementField">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?></div>
 		<div class="data">
@@ -101,6 +168,27 @@
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 	
+	<div class="elementField">
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_start_period'); ?></div>
+			<div class="data">
+				<?php 
+				echo $form->dropDownList(
+					$element, 
+					$side . '_start_period', 
+					CHtml::listData($element->getStartPeriodsForSide($side), 'id', 'name'),
+					array('empty'=>'- Please select -', 'nowrapper' => true)) 
+				?>
+			</div>
+		</div>
+
+	<div class="elementField"
+	<?php if (!($element->{$side . '_start_period'} && $element->{$side . '_start_period'}->urgent) ) { 
+		echo ' style="display: none;"'; 
+	} ?>>
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_urgency_reason'); ?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_urgency_reason', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+	</div>
+
 <?php 
 	$html_options = array(
 		'options' => array(),	
