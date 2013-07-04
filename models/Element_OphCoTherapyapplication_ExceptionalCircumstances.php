@@ -427,8 +427,8 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$save = array();
 		
 		foreach ($this->deviationreasons as $d) {
-			if ($f->side_id == $side) {
-				$curr_by_id[$curr->id] = $curr;
+			if ($d->side_id == $side) {
+				$curr_by_id[$d->deviationreason_id] = $d;
 			}
 		}
 		
@@ -508,7 +508,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		
 		foreach ($this->filecollection_assignments as $f) {
 			if ($f->exceptional_side_id == $side) {
-				$curr_by_id[$curr->id] = $curr;
+				$curr_by_id[$f->collection_id] = $f;
 			}
 		}
 		
