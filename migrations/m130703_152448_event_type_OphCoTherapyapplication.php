@@ -491,8 +491,8 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'In addition to the standard (Additional)', 'description_label' => 'Details', 'display_order'=>1));
-		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Instead of the standard (Deviation)','description_label' => 'Details', 'display_order'=>2));
+		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'In addition to the standard (Additional)', 'description_label' => 'Details of additional', 'display_order'=>1));
+		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Instead of the standard (Deviation)','description_label' => 'Details of deviation', 'is_deviation' => true, 'display_order'=>2));
 		
 		$this->createTable('ophcotherapya_exceptional_standardintervention', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',

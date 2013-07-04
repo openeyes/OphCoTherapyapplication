@@ -541,13 +541,26 @@ $(document).ready(function() {
 		
 		if ($(this).val() == '1') {
 			
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_details').closest('.elementField').show();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').removeClass('hidden');
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_details').closest('.elementField').hide();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').addClass('hidden');
 		}
 	});
 	
+	// show/hide reasons for the standard intervention not having been used
+	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.standard_previous input', 'change', function() {
+		var side = getSplitElementSide($(this));
+		
+		if ($(this).val() == '0') {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_used').removeClass('hidden');
+		}
+		else {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_used').addClass('hidden');
+		}
+	});
+	
+	// managing the consequences of changing the intervention type (additional/deviation)
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.intervention input', 'change', function() {
 		var side = getSplitElementSide($(this));
 		
@@ -555,17 +568,25 @@ $(document).ready(function() {
 			if ($(this).data('description-label')) {
 				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').find('.label').text($(this).data('description-label'));
 			}
+			var is_deviation = $(this).data('is-deviation');
+			var previously_used = $('.Element_OphCoTherapyapplication_ExceptionalCircumstances .standard_previous').find('input:checked').val();
+			if (is_deviation && previously_used == '0') {
+				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').removeClass('hidden');
+			}
+			else {
+				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').addClass('hidden');
+			}
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').show();
 		}
 		else {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').hide();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').addClass('hidden');
 		}
 		
 	});
 	
 	// Manage previous interventions in exceptional circumstances element
 	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePrevintervention', 'click', function(e) {
-		var block = $(this).closest('.data');
 		$(this).closest('tr').remove();
 		e.preventDefault();
 	});
@@ -586,6 +607,28 @@ $(document).ready(function() {
 		}
 		else {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').closest('.elementField').hide();
+		}
+	});
+	
+	// show/hide urgency reason for urgent anticipated start dates
+	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.start_period select', 'change', function() {
+		var side = getSplitElementSide($(this));
+		var sel = $(this).val();
+		var show = false;
+		$(this).find('option').each(function() {
+			if ($(this).val() == sel) {
+				if ($(this).data('urgent')) {
+					show = true;
+				}
+				return false;
+			}
+		});
+		
+		if (show) {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').removeClass('hidden');
+		}
+		else {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_used').addClass('hidden');
 		}
 	});
 	
