@@ -382,6 +382,7 @@ class AdminController extends ModuleAdminController
 		$this->renderPartial('create', array(
 			'model' => $model,
 			'node' => $node,
+			'title' => 'Rule for ' . ($node->outcome ? $node->outcome->name . ' Outcome' : $node->question)
 		));
 	}
 	
@@ -400,9 +401,10 @@ class AdminController extends ModuleAdminController
 			}
 		}
 	
-		$this->renderPartial('create', array(
+		$this->renderPartial('update', array(
 				'model' => $model,
 				'node' => $model->node,
+				'title' => 'Rule for ' . ($model->node->outcome ? $model->node->outcome->name . ' Outcome' : $model->node->question)
 		));
 	}
 	

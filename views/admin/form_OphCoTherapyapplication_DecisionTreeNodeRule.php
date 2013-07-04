@@ -22,7 +22,7 @@
 
 <?php echo $form->errorSummary($model); ?>
 
-<div class="row outcome parent_check eventDetail">
+<div class="row outcomeAdmin parent_check eventDetail">
 	<div class="label"><?php echo $form->labelEx($model,'parent_check'); ?></div>
 	<div class="data"><?php echo $form->dropdownlist($model,'parent_check',$model->COMPARATORS,array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
 	<?php echo $form->error($model,'parent_check'); ?>
