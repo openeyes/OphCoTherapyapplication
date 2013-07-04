@@ -562,7 +562,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'event_id' => 'int(10) unsigned NOT NULL',
 				'eye_id' => 'int(10) unsigned NOT NULL DEFAULT ' . $both_eyes_id,
-				'left_standard_intervention_exists' => 'tinyint(1) unsigned NOT NULL DEFAULT 0', // Standard Intervention Exists
+				'left_standard_intervention_exists' => 'tinyint(1) unsigned NOT NULL', // Standard Intervention Exists
 				'left_standard_intervention_id' => 'int(10) unsigned',
 				'left_standard_previous' => 'boolean',
 				'left_condition_rare' => 'boolean',

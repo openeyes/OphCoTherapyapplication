@@ -23,8 +23,16 @@
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array('nowrapper' => true))?></div>
 	</div>
 	
+	<?php 
+		//TODO: can drive this purely off the element attributes when we fix form processing
+		if (@$_POST[get_class($element)]) {
+			$exists = $_POST[get_class($element)][$side . '_standard_intervention_exists'];
+		} else {
+			$exists = $element->{$side . '_standard_intervention_exists'};
+		}
+	?>
 	<span id="<?php echo get_class($element) . "_" . $side ?>_standard_intervention_details"
-		<?php if (!$element->{$side . '_standard_intervention_exists'}) { 
+		<?php if ($exists != '1') { 
 			echo ' class="hidden"'; 
 		}?>
 	>
@@ -63,8 +71,23 @@
 			<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 		</div>
 		
+		<?php 
+			$need_reason = false;
+			if (@$_POST[get_class($element)]) {
+				if ($_POST[get_class($element)][$side . '_standard_previous'] == '0') {
+					if ($id = $_POST[get_class($element)][$side . '_intervention_id']) {
+						$intervention = Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int)$id);
+						if ($intervention->is_deviation) {
+							$need_reason = true;
+						}
+					}
+				}
+			} else {
+				$need_reason = $element->needDeviationReasonForSide($side);
+			}
+		?>
 		<span id="<?php echo get_class($element) . "_" . $side;?>_deviation_fields"
-			<?php if (!$element->needDeviationReasonForSide($side)) {?>
+			<?php if (!$need_reason) {?>
 			class="hidden"
 			<?php } ?>
 		>
@@ -89,10 +112,11 @@
 	</span>
 
 	<span id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_exists"
-		<?php if (!$element->{$side . '_standard_intervention_exists'}
-			|| $element->{$side . '_standard_previous'}) { 
+		<?php 
+		if ($exists != '0') { 
 			echo ' class="hidden"'; 
-		}?>>
+		}?>
+	>
 		<div class="elementField">
 			<div class="label"><?php echo $element->getAttributeLabel($side . '_condition_rare'); ?></div>
 			<div class="data"><?php echo $form->radioBoolean($element, $side . '_condition_rare', array('nowrapper' => true))?></div>
@@ -163,17 +187,35 @@
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_patient_factors', array('nowrapper' => true))?></div>
 	</div>
 	
-	<div class="elementField"<?php if (!$element->{$side . '_patient_factors'}) { echo ' style="display: none;"'; } ?>>
+	<?php 
+		if (@$_POST[get_class($element)]) {
+			$patient_factors = $_POST[get_class($element)][$side . '_patient_factors'];
+		} else {
+			$patient_factors = $element->{$side . '_patient_factors'};
+		}
+	?>
+	<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_factor_details" class="elementField <?php if (!$patient_factors) { echo ' hidden'; } ?>">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 	
 	<?php 
+		$posted_sp = null;
+		$urgent = false;
+		if (@$_POST[get_class($element)]) {
+			$posted_sp = $_POST[get_class($element)][$side . "_start_period_id"];
+		}
+		else {
+			$urgent = ($element->{$side . '_start_period'} && $element->{$side . '_start_period'}->urgent);
+		}
 		// get all the start periods and get data attribute for urgency requirements
 		$start_periods = $element->getStartPeriodsForSide($side);
 		$html_options = array('empty'=>'- Please select -', 'nowrapper' => true, 'options' => array());
 		foreach ($start_periods as $sp) {
 			$html_options['options'][$sp->id] = array('data-urgent' => $sp->urgent);
+			if ($posted_sp == $sp->id && $sp->urgent) {
+				$urgent = true;
+			}
 		}
 	
 	?>
@@ -183,7 +225,7 @@
 				<?php 
 					echo $form->dropDownList(
 						$element, 
-						$side . '_start_period', 
+						$side . '_start_period_id', 
 						CHtml::listData($start_periods, 'id', 'name'),
 						$html_options
 					); 
@@ -192,7 +234,7 @@
 		</div>
 
 	<div id="<?php echo get_class($element) . '_' . $side ?>_urgency_reason"
-		class="elementField<?php if (!($element->{$side . '_start_period'} && $element->{$side . '_start_period'}->urgent) ) { 
+		class="elementField<?php if (!$urgent) { 
 		echo ' hidden';} ?>">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_urgency_reason'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_urgency_reason', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>

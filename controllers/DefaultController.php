@@ -94,6 +94,9 @@ class DefaultController extends BaseEventTypeController {
 	public function getDefaultElements($action, $event_type_id=false, $event=false) {
 		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
 		
+		foreach ($all_elements as $el) {
+			error_log(get_class($el));
+		}
 		if (in_array($action, array('create', 'edit'))) {
 			// clear out the email element as we don't want to display or edit it
 			$elements = array();
@@ -229,7 +232,8 @@ class DefaultController extends BaseEventTypeController {
 	 * @param Element_OphCoTherapyapplication_ExceptionCircumstances $element
 	 * @param string $side
 	 */
-	private function _POSTPrevinterventions($element, $side) {
+	private function _POSTPrevinterventions($element, $side) 
+	{
 		if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_previnterventions']) ) {
 			$previnterventions = array();
 			foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_previnterventions'] as $idx => $attributes) {
@@ -250,6 +254,19 @@ class DefaultController extends BaseEventTypeController {
 		}
 	} 
 	
+	private function _POSTDeviationReasons($element, $side)
+	{
+		if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons']) ) {
+			$dr_lst = array();
+			foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons'] as $id) {
+				if ($dr = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->findByPk((int)$id)) {
+					$dr_lst[] = $dr;
+				}
+			}
+			$element->{$side . '_deviationreasons'} = $dr_lst;
+		}	
+	}
+	
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEventTypeController::setPOSTManyToMany()
@@ -258,6 +275,8 @@ class DefaultController extends BaseEventTypeController {
 		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
 			$this->_POSTPrevinterventions($element, 'left');
 			$this->_POSTPrevinterventions($element, 'right');
+			$this->_POSTDeviationReasons($element, 'left');
+			$this->_POSTDeviationReasons($element, 'right');
 		}
 	}
 	
@@ -293,6 +312,14 @@ class DefaultController extends BaseEventTypeController {
 				
 			} 
 			else if (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
+				$el->updateDeviationReasons(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_deviationreasons']) ?
+						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_deviationreasons']) :
+						array());
+				$el->updateDeviationReasons(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_deviationreasons']) ?
+						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_deviationreasons']) :
+						array());
 				$el->updatePreviousInterventions(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT, 
 						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_previnterventions']) ?
 						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_previnterventions']) :

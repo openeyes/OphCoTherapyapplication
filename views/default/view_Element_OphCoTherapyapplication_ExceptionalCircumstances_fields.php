@@ -22,19 +22,55 @@
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_exists') ?>:</div>
 	<div class="data"><?php echo $element->{$side . '_standard_intervention_exists'} ? 'Yes' : 'No'?></div>
 </div>
+
 <?php if ($element->{$side . '_standard_intervention_exists'}) { ?>
 	<div class="eventDetail aligned">
-		<div class="label"><?php echo $element->getAttributeLabel($side . '_details') ?>:</div>
-		<div class="data"><?php echo $element->{$side . '_details' } ?></div>
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_id') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_standard_intervention'}->name ?></div>
+	</div>
+	
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_previous') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_standard_previous'} ? 'Yes' : 'No' ?></div>
+	</div>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_intervention_id') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_intervention'}->name ?></div>
+	</div>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_description') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_description'} ?></div>
+	</div>
+	<?php if ($element->needDeviationReasonForSide($side)) { ?>
+		<div class="eventDetail aligned">
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_deviationreasons') ?>:</div>
+			<div class="data">
+				<ul>
+					<?php foreach ($element->{$side . '_deviationreasons'} as $dr) {
+						echo "<li>" . $dr->name . "</li>";
+					}?>
+				</ul>
+			</div>
+		</div>
+	<?php }?>	
+<?php } else { ?>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_condition_rare') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_condition_rare'} ? 'Yes' : 'No' ?></div>
+	</div>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_incidence') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_incidence'} ?></div>
 	</div>
 <?php }?>
+
 <div class="eventDetail aligned">
-	<div class="label"><?php echo $element->getAttributeLabel($side . '_intervention_id') ?>:</div>
-	<div class="data"><?php echo $element->{$side . '_intervention'}->name ?></div>
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_different') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_patient_different'} ?></div>
 </div>
 <div class="eventDetail aligned">
-	<div class="label"><?php echo $element->getAttributeLabel($side . '_description') ?>:</div>
-	<div class="data"><?php echo $element->{$side . '_description'} ?></div>
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_gain') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_patient_gain'} ?></div>
 </div>
 
 <?php if ($element->{$side . '_previnterventions'} ) { ?>
@@ -74,6 +110,19 @@
 		<div class="data"><?php echo $element->{$side . '_patient_factor_details'} ?></div>
 	</div>
 <?php } ?>
+
+<div class="eventDetail aligned">
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_start_period_id') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_start_period'}->name ?></div>
+</div>
+
+<?php if ($element->{$side . "_start_period"}->urgent) { ?>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_urgency_reason') ?>:</div>
+		<div class="data"><?php echo $element->{$side . '_urgency_reason'} ?></div>
+	</div>
+<?php } ?>
+
 <?php if ($element->{$side . '_filecollections'}) { ?>
 <div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>

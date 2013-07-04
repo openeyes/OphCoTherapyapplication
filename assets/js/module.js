@@ -606,10 +606,10 @@ $(document).ready(function() {
 		
 		if ($(this).val() == '1') {
 			
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').closest('.elementField').show();
+			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').removeClass('hidden');
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').closest('.elementField').hide();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').addClass('hidden');
 		}
 	});
 	

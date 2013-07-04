@@ -83,14 +83,22 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 					'right_condition_rare, right_incidence, right_intervention_id, right_description, ' . 
 					'right_patient_different, right_patient_gain, right_patient_factors, right_patient_factor_details, ' .
 					'right_start_period_id, right_urgency_reason', 'safe'),
-			array('left_standard_intervention_exists, left_intervention_id, left_description, left_patient_factors,', 
-					'requiredIfSide', 'side' => 'left'),
-			array('right_standard_intervention_exists, right_intervention_id, right_description, right_patient_factors,',
-					'requiredIfSide', 'side' => 'right'),
-			array('left_details', 'requiredIfStandardInterventionExists', 'side' => 'left'),
-			array('right_details', 'requiredIfStandardInterventionExists', 'side' => 'right'),
+			array('left_standard_intervention_exists, left_patient_different, left_patient_gain, left_patient_factors,' . 
+					'left_start_period_id',	'requiredIfSide', 'side' => 'left'),
+			array('right_standard_intervention_exists, right_patient_different, right_patient_gain,  right_patient_factors,' . 
+					'right_start_period_id', 'requiredIfSide', 'side' => 'right'),
+			array('left_standard_intervention_id, left_standard_previous, left_intervention_id, left_description', 
+					'requiredIfStandardInterventionExists', 'side' => 'left'),
+			array('right_standard_intervention_id, right_standard_previous, right_intervention_id, right_description', 
+					'requiredIfStandardInterventionExists', 'side' => 'right'),
+			array('left_condition_rare, left_incidence',
+					'requiredIfStandardInterventionDoesNotExists', 'side' => 'left'),
+			array('right_condition_rare, right_incidence',
+					'requiredIfStandardInterventionDoesNotExists', 'side' => 'right'),
+			// TODO: validation of reasons for not using standard intervention
 			array('left_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'left'),
 			array('right_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'right'),
+			array('right_urgency_reason', 'requiredIfUrgent', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, left_standard_intervention_exists, left_standard_intervention_id, left_standard_previous,' . 
@@ -133,9 +141,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'right_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
 					'on' => 'right_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::RIGHT),
 			'deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment' , 'element_id' ),
-			'left_deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 'deviation_id', 
+			'left_deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 'deviationreason_id', 
 				'through' => 'deviationreasons', 'on' => 'deviationreasons.side_id = ' . Eye::LEFT),
-			'right_deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 'deviation_id', 
+			'right_deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 'deviationreason_id', 
 				'through' => 'deviationreasons', 'on' => 'deviationreasons.side_id = ' . Eye::RIGHT),
 			'left_start_period' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod', 'left_start_period_id'),
 			'right_start_period' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod', 'right_start_period_id'),
@@ -148,7 +156,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	public function sidedFields() {
-		return array('standard_intervention_exists', 'details', 'intervention_id', 'description', 'patient_factors', 'patient_factor_details');
+		return array('standard_intervention_exists', 'standard_intervention_id', 'standard_previous', 'condition_rare', 
+					'incidence', 'intervention_id', 'description', 'patient_different', 'patient_gain', 'patient_factors', 
+					'patient_factor_details', 'start_period_id', 'urgency_reason');
 	}
 	
 	/**
@@ -366,10 +376,78 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		}
 	}
 	
-	public function requiredIfPatientFactors($attribute, $params) {
+	/*
+	 * requirement validation if a standard intervention does not exist
+	*/
+	public function requiredIfStandardInterventionDoesNotExists($attribute, $params)
+	{
+		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
+			if ($this->{$params['side'] . '_standard_intervention_exists'} != null 
+				&& $this->{$params['side'] . '_standard_intervention_exists'} == false 
+				&& $this->$attribute == null) {
+				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
+			}
+		}
+	}
+	
+	public function requiredIfPatientFactors($attribute, $params) 
+	{
 		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
 			if ($this->{$params['side'] . '_patient_factors'} && $this->$attribute == null) {
 				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
+			}
+		}
+	}
+	
+	/**
+	 * validation of an attribute if the $side start_period is flagged as urgent
+	 * 
+	 * @param string $attribute
+	 * @param array $params
+	 */
+	public function requiredIfUrgent($attribute, $params)
+	{
+		$side = $params['side'];
+		if (($side == 'left' && $this->eye_id != Eye::RIGHT) || ($side == 'right' && $this->eye_id != Eye::LEFT)) {
+			if ($this->$attribute == null && ($this->{$side . '_start_period'} && $this->{$side . '_start_period'}->urgent) ) {
+				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
+			}
+		}
+	}
+	
+	/**
+	 * update the Deviation reasons for the given eye
+	 * 
+	 * @param int $side - Eye::LEFT or Eye::RIGHT
+	 * @param int[] $reason_ids
+	 */
+	public function updateDeviationReasons($side, $reason_ids) 
+	{
+		$curr_by_id = array();
+		$save = array();
+		
+		foreach ($this->deviationreasons as $d) {
+			if ($f->side_id == $side) {
+				$curr_by_id[$curr->id] = $curr;
+			}
+		}
+		
+		foreach ($reason_ids as $r_id) {
+			if (!array_key_exists($r_id, $curr_by_id)) {
+				$ass = new OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment();
+				$ass->attributes = array('element_id' => $this->id, 'side_id' => $side, 'deviationreason_id' => $r_id);
+				$save[] = $ass;
+			}
+			else {
+				unset($curr_by_id[$r_id]);
+			}
+				
+			foreach ($save as $s) {
+				$s->save();
+			}
+				
+			foreach ($curr_by_id as $curr) {
+				$curr->delete();
 			}
 		}
 	}
@@ -421,7 +499,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	/*
 	 * update the file collections to support the exceptional circumstances of this application for the given side
 	 * 
-	 * @param string $side - left or right
+	 * @param int $side - Eye::LEFT or Eye::RIGHT
 	 * @param int[] $collection_ids - uids of the file collections to be used for this side.
 	 */
 	public function updateFileCollections($side, $collection_ids) {
