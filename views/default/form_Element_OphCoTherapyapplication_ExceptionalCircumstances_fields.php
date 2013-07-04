@@ -44,6 +44,48 @@
 			<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_previous', array('nowrapper' => true))?></div>
 		</div>
 
+		<?php 
+			$opts = array('nowrapper' => true, 
+				'options' => array()				
+			);
+			foreach (Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll() as $intervention) {
+				$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label, 'data-is-deviation' => $intervention->is_deviation);
+			}
+		?>
+			
+		<div class="elementField intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
+			<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
+			<div class="data" style="display: inline-block;"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts)?></div>
+		</div>
+	
+		<div class="elementField" <?php if (!$element->{$side . '_intervention_id'}) { echo ' style="display: none;"'; } ?>>
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
+			<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+		</div>
+		
+		<span id="<?php echo get_class($element) . "_" . $side;?>_deviation_fields"
+			<?php if (!$element->needDeviationReasonForSide($side)) {?>
+			class="hidden"
+			<?php } ?>
+		>
+			<?php 
+				$html_options = array(
+					'options' => array(),	
+					'empty' => '- Please select -',
+					'div_id' =>  get_class($element) . '_' . $side . '_deviationreasons',
+					'div_class' => 'elementField',
+					'label' => $element->getAttributeLabel($side . '_deviationreasons'));
+				
+				echo $form->multiSelectList(
+					$element, 
+					get_class($element) . '[' . $side . '_deviationreasons]', 
+					$side . '_deviationreasons', 'id', 
+					CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'), 
+					array(), 
+					$html_options);
+			?>
+		</span>
+		
 	</span>
 
 	<span id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_exists"
@@ -62,49 +104,6 @@
 		</div>
 	</span>
 	
-	<?php 
-		$opts = array('nowrapper' => true, 
-			'options' => array()				
-		);
-		foreach (Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll() as $intervention) {
-			$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label, 'data-is-deviation' => $intervention->is_deviation);
-		}
-			
-	?>
-		
-	<div class="elementField intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
-		<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
-		<div class="data" style="display: inline-block;"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts)?></div>
-	</div>
-
-	<div class="elementField" <?php if (!$element->{$side . '_intervention_id'}) { echo ' style="display: none;"'; } ?>>
-		<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
-		<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
-	</div>
-	
-	<span id="<?php echo get_class($element) . "_" . $side;?>_deviation_fields"
-		<?php if (!$element->needDeviationReasonForSide($side)) {?>
-		class="hidden"
-		<?php } ?>
-	>
-		<?php 
-			$html_options = array(
-				'options' => array(),	
-				'empty' => '- Please select -',
-				'div_id' =>  get_class($element) . '_' . $side . '_deviationreasons',
-				'div_class' => 'elementField',
-				'label' => $element->getAttributeLabel($side . '_deviationreasons'));
-			
-			echo $form->multiSelectList(
-				$element, 
-				get_class($element) . '[' . $side . '_deviationreasons]', 
-				$side . '_deviationreasons', 'id', 
-				CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'), 
-				array(), 
-				$html_options);
-		?>
-	</span>
-
 	<div class="elementField">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_different'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_different', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
