@@ -39,29 +39,29 @@
 					array('empty'=>'- Please select -', 'nowrapper' => true)) ?></div>
 		</div>
 
-		<div class="elementField standard_previous">
+		<div class="elementField standard_previous" id="<?php echo get_class($element) . "_" . $side; ?>_standard_previous">
 			<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_previous'); ?></div>
 			<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_previous', array('nowrapper' => true))?></div>
 		</div>
 
-		<span id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_used"
-			<?php if (!$element->{$side . '_standard_intervention_exists'}
-				|| $element->{$side . '_standard_previous'}) { 
-				echo ' class="hidden"'; 
-			}?>>
-			<div class="elementField">
-				<div class="label"><?php echo $element->getAttributeLabel($side . '_condition_rare'); ?></div>
-				<div class="data"><?php echo $form->radioBoolean($element, $side . '_condition_rare', array('nowrapper' => true))?></div>
-			</div>
-
-			<div class="elementField">
-				<div class="label"><?php echo $element->getAttributeLabel($side . '_incidence'); ?></div>
-				<div class="data"><?php echo $form->textArea($element, $side . '_incidence', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
-			</div>
-		</span>
-
 	</span>
 
+	<span id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_exists"
+		<?php if (!$element->{$side . '_standard_intervention_exists'}
+			|| $element->{$side . '_standard_previous'}) { 
+			echo ' class="hidden"'; 
+		}?>>
+		<div class="elementField">
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_condition_rare'); ?></div>
+			<div class="data"><?php echo $form->radioBoolean($element, $side . '_condition_rare', array('nowrapper' => true))?></div>
+		</div>
+
+		<div class="elementField">
+			<div class="label"><?php echo $element->getAttributeLabel($side . '_incidence'); ?></div>
+			<div class="data"><?php echo $form->textArea($element, $side . '_incidence', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+		</div>
+	</span>
+	
 	<?php 
 		$opts = array('nowrapper' => true, 
 			'options' => array()				
@@ -72,7 +72,7 @@
 			
 	?>
 		
-	<div class="elementField intervention">
+	<div class="elementField intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
 		<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
 		<div class="data" style="display: inline-block;"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts)?></div>
 	</div>

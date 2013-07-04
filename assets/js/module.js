@@ -420,6 +420,17 @@ function OphCoTherapyapplication_addPrevintervention(side) {
 		'dateFormat': nhs_date_format});
 }
 
+function OphCoTherapyapplication_DeviationFields(side) {
+	var previously_used = $('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_previous').find('input:checked').val();
+	var intervention_type = $('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_intervention').find('input:checked');
+	if (previously_used == '0' && intervention_type) {
+		if (intervention_type.data('is-deviation')) {
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').removeClass('hidden');
+			return;
+		}
+	}
+	$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').addClass('hidden');
+}
 
 $(document).ready(function() {
 	// standard stuff
@@ -538,51 +549,43 @@ $(document).ready(function() {
 	// show/hide the standard interventions element
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.standard_intervention_exists input', 'change', function() {
 		var side = getSplitElementSide($(this));
+		var val = $(this).val();
 		
-		if ($(this).val() == '1') {
-			
+		if (val == '1') {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').removeClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').addClass('hidden');
+		}
+		else if (val == '0'){
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').addClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').removeClass('hidden');
 		}
 		else {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').addClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').addClass('hidden');
 		}
 	});
 	
-	// show/hide reasons for the standard intervention not having been used
+	
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.standard_previous input', 'change', function() {
 		var side = getSplitElementSide($(this));
+		OphCoTherapyapplication_DeviationFields(side);
 		
-		if ($(this).val() == '0') {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_used').removeClass('hidden');
-		}
-		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_used').addClass('hidden');
-		}
 	});
 	
 	// managing the consequences of changing the intervention type (additional/deviation)
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.intervention input', 'change', function() {
 		var side = getSplitElementSide($(this));
+		OphCoTherapyapplication_DeviationFields(side);
 		
 		if ($(this).val()) {
 			if ($(this).data('description-label')) {
 				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').find('.label').text($(this).data('description-label'));
 			}
-			var is_deviation = $(this).data('is-deviation');
-			var previously_used = $('.Element_OphCoTherapyapplication_ExceptionalCircumstances .standard_previous').find('input:checked').val();
-			if (is_deviation && previously_used == '0') {
-				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').removeClass('hidden');
-			}
-			else {
-				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').addClass('hidden');
-			}
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').show();
 		}
 		else {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').hide();
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').addClass('hidden');
 		}
-		
 	});
 	
 	// Manage previous interventions in exceptional circumstances element
