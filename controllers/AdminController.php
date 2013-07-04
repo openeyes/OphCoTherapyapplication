@@ -334,6 +334,7 @@ class AdminController extends ModuleAdminController
 		$this->renderPartial('create', array(
 				'model' => $model,
 				'decisiontree' => $tree,
+				'title' => 'Node for ' . $tree->name
 		));
 	}
 	

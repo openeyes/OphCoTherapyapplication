@@ -28,7 +28,7 @@
 		<?php echo $form->error($model,'question'); ?>
 	</div>
 
-	<div class="row outcome eventDetail">
+	<div class="row outcomeAdmin eventDetail">
 		<div class="label"><?php echo $form->labelEx($model,'outcome_id'); ?></div>
 		<div class="data"><?php echo $form->dropdownlist($model,'outcome_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll(),'id','name'),array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
 		<?php echo $form->error($model,'outcome_id'); ?>
