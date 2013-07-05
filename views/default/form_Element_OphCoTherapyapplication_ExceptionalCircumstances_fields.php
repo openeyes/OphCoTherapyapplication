@@ -138,7 +138,7 @@
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_gain', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 
-	<div class="elementField">
+	<div class="elementField" id="div_<?php echo get_class($element) . "_" . $side; ?>_previnterventions">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?></div>
 		<div class="data">
 			<table>
