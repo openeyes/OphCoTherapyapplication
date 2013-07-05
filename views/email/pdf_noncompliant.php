@@ -226,7 +226,14 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			Eye affected: <?php echo $side ?><br />
 			Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
 			Visual Acuity: <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
-			OCT Thickness: TBD
+			OCT Thickness: 
+			<?php
+				$oct_str = "Not measured";
+				if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
+					$oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
+				}
+				echo $oct_str;
+			?>
 			</td>
 		</tr>
 		<tr>
@@ -292,20 +299,47 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<td>(e.g. name of trial, is it an MRC/National trial?)<br />(Not Applicable)</td>
 		</tr>
 		<tr>
-			<td class="row-title">11. (a) Is there a standard intervention at this stage?<br /><br />
-(b) Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?<br /><br />
-(c) What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
+			<td class="row-title">11. (a) Is there a standard intervention at this stage?</td>
 			<td>(a) 
+				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {?>
+					The standard intervention is <?php echo $exceptional->{$side . '_standard_intervention'}->name;?>.<br /><br />
+					This intervention has <?php if (!$exceptional->{$side . '_standard_previous'}) { echo "not"; }?> been applied previously.<br /><br />
+				<?php } else { ?>
+					There is no standard intervention<br /><br />
+					This is <?php if (!$exceptional->{$side . '_condition_rare'}) { echo 'not'; }?> a rare condition.<br />
+					The incidence of it is: <?php echo $exceptional->{$side . '_incidence'}; ?>
+				<?php }?></td>
+		</tr>
+		<tr>
+			<td class="row-title">&nbsp;&nbsp;(b) Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
+			<td>(b) 
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
-					echo $exceptional->{$side . '_standard_intervention'}->name;
-				} else {
-					echo "There is no standard intervention<br />";
-				}?>
-				
-				<br /><br />(b) Intervention is: <?php echo $exceptional->{$side . '_intervention'}->name?><br />
-				(c) <?php echo $exceptional->{$side . '_description'} ?>
-				
+					echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;?><br /><br />
+					<?php echo $exceptional->{$side . '_description'};?>
+					<?php if ($exceptional->needDeviationReasonForSide($side)) {?>
+						<br /><br />The standard intervention cannot be used because of 
+							<?php 
+							$reason_count = count($exceptional->{$side . '_deviationreasons'});
+							foreach ($exceptional->{$side . '_deviationreasons'} as $i => $dr) {
+								echo $dr->name;
+								if ($i == $reason_count - 1) {
+									echo ".";
+								}
+								elseif ($i == $reason_count - 2) {
+									echo " and ";
+								}
+								else {
+									echo ", ";
+								}
+							}?>
+					<?php } ?>
+				<?php } ?>
 			</td>
+		</tr>
+		<tr>
+			<td class="row-title">(c) What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
+			<td>(c) <?php echo $exceptional->{$side . '_patient_different'} ?><br /><br />
+				<?php echo $exceptional->{$side . '_patient_gain'}?></td>
 		</tr>
 		<tr>
 			<td class="row-title">12. In case of intervention for CANCER</td>
@@ -399,8 +433,16 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">15. Anticipated Start Date</td>
-			<td>Processing requests can take up to 2-4 weeks (from the date received by the PCT). <br />If the case is more urgent than this, please state clinical reason why:<br />
-4 Weeks.</td>
+			<td>Processing requests can take up to 2-4 weeks (from the date received by the PCT). <br />If the case is more urgent than this, please state clinical reason why:<br /><br />
+			<?php 
+				echo $exceptional->{$side . '_start_period'}->name;
+				if ($exceptional->{$side . '_urgency_reason'}) {?>
+					<br /><br />
+					<?php 
+					echo $exceptional->{$side . '_urgency_reason'};
+				}
+			?>
+			</td>
 		</tr>
 			
 	</tbody>

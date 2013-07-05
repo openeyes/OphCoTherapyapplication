@@ -211,6 +211,15 @@ class OphCoTherapyapplication_Processor {
 			$letter->addBody($body);
 			$letter->render($pdf);
 			
+			return $pdf;
+		}
+		return null;
+	}
+
+	protected function createPDFForSide($data, $side) 
+	{
+		$pdf = $this->generatePDFForSide($data, $side);
+		if ($pdf) {
 			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $data['patient']->hos_num . '.pdf');
 			$pdf->Output($pfile->getPath(), "F");
 			if (!$pfile->save()) {
@@ -220,8 +229,9 @@ class OphCoTherapyapplication_Processor {
 			return $pfile;
 		}
 	}
-	
-	protected function generateEmailForSide($data, $side) {
+
+	protected function generateEmailForSide($data, $side) 
+	{
 		$template_data = array();
 		foreach ($data as $k => $v) {
 			$template_data[$k] = $v;
@@ -255,22 +265,12 @@ class OphCoTherapyapplication_Processor {
 		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->{$side . '_nice_compliance'};
 	}
 	
-	/**
-	 * processes the application for the event with id $event_id returns a boolean to indicate whether this was successful
-	 * or not.
-	 * 
-	 * @param integer $event_id
-	 * @throws Exception
-	 * @return boolean
-	 */
-	public function processEvent($event_id) {
+	protected function _generateEventDataForProcessing($event_id)
+	{
 		/*
 		 * because we don't really have an event object, create an associative array with all the appropriate properties
 		 */
 		$event_data = $this->getEvent($event_id);
-		if (isset($elements['Element_OphCoTherapyapplication_Email'])) {
-			throw new Exception('Cannot re-process an event');
-		}
 		
 		$event = $event_data['event'];
 		
@@ -285,6 +285,38 @@ class OphCoTherapyapplication_Processor {
 		if (isset($event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'])) {
 			$data['exceptional'] = $event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'];
 		}
+
+		return $data;
+	}
+
+	/** 
+	* generate the pdf for the application for the given event. This is basically a bit of a hack to enable
+	* previewing of the application. If we get time, will try to refactor this a bit to make the service model
+	* a bit more logical in how this works.
+	* 
+	* (I continue to blame the absence of an event model for all this jiggery pokery anyway)
+	* 
+	* @param int $event_id
+	* @param string $side 'left' or 'right'
+	* @return OETCPDF or null
+	*/
+	public function generateEventPDFForSide($event_id, $side)
+	{
+		$event_data = $this->_generateEventDataForProcessing($event_id);
+		return $this->generatePDFForSide($event_data, $side);
+	}
+
+	/**
+	 * processes the application for the event with id $event_id returns a boolean to indicate whether this was successful
+	 * or not.
+	 * 
+	 * @param integer $event_id
+	 * @throws Exception
+	 * @return boolean
+	 */
+	public function processEvent($event_id) 
+	{
+		$event_data = $this->_generateEventDataForProcessing($event_id);
 		
 		$email_el = new Element_OphCoTherapyapplication_Email();
 		$email_el->event_id = $event_id;
@@ -295,7 +327,7 @@ class OphCoTherapyapplication_Processor {
 		
 		if ($data['diagnosis']->hasLeft()) {
 			
-			if ($file = $this->generatePDFForSide($data, 'left')) {
+			if ($file = $this->createPDFForSide($data, 'left')) {
 				//$email_el->left_application_id = $file->id;
 				$left_attach_ids[] = $file->id;
 			}
@@ -309,7 +341,7 @@ class OphCoTherapyapplication_Processor {
 		
 		if ($data['diagnosis']->hasRight()) {
 			
-			if ($file = $this->generatePDFForSide($data, 'right')) {
+			if ($file = $this->createPDFForSide($data, 'right')) {
 				//$email_el->right_application_id = $file->id;
 				$right_attach_ids[] = $file->id;
 			}

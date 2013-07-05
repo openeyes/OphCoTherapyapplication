@@ -62,7 +62,42 @@ class DefaultController extends BaseEventTypeController {
 	
 	private $event_model_cache = array();
 	
-	public function actionProcessApplication() {
+	public function actionPreviewExceptionalCircumstances() 
+	{
+		if (isset($_REQUEST['element_id']) && isset($_REQUEST['side'])) {
+			if ($ec = Element_OphCoTherapyapplication_ExceptionalCircumstances::model()->findByPk((int)$_REQUEST['element_id'])) {
+				if ($_REQUEST['side'] == 'left') {
+					if (!$ec->hasLeft()) {
+						throw new CHttpException('404', 'EC does not have left side');
+					}
+				} else if ($_REQUEST['side'] == 'right') {
+					if (!$ec->hasRight()) {
+						throw new CHttpException('404', 'EC does not have right side');
+					}
+				}
+				else {
+					throw new CHttpException('400', 'Invalid request');
+				}
+				$service = new OphCoTherapyapplication_Processor();
+				if ($pdf = $service->generateEventPDFForSide($ec->event_id, $_REQUEST['side']) ) {
+					$pdf->Output($pdf->getDocref().".pdf", "I");
+				}
+				else {
+					throw new CHttpException('400', 'PDF not valid');
+				}
+			}
+			else {
+				throw new CHttpException('404', 'Exceptional Circumstances not found');
+			}
+			
+		}
+		else {
+			throw new CHttpException('400', 'Invalid request');
+		}
+	}
+
+	public function actionProcessApplication() 
+	{
 		if (isset($_REQUEST['event_id'])) {
 			$service = new OphCoTherapyapplication_Processor();
 			$event_id = (int)$_REQUEST['event_id'];
