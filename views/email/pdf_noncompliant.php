@@ -342,7 +342,15 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				<tr>
 					<th>What is the patient's clinical severity? (Where possible use standard scoring systems e.g. WHO, DAS scores, walk test, cardiac index etc)</th>
 					<td>Visual Acuity in the affected eye is: 
-					<?php echo ($exam_api && ($va = $exam_api->getBestVisualAcuity($patient, $event->episode, $side)) ) ? $va : "Not measured"; ?></td>
+					<?php if ($exam_api) {
+							if ($side == 'left') {
+								$va = $exam_api->getLetterVisualAcuityLeft($patient);
+							} else {
+								$va = $exam_api->getLetterVisualAcuityRight($patient);
+							}
+							echo $va ? $va : "Not measured"; 
+						}
+					?></td>
 				</tr>
 			</table>
 			</td>
