@@ -94,9 +94,6 @@ class DefaultController extends BaseEventTypeController {
 	public function getDefaultElements($action, $event_type_id=false, $event=false) {
 		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
 		
-		foreach ($all_elements as $el) {
-			error_log(get_class($el));
-		}
 		if (in_array($action, array('create', 'edit'))) {
 			// clear out the email element as we don't want to display or edit it
 			$elements = array();

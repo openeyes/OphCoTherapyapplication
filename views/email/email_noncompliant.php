@@ -25,9 +25,14 @@ This email was generated from an OpenEyes Therapy Application event
 AMD EC-Form this patient sent to Contracts for PCT approval.
 AMD EC-Form document sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 
-Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term  . "\n" ?>
+Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
 <?php 
-if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder($patient, $event->episode, $side, $diagnosis->{$side . '_diagnosis_id'})) {
+if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
+		$patient, 
+		$event->episode, 
+		$side, 
+		$diagnosis->{$side . '_diagnosis1_id'},
+		$diagnosis->{$side . '_diagnosis2_id'})) {
 	foreach ($exam_info->{$side . '_answers'} as $answer) {
 		echo $answer->question->question . ": ";
 		echo ($answer->answer) ? "Yes\n" : "No\n";

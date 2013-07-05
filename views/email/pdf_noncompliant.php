@@ -224,8 +224,8 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<td class="row-title">6. Patient Diagnosis (for which intervention is requested)</td>
 			<td>
 			Eye affected: <?php echo $side ?><br />
-			Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term ?><br />
-			Visual Acuity: <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuity($patient, $event->episode, $side)) ) ? $va : "Not measured"; ?><br />
+			Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
+			Visual Acuity: <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
 			OCT Thickness: TBD
 			</td>
 		</tr>
@@ -297,9 +297,9 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 (c) What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
 			<td>(a) 
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
-					echo $exceptional->{$side . '_details'};
+					echo $exceptional->{$side . '_standard_intervention'}->name;
 				} else {
-					echo "No current standard deviation<br />";
+					echo "There is no standard intervention<br />";
 				}?>
 				
 				<br /><br />(b) Intervention is: <?php echo $exceptional->{$side . '_intervention'}->name?><br />

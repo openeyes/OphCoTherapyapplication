@@ -17,7 +17,42 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
+<h4 class="elementTypeName">Application</h4>
 
+<div class="cols2 clearfix">
+	<div class="left eventDetail">
+		<?php if($element->hasRight()) {?>
+			<div class="eventDetail aligned">
+				<div class="label">Application files</div>
+				<div class="data">
+					<ul style="margin: 0px;">
+						<?php foreach ($element->right_attachments as $att) {?>
+							<li><a href="<?php echo $att->getDownloadURL()?>"><?php echo $att->name; ?></a></li>
+						<?php } ?>
+					</ul>
+				</div>
+			</div>
+		<?php } else { ?>
+		N/A
+		<?php } ?>
+	</div>
+	<div class="right eventDetail">
+		<?php if($element->hasLeft()) {?>
+			<div class="eventDetail aligned">
+				<div class="label">Application files</div>
+				<div class="data">
+					<ul style="margin: 0px;">
+						<?php foreach ($element->left_attachments as $att) {?>
+							<li><a href="<?php echo $att->getDownloadURL()?>"><?php echo $att->name; ?></a></li>
+						<?php } ?>
+					</ul>
+				</div>
+			</div>
+		<?php } else { ?>
+		N/A
+		<?php } ?>
+	</div>
+</div>
 <div class="metaData">
 Application sent by <span class="user"><?php echo $element->user->fullname ?></span> on <?php echo $element->NHSDate('created_date') ?>
 		at <?php echo date('H:i', strtotime($element->created_date)) ?>

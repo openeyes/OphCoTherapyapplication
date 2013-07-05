@@ -219,6 +219,23 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		return parent::beforeValidate();
 	}
 	
+	/**
+	 * return a string representation of the diagnoses set for the given side
+	 * @param string $side 'left' or 'right'
+	 * @return string
+	 */
+	public function getDiagnosisStringForSide($side)
+	{
+		$res = '';
+		if ($this->{$side . '_diagnosis1'}) {
+			$res .= $this->{$side . '_diagnosis1'}->term;
+		}
+		if ($this->{$side . '_diagnosis2'}) {
+			$res .= " secondary to " . $this->{$side . '_diagnosis2'}->term;
+		}
+		return $res;
+	}
+
 	/*
 	 * check that the standard intervention description is given if the element is flagged appropriately
 	*/

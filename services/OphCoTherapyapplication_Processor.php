@@ -305,7 +305,6 @@ class OphCoTherapyapplication_Processor {
 					$right_attach_ids[] = $fc->getZipFile()->id;
 				}
 			}
-			$email_el->updateAttachments(SplitEventTypeElement::RIGHT, $attach_ids);
 			$email_el->right_email_text = $this->generateEmailForSide($data,'right');
 		}
 		
