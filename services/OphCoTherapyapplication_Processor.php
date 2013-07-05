@@ -115,6 +115,7 @@ class OphCoTherapyapplication_Processor {
 		$event_data = $this->getEvent($event_id);
 		$elements = $event_data['elements'];
 		$event = $event_data['event'];
+		$can_process = true;
 		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
 			// need to determine if the appropriate information has been captured for the relevant eyes in examination
 			if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
@@ -123,35 +124,47 @@ class OphCoTherapyapplication_Processor {
 				$missing_sides = array();
 				
 				if ($el_diag->hasLeft()) {
-					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->left_diagnosis1_id))) {
-						$sides[] = 'left';
-					}
+					$sides[] = 'left';
 				}
 				if ($el_diag->hasRight()) {
-					if (count($api->getInjectionManagementQuestionsForDisorder($el_diag->right_diagnosis1_id))) {
-						$sides[] = 'right';
-					}
+					$sides[] = 'right';
 				}
 				
 				foreach ($sides as $side) {
-					if (!$api->getInjectionManagementComplexInEpisodeForDisorder($event->episode->patient, $event->episode, $side, $el_diag->{$side . '_diagnosis1_id'})) {
+					if (!$api->getInjectionManagementComplexInEpisodeForDisorder(
+							$event->episode->patient, 
+							$event->episode, 
+							$side, 
+							$el_diag->{$side . '_diagnosis1_id'},
+							$el_diag->{$side . '_diagnosis2_id'})) {
 						$missing_sides[] = $side;
+						$can_process = false;
 					}
-				}
-				
-				if (!count($missing_sides)) {
-					return true;
 				}
 				
 				// log warnings - false falls out at the end
 				foreach ($missing_sides as $missing) {
-					$this->addProcessWarning($event_id, 'No Injection Management has been created for ' . $missing . ' diagnosis ' . $el_diag->{$missing . '_diagnosis1'}->term);
+					$this->addProcessWarning($event_id, 
+						'No Injection Management has been created for ' . $missing . ' diagnosis.');
 				}
-			
+
+				if (!$api->getLetterVisualAcuityLeft($event->episode->patient)) {
+					$this->addProcessWarning($event_id, 'Visual acuity not found for left eye.');
+					$can_process = false;
+				}
+
+				if (!$api->getLetterVisualAcuityRight($event->episode->patient)) {
+					$this->addProcessWarning($event_id, 'Visual acuity not found for right eye.');
+					$can_process = false;
+				}
+			}
+			else {
+				error_log('Therapy application requires OphCIExamination module');
+				$can_process = false;
 			}
 		}
 		
-		return false;
+		return $can_process;
 		
 	}
 	
