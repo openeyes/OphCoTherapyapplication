@@ -163,6 +163,9 @@ class OphCoTherapyapplication_Processor {
 				$can_process = false;
 			}
 		}
+		else {
+			$can_process = false;
+		}
 		
 		return $can_process;
 		
@@ -316,7 +319,7 @@ class OphCoTherapyapplication_Processor {
 	 */
 	public function processEvent($event_id) 
 	{
-		$event_data = $this->_generateEventDataForProcessing($event_id);
+		$data = $this->_generateEventDataForProcessing($event_id);
 		
 		$email_el = new Element_OphCoTherapyapplication_Email();
 		$email_el->event_id = $event_id;
