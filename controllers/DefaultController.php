@@ -75,7 +75,7 @@ class DefaultController extends BaseEventTypeController
 					if (!$ec->hasLeft()) {
 						throw new CHttpException('404', 'EC does not have left side');
 					}
-				} else if ($_REQUEST['side'] == 'right') {
+				} elseif ($_REQUEST['side'] == 'right') {
 					if (!$ec->hasRight()) {
 						throw new CHttpException('404', 'EC does not have right side');
 					}
@@ -345,7 +345,7 @@ class DefaultController extends BaseEventTypeController
 						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse'] :
 						array());
 
-			} else if (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
+			} elseif (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
 				$el->updateDeviationReasons(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT,
 						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_deviationreasons']) ?
 						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_deviationreasons']) :

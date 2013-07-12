@@ -819,4 +819,3 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		return true;
 	}
 }
-?>

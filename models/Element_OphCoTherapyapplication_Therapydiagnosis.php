@@ -259,4 +259,3 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		}
 	}
 }
-?>

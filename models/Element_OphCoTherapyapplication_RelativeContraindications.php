@@ -178,4 +178,3 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 		return false;
 	}
 }
-?>

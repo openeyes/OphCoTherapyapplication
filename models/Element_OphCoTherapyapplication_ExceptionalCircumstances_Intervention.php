@@ -133,4 +133,3 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention exte
 		return parent::beforeValidate();
 	}
 }
-?>

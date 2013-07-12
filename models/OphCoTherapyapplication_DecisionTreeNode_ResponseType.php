@@ -61,7 +61,7 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 	{
 		if (in_array($this->datatype, array('int', 'str')) ) {
 			return null;
-		} else if ($this->datatype == 'bool') {
+		} elseif ($this->datatype == 'bool') {
 			return 1;
 		}
 		// TODO: implement for choice 'ch' response type

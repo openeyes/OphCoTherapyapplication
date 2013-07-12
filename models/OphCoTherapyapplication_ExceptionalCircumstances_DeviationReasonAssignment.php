@@ -129,4 +129,3 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment
 		return parent::beforeValidate();
 	}
 }
-?>

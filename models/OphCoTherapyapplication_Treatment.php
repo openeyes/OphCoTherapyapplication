@@ -172,4 +172,3 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return "Every " . $this->monitoring_frequency . " " . $this->monitoring_frequency_period->name;
 	}
 }
-?>

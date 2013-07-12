@@ -138,4 +138,3 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 		return parent::beforeValidate();
 	}
 }
-?>

@@ -221,4 +221,3 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 
 	}
 }
-?>

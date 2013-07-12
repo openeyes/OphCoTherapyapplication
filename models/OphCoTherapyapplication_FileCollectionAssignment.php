@@ -124,4 +124,3 @@ class OphCoTherapyapplication_FileCollectionAssignment extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 }
-?>

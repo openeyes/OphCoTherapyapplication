@@ -139,4 +139,3 @@ class Element_OphCoTherapyapplication_MrServiceInformation extends BaseEventType
 		return parent::beforeValidate();
 	}
 }
-?>

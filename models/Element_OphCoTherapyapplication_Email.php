@@ -277,4 +277,3 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	}
 
 }
-?>

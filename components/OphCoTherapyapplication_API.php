@@ -44,7 +44,7 @@ class OphCoTherapyapplication_API extends BaseAPI
 
 			if ($side == 'left') {
 				$eye_ids[] = SplitEventTypeElement::LEFT;
-			} else if ($side == 'right') {
+			} elseif ($side == 'right') {
 				$eye_ids[] = SplitEventTypeElement::RIGHT;
 			} else {
 				throw new Exception('unrecognised side value ' . $side);

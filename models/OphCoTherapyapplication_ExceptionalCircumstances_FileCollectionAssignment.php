@@ -127,4 +127,3 @@ class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment 
 		return parent::beforeValidate();
 	}
 }
-?>
