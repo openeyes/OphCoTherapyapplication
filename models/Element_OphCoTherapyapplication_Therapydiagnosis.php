@@ -26,7 +26,7 @@
  * @property integer $left_diagnosis1_id
  * @property integer $right_diagnosis1_id
  * @property integer $left_diagnosis2_id
- * @property integer $right_diagnosis2_id 
+ * @property integer $right_diagnosis2_id
  *
  * The followings are the available model relations:
  *
@@ -80,11 +80,12 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 			array('id, event_id, left_diagnosis1_id, right_diagnosis1_id, left_diagnosis2_id, right_diagnosis2_id, eye_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
-	public function sidedFields() {
+
+	public function sidedFields()
+	{
 		return array('diagnosis1_id', 'diagnosis2_id');
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -138,7 +139,7 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 		$criteria->compare('right_diagnosis1_id', $this->right_diagnosis1_id);
 		$criteria->compare('left_diagnosis2_id', $this->left_diagnosis2_id);
 		$criteria->compare('right_diagnosis2_id', $this->right_diagnosis2_id);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,
 		));
@@ -147,16 +148,17 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 	/**
 	 * Get a list of level 1 disorders for this element (appends any level 1 disorder that has been selected for this
 	 * element but aren't part of the default list)
-	 * 
+	 *
 	 * @return Disorder[]
 	 */
-	public function getLevel1Disorders() {
+	public function getLevel1Disorders()
+	{
 		$criteria = new CDbCriteria;
 		$criteria->condition = 'parent_id IS NULL';
 		$criteria->order = 'display_order asc';
-		
+
 		$therapy_disorders = OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria);
-		
+
 		$disorders = array();
 		$disorder_ids = array();
 		foreach ($therapy_disorders as $td) {
@@ -170,35 +172,36 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 				$disorders[] = $this->{$side . '_diagnosis1'};
 			}
 		}
-		
+
 		return $disorders;
 	}
-	
+
 	/**
 	 * retrieve a list of disorders that are defined as level 2 disorders for the given disorder
 	 * @param unknown $therapyDisorder
 	 * @return Disorder[]
 	 */
-	public function getLevel2Disorders($disorder) {
+	public function getLevel2Disorders($disorder)
+	{
 		$criteria = new CDbCriteria;
 		$criteria->condition = 'parent_id IS NULL AND disorder_id = :did';
 		$criteria->params = array(':did' => $disorder->id);
 		$disorders = array();
-		
+
 		if ($td = OphCoTherapyapplication_TherapyDisorder::model()->find($criteria)) {
 			$disorders = $td->getLevel2Disorders();
 			$dids = array();
 			foreach ($disorders as $d) {
 				$dids[] = $d->id;
 			}
-			foreach(array('left', 'right') as $side) {
-				if ($this->{$side . '_diagnosis1_id'} == $disorder->id 
-					&& $this->{$side . '_diagnosis2'} 
+			foreach (array('left', 'right') as $side) {
+				if ($this->{$side . '_diagnosis1_id'} == $disorder->id
+					&& $this->{$side . '_diagnosis2'}
 					&& !in_array($this->{$side . '_diagnosis2_id'}, $dids)) {
 					$disorders[] = $this->{$side . '_diagnosis2'};
 				}
 			}
-			
+
 		}
 		return $disorders;
 	}
@@ -218,7 +221,7 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 	{
 		return parent::beforeValidate();
 	}
-	
+
 	/**
 	 * return a string representation of the diagnoses set for the given side
 	 * @param string $side 'left' or 'right'
@@ -239,7 +242,8 @@ class Element_OphCoTherapyapplication_Therapydiagnosis extends SplitEventTypeEle
 	/*
 	 * check a level 2 diagnosis is provided for level 1 diagnoses that require it (need to check the side as well though)
 	*/
-	public function requiredIfSecondary($attribute, $params) {
+	public function requiredIfSecondary($attribute, $params)
+	{
 		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
 			if ($this->$params['dependent'] && !$this->$attribute) {
 				$criteria = new CDbCriteria;

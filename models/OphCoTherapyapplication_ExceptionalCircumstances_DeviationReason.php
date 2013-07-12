@@ -17,7 +17,8 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason extends BaseActiveRecord {
+class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -26,7 +27,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason extends B
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,7 +35,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason extends B
 	{
 		return 'ophcotherapya_exceptional_deviationreason';
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -48,5 +49,5 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason extends B
 				array('id, name, enabled, display_order', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 }

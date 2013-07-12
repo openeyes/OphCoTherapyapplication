@@ -36,7 +36,7 @@
  * @property integer $monitoring_frequency_period_id
  * @property string $duration
  * @property string $toxicity
- * 
+ *
  * The followings are the available model relations:
  *
  * @property OphCoTherapyapplication_DecisionTree $decisiontree
@@ -73,18 +73,18 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('drug_id decisiontree_id, available, contraindications_required, decisiontree_id, template_code, intervention_name, 
-					dose_and_frequency, administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id, 
+			array('drug_id decisiontree_id, available, contraindications_required, decisiontree_id, template_code, intervention_name,
+					dose_and_frequency, administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id,
 					duration, toxicity', 'safe'),
-			array('drug_id contraindications_required, intervention_name, dose_and_frequency, 
-					administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id, 
+			array('drug_id contraindications_required, intervention_name, dose_and_frequency,
+					administration_route, cost, cost_type_id, monitoring_frequency, monitoring_frequency_period_id,
 					duration, toxicity', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, drug_id, available, contraindications_required', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -156,16 +156,19 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	{
 		return parent::beforeValidate();
 	}
-	
-	protected function getName() {
+
+	protected function getName()
+	{
 		return $this->drug->name;
 	}
-	
-	public function getDisplayCost() {
+
+	public function getDisplayCost()
+	{
 		return $this->cost . " per "  . $this->cost_type->name;
 	}
-	
-	public function getDisplayMonitoringFrequency() {
+
+	public function getDisplayMonitoringFrequency()
+	{
 		return "Every " . $this->monitoring_frequency . " " . $this->monitoring_frequency_period->name;
 	}
 }

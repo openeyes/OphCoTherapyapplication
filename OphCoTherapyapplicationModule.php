@@ -29,8 +29,9 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 	// this property is really only relevant to gii auto-generation, specifically
 	// for updates to the module through gii
 	public $moduleShortSuffix;
-	
-	public function init() {
+
+	public function init()
+	{
 		// this method is called when the module is being created
 		// you may place code here to customize the module or the application
 
@@ -41,19 +42,19 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 			'OphCoTherapyapplication.services.*',
 			'OphTrIntravitrealinjection.models.*',
 		));
-		
+
 		$this->moduleShortSuffix = "TherapyA";
-		
+
 		// check for required configuration variables
 		$missing_config = array();
-		foreach (array('OphCoTherapyapplication_sender_email', 
+		foreach (array('OphCoTherapyapplication_sender_email',
 				'OphCoTherapyapplication_compliant_recipient_email',
 				'OphCoTherapyapplication_noncompliant_recipient_email',
 				'OphCoTherapyapplication_applicant_email',
 				'OphCoTherapyapplication_chief_pharmacist',
 				'OphCoTherapyapplication_chief_pharmacist_contact',
 				) as $required_config) {
-			
+
 			if (!isset(Yii::app()->params[$required_config])) {
 				$missing_config[] = $required_config;
 			}
@@ -63,13 +64,13 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 		}
 	}
 
-	public function beforeControllerAction($controller, $action) {
-		if(parent::beforeControllerAction($controller, $action)) {
+	public function beforeControllerAction($controller, $action)
+	{
+		if (parent::beforeControllerAction($controller, $action)) {
 			// this method is called before any module controller action is performed
 			// you may place customized code here
 			return true;
-		}
-		else
+		} else
 			return false;
 	}
 }

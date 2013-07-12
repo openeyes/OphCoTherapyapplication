@@ -17,101 +17,106 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphCoTherapyapplication_Processor {
+class OphCoTherapyapplication_Processor
+{
 	private $events_by_id = array();
 	private $controller = null;
-	
+
 	private $_viewpath = null;
-	
+
 	/**
 	 * wrapper for crude caching of event data by id - might need a flushing mechanism if this class gets wider
 	 * usage to manage the events in this module
-	 * 
+	 *
 	 * @param unknown $event_id
 	 * @return multitype:
 	 */
-	private function getEvent($event_id) {
+	private function getEvent($event_id)
+	{
 		if (!isset($this->events_by_id[$event_id])) {
-			
+
 			$event = Event::model()->findByPk($event_id);
 			$this->events_by_id[$event_id]['event'] = $event;
-			
+
 			$event_type = EventType::model()->find('class_name = ?',array('OphCoTherapyapplication'));
-			
+
 			$criteria = new CDbCriteria;
 			$criteria->compare('event_type_id',$event_type->id);
 			$criteria->order = 'display_order asc';
-						
+
 			$elements = array();
-			
-			
+
+
 			foreach (ElementType::model()->findAll($criteria) as $element_type) {
 				$element_class = $element_type->class_name;
-			
+
 				if ($element = $element_class::model()->find('event_id = ?',array($event->id))) {
 					$elements[$element_class] = $element;
 				}
 			}
-			
+
 			$this->events_by_id[$event_id]['elements'] = $elements;
 		}
-		
+
 		return $this->events_by_id[$event_id];
 	}
-	
+
 	/**
 	 * get a controller class for use with rendering etc
-	 * 
+	 *
 	 * @return CController $controller
 	 */
-	protected function getController() {
+	protected function getController()
+	{
 		if (!$this->controller) {
 			if (isset(Yii::app()->controller)) {
 				$this->controller = Yii::app()->controller;
-			}
-			else {
+			} else {
 				$this->controller = new CController('OphCoTherapyapplication');
 			}
 		}
 		return $this->controller;
 	}
-	
+
 	/**
 	 * get the view path for email templates
-	 * 
+	 *
 	 * @return string
 	 */
-	protected function getViewPath() {
+	protected function getViewPath()
+	{
 		if (!$this->_viewpath) {
 			$module = Yii::app()->getModule('OphCoTherapyapplication');
 			$this->_viewpath = $module->getViewPath() . DIRECTORY_SEPARATOR . 'email';
 		}
 		return $this->_viewpath;
 	}
-	
-	public function addProcessWarning($event_id, $warning) {
+
+	public function addProcessWarning($event_id, $warning)
+	{
 		if (!isset($this->events_by_id[$event_id]['warnings']) ) {
 			$this->events_by_id[$event_id]['warnings'] = array();
 		}
 		$this->events_by_id[$event_id]['warnings'][] = $warning;
 	}
-	
-	public function getProcessWarnings($event_id) {
+
+	public function getProcessWarnings($event_id)
+	{
 		if (isset($this->events_by_id[$event_id]['warnings'])) {
 			return $this->events_by_id[$event_id]['warnings'];
-		}
-		else {
+		} else {
 			return array();
 		}
 	}
-	
+
 	/**
 	 * determine if the the event can be processed for application
-	 * 
+	 *
 	 * @param unknown $event_id
 	 * @return boolean
 	 */
-	public function canProcessEvent($event_id) {
+	public function canProcessEvent($event_id)
+	{
 		$event_data = $this->getEvent($event_id);
 		$elements = $event_data['elements'];
 		$event = $event_data['event'];
@@ -122,29 +127,29 @@ class OphCoTherapyapplication_Processor {
 				$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
 				$sides = array();
 				$missing_sides = array();
-				
+
 				if ($el_diag->hasLeft()) {
 					$sides[] = 'left';
 				}
 				if ($el_diag->hasRight()) {
 					$sides[] = 'right';
 				}
-				
+
 				foreach ($sides as $side) {
 					if (!$api->getInjectionManagementComplexInEpisodeForDisorder(
-							$event->episode->patient, 
-							$event->episode, 
-							$side, 
+							$event->episode->patient,
+							$event->episode,
+							$side,
 							$el_diag->{$side . '_diagnosis1_id'},
 							$el_diag->{$side . '_diagnosis2_id'})) {
 						$missing_sides[] = $side;
 						$can_process = false;
 					}
 				}
-				
+
 				// log warnings - false falls out at the end
 				foreach ($missing_sides as $missing) {
-					$this->addProcessWarning($event_id, 
+					$this->addProcessWarning($event_id,
 						'No Injection Management has been created for ' . $missing . ' diagnosis.');
 				}
 
@@ -157,69 +162,65 @@ class OphCoTherapyapplication_Processor {
 					$this->addProcessWarning($event_id, 'Visual acuity not found for right eye.');
 					$can_process = false;
 				}
-			}
-			else {
+			} else {
 				error_log('Therapy application requires OphCIExamination module');
 				$can_process = false;
 			}
-		}
-		else {
+		} else {
 			$can_process = false;
 		}
-		
+
 		return $can_process;
-		
+
 	}
-	
-	protected function generatePDFForSide($data, $side) {
+
+	protected function generatePDFForSide($data, $side)
+	{
 		$pdf = new OETCPDF();
 		$pdf->setAuthor('OpenEyes');
 		$pdf->setTitle('Therapy Application');
 		$pdf->SetSubject('Therapy Application');
-		
+
 		$template_data = array();
 		foreach ($data as $k => $v) {
 			$template_data[$k] = $v;
 		}
 		$template_data['side'] = $side;
 		$template_data['treatment'] = $template_data['suitability']->{$side . '_treatment'};
-		
+
 		$controller = $this->getController();
-		
+
 		if ($data['suitability']->{$side . "_nice_compliance"}) {
 			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_compliant';
-		}
-		else {
+		} else {
 			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_noncompliant';
 		}
-		
+
 		if ($template_data['treatment']->template_code) {
 			$specific = $file . "_" . $template_data['treatment']->template_code . ".php";
 			if (file_exists($specific)) {
 				$file = $specific;
-			}
-			else {
+			} else {
 				$file .= ".php";
 			}
-		}
-		else {
+		} else {
 			$file .= ".php";
 		}
-		
+
 		if (file_exists($file)) {
 			$body = $controller->renderInternal($file, $template_data, true);
-			
+
 			$letter = new OELetter();
 			$letter->setBarcode("E:" . $data['event']->id);
 			$letter->addBody($body);
 			$letter->render($pdf);
-			
+
 			return $pdf;
 		}
 		return null;
 	}
 
-	protected function createPDFForSide($data, $side) 
+	protected function createPDFForSide($data, $side)
 	{
 		$pdf = $this->generatePDFForSide($data, $side);
 		if ($pdf) {
@@ -228,12 +229,12 @@ class OphCoTherapyapplication_Processor {
 			if (!$pfile->save()) {
 				throw new Exception('unable to save protected file');
 			}
-			
+
 			return $pfile;
 		}
 	}
 
-	protected function generateEmailForSide($data, $side) 
+	protected function generateEmailForSide($data, $side)
 	{
 		$template_data = array();
 		foreach ($data as $k => $v) {
@@ -241,42 +242,42 @@ class OphCoTherapyapplication_Processor {
 		}
 		$template_data['side'] = $side;
 		$template_data['treatment'] = $template_data['suitability']->{$side . '_treatment'};
-		
+
 		if ($this->eventSideIsCompliant($data['event']->id, $side)) {
 			$file = 'email_compliant.php';
-		}
-		else {
+		} else {
 			$file = 'email_noncompliant.php';
 		}
-		
+
 		$view = $this->getViewPath() . DIRECTORY_SEPARATOR . $file;
 		$controller = $this->getController();
-		
+
 		return $controller->renderInternal($view, $template_data, true);
-		
+
 	}
-	
+
 	/**
 	 * determine if the side of the event is compliant
-	 * 
+	 *
 	 * @param unknown $event_id
 	 * @param unknown $side
 	 */
-	public function eventSideIsCompliant($event_id, $side) {
+	public function eventSideIsCompliant($event_id, $side)
+	{
 		$event_data = $this->getEvent($event_id);
 		// TODO: check that the side is relevant for the application
 		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->{$side . '_nice_compliance'};
 	}
-	
+
 	protected function _generateEventDataForProcessing($event_id)
 	{
 		/*
 		 * because we don't really have an event object, create an associative array with all the appropriate properties
 		 */
 		$event_data = $this->getEvent($event_id);
-		
+
 		$event = $event_data['event'];
-		
+
 		$data = array(
 				'patient' => $event->episode->patient,
 				'event' => $event,
@@ -292,13 +293,13 @@ class OphCoTherapyapplication_Processor {
 		return $data;
 	}
 
-	/** 
+	/**
 	* generate the pdf for the application for the given event. This is basically a bit of a hack to enable
 	* previewing of the application. If we get time, will try to refactor this a bit to make the service model
 	* a bit more logical in how this works.
-	* 
+	*
 	* (I continue to blame the absence of an event model for all this jiggery pokery anyway)
-	* 
+	*
 	* @param int $event_id
 	* @param string $side 'left' or 'right'
 	* @return OETCPDF or null
@@ -312,24 +313,24 @@ class OphCoTherapyapplication_Processor {
 	/**
 	 * processes the application for the event with id $event_id returns a boolean to indicate whether this was successful
 	 * or not.
-	 * 
+	 *
 	 * @param integer $event_id
 	 * @throws Exception
 	 * @return boolean
 	 */
-	public function processEvent($event_id) 
+	public function processEvent($event_id)
 	{
 		$data = $this->_generateEventDataForProcessing($event_id);
-		
+
 		$email_el = new Element_OphCoTherapyapplication_Email();
 		$email_el->event_id = $event_id;
 		// set the eye value to that of the diagnosis
 		$email_el->eye_id = $data['diagnosis']->eye_id;
 		$left_attach_ids = array();
 		$right_attach_ids = array();
-		
+
 		if ($data['diagnosis']->hasLeft()) {
-			
+
 			if ($file = $this->createPDFForSide($data, 'left')) {
 				//$email_el->left_application_id = $file->id;
 				$left_attach_ids[] = $file->id;
@@ -341,9 +342,9 @@ class OphCoTherapyapplication_Processor {
 			}
 			$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
 		}
-		
+
 		if ($data['diagnosis']->hasRight()) {
-			
+
 			if ($file = $this->createPDFForSide($data, 'right')) {
 				//$email_el->right_application_id = $file->id;
 				$right_attach_ids[] = $file->id;
@@ -355,7 +356,7 @@ class OphCoTherapyapplication_Processor {
 			}
 			$email_el->right_email_text = $this->generateEmailForSide($data,'right');
 		}
-		
+
 		// send email
 		if ($email_el->save()) {
 			if (count($left_attach_ids)) {
@@ -368,9 +369,9 @@ class OphCoTherapyapplication_Processor {
 		} else {
 			return false;
 		}
-		
+
 		// TODO: do audit
-		
+
 		return true;
 	}
 }

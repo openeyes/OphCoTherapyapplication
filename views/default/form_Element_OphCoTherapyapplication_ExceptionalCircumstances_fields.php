@@ -17,13 +17,13 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-	
+
 	<div class="elementField standard_intervention_exists">
 		<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_standard_intervention_exists'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array('nowrapper' => true))?></div>
 	</div>
-	
-	<?php 
+
+	<?php
 		//TODO: can drive this purely off the element attributes when we fix form processing
 		if (@$_POST[get_class($element)]) {
 			$exists = $_POST[get_class($element)][$side . '_standard_intervention_exists'];
@@ -32,17 +32,17 @@
 		}
 	?>
 	<span id="<?php echo get_class($element) . "_" . $side ?>_standard_intervention_details"
-		<?php if ($exists != '1') { 
-			echo ' class="hidden"'; 
+		<?php if ($exists != '1') {
+			echo ' class="hidden"';
 		}?>
 	>
 		<div class="elementField">
 			<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_id'); ?></div>
 			<div class="data">
-				<?php 
+				<?php
 				echo $form->dropDownList(
-					$element, 
-					$side . '_standard_intervention_id', 
+					$element,
+					$side . '_standard_intervention_id',
 					CHtml::listData($element->getStandardInterventionsForSide($side), 'id', 'name'),
 					array('empty'=>'- Please select -', 'nowrapper' => true)) ?></div>
 		</div>
@@ -52,31 +52,31 @@
 			<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_previous', array('nowrapper' => true))?></div>
 		</div>
 
-		<?php 
-			$opts = array('nowrapper' => true, 
-				'options' => array()				
+		<?php
+			$opts = array('nowrapper' => true,
+				'options' => array()
 			);
 			foreach (Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll() as $intervention) {
 				$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label, 'data-is-deviation' => $intervention->is_deviation);
 			}
 		?>
-			
+
 		<div class="elementField intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
 			<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
 			<div class="data" style="display: inline-block;"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts)?></div>
 		</div>
-	
+
 		<div class="elementField" <?php if (!$element->{$side . '_intervention_id'}) { echo ' style="display: none;"'; } ?>>
 			<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
 			<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 		</div>
-		
-		<?php 
+
+		<?php
 			$need_reason = false;
 			if (@$_POST[get_class($element)]) {
 				if ($_POST[get_class($element)][$side . '_standard_previous'] == '0') {
 					if ($id = $_POST[get_class($element)][$side . '_intervention_id']) {
-						$intervention = Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int)$id);
+						$intervention = Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int) $id);
 						if ($intervention->is_deviation) {
 							$need_reason = true;
 						}
@@ -91,30 +91,30 @@
 			class="hidden"
 			<?php } ?>
 		>
-			<?php 
+			<?php
 				$html_options = array(
-					'options' => array(),	
+					'options' => array(),
 					'empty' => '- Please select -',
 					'div_id' =>  get_class($element) . '_' . $side . '_deviationreasons',
 					'div_class' => 'elementField',
 					'label' => $element->getAttributeLabel($side . '_deviationreasons'));
-				
+
 				echo $form->multiSelectList(
-					$element, 
-					get_class($element) . '[' . $side . '_deviationreasons]', 
-					$side . '_deviationreasons', 'id', 
-					CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'), 
-					array(), 
+					$element,
+					get_class($element) . '[' . $side . '_deviationreasons]',
+					$side . '_deviationreasons', 'id',
+					CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'),
+					array(),
 					$html_options);
 			?>
 		</span>
-		
+
 	</span>
 
 	<span id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_exists"
-		<?php 
-		if ($exists != '0') { 
-			echo ' class="hidden"'; 
+		<?php
+		if ($exists != '0') {
+			echo ' class="hidden"';
 		}?>
 	>
 		<div class="elementField">
@@ -127,7 +127,7 @@
 			<div class="data"><?php echo $form->textArea($element, $side . '_incidence', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 		</div>
 	</span>
-	
+
 	<div class="elementField">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_different'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_different', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
@@ -161,7 +161,7 @@
 								}
 							}
 						}
-						
+
 						$key = 0;
 						foreach ($previnterventions as $prev) {
 							$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
@@ -174,20 +174,20 @@
 							$key++;
 						}
 					?>
-				</tbody>				
+				</tbody>
 			</table>
 			<button class="addPrevintervention classy green mini" type="button">
 				<span class="button-span button-span-green">Add</span>
 			</button>
 		</div>
 	</div>
-	
+
 	<div class="elementField patient_factors">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factors'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_patient_factors', array('nowrapper' => true))?></div>
 	</div>
-	
-	<?php 
+
+	<?php
 		if (@$_POST[get_class($element)]) {
 			$patient_factors = $_POST[get_class($element)][$side . '_patient_factors'];
 		} else {
@@ -198,14 +198,13 @@
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
-	
-	<?php 
+
+	<?php
 		$posted_sp = null;
 		$urgent = false;
 		if (@$_POST[get_class($element)]) {
 			$posted_sp = $_POST[get_class($element)][$side . "_start_period_id"];
-		}
-		else {
+		} else {
 			$urgent = ($element->{$side . '_start_period'} && $element->{$side . '_start_period'}->urgent);
 		}
 		// get all the start periods and get data attribute for urgency requirements
@@ -217,32 +216,32 @@
 				$urgent = true;
 			}
 		}
-	
+
 	?>
 	<div class="elementField start_period">
 			<div class="label"><?php echo $element->getAttributeLabel($side . '_start_period_id'); ?></div>
 			<div class="data">
-				<?php 
+				<?php
 					echo $form->dropDownList(
-						$element, 
-						$side . '_start_period_id', 
+						$element,
+						$side . '_start_period_id',
 						CHtml::listData($start_periods, 'id', 'name'),
 						$html_options
-					); 
+					);
 				?>
 			</div>
 		</div>
 
 	<div id="<?php echo get_class($element) . '_' . $side ?>_urgency_reason"
-		class="elementField<?php if (!$urgent) { 
+		class="elementField<?php if (!$urgent) {
 		echo ' hidden';} ?>">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_urgency_reason'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_urgency_reason', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 
-<?php 
+<?php
 	$html_options = array(
-		'options' => array(),	
+		'options' => array(),
 		'empty' => '- Please select -',
 		'div_id' =>  get_class($element) . '_' . $side . '_filecollections',
 		'div_class' => 'elementField',
@@ -252,10 +251,8 @@
 	/*
 	$collections = OphCoTherapyapplication_FileCollection::::model()->findAll(array('order'=>'display_order asc'));
 	foreach ($collections as $collection) {
-		$html_options['options'][(string)$collection->id] = array('data-order' => $collection->display_order); 
+		$html_options['options'][(string) $collection->id] = array('data-order' => $collection->display_order);
 	}
 	*/
 	echo $form->multiSelectList($element, get_class($element) . '[' . $side . '_filecollections]', $side . '_filecollections', 'id', CHtml::listData($collections,'id','name'), array(), $html_options)
 ?>
-	
-	

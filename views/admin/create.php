@@ -22,30 +22,30 @@
 <div class="report curvybox white">
 
 	<div class="admin">
-	<?php 
+	<?php
 	$form=$this->beginWidget('BaseEventTypeCActiveForm', array(
 		'id'=>'OphCoTherapyapplication_adminform',
 		'enableAjaxValidation'=>false,
 		'htmlOptions' => array(
 				'enctype' => 'multipart/form-data'
 		)
-	)); 
-	
+	));
+
 	?>
-	
+
 	<?php echo $form->errorSummary($model); ?>
-	
-	<?php 
+
+	<?php
 	$this->renderPartial('form_' . get_class($model), array(
 			'model' => $model,
 			'form' => $form,
 	));
 	?>
-	
+
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
-	
+
 	<?php $this->endWidget(); ?>
 	</div>
 

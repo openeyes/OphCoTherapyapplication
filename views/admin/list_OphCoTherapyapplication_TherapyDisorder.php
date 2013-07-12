@@ -24,7 +24,7 @@
 $this->renderPartial('//base/_messages');
 ?>
 <div class="hidden" id="add-new-form" style="margin-bottom: 10px">
-<?php 
+<?php
 $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 		'id'=>'clinical-create',
 		'enableAjaxValidation'=>false,
@@ -35,7 +35,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 if ($parent_id) {
 	echo CHtml::hiddenField('parent_id', $parent_id);
 }
- 
+
 $form->widget('application.widgets.DiagnosisSelection',array(
 		'field' => 'new_disorder_id',
 		'layout' => 'minimal',
@@ -61,7 +61,7 @@ $this->endWidget();
 		<div class="sortable">
 			<?php
 			foreach ($model_list as $i => $model) {?>
-				<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $model->id ?>">
+				<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $model->id ?>">
 					<span class="column_name">
 						<?php if (!$parent_id) { ?>
 							<a href="<?php echo Yii::app()->createUrl($this->module->getName() . '/admin/viewDiagnoses', array('parent_id'=> $model->id)) ?>">

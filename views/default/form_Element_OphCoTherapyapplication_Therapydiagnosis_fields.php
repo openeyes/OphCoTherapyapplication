@@ -34,7 +34,7 @@
 <div class="elementField<?php if (!array_key_exists($element->{$side . '_diagnosis1_id'}, $l2_disorders) ) { echo " hidden"; }?>" id="<?php echo $side ?>_diagnosis2_wrapper">
 	<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_diagnosis2_id'); ?></div>
 	<div class="data" style="display: inline-block;">
-		<?php 
+		<?php
 		$l2_attrs =  array('empty'=>'- Please select -', 'style' => 'margin-bottom: 10px; width: 240px;');
 		$l2_opts = array();
 		if (array_key_exists($element->{$side . '_diagnosis1_id'}, $l2_disorders)) {
@@ -50,6 +50,6 @@
 			'default' => false,
 			'dropdownOptions' => $l2_attrs,
 		));?>
-		
+
 	</div>
 </div>

@@ -68,7 +68,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 			array('id, treatment_date, treatment_id, stopreason_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */

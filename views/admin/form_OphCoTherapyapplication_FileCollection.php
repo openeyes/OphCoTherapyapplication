@@ -23,7 +23,7 @@
 <div id="div_OphCoTherapyapplication_FileCollection_file" class="eventDetail">
 	<div class="label">File(s):</div>
 	<div class="data">
-	
+
 	<button class="addFile classy green mini" type="button">
 		<span class="button-span button-span-green">Add File</span>
 	</button>

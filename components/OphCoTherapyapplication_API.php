@@ -17,62 +17,61 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphCoTherapyapplication_API extends BaseAPI {
-	
+class OphCoTherapyapplication_API extends BaseAPI
+{
 	/**
 	 * Gets the last drug that was applied for for the given patient, episode and side
-	 * 
+	 *
 	 * @param Patient $patient
 	 * @param Episode $episode
 	 * @param string $side
 	 * @throws Exception
-	 * 
+	 *
 	 * @return OphTrIntravitrealinjection_Treatment_Drug
 	 */
-	public function getLatestApplicationDrug($patient, $episode, $side) {
+	public function getLatestApplicationDrug($patient, $episode, $side)
+	{
 		if ($episode) {
 			$event_type = $this->getEventType();
-			
+
 			$criteria = new CDbCriteria;
 			$criteria->compare('event.event_type_id',$event_type->id);
 			$criteria->compare('event.episode_id',$episode->id);
 			$criteria->order = 't.created_date desc';
 			$criteria->limit = 1;
-			
+
 			$eye_ids = array('eye_id' => SplitEventTypeElement::BOTH);
-				
+
 			if ($side == 'left') {
 				$eye_ids[] = SplitEventTypeElement::LEFT;
-			}
-			else if ($side == 'right') {
+			} else if ($side == 'right') {
 				$eye_ids[] = SplitEventTypeElement::RIGHT;
-			}
-			else {
+			} else {
 				throw new Exception('unrecognised side value ' . $side);
 			}
-			
+
 			$criteria->addInCondition('eye_id', $eye_ids);
-			
+
 			if ($suit = Element_OphCoTherapyapplication_PatientSuitability::model()->with('event', $side . '_treatment', $side . '_treatment.drug')->find($criteria)) {
 				return $suit->{$side . '_treatment'}->drug;
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * returns the side of the most recent application (see SplitEventTypeElement for definition of constants that indicate side or both)
-	 * 
+	 *
 	 * @param unknown $patient
 	 * @param unknown $episode
-	 * 
+	 *
 	 * @return int $side
 	 */
-	public function getLatestApplicationSide($patient, $episode) {
-		
+	public function getLatestApplicationSide($patient, $episode)
+	{
 		if ($el = $this->getMostRecentElementInEpisode($episode->id, $this->getEventType()->id, 'Element_OphCoTherapyapplication_Therapydiagnosis')) {
 			return $el->eye_id;
 		}
 	}
-	
+
 }

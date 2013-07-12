@@ -24,11 +24,11 @@
 <a href="<?php echo Yii::app()->createUrl('/OphCoTherapyapplication/Default/downloadFileCollection', array('id' => $model->id)) ?>">Download zip</a>
 </div>
 <ul>
-<?php 
+<?php
 foreach ($model->files as $file) {
 ?>
 <li><a href="/ProtectedFile/download/<?php echo $file->id?>"><?php echo $file->name ?></a></li>
-<?php 
+<?php
 }
 ?>
 </ul>

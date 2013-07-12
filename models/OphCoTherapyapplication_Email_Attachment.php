@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -19,19 +19,20 @@
 
 /**
  * Stores the responses for given decision tree nodes for Patient Suitability element
- * 
+ *
  * @property string id
  * @property string email_id
  * @property string eye_id
  * @property string file_id
- * 
+ *
  * The following model relations exist
- * 
+ *
  * @property Element_OphCoTherapyapplication_Email email
  * @property ProtectedFile file
  */
 
-class OphCoTherapyapplication_Email_Attachment extends BaseActiveRecord {
+class OphCoTherapyapplication_Email_Attachment extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -40,7 +41,7 @@ class OphCoTherapyapplication_Email_Attachment extends BaseActiveRecord {
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -48,7 +49,7 @@ class OphCoTherapyapplication_Email_Attachment extends BaseActiveRecord {
 	{
 		return 'ophcotherapya_email_attachment';
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -58,7 +59,7 @@ class OphCoTherapyapplication_Email_Attachment extends BaseActiveRecord {
 				array('element_id, eye_id, file_id', 'safe'),
 		);
 	}
-	
+
 	public function relations()
 	{
 		return array(

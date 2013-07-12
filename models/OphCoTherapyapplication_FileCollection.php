@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -27,7 +27,8 @@
  *
  **/
 
-class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
+class OphCoTherapyapplication_FileCollection extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -36,18 +37,19 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * function to check if a file is the right type to become part of a collection
-	 * 
+	 *
 	 * @param string $file
 	 * @return boolean
 	 */
-	public static function checkMimeType($file) {
+	public static function checkMimeType($file)
+	{
 		$finfo = new finfo(FILEINFO_MIME_TYPE);
 		return in_array($finfo->file($file), array('application/pdf'));
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -55,7 +57,7 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 	{
 		return 'ophcotherapya_filecoll';
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -68,7 +70,7 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 				'compressed_file' => array(self::BELONGS_TO, 'ProtectedFile', 'zipfile_id'),
 		);
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -82,65 +84,67 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 				array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/*
 	 * get a compressed zip file containing all the files in the collection
 	 *
 	 * @return ProtectedFile
 	 */
-	public function getZipFile() {
+	public function getZipFile()
+	{
 		if (!$this->compressed_file) {
-			// need to generate zip file, and store it with this collection			
+			// need to generate zip file, and store it with this collection
 			$pfile = ProtectedFile::createForWriting($this->name . '.zip');
-			
+
 			$zip = new ZipArchive();
 			if (!$zip->open($pfile->getPath(), ZIPARCHIVE::OVERWRITE) ) {
 				throw new Exception('cannot create zip file');
 			}
-			
+
 			foreach ($this->files as $pf) {
-				$zip->addFile($pf->getPath(), $pf->name);	
+				$zip->addFile($pf->getPath(), $pf->name);
 			}
-			
+
 			$zip->close();
 			$pfile->save();
-			
+
 			// set up relation
 			$this->compressed_file = $pfile;
 			$this->zipfile_id = $pfile->id;
-			
-			$this->save(); 
+
+			$this->save();
 		}
-		
+
 		return $this->compressed_file;
 	}
-	
+
 	/**
 	 * return the download url for the compressed file of this collection
-	 * 
+	 *
 	 * @return string URL
 	 */
-	public function getDownloadURL() {
+	public function getDownloadURL()
+	{
 		if ($this->compressed_file != null) {
 			return $this->compressed_file->getDownloadURL();
-		}
-		else {
+		} else {
 			return Yii::app()->createURL('OphCoTherapyapplication/Default/DownloadFileCollection', array('id' => $this->id));
 		}
 	}
-	
+
 	/**
 	 * update the files for this collection.
 	 *
 	 * @param string $side
 	 * @param integer[] $protectedfile_ids - array of ProtectedFile ids to assign to the collection
 	 */
-	public function updateFiles($file_ids) {
+	public function updateFiles($file_ids)
+	{
 		$current_files = array();
 		$save_files = array();
-	
+
 		$current_files = $this->file_assignments;
-	
+
 		// go through each update file id, if it isn't assigned for this element,
 		// create assignment and store for saving
 		// if there is, remove from the current files array
@@ -163,13 +167,13 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord {
 		foreach ($current_files as $curr) {
 			$curr->delete();
 		}
-		
+
 		// ensure the compressed file is removed
 		if ($cf = $this->compressed_file) {
 			$this->compressed_file = null;
 			$this->save();
 			$cf->delete();
-		}		
+		}
 	}
-	
+
 }

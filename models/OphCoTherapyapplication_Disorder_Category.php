@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -21,8 +21,9 @@
  * Enables categorisation of the disorders so that default selection of choices can be made in the decision tree depending on what diagnosis
  * has been made for a given eye
  */
- 
-class OphCoTherapyapplication_Disorder_Category extends BaseActiveRecord {
+
+class OphCoTherapyapplication_Disorder_Category extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -49,7 +50,7 @@ class OphCoTherapyapplication_Disorder_Category extends BaseActiveRecord {
 				'therapydisorders' => array(self::MANY_MANY, 'OphCoTherapyapplication_TherapyDisorder', 'ophcotherapya_therapydisorder_category(category_id,therapydisorder_id)'),
 		);
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -62,5 +63,5 @@ class OphCoTherapyapplication_Disorder_Category extends BaseActiveRecord {
 				// Please remove those attributes that should not be searched.
 				array('id, label', 'safe', 'on' => 'search'),
 		);
-	}	
+	}
 }

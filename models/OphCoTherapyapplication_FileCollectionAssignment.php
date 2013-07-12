@@ -29,7 +29,7 @@
  * @property Element_OphTrIntravitrealinjection_Complications $element
  * @property OphTrIntravitrealinjection_Complication $complication
  * @property User $user
- * @property User $usermodified 
+ * @property User $usermodified
  */
 
 class OphCoTherapyapplication_FileCollectionAssignment extends BaseActiveRecord
@@ -61,7 +61,7 @@ class OphCoTherapyapplication_FileCollectionAssignment extends BaseActiveRecord
 			array('collection_id, file_id', 'required'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */

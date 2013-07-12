@@ -24,38 +24,37 @@ class AdminController extends ModuleAdminController
 	/**
 	 * simple method for popup management
 	 * @param $redirect URL to redirect from closing popup
-	 */ 
-	private function popupCloseAndRedirect($redirect) 
+	 */
+	private function popupCloseAndRedirect($redirect)
 	{
 		$this->render('popupcloseandredirect', array(
 				'url' => $redirect,
 		));
 	}
-	
+
 	// -- Diagnoses actions --
-	
+
 	/**
 	 * View the level diagnoses
 	 */
-	public function actionViewDiagnoses($parent_id = null) 
+	public function actionViewDiagnoses($parent_id = null)
 	{
 		$this->jsVars['OphCoTherapyapplication_sort_url'] = $this->createUrl('sortDiagnoses');
 
 		$criteria = new CDbCriteria;
 		$parent = null;
-		
+
 		if ($parent_id) {
-			$parent = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int)$parent_id);
+			$parent = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int) $parent_id);
 			$criteria->condition = 'parent_id = :pid';
 			$criteria->params = array(':pid' => $parent_id);
-		}
-		else {
+		} else {
 			$criteria->condition = 'parent_id is NULL';
 		}
 		$criteria->order = 'display_order asc';
-		
+
 		$diagnoses = OphCoTherapyapplication_TherapyDisorder::model()->findAll($criteria);
-		
+
 		$this->render('list_OphCoTherapyapplication_TherapyDisorder', array(
 				'model_class' => 'OphCoTherapyapplication_TherapyDisorder',
 				'model_list' => $diagnoses,
@@ -63,50 +62,48 @@ class AdminController extends ModuleAdminController
 				'parent_id' => $parent_id
 		));
 	}
-	
+
 	/**
 	 * add a diagnosis to the specified parent if it doesn't already exist there
-	 * 
+	 *
 	 * @throws Exception
 	 */
-	public function actionAddDiagnosis() 
+	public function actionAddDiagnosis()
 	{
 		$parent = null;
-		if (@$_POST['parent_id'] && !$parent = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int)$_POST['parent_id'])) {
+		if (@$_POST['parent_id'] && !$parent = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int) $_POST['parent_id'])) {
 			throw new Exception('Cannot find parent with id ' . $parent->id);
 		}
-		
-		if (!$disorder = Disorder::model()->findByPk((int)@$_POST['disorder_id'])) {
+
+		if (!$disorder = Disorder::model()->findByPk((int) @$_POST['disorder_id'])) {
 			throw new Exception('Unknown disorder id ' . @$_POST['disorder_id']);
 		}
-		
+
 		// check not already been added
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'disorder_id = :did';
 		$criteria->params = array(':did' => $disorder->id);
-		
+
 		if ($parent) {
 			$criteria->condition .= ' AND parent_id = :pid';
 			$criteria->params[':pid'] = $parent->id;
-		}
-		else {
+		} else {
 			$criteria->condition .= ' AND parent_id is NULL';
 		}
-		
+
 		if (OphCoTherapyapplication_TherapyDisorder::model()->find($criteria)) {
 			Yii::app()->user->setFlash('failure', 'Disorder already set at this level');
-		}
-		else {
+		} else {
 			$therapy_disorder = new OphCoTherapyapplication_TherapyDisorder();
 			$therapy_disorder->disorder_id = $disorder->id;
-			
+
 			$query = 'SELECT MAX(display_order) AS maxdisplay FROM ' . OphCoTherapyapplication_TherapyDisorder::model()->tableName();
-			
+
 			if ($parent) {
 				$therapy_disorder->parent_id = $parent->id;
 	 			$query .= ' WHERE parent_id = ' . $parent->id;
 			}
-			
+
 			$val = Yii::app()->db->createCommand($query)->queryRow();
 			$therapy_disorder->display_order = $val['maxdisplay']+1;
 			if (!$therapy_disorder->save()) {
@@ -115,21 +112,22 @@ class AdminController extends ModuleAdminController
 			Yii::app()->user->setFlash('success', 'Disorder added');
 			Audit::add('OphCoTherapyapplication_TherapyDisorder','created', serialize($therapy_disorder));
 		}
-		
+
 		$this->redirect(array('viewdiagnoses', 'parent_id' => @$_POST['parent_id']));
 	}
-	
+
 	/**
 	 * delete the specified diagnosis, and its children
-	 * 
+	 *
 	 * @param unknown $diagnosis_id
 	 * @throws Exception
 	 */
-	public function actionDeleteDiagnosis($diagnosis_id) {
-		if ($diagnosis = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int)$diagnosis_id)) {
+	public function actionDeleteDiagnosis($diagnosis_id)
+	{
+		if ($diagnosis = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int) $diagnosis_id)) {
 			$parent_id = $diagnosis->parent_id;
 			$disorder_id = $diagnosis->disorder_id;
-			
+
 			// check for and delete any children first
 			$criteria = new CDbCriteria();
 			$criteria->condition = 'parent_id = :pid';
@@ -143,7 +141,7 @@ class AdminController extends ModuleAdminController
 						}
 					}
 				}
-				
+
 				if (!$diagnosis->delete()) {
 					throw new Exception('unable to delete diagnosis' . print_r($diagnosis->getErrors(), true));
 				}
@@ -155,16 +153,15 @@ class AdminController extends ModuleAdminController
 				$transaction->rollback();
 				throw $e;
 			}
-		}
-		else {
+		} else {
 			throw new Exception('Diagnosis not found with id ' . $diagnosis_id);
 		}
 	}
-	
+
 	/**
-	 * sort the diagnoses (note that the diagnoses submitted may be a subset of all diagnoses, as the display_order 
-	 * is set on the subsets for diagnoses that have parents. 
-	 * 
+	 * sort the diagnoses (note that the diagnoses submitted may be a subset of all diagnoses, as the display_order
+	 * is set on the subsets for diagnoses that have parents.
+	 *
 	 * @param string $parent_id
 	 */
 	public function actionSortDiagnoses()
@@ -180,75 +177,75 @@ class AdminController extends ModuleAdminController
 			}
 		}
 	}
-	
+
 	// -- Treatment actions --
 	/**
 	 * View all the treatments that are defined
 	 */
-	public function actionViewTreatments() 
+	public function actionViewTreatments()
 	{
 		$data_provider=new CActiveDataProvider('OphCoTherapyapplication_Treatment');
-		
+
 		$this->render('list',array(
 				'dataProvider'=>$data_provider,
 				'title'=>'Treatments',
 		));
 	}
-	
+
 	/**
 	 * update the specified treatment
-	 * 
+	 *
 	 * @param integer $id
 	 */
-	public function actionUpdateOphCoTherapyapplication_Treatment($id) 
+	public function actionUpdateOphCoTherapyapplication_Treatment($id)
 	{
-		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int)$id);
-		
+		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int) $id);
+
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
-			
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_Treatment','update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Treatment update');
-				
+
 				$this->redirect(array('viewtreatments'));
 			}
 		}
-		
+
 		$this->render('update', array(
 				'model' => $model,
 				'title'=>'Treatment'
 		));
 	}
-	
+
 	/**
 	 * create a treatment
 	 */
-	public function actionCreateOphCoTherapyapplication_Treatment() 
+	public function actionCreateOphCoTherapyapplication_Treatment()
 	{
 		$model = new OphCoTherapyapplication_Treatment();
-		
+
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
 			// do the actual create
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
-			
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_Treatment','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Treatment created');
-				
+
 				$this->redirect(array('viewtreatments'));
 			}
 		}
-		
+
 		$this->render('create', array(
 				'model' => $model,
 				'title'=>'Treatment'
 		));
 	}
-	
+
 	// -- decision tree actions --
-	
-	public function actionViewDecisionTrees() 
+
+	public function actionViewDecisionTrees()
 	{
 		$data_provider=new CActiveDataProvider('OphCoTherapyapplication_DecisionTree');
 		$this->render('list',array(
@@ -256,68 +253,66 @@ class AdminController extends ModuleAdminController
 				'title'=>'Decision Trees',
 		));
 	}
-	
-	public function actionViewDecisionTree($id) 
+
+	public function actionViewDecisionTree($id)
 	{
-		$model = OphCoTherapyapplication_DecisionTree::model()->findByPk((int)$id);
-		
+		$model = OphCoTherapyapplication_DecisionTree::model()->findByPk((int) $id);
+
 		if (@$_GET['node_id']) {
-			$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int)$_GET['node_id']);
+			$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int) $_GET['node_id']);
 			if ($node->decisiontree_id != $model->id) {
 				throw Exception("mismatched node and decision tree!");
 			}
-		}
-		else
-		{
+		} else {
 			$node = $model->getRootNode();
 		}
-		
+
 		$this->render('view_OphCoTherapyapplication_DecisionTree', array(
 				'model' => $model,
 				'node' => $node
 		));
 	}
-	
-	public function actionCreateOphCoTherapyapplication_DecisionTree() 
+
+	public function actionCreateOphCoTherapyapplication_DecisionTree()
 	{
 		$model = new OphCoTherapyapplication_DecisionTree();
-	
+
 		if (isset($_POST['OphCoTherapyapplication_DecisionTree'])) {
 			// do the actual create
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTree'];
-				
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTree','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree created');
-	
+
 				$this->redirect(array('viewdecisiontree','id'=>$model->id));
 			}
 		}
-	
+
 		$this->render('create',array(
 				'model'=>$model,
 				'title'=>'Decision Tree'
 		));
-	
+
 	}
-	
+
 	// decision tree node actions
-	
-	public function actionCreateDecisionTreeNode($id) 
+
+	public function actionCreateDecisionTreeNode($id)
 	{
-		$tree = OphCoTherapyapplication_DecisionTree::model()->findByPk((int)$id);
-		
+		$tree = OphCoTherapyapplication_DecisionTree::model()->findByPk((int) $id);
+
 		$parent = null;
 		if (isset($_GET['parent_id'])) {
-			$parent = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int)$_GET['parent_id']);
+			$parent = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int) $_GET['parent_id']);
 		}
-		
+
 		$model = new OphCoTherapyapplication_DecisionTreeNode();
-		
+
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNode'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNode'];
 			$model->decisiontree_id = $id;
-			
+
 			if ($parent) {
 				$model->parent_id = $parent->id;
 			}
@@ -325,92 +320,92 @@ class AdminController extends ModuleAdminController
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTreeNode','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree node created');
-				
+
 				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
 			}
-			
+
 		}
-		
+
 		$this->renderPartial('create', array(
 				'model' => $model,
 				'decisiontree' => $tree,
 				'title' => 'Node for ' . $tree->name
 		));
 	}
-	
-	public function actionUpdateDecisionTreeNode($id) 
+
+	public function actionUpdateDecisionTreeNode($id)
 	{
 		$this->layout = "//layouts/admin_popup";
-		
-		$model = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int)$id);
-		
+
+		$model = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int) $id);
+
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNode'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNode'];
-			
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTreeNode', 'update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree node updated');
-				
+
 				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
 			}
 		}
-		
+
 		$this->render('update', array(
 				'model' => $model,
 		));
 	}
-	
-	public function actionCreateDecisionTreeNodeRule($id) 
+
+	public function actionCreateDecisionTreeNodeRule($id)
 	{
-		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int)$id);
-		
+		$node = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int) $id);
+
 		$model = new OphCoTherapyapplication_DecisionTreeNodeRule();
 		$model->node = $node;
-		
+
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNodeRule'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
 			$model->node_id = $node->id;
-			
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree Node rule created');
-				
+
 				$this->redirect(array('viewdecisiontree', 'id' => $node->decisiontree_id, 'node_id' => $node->id));
 			}
 		}
-		
+
 		$this->renderPartial('create', array(
 			'model' => $model,
 			'node' => $node,
 			'title' => 'Rule for ' . ($node->outcome ? $node->outcome->name . ' Outcome' : $node->question)
 		));
 	}
-	
-	public function actionUpdateDecisionTreeNodeRule($id) 
+
+	public function actionUpdateDecisionTreeNodeRule($id)
 	{
-		$model = OphCoTherapyapplication_DecisionTreeNodeRule::model()->findByPk((int)$id);
-	
+		$model = OphCoTherapyapplication_DecisionTreeNodeRule::model()->findByPk((int) $id);
+
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNodeRule'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
-				
+
 			if ($model->save()) {
 				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree Node Rule updated');
-	
+
 				$this->redirect(array('viewdecisiontree', 'id' => $model->node->decisiontree_id, 'node_id' => $model->node->id));
 			}
 		}
-	
+
 		$this->renderPartial('update', array(
 				'model' => $model,
 				'node' => $model->node,
 				'title' => 'Rule for ' . ($model->node->outcome ? $model->node->outcome->name . ' Outcome' : $model->node->question)
 		));
 	}
-	
+
 	// -- File Collection actions --
-	
-	public function actionViewFileCollections() 
+
+	public function actionViewFileCollections()
 	{
 		$data_provider = new CActiveDataProvider('OphCoTherapyapplication_FileCollection');
 		$this->render('list',array(
@@ -418,39 +413,37 @@ class AdminController extends ModuleAdminController
 				'title'=>'File Collections',
 		));
 	}
-	
-	public function actionViewOphCoTherapyapplication_FileCollection($id) 
+
+	public function actionViewOphCoTherapyapplication_FileCollection($id)
 	{
-		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int)$id);
-		
+		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int) $id);
+
 		$this->render('view_' . get_class($model), array(
 				'model' => $model)
 		);
 	}
-	
-	public function actionCreateOphCoTherapyapplication_FileCollection() 
+
+	public function actionCreateOphCoTherapyapplication_FileCollection()
 	{
 		$model = new OphCoTherapyapplication_FileCollection();
-		
+
 		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_FileCollection'];
 
 			// validate the model
 			$model->validate();
-			
+
 			$file_errs = array();
 			$files = array();
 			foreach ($_FILES['OphCoTherapyapplication_FileCollection_files']['tmp_name'] as $i => $f) {
 				if (!empty($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i])) {
 					$file_errs[] = "file $i had an error";
-				}
-				elseif (!empty($f) && is_uploaded_file($f)) {
+				} elseif (!empty($f) && is_uploaded_file($f)) {
 					$name = $_FILES['OphCoTherapyapplication_FileCollection_files']['name'][$i];
 					// check the file mimetype
 					if (OphCoTherapyapplication_FileCollection::checkMimeType($f)) {
 						$files[] = array('tmpfile' => $f, 'name' => $name);
-					}
-					else {
+					} else {
 						$model->addError("files", "File $name is not a valid filetype");
 					}
 				}
@@ -464,27 +457,26 @@ class AdminController extends ModuleAdminController
 					$pf->name = $fdet['name'];
 					if ($pf->save()) {
 						$pfs[] = $pf->id;
-					}
-					else {
+					} else {
 						throw new Exception('Could not save file object');
 						Yii::log("couldn't save file object" . print_r($pf->getErrors(), true), 'error');
 					}
 				}
-				
+
 				if ($model->save()) {
-					
+
 					$model->updateFiles($pfs);
-					
+
 					Audit::add('OphCoTherapyapplication_FileCollection','create', serialize($model->attributes));
 					Yii::app()->user->setFlash('success', 'File Collection created');
-					
+
 					$this->redirect(array('viewfilecollections'));
 				} else {
 					//TODO: delete the files again
 				}
 			}
 		}
-		
+
 		$this->render('create', array(
 				'model' => $model,
 				'title' => 'File Collection',

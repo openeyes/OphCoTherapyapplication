@@ -45,7 +45,7 @@
 class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeElement
 {
 	public $service;
-	
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -79,7 +79,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 			array('id, event_id, eye_id, left_treatment_id, left_angiogram_baseline_date, left_nice_compliance, right_treatment_id, right_angiogram_baseline_date, right_nice_compliance', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -99,10 +99,11 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		);
 	}
 
-	public function sidedFields() {
+	public function sidedFields()
+	{
 		return array('treatment_id', 'angiogram_baseline_date', 'nice_compliance');
 	}
-	
+
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -139,7 +140,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		$criteria->compare('right_treatment_id', $this->right_treatment_id);
 		$criteria->compare('right_angiogram_baseline_date', $this->right_angiogram_baseline_date);
 		$criteria->compare('right_nice_compliance', $this->right_nice_compliance);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,
 		));
@@ -162,34 +163,34 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 	{
 		return parent::beforeValidate();
 	}
-	
+
 	/*
 	 * if either the left or right treatment requires the contraindications to be provided, returns true. otherwise returns false
-	 * 
+	 *
 	 * @return boolean $required
 	 */
-	public function contraindicationsRequired() {
+	public function contraindicationsRequired()
+	{
 		return ($this->left_treatment && $this->left_treatment->contraindications_required) ||
 		($this->right_treatment && $this->right_treatment->contraindications_required);
 	}
-	
-	public function updateDecisionTreeResponses($side, $update_responses) {
+
+	public function updateDecisionTreeResponses($side, $update_responses)
+	{
 		$current_responses = array();
 		$save_responses = array();
 		if ($side == $this::LEFT) {
 			$responses = $this->left_responses;
-		}
-		elseif ($side == $this::RIGHT) {
+		} elseif ($side == $this::RIGHT) {
 			$responses = $this->right_responses;
-		}
-		else {
+		} else {
 			throw Exception("Invalid side value");
 		}
-		
+
 		foreach ($responses as $curr_resp) {
 			$current_responses[$curr_resp->node_id] = $curr_resp;
 		}
-				
+
 		// go through each node response, if there isn't one for this element,
 		// create it and store for saving
 		// if there is, check if the value is the same ... if it has changed
@@ -217,7 +218,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		foreach ($current_responses as $curr) {
 			$curr->delete();
 		}
-		
+
 	}
 }
 ?>

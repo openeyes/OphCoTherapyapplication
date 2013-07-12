@@ -37,12 +37,12 @@
 	<div class="row default_function  eventDetail">
 		<div class="label"><?php echo $form->labelEx($model,'default_function'); ?></div>
 		<div class="data">
-		<?php 
+		<?php
 		$func_list = array();
 		foreach ($model->getDefaultFunctions() as $func) {
 			$func_list[$func] = $func;
 		}
-			
+
 		echo $form->dropdownlist($model, 'default_function', $func_list, array('empty' => '- Please select -', 'nowrapper' => true)); ?>
 		</div>
 		<?php echo $form->error($model,'default_function'); ?>
@@ -51,13 +51,13 @@
 	<div class="row default_value eventDetail">
 		<div class="label"><?php echo $form->labelEx($model,'default_value'); ?></div>
 		<div class="data">
-		<?php 
+		<?php
 			if ($model->response_type && $model->response_type->datatype == 'bool') {
 				$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
 						array('name' => get_class($model) . '[default_value]',
 								'id' => get_class($model) . '_default_value',
 								'val'=> $model->default_value,
-			
+
 						));
 			} else {
 				$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_default',
@@ -73,24 +73,24 @@
 
 	<div class="row response_type eventDetail">
 		<div class="label"><?php echo $form->labelEx($model,'response_type'); ?></div>
-		
+
 		<div class="data">
-		<?php 
+		<?php
 		$html_options = array(
 				'options' => array(),
 				'empty'=>'- Please select -',
 				'nowrapper' => true
 		);
 		foreach (OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll() as $rt) {
-			$html_options['options'][(string)$rt->id] = array('data-datatype' => $rt->datatype);
+			$html_options['options'][(string) $rt->id] = array('data-datatype' => $rt->datatype);
 		}
-		
+
 		echo $form->dropdownlist($model,'response_type_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll(),'id','label'),$html_options); ?>
 		</div>
 		<?php echo $form->error($model,'response_type'); ?>
 	</div>
 </div>
-	
+
 <script id="template_default_value_default" type="text/html">
 	<?php
 		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_default',
@@ -101,11 +101,11 @@
 	?>
 </script>
 <script id="template_default_value_bool" type="text/html">
-	<?php 
+	<?php
 		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
 					array('name' => '{{name}}',
 					'id' => '{{id}}',
 					'val'=> null,
 			));
-	?>	
+	?>
 </script>

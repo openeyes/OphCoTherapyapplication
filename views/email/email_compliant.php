@@ -27,7 +27,7 @@ The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
 
 Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term  . "\n" ?>
-<?php 
+<?php
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder($patient, $event->episode, $side, $diagnosis->{$side . '_diagnosis_id'})) {
 	foreach ($exam_info->{$side . '_answers'} as $answer) {
 		echo $answer->question->question . ": ";
