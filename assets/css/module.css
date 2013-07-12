@@ -1,5 +1,7 @@
 @CHARSET "UTF-8";
 
+#event_content.watermarkBox { background-image: url(../img/watermark.png); background-position: -5px 0; background-repeat: repeat-y; border-color: #86cdff; }
+
 .dt-node {
 	margin-bottom: 10px;
 	display: inline-block;
