@@ -17,20 +17,45 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-
+	<?php
+		//TODO: can drive this purely off the element attributes when we fix form processing
+		// Getting flags together for determining which elements to show
+		$need_reason = false;
+		$previnterventions = array();
+		if (@$_POST[get_class($element)]) {
+			$exists = $_POST[get_class($element)][$side . '_standard_intervention_exists'];
+			$intervention_id = $_POST[get_class($element)][$side . '_intervention_id'];
+			if ($_POST[get_class($element)][$side . '_standard_previous'] == '0') {
+				if ($id = $_POST[get_class($element)][$side . '_intervention_id']) {
+					$intervention = Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int) $id);
+					if ($intervention->is_deviation) {
+						$need_reason = true;
+					}
+				}
+			}	
+			if (isset($_POST[get_class($element)][$side . '_previnterventions'])) {
+				foreach ($_POST[get_class($element)][$side . '_previnterventions'] as $attrs) {
+					$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
+					$prev->attributes = $attrs;
+					$previnterventions[] = $prev;
+				}
+			}
+			$patient_factors = $_POST[get_class($element)][$side . '_patient_factors'];
+		} else {
+			$exists = $element->{$side . '_standard_intervention_exists'};
+			$intervention_id = $element->{$side . '_intervention_id'};
+			$need_reason = $element->needDeviationReasonForSide($side);
+			$previnterventions = $element->{$side . '_previnterventions'};
+			$patient_factors = $element->{$side . '_patient_factors'};
+		}
+	?>
+	
 	<div class="elementField standard_intervention_exists">
 		<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_standard_intervention_exists'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array('nowrapper' => true))?></div>
 	</div>
 
-	<?php
-		//TODO: can drive this purely off the element attributes when we fix form processing
-		if (@$_POST[get_class($element)]) {
-			$exists = $_POST[get_class($element)][$side . '_standard_intervention_exists'];
-		} else {
-			$exists = $element->{$side . '_standard_intervention_exists'};
-		}
-	?>
+	
 	<span id="<?php echo get_class($element) . "_" . $side ?>_standard_intervention_details"
 		<?php if ($exists != '1') {
 			echo ' class="hidden"';
@@ -65,27 +90,18 @@
 			<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
 			<div class="data" style="display: inline-block;"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts)?></div>
 		</div>
-
-		<div class="elementField" <?php if (!$element->{$side . '_intervention_id'}) { echo ' style="display: none;"'; } ?>>
-			<div class="label"><?php echo $element->getAttributeLabel($side . '_description'); ?></div>
+		
+		<div class="elementField" <?php if (!$intervention_id) { echo ' style="display: none;"'; } ?>>
+			<div class="label">
+			<?php if ($intervention_id) {
+				echo Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int)$intervention_id)->description_label;
+			} else {
+				$element->getAttributeLabel($side . '_description');
+			}?>
+			</div>
 			<div class="data"><?php echo $form->textArea($element, $side . '_description',array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 		</div>
 
-		<?php
-			$need_reason = false;
-			if (@$_POST[get_class($element)]) {
-				if ($_POST[get_class($element)][$side . '_standard_previous'] == '0') {
-					if ($id = $_POST[get_class($element)][$side . '_intervention_id']) {
-						$intervention = Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int) $id);
-						if ($intervention->is_deviation) {
-							$need_reason = true;
-						}
-					}
-				}
-			} else {
-				$need_reason = $element->needDeviationReasonForSide($side);
-			}
-		?>
 		<span id="<?php echo get_class($element) . "_" . $side;?>_deviation_fields"
 			<?php if (!$need_reason) {?>
 			class="hidden"
@@ -149,19 +165,6 @@
 				</thead>
 				<tbody>
 					<?php
-						if (empty($_POST)) {
-							$previnterventions = $element->{$side . '_previnterventions'};
-						} else {
-							$previnterventions = array();
-							if (isset($_POST[get_class($element)][$side . '_previnterventions'])) {
-								foreach ($_POST[get_class($element)][$side . '_previnterventions'] as $attrs) {
-									$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
-									$prev->attributes = $attrs;
-									$previnterventions[] = $prev;
-								}
-							}
-						}
-
 						$key = 0;
 						foreach ($previnterventions as $prev) {
 							$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
@@ -187,13 +190,6 @@
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_patient_factors', array('nowrapper' => true))?></div>
 	</div>
 
-	<?php
-		if (@$_POST[get_class($element)]) {
-			$patient_factors = $_POST[get_class($element)][$side . '_patient_factors'];
-		} else {
-			$patient_factors = $element->{$side . '_patient_factors'};
-		}
-	?>
 	<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_factor_details" class="elementField <?php if (!$patient_factors) { echo ' hidden'; } ?>">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details'); ?></div>
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
