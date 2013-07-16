@@ -21,14 +21,19 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 
 ?>
 
-This email was generated from the OpenEyes IVT Application event
+This email was generated from the OpenEyes Therapy Application event
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
 
-Diagnosis: <?php echo $diagnosis->{$side . '_diagnosis'}->term  . "\n" ?>
+Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
 <?php 
-if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder($patient, $event->episode, $side, $diagnosis->{$side . '_diagnosis_id'})) {
+if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
+		$patient, 
+		$event->episode, 
+		$side, 
+		$diagnosis->{$side . '_diagnosis1_id'},
+		$diagnosis->{$side . '_diagnosis2_id'})) {
 	foreach ($exam_info->{$side . '_answers'} as $answer) {
 		echo $answer->question->question . ": ";
 		echo ($answer->answer) ? "Yes\n" : "No\n";
