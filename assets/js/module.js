@@ -609,7 +609,7 @@ $(document).ready(function() {
 			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').removeClass('hidden');
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').addClass('hidden');
+			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').addClass('hidden');
 		}
 	});
 	
