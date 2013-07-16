@@ -36,7 +36,7 @@ table.layout {
 	width: 650px;
 	margin-bottom: 30px;
 }
-	
+
 table.layout th,
 table.layout td {
 	border: 1px solid #999;
@@ -63,7 +63,7 @@ table.inner tr.last th {
 
 </style>
 
-<?php 
+<?php
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 ?>
 
@@ -122,11 +122,10 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 							<th>Patient Name</th>
 							<td>
 								<?php echo $patient->getFullName() ?><br />
-								<?php 
+								<?php
 								if ($address = $patient->contact->address) {
 									echo $address->getLetterLine();
-								}
-								else {
+								} else {
 									echo "Unknown";
 								}
 								?>
@@ -176,12 +175,12 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 							<th>Date of Referral</th>
 							<td>TBD</td>
 						</tr>
-						
+
 					</tbody>
 				</table>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<td class="row-title">5. Application reviewed by Chief Pharmacist or nominated deputy e.g. relevant specialist pharmacist (in the case of a drug intervention)</td>
 			<td>
@@ -203,13 +202,13 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 							<th>Pharmacist email and contact number:</th>
 							<td><?php echo preg_replace('/\n/', '<br />', Yii::app()->params['OphCoTherapyapplication_chief_pharmacist_alternate_contact']) ?></td>
 						</tr>
-						
+
 						</tbody>
 				</table>
 			</td>
 		</tr>
-		
-	</tbody>	
+
+	</tbody>
 </table>
 
 <tcpdf method="AddPage" />
@@ -226,7 +225,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			Eye affected: <?php echo $side ?><br />
 			Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
 			Visual Acuity: <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
-			OCT Thickness: 
+			OCT Thickness:
 			<?php
 				$oct_str = "Not measured";
 				if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
@@ -280,7 +279,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">9. (a) Planned duration of intervention?<br /><br />
-(b) How will you monitor the effectiveness of the intervention?<br />	
+(b) How will you monitor the effectiveness of the intervention?<br />
 (c) What are the criteria for stopping treatment<br /><br /><br /><br />
 (d) What would you consider to be a successful outcome for this intervention in this patient?</td>
 			<td>(a)<?php echo $treatment->duration ?><br /><br />
@@ -300,7 +299,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">11. (a) Is there a standard intervention at this stage?</td>
-			<td>(a) 
+			<td>(a)
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {?>
 					The standard intervention is <?php echo $exceptional->{$side . '_standard_intervention'}->name;?>.<br /><br />
 					This intervention has <?php if (!$exceptional->{$side . '_standard_previous'}) { echo "not"; }?> been applied previously.<br /><br />
@@ -312,23 +311,21 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">&nbsp;&nbsp;(b) Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
-			<td>(b) 
+			<td>(b)
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
 					echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;?><br /><br />
 					<?php echo $exceptional->{$side . '_description'};?>
 					<?php if ($exceptional->needDeviationReasonForSide($side)) {?>
-						<br /><br />The standard intervention cannot be used because of 
-							<?php 
+						<br /><br />The standard intervention cannot be used because of
+							<?php
 							$reason_count = count($exceptional->{$side . '_deviationreasons'});
 							foreach ($exceptional->{$side . '_deviationreasons'} as $i => $dr) {
 								echo $dr->name;
 								if ($i == $reason_count - 1) {
 									echo ".";
-								}
-								elseif ($i == $reason_count - 2) {
+								} elseif ($i == $reason_count - 2) {
 									echo " and ";
-								}
-								else {
+								} else {
 									echo ", ";
 								}
 							}?>
@@ -375,14 +372,14 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<table class="inner">
 				<tr>
 					<th>What is the patient's clinical severity? (Where possible use standard scoring systems e.g. WHO, DAS scores, walk test, cardiac index etc)</th>
-					<td>Visual Acuity in the affected eye is: 
+					<td>Visual Acuity in the affected eye is:
 					<?php if ($exam_api) {
 							if ($side == 'left') {
 								$va = $exam_api->getLetterVisualAcuityLeft($patient);
 							} else {
 								$va = $exam_api->getLetterVisualAcuityRight($patient);
 							}
-							echo $va ? $va : "Not measured"; 
+							echo $va ? $va : "Not measured";
 						}
 					?></td>
 				</tr>
@@ -391,7 +388,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr nobr="true">
 			<td class="row-title">14. Summary of previous intervention(s) this patient has received for the condition.<br />
-* Reasons for stopping may include: 
+* Reasons for stopping may include:
 	<ul>
 	<li>Course completed</li>
 	<li>No or poor response</li>
@@ -399,7 +396,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 	<li>Adverse effects/poorly tolerated</li>
 	</ul></td>
 			<td>
-			<?php 
+			<?php
 			if ($exceptional->{$side . '_previnterventions'}) {
 				?>
 				<table>
@@ -411,7 +408,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 					</tr>
 					</thead>
 					<tbody>
-				<?php 
+				<?php
 				foreach ($exceptional->{$side . '_previnterventions'} as $previntervention) {
 					?>
 					<tr>
@@ -419,13 +416,13 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 						<td><?php echo $previntervention->treatment->name ?></td>
 						<td><?php echo $previntervention->stopreason->name ?></td>
 					</tr>
-					<?php 	
+					<?php
 				}
 				?>
 					</tbody>
 				</table>
 				<?php
-			} else {	
+			} else {
 				echo "None";
 			}
 			?>
@@ -434,17 +431,17 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		<tr>
 			<td class="row-title">15. Anticipated Start Date</td>
 			<td>Processing requests can take up to 2-4 weeks (from the date received by the PCT). <br />If the case is more urgent than this, please state clinical reason why:<br /><br />
-			<?php 
+			<?php
 				echo $exceptional->{$side . '_start_period'}->name;
 				if ($exceptional->{$side . '_urgency_reason'}) {?>
 					<br /><br />
-					<?php 
+					<?php
 					echo $exceptional->{$side . '_urgency_reason'};
 				}
 			?>
 			</td>
 		</tr>
-			
+
 	</tbody>
 </table>
 
@@ -460,7 +457,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		<tr>
 			<td class="row-title">17. Has the Trust Drugs and Therapeutics Committee or equivalent Committee approved the requested intervention for use? (if drug or medical device)</td>
 			<td>If No, Committee Chair or Chief Pharmacist who approved?<br />
-			Evidence must be supplied e.g. D&amp;TC minutes, Chairs actions, etc<br /> 
+			Evidence must be supplied e.g. D&amp;TC minutes, Chairs actions, etc<br />
 			<b>NB: the PCT cannot consider the case in the absence of this evidence.</b><br /><br />
 			YES.</td>
 		</tr>
@@ -471,7 +468,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<li>N/A</li>
 			<li>London Cancer Drugs Group</li>
 			<li>London Cancer prioritisation process (LCP)</li>
-			</ol> 
+			</ol>
 (Not applicable)</td>
 		</tr>
 		<tr>
@@ -482,7 +479,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">20. What is the anticipated benefit of the intervention compared to the standard?</td>
-			<td>In case of intervention for cancer please provide details of expected survival benefit.<br /> 
+			<td>In case of intervention for cancer please provide details of expected survival benefit.<br />
 (Not applicable)</td>
 		</tr>
 		<tr>
@@ -491,11 +488,10 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		</tr>
 		<tr>
 			<td class="row-title">22. Are there any patient factors (clinical or personal) that need to be considered?</td>
-			<td><?php  
+			<td><?php
 				if ($exceptional->{$side . '_patient_factors'}) {
 					echo $exceptional->{$side . '_patient_factor_details'};
-				}
-				else {
+				} else {
 					echo "No";
 				}
 			?></td>
@@ -507,6 +503,6 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 		<tr>
 			<td class="row-title">Trust reference number</td>
 			<td>&nbsp;</td>
-		</tr>	
+		</tr>
 	</tbody>
 </table>

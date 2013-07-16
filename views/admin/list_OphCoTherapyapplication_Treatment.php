@@ -22,5 +22,5 @@
 <div class="view">
 
 <a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/updateOphCoTherapyapplication_Treatment/', array('id'=> $data->id)) ?>"><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>: <?php echo $data->name ?></a>
-	
+
 </div>

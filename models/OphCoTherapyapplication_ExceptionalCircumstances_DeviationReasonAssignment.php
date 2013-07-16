@@ -63,7 +63,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment
 			array('id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -73,8 +73,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment
 		// class name for the relations automatically generated below.
 		return array(
 			'element' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'element_id'),
-			'deviationreason' => array(self::BELONGS_TO, 
-				'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 
+			'deviationreason' => array(self::BELONGS_TO,
+				'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason',
 				'deviationreason_id'),
 		);
 	}
@@ -129,4 +129,3 @@ class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment
 		return parent::beforeValidate();
 	}
 }
-?>

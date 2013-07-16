@@ -30,7 +30,7 @@
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_id') ?>:</div>
 		<div class="data"><?php echo $element->{$side . '_standard_intervention'}->name ?></div>
 	</div>
-	
+
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_previous') ?>:</div>
 		<div class="data"><?php echo $element->{$side . '_standard_previous'} ? 'Yes' : 'No' ?></div>
@@ -54,7 +54,7 @@
 				</ul>
 			</div>
 		</div>
-	<?php }?>	
+	<?php }?>
 <?php } else { ?>
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_condition_rare') ?>:</div>
@@ -75,7 +75,7 @@
 	<div class="data"><?php echo $element->{$side . '_patient_gain'} ?></div>
 </div>
 
-<?php if ($element->{$side . '_previnterventions'} ) { ?>
+<?php if ($element->{$side . '_previnterventions'}) { ?>
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?>:</div>
 		<div class="data">
@@ -85,7 +85,7 @@
 					<th class="previntervention-treatment">Treatment</th>
 					<th class="previntervention-reason">Reason for Stopping</th>
 				</tr>
-		<?php 
+		<?php
 			foreach ($element->{$side . '_previnterventions'} as $previntervention) {
 				?>
 				<tr>
@@ -93,7 +93,7 @@
 					<td><?php echo $previntervention->treatment->drug->name ?></td>
 					<td><?php echo $previntervention->stopreason->name ?></td>
 				</tr>
-				<?php 				
+				<?php
 			}
 		?>
 			</table>

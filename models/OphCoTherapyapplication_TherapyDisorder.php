@@ -17,7 +17,8 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord {
+class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -44,7 +45,7 @@ class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord {
 				'disorder' => array(self::BELONGS_TO, 'Disorder', 'disorder_id'),
 		);
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -58,19 +59,19 @@ class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecord {
 				array('id, disorder_id, display_order', 'safe', 'on' => 'search'),
 		);
 	}
-	
-	public function getLevel2Disorders() 
+
+	public function getLevel2Disorders()
 	{
 		$criteria = new CDbCriteria;
 		$criteria->condition = 'parent_id = :pid';
 		$criteria->params = array('pid' => $this->id);
 		$criteria->order = 'display_order asc';
 		$disorders = array();
-		
+
 		foreach (OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria) as $therapy_disorder) {
 			$disorders[] = $therapy_disorder->disorder;
 		}
-		
+
 		return $disorders;
 	}
 }

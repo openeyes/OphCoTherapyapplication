@@ -67,7 +67,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention exte
 			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -133,4 +133,3 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention exte
 		return parent::beforeValidate();
 	}
 }
-?>

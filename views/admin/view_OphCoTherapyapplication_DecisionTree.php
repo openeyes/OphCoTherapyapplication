@@ -18,22 +18,20 @@
  */
 ?>
 
-<?php 
+<?php
 $this->renderPartial('_menu_main');
 ?>
 
 <div class="OphCoTherapyapplication_DecisionTree">
 <h3>Decision Tree: <?php echo $model->name ?></h3>
 <?php if ($node) {?>
-<?php 
+<?php
 $this->renderPartial('view_OphCoTherapyapplication_DecisionTreeNode', array(
 		'model' => $node,
 ));
 
-}
-else 
-{?>
+} else {?>
 <a href="#" class="add_node" data-dt_id="<?php echo $model->id ?>">add root</a>
-<?php 
+<?php
 }
 ?>

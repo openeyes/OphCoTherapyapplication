@@ -18,8 +18,8 @@
  */
 ?>
 
-<?php 
-$name_stub = $element_name . '[' . $side . '_previnterventions]'; 
+<?php
+$name_stub = $element_name . '[' . $side . '_previnterventions]';
 $all_treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->findAll();
 
 /*
@@ -31,33 +31,33 @@ $all_treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->find
 
 <tr class="previousintervention" data-key="<?php echo $key ?>">
 	<td>
-	<?php if($previntervention && $previntervention->id) { ?>
+	<?php if ($previntervention && $previntervention->id) { ?>
 		<input type="hidden"
 			name="<?php echo $name_stub; ?>[<?php echo $key ?>][id]"
 			value="<?php echo $previntervention->id?>" />
 	<?php } ?>
-	
-	<?php 
+
+	<?php
 		$d_name = $name_stub . "[$key][treatment_date]";
 		$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_treatment_date";
-		
+
 		// using direct widget call to allow custom name for the field
 		$form->widget('application.widgets.DatePicker',array(
-			'element' => $previntervention, 
-			'name' => $d_name, 
-			'field' => 'treatment_date', 
-			'options' => array('maxDate' => 'today'), 
+			'element' => $previntervention,
+			'name' => $d_name,
+			'field' => 'treatment_date',
+			'options' => array('maxDate' => 'today'),
 			'htmlOptions' => array('id' => $d_id, 'nowrapper' => true, 'style'=>'width: 90px;')));
 	?>
 	</td>
 	<td>
-	<?php 
+	<?php
 	echo CHtml::activeDropDownList($previntervention, 'treatment_id', CHtml::listData($all_treatments,'id','name'),array('name' => $name_stub . "[$key][treatment_id]", 'nowrapper' => true));
-	?>	
+	?>
 	</td>
 	<td>
-	<?php 
-	echo CHtml::activeDropDownList($previntervention, 'stopreason_id', 
+	<?php
+	echo CHtml::activeDropDownList($previntervention, 'stopreason_id',
 		CHtml::listData(OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findAll(),'id','name'),
 		array('name' => $name_stub . "[$key][stopreason_id]"));
 	 ?>

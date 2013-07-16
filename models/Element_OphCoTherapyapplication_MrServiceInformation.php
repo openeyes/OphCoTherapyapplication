@@ -71,7 +71,7 @@ class Element_OphCoTherapyapplication_MrServiceInformation extends BaseEventType
 			array('id, event_id, consultant_id, ', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -115,7 +115,7 @@ class Element_OphCoTherapyapplication_MrServiceInformation extends BaseEventType
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('event_id', $this->event_id, true);
 		$criteria->compare('consultant_id', $this->consultant_id);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,
 		));
@@ -139,4 +139,3 @@ class Element_OphCoTherapyapplication_MrServiceInformation extends BaseEventType
 		return parent::beforeValidate();
 	}
 }
-?>

@@ -21,7 +21,7 @@
 <?php if ($model->parent) {
 ?>
 	<div><a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree/') . '/'. $model->decisiontree_id . '?node_id=' . $model->parent_id ?>" class="view_parent">&lt;&lt; Parent</a></div>
-<?php 
+<?php
 }
 if ($model->rules) {
 ?>
@@ -34,11 +34,11 @@ if ($model->rules) {
 			));
 		}?>
 	</div>
-<?php 
+<?php
 }
 ?>
 <?php if ($model->canAddRule()) {?>
-<div> 
+<div>
 	<a href="#" class="add_rule" data-node_id="<?php echo $model->id ?>">Add rule</a>
 </div>
 <?php } ?>
@@ -60,27 +60,27 @@ if ($model->rules) {
 	<?php } ?>
 <a href="#" class="edit_node" data-node_id="<?php echo $model->id ?>">Edit</a>
 </div>
-<?php 
-if ($model->children){
+<?php
+if ($model->children) {
 ?>
 <div class="children curvybox blue">
 	<h4>Children	</h4>
 	<?php foreach ($model->children as $child) {
 	?>
 		<div class="child curvybox">
-			<?php 
+			<?php
 			if ($child->rules) {
-				foreach ($child->rules as $rule) { echo ' [' . $rule->displayParentCheck() . ' ' . $rule->displayParentCheckValue() . ']'; } 
+				foreach ($child->rules as $rule) { echo ' [' . $rule->displayParentCheck() . ' ' . $rule->displayParentCheckValue() . ']'; }
 			} else {
 				echo '[DEFAULT]';
-			}	
+			}
 			?>:
 			<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree/') . '/' . $model->decisiontree_id . '?node_id=' . $child->id ?>"><?php echo $child->question ? $child->question : $child->outcome->name ?></a>
 		</div>
-	<?php 
+	<?php
 	}?>
 </div>
-<?php 
+<?php
 }
 ?>
 <div>

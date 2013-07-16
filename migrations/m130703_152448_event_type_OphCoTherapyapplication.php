@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -19,11 +19,12 @@
 
 class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 {
-	public function up() {
+	public function up()
+	{
 		if (!Yii::app()->hasModule('OphTrIntravitrealinjection')) {
 			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
-		
+
 		// file collection table
 		$this->createTable('ophcotherapya_filecoll', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -41,7 +42,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_filecoll_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_filecoll_zi_fk` FOREIGN KEY (`zipfile_id`) REFERENCES `protected_file` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		// file collection file assignments
 		$this->createTable('ophcotherapya_filecoll_assignment', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -61,7 +62,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_filecollass_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		// decision tree table creation
 		$this->createTable('ophcotherapya_decisiontree', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -76,7 +77,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_decisiontree_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_decisiontree_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->createTable('ophcotherapya_decisiontreeoutcome', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'name' => 'varchar(32) NOT NULL',
@@ -91,10 +92,10 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_decisiontreeoutcome_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_decisiontreeoutcome_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_decisiontreeoutcome',array('name'=>'Compliant','outcome_type'=> 'COMP'));
 		$this->insert('ophcotherapya_decisiontreeoutcome',array('name'=>'Non-Compliant','outcome_type'=> 'NCOM'));
-		
+
 		$this->createTable('ophcotherapya_decisiontreenode_responsetype', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'label' => 'varchar(32) NOT NULL',
@@ -109,12 +110,12 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_decisiontreenode_rtype_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_decisiontreenode_rtype_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'Integer','datatype'=> 'int'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'string','datatype'=> 'str'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'yes/no','datatype'=> 'bool'));
 		$this->insert('ophcotherapya_decisiontreenode_responsetype',array('label'=>'Visual Acuity','datatype'=> 'va'));
-		
+
 		$this->createTable('ophcotherapya_decisiontreenode', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'decisiontree_id' => 'int(10) unsigned NOT NULL',
@@ -142,7 +143,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_decisiontreenode_oi_fk` FOREIGN KEY (`outcome_id`) REFERENCES `ophcotherapya_decisiontreeoutcome` (`id`)',
 				'CONSTRAINT `ophcotherapya_decisiontreenode_rti_fk` FOREIGN KEY (`response_type_id`) REFERENCES `ophcotherapya_decisiontreenode_responsetype` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->createTable('ophcotherapya_decisiontreenoderule', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'node_id' => 'int(10) unsigned NOT NULL',
@@ -160,7 +161,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_decisiontreenoderule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_decisiontreenoderule_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->createTable('ophcotherapya_decisiontreenodechoice', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'node_id' => 'int(10) unsigned NOT NULL',
@@ -178,7 +179,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_decisiontreenodechoice_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_decisiontreenodechoice_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		// disorder lookup for therapies
 		$this->createTable('ophcotherapya_therapydisorder', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -199,10 +200,10 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_therapydisorder_di_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`)',
 				'CONSTRAINT `ophcotherapya_therapydisorder_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_therapydisorder` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>75971007,'display_order'=>1));
 		$cnv_id = Yii::app()->db->getLastInsertID();
-		
+
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>267718000,'display_order'=>1, 'parent_id' => $cnv_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>57190000,'display_order'=>2, 'parent_id' => $cnv_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>312950007,'display_order'=>3, 'parent_id' => $cnv_id));
@@ -212,22 +213,22 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>255024002,'display_order'=>7, 'parent_id' => $cnv_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>255025001,'display_order'=>8, 'parent_id' => $cnv_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>2532009,'display_order'=>9, 'parent_id' => $cnv_id));
-		
+
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>37231002,'display_order'=>2));
 		$mac_id = Yii::app()->db->getLastInsertID();
-		
+
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>4855003,'display_order'=>1, 'parent_id' => $mac_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>24596005,'display_order'=>2, 'parent_id' => $mac_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>68478007,'display_order'=>3, 'parent_id' => $mac_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>232024000,'display_order'=>4, 'parent_id' => $mac_id));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>276436007,'display_order'=>5, 'parent_id' => $mac_id));
-		
+
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>312956001,'display_order'=>3));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>313001006,'display_order'=>4));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>360455002,'display_order'=>5));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>128473001,'display_order'=>6));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>78370002,'display_order'=>7));
-		
+
 		// --- EVENT TYPE ENTRIES ---
 
 		// create an event_type entry for this event type name if one doesn't already exist
@@ -264,14 +265,14 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'MR Service Information'))->queryRow();
-		
+
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Exceptional Circumstances',':eventTypeId'=>$event_type['id']))->queryRow()) {
 			$this->insert('element_type', array('name' => 'Exceptional Circumstances','class_name' => 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'event_type_id' => $event_type['id'], 'required' => false, 'display_order' => 40));
 		}
 		// select the element_type_id for this element type name
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Exceptional Circumstances'))->queryRow();
-		
+
 		// create an element_type entry for this element type name if one doesn't already exist
 		if (!$this->dbConnection->createCommand()->select('id')->from('element_type')->where('name=:name and event_type_id=:eventTypeId', array(':name'=>'Application Email',':eventTypeId'=>$event_type['id']))->queryRow()) {
 			$this->insert('element_type', array('name' => 'Application Email','class_name' => 'Element_OphCoTherapyapplication_Email', 'event_type_id' => $event_type['id'], 'display_order' => 50, 'default' => false, 'required' => false));
@@ -280,9 +281,9 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$element_type = $this->dbConnection->createCommand()->select('id')->from('element_type')->where('event_type_id=:eventTypeId and name=:name', array(':eventTypeId'=>$event_type['id'],':name'=>'Application Email'))->queryRow();
 
 		// get the id for both eyes
-		
+
 		$both_eyes_id = Eye::model()->find("name = 'Both'")->id;
-		
+
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_therapydiag', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -329,10 +330,10 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_treatment_cost_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_treatment_cost_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_treatment_cost_type',array('name'=>'Month'));
 		$this->insert('ophcotherapya_treatment_cost_type',array('name'=>'Injection'));
-		
+
 		// element lookup table ophcotherapya_treatment
 		// NOTE dependency on the ophtrintravitinjection_treatment_drug table and therefore the OphTrIntravitinjection module
 		$this->createTable('ophcotherapya_treatment', array(
@@ -379,7 +380,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->insert('ophcotherapya_treatment',array('name'=>'Ozurdex','display_order'=>6, 'contraindications_required' => false));
 		$this->insert('ophcotherapya_treatment',array('name'=>'Intravitreal triamcinolone','display_order'=>7, 'contraindications_required' => false));
 		*/
-		
+
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_patientsuit', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -413,7 +414,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->createTable('ophcotherapya_patientsuit_decisiontreenoderesponse', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'patientsuit_id' => 'int(10) unsigned NOT NULL',
-				'eye_id' => 'int(10) unsigned NOT NULL', 
+				'eye_id' => 'int(10) unsigned NOT NULL',
 				'node_id' => 'int(10) unsigned NOT NULL',
 				'value' => 'varchar(16) NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -493,7 +494,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'In addition to the standard (Additional)', 'description_label' => 'Details of additional', 'display_order'=>1));
 		$this->insert('et_ophcotherapya_exceptional_intervention',array('name'=>'Instead of the standard (Deviation)','description_label' => 'Details of deviation', 'is_deviation' => true, 'display_order'=>2));
-		
+
 		$this->createTable('ophcotherapya_exceptional_standardintervention', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'name' => 'varchar(128) COLLATE utf8_bin NOT NULL',
@@ -509,7 +510,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_exceptional_standardintervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_exceptional_standardintervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Observation', 'display_order'=>1));
 		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Conventional laser', 'display_order'=>2));
 		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Photodynamic therapy with vertoporfin', 'display_order'=>3));
@@ -531,7 +532,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_exceptional_deviationreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_exceptional_deviationreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_exceptional_deviationreason',array('name'=>'Contraindication', 'display_order'=>1));
 		$this->insert('ophcotherapya_exceptional_deviationreason',array('name'=>'Side effects', 'display_order'=>2));
 		$this->insert('ophcotherapya_exceptional_deviationreason',array('name'=>'No response', 'display_order'=>3));
@@ -613,7 +614,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_exceptional_lspid_fk` FOREIGN KEY (`left_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_exceptional_rspid_fk` FOREIGN KEY (`right_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->createTable('ophcotherapya_exceptional_deviationreason_ass', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'element_id' => 'int(10) unsigned NOT NULL',
@@ -654,7 +655,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		// lookup table for stopping reasons for previous interventions
 		$this->createTable('ophcotherapya_exceptional_previntervention_stopreason', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -670,13 +671,13 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_exceptional_previntervention_stopreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophcotherapya_exceptional_previntervention_stopreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		$this->insert('ophcotherapya_exceptional_previntervention_stopreason',array('name'=>'Adverse effects','display_order'=>1));
 		$this->insert('ophcotherapya_exceptional_previntervention_stopreason',array('name'=>'Course completed','display_order'=>2));
 		$this->insert('ophcotherapya_exceptional_previntervention_stopreason',array('name'=>'No disease activity','display_order'=>3));
 		$this->insert('ophcotherapya_exceptional_previntervention_stopreason',array('name'=>'No response','display_order'=>4));
 		$this->insert('ophcotherapya_exceptional_previntervention_stopreason',array('name'=>'Poor response','display_order'=>5));
-		
+
 		// create the table for the previous interventions on the exceptional element
 		$this->createTable('ophcotherapya_exceptional_previntervention', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -701,7 +702,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_exceptional_previntervention_ti_fk` FOREIGN KEY (`treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`)',
 				'CONSTRAINT `ophcotherapya_exceptional_previntervention_sri_fk` FOREIGN KEY (`stopreason_id`) REFERENCES `ophcotherapya_exceptional_previntervention_stopreason` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 		// create the table for this element type: et_modulename_elementtypename
 		$this->createTable('et_ophcotherapya_email', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -743,42 +744,43 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_email_att_eyei_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-		
+
 	}
 
-	public function down() {
+	public function down()
+	{
 		// --- drop any element related tables ---
 		// --- drop element tables ---
-		
+
 		$this->dropTable('et_ophcotherapya_therapydiag');
 
 		$this->dropTable('ophcotherapya_patientsuit_decisiontreenoderesponse');
-		
+
 		$this->dropTable('et_ophcotherapya_patientsuit');
-		
+
 		$this->dropTable('et_ophcotherapya_relativecon');
 
 		$this->dropTable('ophcotherapya_email_attachment');
 		$this->dropTable('et_ophcotherapya_email');
-		
+
 		$this->dropTable('et_ophcotherapya_mrservicein');
 
 
 		$this->dropTable('ophcotherapya_exceptional_previntervention');
 		$this->dropTable('ophcotherapya_exceptional_previntervention_stopreason');
 		$this->dropTable('ophcotherapya_exceptional_filecoll_assignment');
-		
+
 		$this->dropTable('ophcotherapya_exceptional_deviationreason_ass');
 		$this->dropTable('et_ophcotherapya_exceptional');
 		$this->dropTable('ophcotherapya_exceptional_standardintervention');
-		
+
 		$this->dropTable('ophcotherapya_exceptional_deviationreason');
 		$this->dropTable('ophcotherapya_exceptional_startperiod');
 
 		$this->dropTable('et_ophcotherapya_exceptional_intervention');
-		
+
 		$this->dropTable('ophcotherapya_treatment');
-		
+
 		$this->dropTable('ophcotherapya_treatment_cost_type');
 
 		// --- delete event entries ---
@@ -794,7 +796,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 
 		// --- delete entries from event_type ---
 		$this->delete('event_type', 'id='.$event_type['id']);
-		
+
 		// drop decision tree tables
 		$this->dropTable('ophcotherapya_decisiontreenoderule');
 		$this->dropTable('ophcotherapya_decisiontreenodechoice');
@@ -802,13 +804,13 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->dropTable('ophcotherapya_decisiontreenode_responsetype');
 		$this->dropTable('ophcotherapya_decisiontreeoutcome');
 		$this->dropTable('ophcotherapya_decisiontree');
-		
+
 		// disorder lookup
 		$this->dropForeignKey('ophcotherapya_therapydisorder_pi_fk', 'ophcotherapya_therapydisorder');
 		$this->dropTable('ophcotherapya_therapydisorder');
-		
+
 		$this->dropTable('ophcotherapya_filecoll_assignment');
-		
+
 		$this->dropTable('ophcotherapya_filecoll');
 
 		// echo "m000000_000001_event_type_OphCoTherapyapplication does not support migration down.\n";
@@ -817,4 +819,3 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		return true;
 	}
 }
-?>

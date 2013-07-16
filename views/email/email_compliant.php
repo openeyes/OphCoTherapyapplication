@@ -18,7 +18,6 @@
 */
 
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
-
 ?>
 
 This email was generated from the OpenEyes Therapy Application event

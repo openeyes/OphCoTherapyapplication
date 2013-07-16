@@ -22,7 +22,7 @@
 	$this->header();
 ?>
 
-<?php 
+<?php
 $this->renderPartial('//base/_messages');
 
 $service = new OphCoTherapyapplication_Processor();
@@ -31,11 +31,10 @@ $warnings = array();
 if ($service->canProcessEvent($this->event->id)) {
 	$this->event_actions[] = EventAction::link('Submit Application',
 					Yii::app()->createUrl($this->event->eventType->class_name.'/default/processApplication/?event_id='.$this->event->id));
-}
-else {
+} else {
 	$warnings = $service->getProcessWarnings($this->event->id);
 }
-	
+
 ?>
 
 <?php  $this->renderPartial('//patient/event_actions'); ?>
@@ -43,7 +42,7 @@ else {
 <h3 class="withEventIcon" style="background:transparent url(<?php echo $this->assetPath?>/img/medium.png) center left no-repeat;"><?php echo $this->event_type->name?></h3>
 
 <div>
-	<?php 
+	<?php
 	if (count($warnings)) {
 		echo "Application cannot be submitted for the following reasons:<ul>";
 		foreach ($warnings as $warning) {
@@ -52,7 +51,7 @@ else {
 		echo "</ul>";
 	}
 	?>
-	
+
 	<?php $this->renderDefaultElements($this->action->id)?>
 	<?php $this->renderOptionalElements($this->action->id)?>
 	<div class="cleartall"></div>

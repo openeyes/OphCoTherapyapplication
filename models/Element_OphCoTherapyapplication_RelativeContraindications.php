@@ -72,7 +72,7 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 			array('id, event_id, cerebrovascular_accident, ischaemic_attack, myocardial_infarction, ', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -102,7 +102,7 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 			'myocardial_infarction' => 'Myocardial Infarction',
 		);
 	}
-	
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -119,7 +119,7 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 		$criteria->compare('cerebrovascular_accident', $this->cerebrovascular_accident);
 		$criteria->compare('ischaemic_attack', $this->ischaemic_attack);
 		$criteria->compare('myocardial_infarction', $this->myocardial_infarction);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria' => $criteria,
 		));
@@ -142,17 +142,18 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 	{
 		return parent::beforeValidate();
 	}
-	
-	public function eventPatientSuitability() {
+
+	public function eventPatientSuitability()
+	{
 		if ($this->event_id) {
 			$criteria = new CDbCriteria;
 			$criteria->compare('event_id',$this->event_id);
-			
+
 			return Element_OphCoTherapyapplication_PatientSuitability::model()->find($criteria);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * the list of attributes on this elements that are fields for contraindication
 	 *
@@ -166,8 +167,9 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 				'myocardial_infarction'
 		);
 	}
-	
-	public function hasAny() {
+
+	public function hasAny()
+	{
 		foreach ($this->contraindicationFields() as $fld) {
 			if ($this->$fld) {
 				return true;
@@ -176,4 +178,3 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 		return false;
 	}
 }
-?>

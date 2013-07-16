@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -29,7 +29,8 @@
  *
  **/
 
-class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecord {
+class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -38,7 +39,7 @@ class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecord {
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -47,7 +48,8 @@ class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecord {
 		return 'ophcotherapya_decisiontreeoutcome';
 	}
 
-	public function isCompliant() {
+	public function isCompliant()
+	{
 		if ($this->outcome_type == 'COMP') {
 			return true;
 		}

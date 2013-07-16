@@ -28,7 +28,7 @@
 	<div class="cols2 clearfix">
 		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
 		<div
-			class="side left eventDetail<?php if(!$element->hasRight()) { ?> inactive<?php } ?>"
+			class="side left eventDetail<?php if (!$element->hasRight()) { ?> inactive<?php } ?>"
 			data-side="right">
 			<div class="activeForm">
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
@@ -38,22 +38,22 @@
 				Only required if Patient Suitability is Non-Compliant
 			</div>
 		</div>
-	
+
 		<div
-			class="side right eventDetail<?php if(!$element->hasLeft()) { ?> inactive<?php } ?>"
+			class="side right eventDetail<?php if (!$element->hasLeft()) { ?> inactive<?php } ?>"
 			data-side="left">
 			<div class="activeForm">
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
 					array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
-				
+
 			</div>
 			<div class="inactiveForm">
 				Only required if Patient Suitability is Non-Compliant
 			</div>
 		</div>
-	
+
 	</div>
-	
+
 </div>
 
 <script id="previntervention_template" type="text/html">

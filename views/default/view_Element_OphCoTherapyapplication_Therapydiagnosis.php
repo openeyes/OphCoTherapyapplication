@@ -22,7 +22,7 @@
 
 	<div class="cols2 clearfix">
 		<div class="left eventDetail">
-			<?php if($element->hasRight()) {
+			<?php if ($element->hasRight()) {
 				$this->renderPartial('view_' . get_class($element) . '_fields',
 					array('side' => 'right', 'element' => $element));
 			} else { ?>
@@ -30,7 +30,7 @@
 			<?php } ?>
 		</div>
 		<div class="right eventDetail">
-			<?php if($element->hasLeft()) {
+			<?php if ($element->hasLeft()) {
 				$this->renderPartial('view_' . get_class($element) . '_fields',
 					array('side' => 'left', 'element' => $element));
 			} else { ?>
@@ -38,4 +38,3 @@
 			<?php } ?>
 		</div>
 	</div>
-	

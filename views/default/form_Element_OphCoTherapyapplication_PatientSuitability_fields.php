@@ -35,8 +35,8 @@
 			'form_OphCoTherapyapplication_DecisionTree',
 			array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),
 			false, false
-		)?>	
-	
+		)?>
+
 	</div>
-	
+
 </div>

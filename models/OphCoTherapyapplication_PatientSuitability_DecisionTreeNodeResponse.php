@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -19,21 +19,22 @@
 
 /**
  * Stores the responses for given decision tree nodes for Patient Suitability element
- * 
+ *
  * @property string id
  * @property string patientsuit_id
  * @property string eye_id
  * @property string node_id
  * @property string value
- * 
+ *
  * The following model relations exist
- * 
+ *
  * @property Element_OphCoTherapyapplication_PatientSuitablity patientsuitability
  * @property OphCoTherapyapplication_DecisionTreeNode node
  * @property Eye eye
  */
 
-class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecord {
+class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -42,7 +43,7 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -50,7 +51,7 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 	{
 		return 'ophcotherapya_patientsuit_decisiontreenoderesponse';
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -60,7 +61,7 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 				array('patientsuit_id, node_id, eye_id, value', 'safe'),
 		);
 	}
-	
+
 	public function relations()
 	{
 		return array(

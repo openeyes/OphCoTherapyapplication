@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -29,7 +29,8 @@
  *
  **/
 
-class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRecord {
+class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -38,7 +39,7 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -47,7 +48,7 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 		return 'ophcotherapya_decisiontreenode_responsetype';
 	}
 
-	public function validRuleComparators() 
+	public function validRuleComparators()
 	{
 		if ($this->datatype == 'int') {
 			return array('eq','lt', 'lte', 'gt', 'gte');
@@ -55,35 +56,35 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 			return array('eq');
 		}
 	}
-	
-	public function ruleLimit() {
+
+	public function ruleLimit()
+	{
 		if (in_array($this->datatype, array('int', 'str')) ) {
 			return null;
-		}
-		else if ($this->datatype == 'bool') {
+		} elseif ($this->datatype == 'bool') {
 			return 1;
 		}
 		// TODO: implement for choice 'ch' response type
 	}
-	
+
 	/*
 	 * return choice options for response types that have them
 	 * Note that this is hard coded for now to reduce admin overhead etc
-	 * if the response types expand greatly, then it will be worth expanding 
+	 * if the response types expand greatly, then it will be worth expanding
 	 * this functionality to have choices defined in models
 	 */
-	public function getChoices($datatype = null) {
+	public function getChoices($datatype = null)
+	{
 		if ($datatype == null) {
 			$datatype = $this->datatype;
 		}
-		
+
 		if ($datatype == 'bool') {
 			return array(
 				'0' => 'No',
 				'1' => 'Yes',
 			);
-		}
-		elseif ($datatype == 'va') {
+		} elseif ($datatype == 'va') {
 			return array(
 				'94' => '6/5',
 				'90' => '6/6',
@@ -98,5 +99,5 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 		}
 		return null;
 	}
-	
+
 }

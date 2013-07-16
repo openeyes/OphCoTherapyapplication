@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -27,7 +27,8 @@
  *
  **/
 
-class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
+class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -36,7 +37,7 @@ class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -44,7 +45,7 @@ class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
 	{
 		return 'ophcotherapya_decisiontree';
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -54,7 +55,7 @@ class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
 				'nodes' => array(self::HAS_MANY, 'OphCoTherapyapplication_DecisionTreeNode', 'decisiontree_id'),
 		);
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -68,20 +69,22 @@ class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord {
 				array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
-	public function getRootNode() {
+
+	public function getRootNode()
+	{
 		$criteria = new CDbCriteria();
 		$criteria->addColumnCondition(array('decisiontree_id' => $this->id, 'parent_id' => null));
 		$node = OphCoTherapyapplication_DecisionTreeNode::model()->find($criteria);
 		return $node;
 	}
-	
-	public function getDefinition() {
+
+	public function getDefinition()
+	{
 		$definition = array();
 		if ($root = $this->getRootNode()) {
 			$definition['root_id'] = $root->id;
 		}
 		return $definition;
 	}
-	
+
 }

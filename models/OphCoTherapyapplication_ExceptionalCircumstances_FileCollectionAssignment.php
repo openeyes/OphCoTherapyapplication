@@ -63,7 +63,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment 
 			array('id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -127,4 +127,3 @@ class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment 
 		return parent::beforeValidate();
 	}
 }
-?>

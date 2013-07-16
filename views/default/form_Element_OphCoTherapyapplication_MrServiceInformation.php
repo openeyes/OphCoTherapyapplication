@@ -25,8 +25,8 @@
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
 	<h4 class="elementTypeName"><?php echo $element->elementType->name; ?></h4>
 
-	<?php 
+	<?php
 	$subspecialty = Subspecialty::model()->find('ref_spec=:ref_spec', array(':ref_spec' => 'MR'));
-	
+
 	echo $form->dropDownList($element, 'consultant_id', Firm::model()->getList($subspecialty->id),array('empty'=>'- Please select -'))?>
 </div>

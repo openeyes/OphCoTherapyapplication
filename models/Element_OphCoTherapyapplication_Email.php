@@ -36,16 +36,16 @@
 * @property OphCoTherapyapplication_Email_Attachment[] $attachments
 * @property ProtectedFile[] $left_attachments
 * @property ProtectedFile[] $right_attachments
-* 
+*
 */
 
 class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 {
 	public $service;
-	
+
 	// internal store to related Element_OphCoTherapyapplication_PatientSuitability object
 	protected $_suitability;
-	
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -128,7 +128,8 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		));
 	}
 
-	public function isEditable() {
+	public function isEditable()
+	{
 		// the existence of the email element indicates that the application is considered to be complete
 		// so we don't allow it to be edited. This may well become more sophisticated if we start allowing status
 		// change and the like.
@@ -150,11 +151,11 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	{
 		return parent::beforeValidate();
 	}
-	
+
 	/**
 	 * abstracted method to update a ManyToMany sided relationship
 	 * TODO: set this as a behaviour that can be attached to the appropriate models and used.
-	 * 
+	 *
 	 * @param string $side left or right
 	 * @param string $side_relation field that defines which side the m2m model belongs to
 	 * @param unknown $m2m_relation field that holds the relationship to the assignment model of the m2m model
@@ -162,45 +163,46 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	 * @param unknown $id_fld the id field in the assignment model that relates to the actual m2m model
 	 * @param unknown $ids the ids that the relationship should be set to.
 	 */
-	protected function updateManyToMany($side, $side_relation, $m2m_relation, $m2m_model, $id_fld, $ids) {
+	protected function updateManyToMany($side, $side_relation, $m2m_relation, $m2m_model, $id_fld, $ids)
+	{
 		$curr_by_id = array();
 		$save = array();
-		
+
 		foreach ($this->$m2m_relation as $c) {
 			if ($c->$side_relation == $side) {
 				$curr_by_id[$c->id] = $c;
 			}
 		}
-		
+
 		foreach ($ids as $id) {
 			if (!array_key_exists($id, $curr_by_id)) {
 				$ass = new $m2m_model();
 				$ass->attributes = array('element_id' => $this->id, $side_relation => $side, $id_fld => $id);
 				$save[] = $ass;
-			}
-			else {
+			} else {
 				// keep the assignment
 				unset($curr_by_id[$id]);
 			}
 		}
-		
+
 		foreach ($save as $s) {
 			$s->save();
 		}
-		
+
 		foreach ($curr_by_id as $curr) {
 			$curr->delete();
 		}
 	}
-	
-	public function updateAttachments($side, $attachment_ids) {
+
+	public function updateAttachments($side, $attachment_ids)
+	{
 		$this->updateManyToMany($side, "eye_id", "attachments", "OphCoTherapyapplication_Email_Attachment", "file_id", $attachment_ids);
 	}
-	
+
 	/**
-	 * sends the application for email for the specified side. Returns boolean to indicate email 
+	 * sends the application for email for the specified side. Returns boolean to indicate email
 	 * success or failure
-	 * 
+	 *
 	 * @param string $side
 	 * @return boolean
 	 */
@@ -209,54 +211,53 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		$message = Yii::app()->mailer->newMessage();
 		$message->setSubject('Therapy Application');
 		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
-		
+
 		if ($this->isSideCompliant($side)) {
 			$message->setTo(Yii::app()->params['OphCoTherapyapplication_compliant_recipient_email']);
-		}
-		else {
+		} else {
 			$message->setTo(Yii::app()->params['OphCoTherapyapplication_noncompliant_recipient_email']);
 		}
-		
+
 		$message->setBody($this->{$side . '_email_text'});
 		if ($attach = $this->{$side . '_attachments'}) {
 			foreach ($attach as $att) {
 				$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name) );
 			}
 		}
-		
+
 		if (Yii::app()->mailer->sendMessage($message)) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Determines if the given side is a compliant application or not
-	 * 
-	 * NOTE: if we wind up with an event object, this should make use of that rather than performing its 
+	 *
+	 * NOTE: if we wind up with an event object, this should make use of that rather than performing its
 	 * own query on a sibling element
-	 * 
+	 *
 	 * @param string $side
 	 * @return boolean
 	 */
-	protected function isSideCompliant($side) {
+	protected function isSideCompliant($side)
+	{
 		if (!$this->_suitability) {
 			$criteria = new CDbCriteria;
 			$criteria->compare('event_id',$this->event_id);
 			$this->_suitability = Element_OphCoTherapyapplication_PatientSuitability::model()->find($criteria);
 		}
-		if ( ($side == 'left' && !$this->_suitability->hasLeft()) || 
+		if ( ($side == 'left' && !$this->_suitability->hasLeft()) ||
 			($side == 'right' && !$this->_suitability->hasRight()) ) {
 			throw new Exception("cannot determine compatibility for invalid side");
 		}
 		return $this->_suitability->{$side . '_nice_compliance'};
 	}
-	
+
 	/**
 	 * Actually send the email(s) for the application. Returns success/failure flag
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function sendEmail()
@@ -274,6 +275,5 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 		}
 		return $success;
 	}
-		
+
 }
-?>

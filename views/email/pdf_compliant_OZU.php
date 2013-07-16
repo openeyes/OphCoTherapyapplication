@@ -35,10 +35,10 @@ table td {
 td.signature {
 	background-color: #dae6f1;
 }
-	
+
 </style>
 
-<?php 
+<?php
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 ?>
 

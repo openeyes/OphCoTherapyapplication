@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<?php 
+<?php
 $decisiontree = null;
 $treatment = $element->{$side . '_treatment'};
 
@@ -34,14 +34,14 @@ if ($treatment && $treatment->decisiontree) {
 			<?php if ($node->question) {?>
 				<div class="label"><?php echo $node->question ?></div>
 				<div class="data">
-				<?php $val = $this->getNodeResponseValue($element, $side, $node->id); 
+				<?php $val = $this->getNodeResponseValue($element, $side, $node->id);
 				if ($node->response_type->datatype == 'bool') { ?>
 					<select name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]">
 						<option value="">- Please select-</option>
 						<option value="0" <?php if ($val == '0') { echo "selected"; }?>>No</option>
 						<option value="1" <?php if ($val == '1') { echo "selected"; }?>>Yes</option>
 					</select>
-				<?php 
+				<?php
 				} elseif ($node->response_type->datatype == 'va') {?>
 					<select name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]">
 						<option value="">- Please select-</option>
@@ -49,7 +49,7 @@ if ($treatment && $treatment->decisiontree) {
 							<option value="<?php echo $id; ?>" <?php if ($val == $id) { echo "selected"; }?>><?php echo $label; ?></option>
 						<?php } ?>
 					</select>
-				<?php 
+				<?php
 				} else {
 				?>
 					<input type="text" name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]" value="<?php echo $val; ?>" />
@@ -64,7 +64,7 @@ if ($treatment && $treatment->decisiontree) {
 	<?php } ?>
 		<div id="<?php echo $side; ?>_outcome_unknown" style="display: none;" class="outcome unknown">Unknown</div>
 	<?php foreach (OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll() as $outcome) { ?>
-		<div id="<?php echo $side; ?>_outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome <?php echo $outcome->isCompliant() ? "compliant" : "non-compliant";?>" 
+		<div id="<?php echo $side; ?>_outcome_<?php echo $outcome->id ?>" style="display: none;" class="outcome <?php echo $outcome->isCompliant() ? "compliant" : "non-compliant";?>"
 			data-comp-val="<?php echo $outcome->isCompliant() ? "1" : "0";?>" ><?php echo $outcome->name; ?></div>
 	<?php }?>
 	<?php echo $form->hiddenInput($element, $side . '_nice_compliance')?>

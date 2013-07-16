@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * OpenEyes
  *
@@ -19,7 +19,7 @@
 
 /**
  * This is the model class for table "ophcotherapya_decisiontreenode".
- * 
+ *
  * Each node is a question for a given assessment flow. If it's parent is null, it is the root node
  * for the related flow. There should only be one with a null parent for each flow.
  *
@@ -31,13 +31,14 @@
  * @property string $default_function The name of the function that should be used to determine the default response to this node
  * @property string $default_value The default value that should be set for this node (if no default function selected)
  * @property string $response_type The response type for this node (va - value, ch - choice)
- * 
+ *
  * @property OphCoTherapyapplication_DecisionTree $decisiontree
  * @property OphCoTherapyapplication_DecisionTreeNode $parent
  * @property OphCoTherapyapplication_DecisionTreeOutcome $outcome
  **/
- 
-class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
+
+class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord
+{
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -46,7 +47,7 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	{
 		return parent::model($className);
 	}
-	
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -54,7 +55,7 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 	{
 		return 'ophcotherapya_decisiontreenode';
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -69,7 +70,7 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 			'children' => array(self::HAS_MANY, 'OphCoTherapyapplication_DecisionTreeNode', 'parent_id'),
 		);
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -85,16 +86,17 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 				array('id, question, outcome_id, default_function, default_value, response_type_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	public function getDefaultFunctions()
 	{
 		return array('bestVisualAcuityForEye');
 	}
-	
+
 	/*
 	 * Can only have children for question nodes, not outcomes
 	 */
-	public function canAddChild() {
+	public function canAddChild()
+	{
 		if ($this->outcome) {
 			return false;
 		}
@@ -105,16 +107,17 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 		}
 		return true;
 	}
-	
+
 	/*
-	 * @return bool - whether a rule can be added to this node or not. 
+	 * @return bool - whether a rule can be added to this node or not.
 	 */
-	public function canAddRule() {
+	public function canAddRule()
+	{
 		// if it's the root node, there are no rules to define for it.
 		if (!$this->parent) {
 			return false;
 		}
-		
+
 		// check the parent response type, and the number of rules already extant
 		// if there is room for another one, return true
 		if ($limit = $this->parent->response_type->ruleLimit()) {
@@ -124,13 +127,14 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Works out a full abstract definition of the node.
-	 * 
+	 *
 	 * @return array - associative array of details of the node
 	 */
-	public function getDefinition() {
+	public function getDefinition()
+	{
 		// return a definition of the node
 		$defn = array();
 		$defn['id']         = $this->id;
@@ -141,64 +145,67 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord {
 		foreach ($this->rules as $rule) {
 			$defn['rules'][] = $rule->getDefinition();
 		}
-		
+
 		return $defn;
 	}
-	
+
 	/*
 	 * Works out the default value for this node, based on the provided $patient
-	 * 
+	 *
 	 * @return string default response value
 	 */
-	public function getDefaultValue($side, $patient, $episode) {
+	public function getDefaultValue($side, $patient, $episode)
+	{
 		if ($this->default_value) {
 			return $this->default_value;
-		}
-		elseif ($this->default_function && $episode) {
+		} elseif ($this->default_function && $episode) {
 			// call the appropriate default function
 			return $this->{$this->default_function}($side, $patient, $episode);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
-	
+
 	/*
 	* outcome being set implies that no other attributes should be set for the node
 	*/
-	public function outcomeValidation($attribute) {
+	public function outcomeValidation($attribute)
+	{
 		if ($this->outcome_id && ($this->question || $this->default_function || $this->default_value || $this->response_type)) {
 			$this->addError($attribute, 'Outcome nodes cannot have any other values set.');
 		}
 	}
-	
+
 	/*
 	 * if outcome is null then it implies this node should be a question node
 	 */
-	public function requiredIfNotOutcomeValidation($attribute) {
+	public function requiredIfNotOutcomeValidation($attribute)
+	{
 		if (!$this->outcome_id && !$this->$attribute) {
 			$this->addError($attribute, $this->getAttributeLabel($attribute) . ' required if not an outcome node.');
 		}
 	}
-	
+
 	/*
 	 * can only have one source for the default response for the node
 	 */
-	public function defaultsValidation($attribute) {
+	public function defaultsValidation($attribute)
+	{
 		if ($this->default_function && $this->default_value) {
 			$this->addError($attribute, 'Cannot have two default values for node response');
 		}
 	}
-	
+
 	/*
 	 * returns the best visual acuity record for the given the $side of the given $patient
-	 * 
+	 *
 	 * @return integer $visualacuity
 	 */
-	public function bestVisualAcuityForEye($side, $patient, $episode) {
+	public function bestVisualAcuityForEye($side, $patient, $episode)
+	{
 		if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
 			return ($best = $api->getBestVisualAcuity($patient, $episode, $side, false)) ? $best->value : null;
 		}
-		return null;	
+		return null;
 	}
 }
