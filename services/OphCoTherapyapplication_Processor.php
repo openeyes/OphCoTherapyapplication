@@ -277,9 +277,12 @@ class OphCoTherapyapplication_Processor
 		$event_data = $this->getEvent($event_id);
 
 		$event = $event_data['event'];
-
+		// at the moment we are using a fixed type of commissioning body, but it's possible that in the future this
+		// might need to be determined in a more complex fashion, so we pass the type through to the templates
+		$cbody_type = CommissioningBodyType::model()->findByPk(1);
 		$data = array(
 				'patient' => $event->episode->patient,
+				'cbody_type' => $cbody_type,
 				'event' => $event,
 				'diagnosis' => $event_data['elements']['Element_OphCoTherapyapplication_Therapydiagnosis'],
 				'suitability' => $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability'],

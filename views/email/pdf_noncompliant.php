@@ -21,7 +21,7 @@
 <style>
 
 body {
-	font-size: 24px;
+	font-size: 20px;
 }
 
 .header {
@@ -30,6 +30,10 @@ body {
 	border-style: solid solid none solid;
 	border-color: #999 #999 #999 #999;
 	border-width: 1px 1px 0px 1px;
+}
+
+.form-text {
+	color: #666;
 }
 
 table.layout {
@@ -42,18 +46,24 @@ table.layout td {
 	border: 1px solid #999;
 }
 
-table.layout tr {
-	nobr: true;
+table.layout tr.header {
+	width: 300px;
+	background-color: #ccffff;
 }
 
 td.row-title {
 	background-color: #ccffcc;
 	width: 180px;
+	font-size: 24px;
 }
 
 table.inner td,
 table.inner th {
 	border-bottom: 1px solid #ccc;
+}
+
+.inner th {
+	color: #666;
 }
 
 table.inner tr.last td,
@@ -74,15 +84,31 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 </div>
 <table class="layout">
 	<tbody>
-		<tr>
-			<td class="row-title">1. PCT Name</td>
-			<td class="row-data">TBD</td>
+		<?php 
+		$ccg = $patient->getCommissioningBodyOfType($cbody_type);
+		?>
+		<tr nobr="true">
+			<td class="row-title">1. <?php echo $cbody_type->shortname ?> Code &amp; Name</td>
+			<td class="row-data">
+			<?php if ($ccg) {
+				echo '<span class="form-text">' . $cbody_type->shortname . " Code:</span> " . $ccg->code . "<br />";
+				echo '<span class="form-text">' . $cbody_type->shortname . " Name:</span> " . $ccg->name;
+			} else {
+				echo "Unknown";
+			}?>
+			</td>
 		</tr>
-		<tr>
-			<td class="row-title">2. PCT Address</td>
-			<td class="row-data">TBD</td>
+		<tr nobr="true">
+			<td class="row-title">2. <?php echo $cbody_type->shortname ?> Address</td>
+			<td class="row-data">
+			<?php if ($ccg) {
+				echo $ccg->getLetterAddress(array('delimiter' => ', '));
+			} else {
+				echo "Unknown";
+			}?>
+			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">3. Trust Applicant Details</td>
 			<td class="row-data">
 				<table class="inner">
@@ -113,7 +139,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				</table>
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">4. Patient Details</td>
 			<td class="row-data">
 				<table class="inner">
@@ -160,10 +186,6 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 							<td><?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?></td>
 						</tr>
 						<tr>
-							<th>PCT</th>
-							<td>TBD</td>
-						</tr>
-						<tr>
 							<th>Referred By (other than GP)</th>
 							<td>TBD</td>
 						</tr>
@@ -186,19 +208,19 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			<td>
 				<table class="inner">
 					<tbody>
-						<tr>
+						<tr nobr="true">
 							<th>Chief Pharmacist / Deputy Name</th>
 							<td><?php echo preg_replace('/\n/', '<br />', Yii::app()->params['OphCoTherapyapplication_chief_pharmacist']) ?></td>
 						</tr>
-						<tr>
+						<tr nobr="true">
 							<th>Chief Pharmacist / Deputy email &amp; contact number:</th>
 							<td><?php echo preg_replace('/\n/', '<br />', Yii::app()->params['OphCoTherapyapplication_chief_pharmacist_contact']) ?></td>
 						</tr>
-						<tr>
+						<tr nobr="true">
 							<th>Pharmacist name for any queries if different to above</th>
 							<td><?php echo preg_replace('/\n/', '<br />', Yii::app()->params['OphCoTherapyapplication_chief_pharmacist_alternate']) ?></td>
 						</tr>
-						<tr class="last">
+						<tr nobr="true" class="last">
 							<th>Pharmacist email and contact number:</th>
 							<td><?php echo preg_replace('/\n/', '<br />', Yii::app()->params['OphCoTherapyapplication_chief_pharmacist_alternate_contact']) ?></td>
 						</tr>
@@ -211,21 +233,18 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 	</tbody>
 </table>
 
-<tcpdf method="AddPage" />
-
-<div class="header">
-<h2>&nbsp;Intervention Requested</h2>
-<p>NB: Intervention refers to requested treatment, investigation, etc)</p>
+<div class="header"><h2>&nbsp;Intervention Requested</h2>
+NB: Intervention refers to requested treatment, investigation, etc)
 </div>
 <table class="layout">
 	<tbody>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">6. Patient Diagnosis (for which intervention is requested)</td>
 			<td>
-			Eye affected: <?php echo $side ?><br />
-			Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
-			Visual Acuity: <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
-			OCT Thickness:
+			<span class="form-text">Eye affected:</span> <?php echo $side ?><br />
+			<span class="form-text">Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
+			<span class="form-text">Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
+			<span class="form-text">OCT Thickness:</span>
 			<?php
 				$oct_str = "Not measured";
 				if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
@@ -235,7 +254,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			?>
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">7. Details of intevention (for which funding is requested)</td>
 			<td>
 			<table class="inner">
@@ -254,7 +273,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			</table>
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">8. Costing information</td>
 			<td>
 				<table class="inner">
@@ -277,27 +296,27 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				</table>
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">9. (a) Planned duration of intervention?<br /><br />
 (b) How will you monitor the effectiveness of the intervention?<br />
 (c) What are the criteria for stopping treatment<br /><br /><br /><br />
 (d) What would you consider to be a successful outcome for this intervention in this patient?</td>
-			<td>(a)<?php echo $treatment->duration ?><br /><br />
-			(b) Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG<br /><br />
-			(c) 1. Failure of treatment indicated by persistent deterioration in visual acuity<br />
+			<td><span class="form-text">(a)</span><?php echo $treatment->duration ?><br /><br />
+			<span class="form-text">(b)</span> Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG<br /><br />
+			<span class="form-text">(c)</span> 1. Failure of treatment indicated by persistent deterioration in visual acuity<br />
 2. Absence of disease activity<br />
 3. Adverse effects related to the drug<br />
 4. Hypersensitivity to the drug<br /><br />
-(d) 1. Stabilisation / improvement in visual acuity<br />
+<span class="form-text">(d)</span> 1. Stabilisation / improvement in visual acuity<br />
 2. Resolution of subretinal fluid on OCT<br />
 3. Absence of leak on FFA/ICG
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">10. Is requested intervention part of a clinical trial?</td>
-			<td>(e.g. name of trial, is it an MRC/National trial?)<br />(Not Applicable)</td>
+			<td><span class="form-text">(e.g. name of trial, is it an MRC/National trial?)</span><br />(Not Applicable)</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">11. (a) Is there a standard intervention at this stage?</td>
 			<td>(a)
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {?>
@@ -309,8 +328,8 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 					The incidence of it is: <?php echo $exceptional->{$side . '_incidence'}; ?>
 				<?php }?></td>
 		</tr>
-		<tr>
-			<td class="row-title">&nbsp;&nbsp;(b) Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
+		<tr nobr="true">
+			<td class="row-title">(b) Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
 			<td>(b)
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
 					echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;?><br /><br />
@@ -333,12 +352,12 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				<?php } ?>
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">(c) What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
 			<td>(c) <?php echo $exceptional->{$side . '_patient_different'} ?><br /><br />
 				<?php echo $exceptional->{$side . '_patient_gain'}?></td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">12. In case of intervention for CANCER</td>
 			<td><table class="inner">
 				<tr>
@@ -366,7 +385,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				</tr>
 			</table></td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">13. In case of intervention for NON-CANCER</td>
 			<td>
 			<table class="inner">
@@ -428,13 +447,13 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 			?>
 			</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">15. Anticipated Start Date</td>
-			<td>Processing requests can take up to 2-4 weeks (from the date received by the PCT). <br />If the case is more urgent than this, please state clinical reason why:<br /><br />
+			<td><span class="form-text">Processing requests can take up to 2-4 weeks (from the date received by the PCT). <br />If the case is more urgent than this, please state clinical reason why:</span><br />
 			<?php
 				echo $exceptional->{$side . '_start_period'}->name;
 				if ($exceptional->{$side . '_urgency_reason'}) {?>
-					<br /><br />
+					-
 					<?php
 					echo $exceptional->{$side . '_urgency_reason'};
 				}
@@ -450,43 +469,49 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 </div>
 <table class="layout">
 	<tbody>
-		<tr>
-			<td class="row-title">16. Is requested intervention licensed in the UK for use in the requested indication? NO.</td>
-			<td>If No, is it licensed for use in another indication: YES.</td>
+		<tr nobr="true">
+			<td class="row-title">16. Is requested intervention licensed in the UK for use in the requested indication?</td>
+			<td>NO<br /><br /><span class="form-text">If No, is it licensed for use in another indication:</span> YES.</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">17. Has the Trust Drugs and Therapeutics Committee or equivalent Committee approved the requested intervention for use? (if drug or medical device)</td>
-			<td>If No, Committee Chair or Chief Pharmacist who approved?<br />
+			<td><span class="form-text">If No, Committee Chair or Chief Pharmacist who approved?<br />
 			Evidence must be supplied e.g. D&amp;TC minutes, Chairs actions, etc<br />
-			<b>NB: the PCT cannot consider the case in the absence of this evidence.</b><br /><br />
+			<b>NB: the PCT cannot consider the case in the absence of this evidence.</b></span><br /><br />
 			YES.</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">18. In case of intervention for CANCER has it been approved by any of the following:</td>
-			<td>Mark as appropriate:
-			<ol>
-			<li>N/A</li>
-			<li>London Cancer Drugs Group</li>
-			<li>London Cancer prioritisation process (LCP)</li>
-			</ol>
+			<td><span class="form-text">Mark as appropriate:
+				<ol>
+				<li>N/A</li>
+				<li>London Cancer Drugs Group</li>
+				<li>London Cancer prioritisation process (LCP)</li>
+				</ol>
+			</span>
 (Not applicable)</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">19. Give details of National, Cancer Network or Local Guidelines/ recommendations or other published data supporting the use of the requested intervention for this condition?</td>
-			<td>PUBLISHED trials/data<br />
-(Full published papers, rather than abstracts, should be submitted, unless the application relates to the use of an intervention in a rare disease where published data are not available. Electronic copies of the papers/web links for peer-reviewed papers must be supplied, where available.)<br /><br />
-(Please see attached papers and supporting documents.)</td>
+			<td><span class="form-text">PUBLISHED trials/data<br />
+(Full published papers, rather than abstracts, should be submitted, unless the application relates to the use of an intervention in a rare disease where published data are not available. Electronic copies of the papers/web links for peer-reviewed papers must be supplied, where available.)</span><br /><br />
+<?php if ($exceptional->{$side . '_filecollections'}) {
+	echo "(Please see attached papers and supporting documents.)"; 
+} else {
+	echo "None";
+}?></td>
+
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">20. What is the anticipated benefit of the intervention compared to the standard?</td>
-			<td>In case of intervention for cancer please provide details of expected survival benefit.<br />
+			<td><span class="form-text">In case of intervention for cancer please provide details of expected survival benefit.</span><br />
 (Not applicable)</td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">21. What is the anticipated toxicity of the intervention for this patient?</td>
 			<td><?php echo nl2br($treatment->toxicity) ?></td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">22. Are there any patient factors (clinical or personal) that need to be considered?</td>
 			<td><?php
 				if ($exceptional->{$side . '_patient_factors'}) {
@@ -496,11 +521,11 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 				}
 			?></td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">Date form completed:</td>
 			<td><?php echo $event->NHSDate('last_modified_date') ?></td>
 		</tr>
-		<tr>
+		<tr nobr="true">
 			<td class="row-title">Trust reference number</td>
 			<td>&nbsp;</td>
 		</tr>
