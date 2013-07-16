@@ -2,6 +2,22 @@
 
 #event_content.watermarkBox { background-image: url(../img/watermark.png); background-position: -5px 0; background-repeat: repeat-y; border-color: #86cdff; }
 
+.elementField {
+	overflow: hidden;
+}
+
+.elementField .data table {
+	width: 100%;
+}
+
+.elementField .data th,
+.eventDetail .data th {
+	text-align: left;
+}
+.eventDetail .data th {
+	padding: 0 2px 2px 0;
+}
+
 .dt-node {
 	margin-bottom: 10px;
 	display: inline-block;
