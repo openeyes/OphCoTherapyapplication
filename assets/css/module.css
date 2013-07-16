@@ -2,6 +2,18 @@
 
 #event_content.watermarkBox { background-image: url(../img/watermark.png); background-position: -5px 0; background-repeat: repeat-y; border-color: #86cdff; }
 
+#event_content .cols2 .data { 
+	width: 316px; 
+	float: right; 
+}
+#event_content .eventDetail > .label { 
+	padding-right: 8px;  
+}
+#event_content .eventDetail > .eventDetail { 
+	padding-left: 0; 
+	padding-right: 0; 
+}
+
 .elementField {
 	overflow: hidden;
 }
