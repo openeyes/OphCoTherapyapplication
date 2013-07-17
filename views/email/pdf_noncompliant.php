@@ -20,6 +20,10 @@
 
 <style>
 
+h2 {
+	margin-bottom: 20px;
+}
+	
 body {
 	font-size: 16px;
 }
@@ -32,13 +36,6 @@ p {
 	font-size: 36px;
 }
 
-.header {
-	width: 650px;
-	background-color: #ccffff;
-	border-style: solid solid none solid;
-	border-color: #999 #999 #999 #999;
-	border-width: 1px 1px 0px 1px;
-}
 
 .form-text {
 	color: #666;
@@ -46,7 +43,6 @@ p {
 
 table.layout {
 	width: 650px;
-	margin-bottom: 30px;
 }
 
 table.layout th,
@@ -54,9 +50,13 @@ table.layout td {
 	border: 1px solid #999;
 }
 
-table.layout tr.header {
-	width: 300px;
+td.header {
+	border: 1px solid #999;
 	background-color: #ccffff;
+}
+
+td.table-title {
+	width: 650px;
 }
 
 td.row-title {
@@ -84,6 +84,7 @@ table.inner tr.last th {
 <body></body>
 <?php
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+$ccg = $patient->getCommissioningBodyOfType($cbody_type);
 ?>
 
 <h5>Individual Treatment Funding Request (IFR) application template (to be completed by consultant)</h5>
@@ -95,25 +96,31 @@ a need-to-know basis with appropriate professionals who may be involved in the p
 cases where further investigation to gain a fuller picture is needed. All data are stored in line with the PCT Data 
 Protection Regulations.</p>
 
-<div class="header">
-<h2>&nbsp;Contact Information</h2>
-</div>
+<table nobr="true">
+	<tr>
+		<td class="header"><h2>&nbsp;Contact Information</h2></td>
+	</tr>
+	<tr>
+		<td>
+		<table class="layout">
+			<tr nobr="true">
+				<td class="row-title">&nbsp;1. <?php echo $cbody_type->shortname ?> Code &amp; Name</td>
+				<td class="row-data">
+				<?php if ($ccg) {
+					echo '<span class="form-text">' . $cbody_type->shortname . " Code:</span> " . $ccg->code . "<br />";
+					echo '<span class="form-text">' . $cbody_type->shortname . " Name:</span> " . $ccg->name;
+				} else {
+					echo " Unknown";
+				}?>
+				</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+
 <table class="layout">
 	<tbody>
-		<?php 
-		$ccg = $patient->getCommissioningBodyOfType($cbody_type);
-		?>
-		<tr nobr="true">
-			<td class="row-title">1. <?php echo $cbody_type->shortname ?> Code &amp; Name</td>
-			<td class="row-data">
-			<?php if ($ccg) {
-				echo '<span class="form-text">' . $cbody_type->shortname . " Code:</span> " . $ccg->code . "<br />";
-				echo '<span class="form-text">' . $cbody_type->shortname . " Name:</span> " . $ccg->name;
-			} else {
-				echo "Unknown";
-			}?>
-			</td>
-		</tr>
 		<tr nobr="true">
 			<td class="row-title">2. <?php echo $cbody_type->shortname ?> Address</td>
 			<td class="row-data">
@@ -248,28 +255,41 @@ Protection Regulations.</p>
 
 	</tbody>
 </table>
+<br />&nbsp;<br />
+<table nobr="true">
+	<tbody>
+	<tr class="header">
+		<td class="header"><h2>&nbsp;Intervention Requested</h2>
+		<p>&nbsp;NB: Intervention refers to requested treatment, investigation, etc</p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<table class="layout">
+				<tr nobr="true">
+				<td class="row-title">&nbsp;6. Patient Diagnosis (for which intervention is requested)</td>
+				<td>
+				<span class="form-text">Eye affected:</span> <?php echo $side ?><br />
+				<span class="form-text">Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
+				<span class="form-text">Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
+				<span class="form-text">OCT Thickness:</span>
+				<?php
+					$oct_str = "Not measured";
+					if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
+						$oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
+					}
+					echo $oct_str;
+				?>
+				</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-<div class="header"><h2>&nbsp;Intervention Requested</h2>
-NB: Intervention refers to requested treatment, investigation, etc)
-</div>
 <table class="layout">
 	<tbody>
-		<tr nobr="true">
-			<td class="row-title">6. Patient Diagnosis (for which intervention is requested)</td>
-			<td>
-			<span class="form-text">Eye affected:</span> <?php echo $side ?><br />
-			<span class="form-text">Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
-			<span class="form-text">Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
-			<span class="form-text">OCT Thickness:</span>
-			<?php
-				$oct_str = "Not measured";
-				if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
-					$oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
-				}
-				echo $oct_str;
-			?>
-			</td>
-		</tr>
 		<tr nobr="true">
 			<td class="row-title">7. Details of intevention (for which funding is requested)</td>
 			<td>
@@ -480,15 +500,26 @@ NB: Intervention refers to requested treatment, investigation, etc)
 	</tbody>
 </table>
 
-<div class="header">
-<h2>&nbsp;Clinical Evidence</h2>
-</div>
+<br />&nbsp;<br />
+
+<table nobr="true">
+	<tr class="header">
+		<td class="header"><h2>&nbsp;Clinical Evidence</h2></td>
+	</tr>
+	<tr>
+		<td>
+		<table class="layout">
+				<tr>
+					<td class="row-title">&nbsp;16. Is requested intervention licensed in the UK for use in the requested indication?</td>
+					<td>&nbsp;NO<br /><br />&nbsp;<span class="form-text">If No, is it licensed for use in another indication:</span> YES.</td>
+				</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+
 <table class="layout">
 	<tbody>
-		<tr nobr="true">
-			<td class="row-title">16. Is requested intervention licensed in the UK for use in the requested indication?</td>
-			<td>NO<br /><br /><span class="form-text">If No, is it licensed for use in another indication:</span> YES.</td>
-		</tr>
 		<tr nobr="true">
 			<td class="row-title">17. Has the Trust Drugs and Therapeutics Committee or equivalent Committee approved the requested intervention for use? (if drug or medical device)</td>
 			<td><span class="form-text">If No, Committee Chair or Chief Pharmacist who approved?<br />
