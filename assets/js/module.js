@@ -635,7 +635,7 @@ $(document).ready(function() {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').removeClass('hidden');
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_used').addClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').addClass('hidden');
 		}
 	});
 	
