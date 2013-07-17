@@ -21,7 +21,15 @@
 <style>
 
 body {
-	font-size: 20px;
+	font-size: 16px;
+}
+
+p {
+	font-size: 24px;
+}
+
+.large {
+	font-size: 36px;
 }
 
 .header {
@@ -73,11 +81,19 @@ table.inner tr.last th {
 
 </style>
 
+<body></body>
 <?php
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 ?>
 
-<h1>Individual Treatment Funding Request Form</h1>
+<h5>Individual Treatment Funding Request (IFR) application template (to be completed by consultant)</h5>
+
+<p>Is this application urgent? <span class="large"><?php echo ($exceptional->{$side . '_start_period'}->urgent) ? 'YES' : 'NO'; ?></span></p>
+
+<p>Please ensure that you have your patient's consent for patient identifiable data (i.e. name, DoB etc) to be shared on 
+a need-to-know basis with appropriate professionals who may be involved in the patient's care. This will be required in 
+cases where further investigation to gain a fuller picture is needed. All data are stored in line with the PCT Data 
+Protection Regulations.</p>
 
 <div class="header">
 <h2>&nbsp;Contact Information</h2>
@@ -531,3 +547,5 @@ NB: Intervention refers to requested treatment, investigation, etc)
 		</tr>
 	</tbody>
 </table>
+
+</body>
