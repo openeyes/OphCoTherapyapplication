@@ -313,15 +313,14 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 	if (el.is(":visible") && el.val()) {
 		var l2_el = $('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id');
 		// check l2 selection needs updating
+		var l2_data;
+		el.find('option').each(function() {
+			if ($(this).val() == el.val()) {
+				l2_data = $(this).data('level2');
+				return true;
+			}
+		});
 		if (l2_el.data('parent_id') != el.val()) {
-			
-			var l2_data;
-			el.find('option').each(function() {
-				if ($(this).val() == el.val()) {
-					l2_data = $(this).data('level2');
-					return true;
-				}
-			});
 			
 			if (l2_data) {
 				// need to update the list of options in the level 2 drop down
@@ -340,8 +339,13 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 			l2_el.data('parent_id', el.val());
 		}
 		else {
-			// show level 2 if its been hidden previously (by selecting none)
-			$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
+			if (l2_data) {
+				// show level 2 if its been hidden previously (by selecting none)
+				$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
+			}
+			else {
+				$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
+			}
 		}
 		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
 	}
