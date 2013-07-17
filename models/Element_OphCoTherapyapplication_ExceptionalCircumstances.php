@@ -96,6 +96,8 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			array('right_condition_rare, right_incidence',
 					'requiredIfStandardInterventionDoesNotExists', 'side' => 'right'),
 			// TODO: validation of reasons for not using standard intervention
+			array('left_deviationreasons', 'requiredIfStandardInterventionNotUsed', 'side' => 'left'),
+			array('right_deviationreasons', 'requiredIfStandardInterventionNotUsed', 'side' => 'right'),
 			array('left_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'left'),
 			array('right_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'right'),
 			array('right_urgency_reason', 'requiredIfUrgent', 'side' => 'right'),
@@ -370,7 +372,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function requiredIfStandardInterventionExists($attribute, $params)
 	{
-		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
+		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
 			if ($this->{$params['side'] . '_standard_intervention_exists'} && $this->$attribute == null) {
 				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
 			}
@@ -382,7 +384,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	*/
 	public function requiredIfStandardInterventionDoesNotExists($attribute, $params)
 	{
-		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
+		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
 			if ($this->{$params['side'] . '_standard_intervention_exists'} != null
 				&& $this->{$params['side'] . '_standard_intervention_exists'} == false
 				&& $this->$attribute == null) {
@@ -390,10 +392,26 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			}
 		}
 	}
-
+	
+	/**
+	 * validates attribute if there is standard intervention and it is not being used
+	 * 
+	 * @param string $attribute
+	 * @param array $params 
+	 */
+	public function requiredIfStandardInterventionNotUsed($attribute, $params)
+	{
+		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
+			if ($this->{$params['side'] . '_standard_intervention_exists'} && !$this->{$params['side'] . '_standard_previous'}
+				&& $this->{$params['side'] . '_intervention'}->is_deviation && !$this->$attribute) {
+				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
+			}
+		}
+	}
+	
 	public function requiredIfPatientFactors($attribute, $params)
 	{
-		if (($params['side'] == 'left' && $this->eye_id != 2) || ($params['side'] == 'right' && $this->eye_id != 1)) {
+		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
 			if ($this->{$params['side'] . '_patient_factors'} && $this->$attribute == null) {
 				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
 			}
