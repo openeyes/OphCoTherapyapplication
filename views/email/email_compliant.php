@@ -18,6 +18,9 @@
 */
 
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+$ccg = CommissioningBodyType::model()->find('shortname=?',array('CCG'));
+$cb = $patient->getCommissioningBodyOfType($ccg);
+$gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
 ?>
 
 This email was generated from the OpenEyes Therapy Application event
@@ -52,13 +55,13 @@ NHS Number: <?php echo $patient->nhs_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
 Gender: <?php echo $patient->gender . "\n" ?>
 Address: <?php echo ($address = $patient->contact->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
-PCT Code: TBD
-PCT Description: TBD
-PCT Address: TBD
+CCG Code: <?php echo $cb ? $cb->code."\n" : "Unknown\n" ?>
+CCG Description: <?php echo $cb ? $cb->name."\n" : "Unknown\n" ?>
+CCG Address: <?php echo $cb && $cb->contact->address ? $cb->contact->address->getLetterLine() . "\n" : "Unknown\n"; ?>
 
 GP Details:
 Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
 Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?>
-PCT Code: TBD
-PCT Description: TBD
-PCT Address: TBD
+CCG Code: <?php echo $gp_cb ? $gp_cb->code."\n" : "Unknown\n" ?>
+CCG Description: <?php echo $gp_cb ? $gp_cb->name."\n" : "Unknown\n" ?>
+CCG Address: <?php echo $gp_cb && $gp_cb->contact->address ? $gp_cb->contact->address->getLetterLine() . "\n" : "Unknown\n" ?>
