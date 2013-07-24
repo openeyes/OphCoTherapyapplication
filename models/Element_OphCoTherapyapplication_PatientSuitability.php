@@ -218,6 +218,51 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		foreach ($current_responses as $curr) {
 			$curr->delete();
 		}
+	}
 
+	public function getDecisionTreeForSide($side) {
+		$side_id = $side == 'left' ? SplitEventTypeElement::LEFT : SplitEventTypeElement::RIGHT;
+
+		if ($response = OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse::model()->find("patientsuit_id=? and eye_id=? and value != ?",array($this->id,$side_id,''))) {
+			return $response->node->decisiontree;
+		}
+
+		return false;
+	}
+
+	public function getDecisionTreeAnswersForDisplay($side) {
+		if ($tree = $this->getDecisionTreeForSide($side)) {
+			$answers = array();
+
+			foreach ($this->{$side.'_responses'} as $response) {
+				if (strlen($response->value) == 1) {
+					$answers[$response['node_id']] = $response->value;
+				}
+			}
+
+			$treeData = array();
+
+			foreach ($tree->nodes as $node) {
+				$treeData[$node->parent_id][] = $node;
+			}
+
+			$answers = $this->calculateAnswers($treeData, $answers);
+		}
+
+		return array();
+	}
+
+	public function calculateAnswers($treeData, $answers, $parent=null, $textAnswers=array()) {
+		foreach ($treeData[$parent] as $node) {
+			if (isset($answers[$node->id])) {
+				$textAnswers[$node->question] = $answers[$node->id] ? 'Yes' : 'No';
+			}
+
+			if (isset($treeData[$node->id])) {
+				$textAnswers = $this->calculateAnswers($treeData, $answers, $node->id, $textAnswers);
+			}
+		}
+
+		return $textAnswers;
 	}
 }

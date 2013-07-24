@@ -24,7 +24,11 @@ This email was generated from the OpenEyes Therapy Application event
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
-
+VA: Right eye: <?php echo $exam_api->getLetterVisualAcuityRight($patient)?>, left eye: <?php echo $exam_api->getLetterVisualAcuityLeft($patient) . "\n" ?>
+<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {?>
+<?php echo "$question: $answer\n" ?>
+<?php }?>
+NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'Yes' : 'No')."\n" ?>
 Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
 <?php 
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
@@ -53,7 +57,7 @@ PCT Description: TBD
 PCT Address: TBD
 
 GP Details:
-Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : 'Unknown\n'; ?>
+Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
 Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?>
 PCT Code: TBD
 PCT Description: TBD

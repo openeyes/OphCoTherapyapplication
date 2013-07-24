@@ -68,7 +68,7 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 			'patientsuitability' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_PatientSuitability', 'patientsuit_id'),
 			// note that this should only ever be a side, not both
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'node' => array(self::HAS_ONE, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
+			'node' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
 		);
 	}
 }
