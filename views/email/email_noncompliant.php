@@ -41,6 +41,8 @@ if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
 }
 ?>
 
+NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'Yes' : 'No')."\n" ?>
+
 Patient Details:
 Full Name: <?php echo $patient->getFullName() . "\n" ?>
 Number: <?php echo $patient->hos_num . "\n" ?>
