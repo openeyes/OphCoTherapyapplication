@@ -258,6 +258,19 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		return parent::beforeValidate();
 	}
 
+	protected function afterValidate()
+	{
+		foreach (array('left', 'right') as $side) {
+			foreach ($this->{$side . '_previnterventions'} as $i => $prev) {
+				if (!$prev->validate()) {
+					foreach ($prev->getErrors() as $fld => $err) {
+						$this->addError($side . '_previntervention', 'Right previous intervention (' .($i+1) . '): ' . implode(', ', $err) );
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * get list of valid standard interventions for this element on the given side
 	 *

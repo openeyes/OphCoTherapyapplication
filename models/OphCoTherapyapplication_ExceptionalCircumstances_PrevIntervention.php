@@ -26,6 +26,8 @@
  * @property date $treatment_date
  * @property integer $treatment_id
  * @property integer $stopreason_id
+ * @property string $stopreason_other
+ * @property string $comments
  *
  * The followings are the available model relations:
  *
@@ -61,11 +63,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('treatment_date, treatment_id, stopreason_id', 'safe'),
+			array('treatment_date, treatment_id, stopreason_id, stopreason_other, comments', 'safe'),
 			array('treatment_date, treatment_id, stopreason_id', 'required'),
+			array('stopreason_other', 'requiredIfStopReasonIsOther'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, treatment_date, treatment_id, stopreason_id', 'safe', 'on' => 'search'),
+			array('id, treatment_date, treatment_id, stopreason_id, stopreason_other, comments', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -93,6 +96,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 			'treatment_date' => 'Date',
 			'treatment_id' => 'Treatment',
 			'stopreason_id' => 'Reason for stopping',
+			'stopreason_other' => 'Please describe the reason for stopping',
+			'comments' => 'Comments'
 		);
 	}
 
@@ -136,5 +141,17 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 	protected function beforeValidate()
 	{
 		return parent::beforeValidate();
+	}
+	
+	/**
+	 * validate that a reason is given if the stop reason select is of type other
+	 * @param unknown $attribute
+	 * @param unknown $params
+	 */
+	public function requiredIfStopReasonIsOther($attribute, $params)
+	{
+		if ($this->stopreason && $this->stopreason->other && $this->$attribute == null) {
+			$this->addError($attribute, $this->getAttributeLabel($attribute)." is required when stop reason is set to " . $this->stopreason->name);
+		}
 	}
 }

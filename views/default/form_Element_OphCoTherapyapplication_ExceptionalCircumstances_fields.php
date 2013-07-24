@@ -158,11 +158,6 @@
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?></div>
 		<div class="data">
 			<table>
-				<thead>
-					<th>Date</th>
-					<th>Treatment</th>
-					<th>Reason For Stopping</th>
-				</thead>
 				<tbody>
 					<?php
 						$key = 0;

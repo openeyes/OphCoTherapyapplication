@@ -604,6 +604,25 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	
+	$(this).delegate('.stop-reasons', 'change', function(e) {
+		var is_other = false;
+		var selVal = $(this).val();
+		$(this).find('option').each(function() {
+			if (selVal == $(this).val()) {
+				if ($(this).data('other') == '1') {
+					is_other = true;
+					return true;
+				}
+			}
+		});
+		if (is_other) {
+			$(this).parents('.previousintervention').find('.stop-reason-other').removeClass('hidden');
+		}
+		else {
+			$(this).parents('.previousintervention').find('.stop-reason-other').addClass('hidden');
+		}
+	});
+	
 	// show/hide the patient factors element
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.patient_factors input', 'change', function() {
 		var side = getSplitElementSide($(this));
