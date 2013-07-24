@@ -154,4 +154,14 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 			$this->addError($attribute, $this->getAttributeLabel($attribute)." is required when stop reason is set to " . $this->stopreason->name);
 		}
 	}
+	
+	public function getStopReasonText() {
+		if ($this->stopreason) {
+			if ($this->stopreason->other) {
+				return $this->stopreason_other;
+			} else {
+				return $this->stopreason->name;
+			}
+		}
+	}
 }
