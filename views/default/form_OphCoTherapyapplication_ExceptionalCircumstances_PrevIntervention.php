@@ -21,6 +21,21 @@
 <?php
 $name_stub = $element_name . '[' . $side . '_previnterventions]';
 $all_treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->findAll();
+$show_stop_other = false;
+if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions']) {
+	if (@$_POST[$element_name][$side . '_previnterventions'][$key]) {
+		if ($stop_id = $_POST[$element_name][$side . '_previnterventions'][$key]['stopreason_id']) {
+			$stopreason = OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findByPk((int)$stop_id);
+			if ($stopreason->other) {
+				$show_stop_other = true;
+			}
+		}
+	}
+} else {
+	if ($previntervention->stopreason && $previntervention->stopreason->other) {
+		$show_stop_other = true;
+	}
+}
 
 /*
  * Am using a bit of a bastardisation of different form field approaches here as this many to many model form is not something that is supported well
@@ -37,30 +52,72 @@ $all_treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->find
 			value="<?php echo $previntervention->id?>" />
 	<?php } ?>
 
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_date'); ?></div>
+		<div class="data">
+			<?php
+				$d_name = $name_stub . "[$key][treatment_date]";
+				$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_treatment_date";
+			
+				// using direct widget call to allow custom name for the field
+				$form->widget('application.widgets.DatePicker',array(
+					'element' => $previntervention,
+					'name' => $d_name,
+					'field' => 'treatment_date',
+					'options' => array('maxDate' => 'today'),
+					'htmlOptions' => array('id' => $d_id, 'nowrapper' => true, 'style'=>'width: 90px;')));
+			?>
+		</div>
+	</div>
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id');?></div>
+		<div class="data">
 	<?php
-		$d_name = $name_stub . "[$key][treatment_date]";
-		$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_treatment_date";
-
-		// using direct widget call to allow custom name for the field
-		$form->widget('application.widgets.DatePicker',array(
-			'element' => $previntervention,
-			'name' => $d_name,
-			'field' => 'treatment_date',
-			'options' => array('maxDate' => 'today'),
-			'htmlOptions' => array('id' => $d_id, 'nowrapper' => true, 'style'=>'width: 90px;')));
+	echo CHtml::activeDropDownList($previntervention, 'treatment_id', CHtml::listData($all_treatments,'id','name'),
+		array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][treatment_id]", 'nowrapper' => true));
 	?>
+		</div>
+	</div>
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id')?></div>
+		<div class="data">	
+		<?php
+		
+		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findAll();
+		$html_options = array(
+				'class' => 'stop-reasons',
+				'empty' => '- Please select -',
+				'name' => $name_stub . "[$key][stopreason_id]",
+				'options' => array(),
+		);
+		// get the previous injection counts for each of the drug options for this eye
+		foreach ($reasons as $reason) {
+			$html_options['options'][$reason->id] = array(
+					'data-other' => $reason->other,
+			);
+		}
+		
+		echo CHtml::activeDropDownList($previntervention, 'stopreason_id',
+			CHtml::listData($reasons,'id','name'),
+			$html_options);
+		 ?>
+		</div>
+	</div>
+	
+	<div class="<?php if (!$show_stop_other) { echo "hidden "; } ?>stop-reason-other">
+		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_other'); ?></div>
+		<div class="data">
+		<?php echo CHtml::activeTextArea($previntervention, 'stopreason_other',array('name' => $name_stub . "[$key][stopreason_other]", 'rows' => 2, 'cols' => 25, 'nowrapper' => true))?>
+		</div>
+	</div>
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('comments')?></div>
+		<div class="data">
+		<?php echo CHtml::activeTextArea($previntervention, 'comments',array('name' => $name_stub . "[$key][comments]", 'rows' => 3, 'cols' => 25, 'nowrapper' => true))?>
+		</div>
+	</div>
+	
+	<br />
+	<a class="removePrevintervention" href="#">Remove</a>
 	</td>
-	<td>
-	<?php
-	echo CHtml::activeDropDownList($previntervention, 'treatment_id', CHtml::listData($all_treatments,'id','name'),array('name' => $name_stub . "[$key][treatment_id]", 'nowrapper' => true));
-	?>
-	</td>
-	<td>
-	<?php
-	echo CHtml::activeDropDownList($previntervention, 'stopreason_id',
-		CHtml::listData(OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findAll(),'id','name'),
-		array('name' => $name_stub . "[$key][stopreason_id]"));
-	 ?>
-	</td>
-	<td class="previnterventionActions"><a class="removePrevintervention" href="#">Remove</a></td>
 </tr>

@@ -79,25 +79,13 @@
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?>:</div>
 		<div class="data">
-			<table>
-				<tr>
-					<th class="previntervention-date">Date</th>
-					<th class="previntervention-treatment">Treatment</th>
-					<th class="previntervention-reason">Reason for Stopping</th>
-				</tr>
 		<?php
 			foreach ($element->{$side . '_previnterventions'} as $previntervention) {
-				?>
-				<tr>
-					<td><?php echo Helper::convertMySQL2NHS($previntervention->treatment_date) ?></td>
-					<td><?php echo $previntervention->treatment->drug->name ?></td>
-					<td><?php echo $previntervention->stopreason->name ?></td>
-				</tr>
-				<?php
+				$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
+					'previntervention' => $previntervention,
+				));
 			}
 		?>
-			</table>
-
 		</div>
 	</div>
 <?php } ?>

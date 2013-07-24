@@ -16,45 +16,40 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+?>
 
-class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason extends BaseActiveRecord
-{
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_exceptional_previntervention_stopreason';
-	}
+<div>
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_date'); ?></div>
+		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->treatment_date) ?></div>
+	</div>
 	
-	public function defaultScope()
-	{
-		return array(
-			'order' => 'display_order ASC'	
-		);
-	}
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id'); ?></div>
+		<div class="data"><?php echo $previntervention->treatment->drug->name ?></div>
+	</div>
 	
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('name, display_order, other', 'safe'),
-				array('name, display_order', 'required'),
-				// The following rule is used by search().
-				// Please remove those attributes that should not be searched.
-				array('id, name, display_order, other', 'safe', 'on' => 'search'),
-		);
-	}
-
-}
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id'); ?></div>
+		<div class="data">
+			<?php if ($previntervention->stopreason_other) {
+				echo $previntervention->stopreason_other;
+			} else {
+				echo $previntervention->stopreason->name;
+			} ?>
+		</div>
+	</div>
+	
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('comments'); ?></div>
+		<div class="data">
+		<?php if ($previntervention->comments) {
+			echo $previntervention->comments;
+		} else {
+			echo "None";
+		}
+		?></div>
+	</div>
+	
+</div>
