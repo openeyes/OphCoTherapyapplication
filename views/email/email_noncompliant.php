@@ -42,6 +42,10 @@ if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
 ?>
 
 NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'Yes' : 'No')."\n" ?>
+Urgent: <?php echo ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent) ? 'Yes' : 'No')."\n" ?>
+<?php if ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent)) {?>
+Reason for urgency: <?php echo $exceptional->{$side . '_urgency_reason'}."\n"?>
+<?php }?>
 
 Patient Details:
 Full Name: <?php echo $patient->getFullName() . "\n" ?>
