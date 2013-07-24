@@ -25,6 +25,10 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
 
+		if (!in_array('ophtrintravitinjection_treatment_drug',Yii::app()->db->getSchema()->tableNames)) {
+			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
+		}
+
 		// file collection table
 		$this->createTable('ophcotherapya_filecoll', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
