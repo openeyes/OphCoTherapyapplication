@@ -32,7 +32,7 @@
 						$need_reason = true;
 					}
 				}
-			}	
+			}
 			if (isset($_POST[get_class($element)][$side . '_previnterventions'])) {
 				foreach ($_POST[get_class($element)][$side . '_previnterventions'] as $attrs) {
 					$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
@@ -49,13 +49,13 @@
 			$patient_factors = $element->{$side . '_patient_factors'};
 		}
 	?>
-	
+
 	<div class="elementField standard_intervention_exists">
 		<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_standard_intervention_exists'); ?></div>
 		<div class="data"><?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array('nowrapper' => true))?></div>
 	</div>
 
-	
+
 	<span id="<?php echo get_class($element) . "_" . $side ?>_standard_intervention_details"
 		<?php if ($exists != '1') {
 			echo ' class="hidden"';
@@ -90,7 +90,7 @@
 			<div class="label" style="vertical-align: top;"><?php echo $element->getAttributeLabel($side . '_intervention_id'); ?></div>
 			<div class="data" style="display: inline-block;"><?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts)?></div>
 		</div>
-		
+
 		<div class="elementField" <?php if (!$intervention_id) { echo ' style="display: none;"'; } ?>>
 			<div class="label">
 			<?php if ($intervention_id) {
@@ -157,23 +157,21 @@
 	<div class="elementField" id="div_<?php echo get_class($element) . "_" . $side; ?>_previnterventions">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?></div>
 		<div class="data">
-			<table>
-				<tbody>
-					<?php
-						$key = 0;
-						foreach ($previnterventions as $prev) {
-							$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
-								'key' => $key,
-								'previntervention' => $prev,
-								'side' => $side,
-								'element_name' => get_class($element),
-								'form' => $form,
-							));
-							$key++;
-						}
-					?>
-				</tbody>
-			</table>
+			<div class="previntervention-container">
+				<?php
+					$key = 0;
+					foreach ($previnterventions as $prev) {
+						$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
+							'key' => $key,
+							'previntervention' => $prev,
+							'side' => $side,
+							'element_name' => get_class($element),
+							'form' => $form,
+						));
+						$key++;
+					}
+				?>
+			</div>
 			<button class="addPrevintervention classy green mini" type="button">
 				<span class="button-span button-span-green">Add</span>
 			</button>

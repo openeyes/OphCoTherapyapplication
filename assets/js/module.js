@@ -17,13 +17,13 @@
  */
 
 function ComplianceCalculator(elem, properties) {
-	
+
 	this._elem = elem;
 	this._properties = properties;
 	this._side = properties.side;
 	this._nodes = {};
 	this._nodes_by_parent = {};
-	
+
 	this.init()
 }
 
@@ -52,7 +52,7 @@ ComplianceCalculator.prototype.init = function()
 			}
 		}
 	});
-	
+
 	self.showNode(self._root_node_id);
 };
 
@@ -62,7 +62,7 @@ ComplianceCalculator.prototype.init = function()
  */
 ComplianceCalculator.prototype.showOutcome = function(outcome_id, source_node_id)
 {
-	var node_elem = this._elem.find('#' + this._side + '_outcome_' + outcome_id); 
+	var node_elem = this._elem.find('#' + this._side + '_outcome_' + outcome_id);
 	this._elem.find('div.outcome').hide().each(function() {$(this).data('source-node-id', null); });
 	node_elem.show().data('source-node-id', source_node_id);
 	this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_' + this._side + '_nice_compliance').val(node_elem.data('comp-val'));
@@ -75,19 +75,19 @@ ComplianceCalculator.prototype.showOutcome = function(outcome_id, source_node_id
  */
 ComplianceCalculator.prototype.hideOutcome = function(outcome_id, source_node_id)
 {
-	var node_elem = this._elem.find('#' + this._side + '_outcome_' + outcome_id); 
+	var node_elem = this._elem.find('#' + this._side + '_outcome_' + outcome_id);
 	if (node_elem.is(":visible") && node_elem.data('source-node-id') == source_node_id) {
 		node_elem.hide();
 		node_elem.data('source-node-id', null);
 		this._elem.find('#Element_OphCoTherapyapplication_PatientSuitability_' + this._side + '_nice_compliance').val('');
 	}
-	
+
 }
 
 /*
  * show the specified node - if the node is an outcome then we show the outcome result, otherwise display node and check children or a child node
  */
-ComplianceCalculator.prototype.showNode = function(node_id)	
+ComplianceCalculator.prototype.showNode = function(node_id)
 {
 	if (this._nodes[node_id].outcome_id) {
 		this.showOutcome(this._nodes[node_id].outcome_id, node_id);
@@ -102,7 +102,7 @@ ComplianceCalculator.prototype.showNode = function(node_id)
 /*
  * hide the specified node - will hide its children as well
  */
-ComplianceCalculator.prototype.hideNode = function(node_id)	
+ComplianceCalculator.prototype.hideNode = function(node_id)
 {
 	// clear the outcome if this was defining what the outcome was
 	if (this._nodes[node_id]['outcome_id']) {
@@ -113,7 +113,7 @@ ComplianceCalculator.prototype.hideNode = function(node_id)
 		node_elem.hide();
 		// remove prev value attribute so that this node will be checked fresh if it is redisplayed
 		node_elem.data('prev-val',null);
-		
+
 		// hide the children
 		if (this._nodes_by_parent[node_id]) {
 			for (var i =0; i < this._nodes_by_parent[node_id].length; i++) {
@@ -139,7 +139,7 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 		else {
 			value = node_elem.find('input').val();
 		}
-		
+
 		// if the value has changed and the node has children
 		if (value != node_elem.data('prev-val') && this._nodes_by_parent[node_id]) {
 			// set the store of the previous value
@@ -166,7 +166,7 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 						}
 					}
 				}
-				
+
 				if (default_node_id != null) {
 					// there was a node without rules (indicating a default child)
 					if (notMatched) {
@@ -188,7 +188,7 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 			}
 		}
 	}
-	
+
 };
 
 /*
@@ -198,7 +198,7 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
 	if (this._nodes[node_id]['rules'].length) {
 		var res = true;
-		
+
 		for (var i = 0; i < this._nodes[node_id]['rules'].length; i++) {
 			var cmp =  this._nodes[node_id]['rules'][i]['parent_check'];
 			var chk_val = this._nodes[node_id]['rules'][i]['parent_check_value'];
@@ -234,14 +234,14 @@ ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
 /* go through the values of the form, and show the relevant form elements
  * and possibly outcome
  */
-ComplianceCalculator.prototype.update = function update(node_id) 
+ComplianceCalculator.prototype.update = function update(node_id)
 {
 	if (!node_id) {
 		node_id = this._root_node_id;
 	}
 	this.checkNode(node_id);
 }
-	
+
 /*
  * initialise a compliance calculator object for the side provided
  */
@@ -259,7 +259,7 @@ function OphCoTherapyapplication_ComplianceCalculator_update(elem) {
 	var node = elem.parents('.dt-node');
 	var id = node.data('defn').id;
 	var side = node.closest('.side').data('side');
-	
+
 	$('#OphCoTherapyapplication_ComplianceCalculator_' + side).data('calc_obj').update(id);
 }
 
@@ -288,7 +288,7 @@ function _getContraindicationsFromSide(side) {
 	return false;
 }
 
-/* 
+/*
  * show or hide the contraindications form depending on if it is needed or not.
  */
 function OphCoTherapyapplication_ContraIndications_check() {
@@ -321,7 +321,7 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 			}
 		});
 		if (l2_el.data('parent_id') != el.val()) {
-			
+
 			if (l2_data) {
 				// need to update the list of options in the level 2 drop down
 				var options = '<option value="">- Please Select -</option>';
@@ -354,7 +354,7 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 		$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
 		hideSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
 	}
-	
+
 	OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 }
 
@@ -378,19 +378,19 @@ function _isCompliant(side) {
 // check whether the exceptional circumstances elements should be shown for the given eye side
 function OphCoTherapyapplication_ExceptionalCircumstances_check(side) {
 	var compliant = _isCompliant(side);
-	
+
 	var other_side = 'right';
 	if (side == 'right') {
 		other_side = 'left';
 	}
-	
+
 	if (compliant != null && !compliant) {
 		showSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);
 		// enable form elements (in case this is the first side to be shown)
 		$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('input, select, textarea').each(function() { $(this).removeAttr('disabled')});
 	}
 	else {
-		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);	
+		hideSplitElementSide('Element_OphCoTherapyapplication_ExceptionalCircumstances', side);
 		// check if the other side is visible
 		// if it isn't disable the form elements
 		if ($('.Element_OphCoTherapyapplication_ExceptionalCircumstances').find('div.side.' + side).hasClass('inactive')) {
@@ -416,8 +416,8 @@ function OphCoTherapyapplication_addPrevintervention(side) {
 		"side" : side,
 	};
 	var form = Mustache.render(template, data);
-	var table = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_' + side + '_previnterventions table');
-	$('tbody', table).append(form);
+	var container = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_' + side + '_previnterventions .previntervention-container');
+	container.append(form);
 	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_previnterventions_" + data.key + "_treatment_date").datepicker({
 		'maxDate': 'today',
 		'showAnim': 'fold',
@@ -440,7 +440,7 @@ $(document).ready(function() {
 	// standard stuff
 	handleButton($('#et_save'),function() {
 			});
-	
+
 	handleButton($('#et_cancel'),function(e) {
 		if (m = window.location.href.match(/\/update\/[0-9]+/)) {
 			window.location.href = window.location.href.replace('/update/','/view/');
@@ -475,22 +475,22 @@ $(document).ready(function() {
 			}
 		}
 	});
-	
+
 	$('.Element_OphCoTherapyapplication_Therapydiagnosis').delegate('#Element_OphCoTherapyapplication_Therapydiagnosis_right_diagnosis1_id, ' +
 			'#Element_OphCoTherapyapplication_Therapydiagnosis_left_diagnosis1_id', 'change', function() {
 		var side = getSplitElementSide($(this));
-		
+
 		OphCoTherapyapplication_PatientSuitability_check(side);
 	});
-	
+
 	// handle treatment selection when editing
 	$('#event_content').delegate('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id, ' +
 			'#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id', 'change', function() {
 		var selected = $(this).val();
 		var side = getSplitElementSide($(this));
-		
+
 		OphCoTherapyapplication_ContraIndications_check();
-		
+
 		$(this).find('option').each( function() {
 			if ($(this).val() == selected) {
 				// this is the option that has been switched to
@@ -500,7 +500,7 @@ $(document).ready(function() {
 						'treatment_id': $(this).val(),
 						'side': side
 					};
-					
+
 					//TODO: check if there are any answers on a current tree
 					// if there are, should confirm before blowing them away
 					$.ajax({
@@ -520,41 +520,41 @@ $(document).ready(function() {
 				}
 			}
 		})
-		
+
 	});
-	
+
 	// various inputs that we need to react to changes on for the compliance calculator
 	$('#nice_compliance_left, #nice_compliance_right').delegate('input, select', 'change', function() {
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
-		var side = getSplitElementSide($(this)); 
+		var side = getSplitElementSide($(this));
 		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 	});
-	
+
 	$('#nice_compliance_left, #nice_compliance_right').delegate('input', 'keyup', function() {
 		OphCoTherapyapplication_ComplianceCalculator_update($(this));
-		var side = getSplitElementSide($(this)); 
+		var side = getSplitElementSide($(this));
 		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 	});
-	
+
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init('left');
 		OphCoTherapyapplication_ContraIndications_check();
 	}
-	
+
 	if ($('#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id').val()) {
 		// there should be a tree to initialise given that a treatment has been chosen
 		// TODO: work out what to do if the treatment is no longer available (i.e. we are editing a now redundant application)
 		OphCoTherapyapplication_ComplianceCalculator_init('right');
 		OphCoTherapyapplication_ContraIndications_check();
 	}
-	
+
 	// show/hide the standard interventions element
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.standard_intervention_exists input', 'change', function() {
 		var side = getSplitElementSide($(this));
 		var val = $(this).val();
-		
+
 		if (val == '1') {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').removeClass('hidden');
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').addClass('hidden');
@@ -568,19 +568,19 @@ $(document).ready(function() {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').addClass('hidden');
 		}
 	});
-	
-	
+
+
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.standard_previous input', 'change', function() {
 		var side = getSplitElementSide($(this));
 		OphCoTherapyapplication_DeviationFields(side);
-		
+
 	});
-	
+
 	// managing the consequences of changing the intervention type (additional/deviation)
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.intervention input', 'change', function() {
 		var side = getSplitElementSide($(this));
 		OphCoTherapyapplication_DeviationFields(side);
-		
+
 		if ($(this).val()) {
 			if ($(this).data('description-label')) {
 				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').find('.label').text($(this).data('description-label'));
@@ -591,10 +591,10 @@ $(document).ready(function() {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').hide();
 		}
 	});
-	
+
 	// Manage previous interventions in exceptional circumstances element
 	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePrevintervention', 'click', function(e) {
-		$(this).closest('tr').remove();
+		$(this).closest('.previousintervention').remove();
 		e.preventDefault();
 	});
 
@@ -603,7 +603,7 @@ $(document).ready(function() {
 		OphCoTherapyapplication_addPrevintervention(side);
 		e.preventDefault();
 	});
-	
+
 	$(this).delegate('.stop-reasons', 'change', function(e) {
 		var is_other = false;
 		var selVal = $(this).val();
@@ -622,20 +622,20 @@ $(document).ready(function() {
 			$(this).parents('.previousintervention').find('.stop-reason-other').addClass('hidden');
 		}
 	});
-	
+
 	// show/hide the patient factors element
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.patient_factors input', 'change', function() {
 		var side = getSplitElementSide($(this));
-		
+
 		if ($(this).val() == '1') {
-			
+
 			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').removeClass('hidden');
 		}
 		else {
 			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').addClass('hidden');
 		}
 	});
-	
+
 	// show/hide urgency reason for urgent anticipated start dates
 	$('.Element_OphCoTherapyapplication_ExceptionalCircumstances').delegate('.start_period select', 'change', function() {
 		var side = getSplitElementSide($(this));
@@ -649,7 +649,7 @@ $(document).ready(function() {
 				return false;
 			}
 		});
-		
+
 		if (show) {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').removeClass('hidden');
 		}
@@ -657,12 +657,12 @@ $(document).ready(function() {
 			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').addClass('hidden');
 		}
 	});
-	
+
 	// check whether we need exceptional circumstances or not
 	OphCoTherapyapplication_ExceptionalCircumstances_check('left');
 	OphCoTherapyapplication_ExceptionalCircumstances_check('right');
-	
-	
+
+
 	// extend the removal behaviour for diagnosis to affect the dependent elements
 	$(this).delegate('#event_content .side .activeForm a.removeSide', 'click', function(e) {
 		side = getSplitElementSide($(this));
@@ -677,7 +677,7 @@ $(document).ready(function() {
 		OphCoTherapyapplication_ContraIndications_check();
 		OphCoTherapyapplication_ExceptionalCircumstances_check(other_side);
 	});
-	
+
 	// extend the adding behaviour for diagnosis to affect dependent elements
 	$(this).delegate('#event_content .side .inactiveForm a', 'click', function(e) {
 		side = getSplitElementSide($(this));
@@ -685,7 +685,7 @@ $(document).ready(function() {
 		OphCoTherapyapplication_ContraIndications_check();
 		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 	});
-	
+
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }

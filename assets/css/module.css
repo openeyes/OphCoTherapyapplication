@@ -2,16 +2,16 @@
 
 #event_content.watermarkBox { background-image: url(../img/watermark.png); background-position: -5px 0; background-repeat: repeat-y; border-color: #86cdff; }
 
-#event_content .cols2 .data { 
-	width: 316px; 
-	float: right; 
+#event_content .cols2 .data {
+	width: 316px;
+	float: right;
 }
-#event_content .eventDetail > .label { 
-	padding-right: 8px;  
+#event_content .eventDetail > .label {
+	padding-right: 8px;
 }
-#event_content .eventDetail > .eventDetail { 
-	padding-left: 0; 
-	padding-right: 0; 
+#event_content .eventDetail > .eventDetail {
+	padding-left: 0;
+	padding-right: 0;
 }
 
 .elementField {
@@ -48,12 +48,12 @@
 	font-size: 15px;
 	width: 170px !important;
 	display: inline-block !important;
-	
+
 }
 
 .cols2 div.elementField div.data div {
 	display: inline-block;
-	
+
 }
 
 #OphCoTherapyapplication_ComplianceCalculator div {
@@ -113,4 +113,72 @@ select.MultiSelectList, div.MultiSelectList {
 
 ul.MultiSelectList {
 	margin: 0px;
+}
+
+/*
+ Exceptional Circumstances >> Previous interventions (edit mode)
+ */
+#event_content .cols2 .previntervention-container,
+#event_content .cols2 .previousintervention,
+#event_content .cols2 .previousintervention div {
+    display: block;
+}
+#event_content .cols2 .previousintervention {
+    background: rgba(255,255,255,0.6);
+    padding: 5px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    position: relative;
+}
+#event_content .cols2 .previousintervention > div {
+    padding-bottom: 4px;
+    width: 100%;
+    overflow: hidden;
+}
+#event_content .cols2 .previousintervention .data {
+    width: 160px;
+}
+#event_content .cols2 .previousintervention .data select,
+#event_content .cols2 .previousintervention .data.comments {
+    width: 100%;
+}
+#event_content .cols2 .previousintervention .data.comments textarea {
+    box-sizing: border-box;
+    width: 100%;
+}
+#event_content .cols2 .previousintervention .label {
+    float: left;
+    width: 140px !important;
+}
+#event_content .cols2 .previousintervention .removePrevintervention {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+/*
+ Exceptional Circumstances >> Previous interventions (view mode)
+ */
+#event_content .cols2 .previntervention-view  > div {
+    overflow: hidden;
+    padding-bottom: 8px;
+}
+#event_content .cols2 .previntervention-view .label {
+    float: left;
+}
+#event_content .cols2 .previntervention-view .data {
+    float: right;
+    width: 162px;
+}
+#event_content .cols2 .previntervention-view .data.comments {
+    width: 100%;
+}
+#event_content .cols2 .previntervention-view {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.6);
+    padding: 5px;
+}
+#event_content .cols2 .previntervention-view:last-child {
+    margin: 0;
 }

@@ -19,19 +19,19 @@
 ?>
 
 
-<div>
+<div class="previntervention-view">
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_date'); ?></div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_date'); ?>:</div>
 		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->treatment_date) ?></div>
 	</div>
-	
+
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id'); ?></div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id'); ?>:</div>
 		<div class="data"><?php echo $previntervention->treatment->drug->name ?></div>
 	</div>
-	
+
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id'); ?></div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id'); ?>:</div>
 		<div class="data">
 			<?php if ($previntervention->stopreason_other) {
 				echo $previntervention->stopreason_other;
@@ -40,10 +40,10 @@
 			} ?>
 		</div>
 	</div>
-	
+
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('comments'); ?></div>
-		<div class="data">
+		<div class="label"><?php echo $previntervention->getAttributeLabel('comments'); ?>:</div>
+		<div class="data comments">
 		<?php if ($previntervention->comments) {
 			echo $previntervention->comments;
 		} else {
@@ -51,5 +51,4 @@
 		}
 		?></div>
 	</div>
-	
 </div>

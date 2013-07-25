@@ -44,8 +44,8 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 
 ?>
 
-<tr class="previousintervention" data-key="<?php echo $key ?>">
-	<td>
+<div class="previousintervention" data-key="<?php echo $key ?>">
+	<a class="removePrevintervention removeElementForm" href="#">Remove</a>
 	<?php if ($previntervention && $previntervention->id) { ?>
 		<input type="hidden"
 			name="<?php echo $name_stub; ?>[<?php echo $key ?>][id]"
@@ -58,7 +58,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 			<?php
 				$d_name = $name_stub . "[$key][treatment_date]";
 				$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_treatment_date";
-			
+
 				// using direct widget call to allow custom name for the field
 				$form->widget('application.widgets.DatePicker',array(
 					'element' => $previntervention,
@@ -80,9 +80,9 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	</div>
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id')?></div>
-		<div class="data">	
+		<div class="data">
 		<?php
-		
+
 		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findAll();
 		$html_options = array(
 				'class' => 'stop-reasons',
@@ -96,14 +96,14 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 					'data-other' => $reason->other,
 			);
 		}
-		
+
 		echo CHtml::activeDropDownList($previntervention, 'stopreason_id',
 			CHtml::listData($reasons,'id','name'),
 			$html_options);
 		 ?>
 		</div>
 	</div>
-	
+
 	<div class="<?php if (!$show_stop_other) { echo "hidden "; } ?>stop-reason-other">
 		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_other'); ?></div>
 		<div class="data">
@@ -112,12 +112,8 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	</div>
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('comments')?></div>
-		<div class="data">
+		<div class="data comments">
 		<?php echo CHtml::activeTextArea($previntervention, 'comments',array('name' => $name_stub . "[$key][comments]", 'rows' => 3, 'cols' => 25, 'nowrapper' => true))?>
 		</div>
 	</div>
-	
-	<br />
-	<a class="removePrevintervention" href="#">Remove</a>
-	</td>
-</tr>
+</div>
