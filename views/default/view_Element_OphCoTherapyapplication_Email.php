@@ -19,6 +19,10 @@
 ?>
 <h4 class="elementTypeName">Application</h4>
 
+<?php if (!$element->sent) {?>
+	<p><strong>This application has been prepared but not sent due to a system failure sending the email - please try again.</strong></p>
+<?php }?>
+
 <div class="cols2 clearfix">
 	<div class="left eventDetail">
 		<?php if ($element->hasRight()) {?>

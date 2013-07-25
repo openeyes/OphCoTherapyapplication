@@ -225,11 +225,7 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 			}
 		}
 
-		if (Yii::app()->mailer->sendMessage($message)) {
-			return true;
-		} else {
-			return false;
-		}
+		return Yii::app()->mailer->sendMessage($message);
 	}
 
 	/**
