@@ -61,7 +61,7 @@ CCG Address: <?php echo $cb && $cb->contact->address ? $cb->contact->address->ge
 
 GP Details:
 Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
-Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?>
+Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine."\n" : "Unknown\n"; ?>
 CCG Code: <?php echo $gp_cb ? $gp_cb->code."\n" : "Unknown\n" ?>
 CCG Description: <?php echo $gp_cb ? $gp_cb->name."\n" : "Unknown\n" ?>
 CCG Address: <?php echo $gp_cb && $gp_cb->contact->address ? $gp_cb->contact->address->getLetterLine() . "\n" : "Unknown\n" ?>

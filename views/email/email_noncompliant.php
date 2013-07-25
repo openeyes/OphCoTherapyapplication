@@ -55,6 +55,5 @@ Gender: <?php echo $patient->gender . "\n" ?>
 Address: <?php echo ($address = $patient->contact->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
 
 GP Details:
-Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : 'Unknown\n'; ?>
-
-Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?>
+Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
+Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine."\n" : "Unknown\n"; ?>
