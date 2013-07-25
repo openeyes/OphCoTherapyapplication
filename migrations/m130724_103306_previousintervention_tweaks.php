@@ -10,14 +10,21 @@ class m130724_103306_previousintervention_tweaks extends CDbMigration
 		$this->addColumn('ophcotherapya_exceptional_previntervention', 'stopreason_other', 'text');
 		$this->addColumn('ophcotherapya_exceptional_previntervention', 'comments', 'text');
 		
+		$this->insert('ophcotherapya_exceptional_standardintervention',array('name'=>'Intravitreal Eylea', 'display_order'=>6));
 	}
 
 	public function down()
 	{
+		// If these first statement fails, you have data issues to deal with before you can migrate down
+		$this->delete('ophcotherapya_exceptional_previntervention_stopreason', 'other = true');
+		$this->delete('ophcotherapya_exceptional_standardintervention', "name = 'Intravitreal Eylea'");
+		
 		$this->dropColumn('ophcotherapya_exceptional_previntervention', 'comments');
 		$this->dropColumn('ophcotherapya_exceptional_previntervention', 'stopreason_other');
-		$this->delete('ophcotherapya_exceptional_previntervention_stopreason', 'other = true');
 		$this->dropColumn('ophcotherapya_exceptional_previntervention_stopreason', 'other');
+		
+		
+		
 	}
 
 	/*
