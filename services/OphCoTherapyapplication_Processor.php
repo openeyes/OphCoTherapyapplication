@@ -167,7 +167,7 @@ class OphCoTherapyapplication_Processor
 				$can_process = false;
 			}
 		} else {
-			$can_process = false;
+			return !$elements['Element_OphCoTherapyapplication_Email']['sent'];
 		}
 
 		return $can_process;
@@ -325,55 +325,70 @@ class OphCoTherapyapplication_Processor
 	{
 		$data = $this->_generateEventDataForProcessing($event_id);
 
-		$email_el = new Element_OphCoTherapyapplication_Email();
-		$email_el->event_id = $event_id;
-		// set the eye value to that of the diagnosis
-		$email_el->eye_id = $data['diagnosis']->eye_id;
-		$left_attach_ids = array();
-		$right_attach_ids = array();
+		if (!$email_el = Element_OphCoTherapyapplication_Email::model()->find('event_id=?',array($event_id))) {
+			$email_el = new Element_OphCoTherapyapplication_Email();
+			$email_el->event_id = $event_id;
+			// set the eye value to that of the diagnosis
+			$email_el->eye_id = $data['diagnosis']->eye_id;
+			$left_attach_ids = array();
+			$right_attach_ids = array();
 
-		if ($data['diagnosis']->hasLeft()) {
+			if ($data['diagnosis']->hasLeft()) {
 
-			if ($file = $this->createPDFForSide($data, 'left')) {
-				//$email_el->left_application_id = $file->id;
-				$left_attach_ids[] = $file->id;
-			}
-			if ($data['exceptional'] && $data['exceptional']->hasLeft()) {
-				foreach ($data['exceptional']->left_filecollections as $fc) {
-					$left_attach_ids[] = $fc->getZipFile()->id;
+				if ($file = $this->createPDFForSide($data, 'left')) {
+					//$email_el->left_application_id = $file->id;
+					$left_attach_ids[] = $file->id;
 				}
-			}
-			$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
-		}
-
-		if ($data['diagnosis']->hasRight()) {
-
-			if ($file = $this->createPDFForSide($data, 'right')) {
-				//$email_el->right_application_id = $file->id;
-				$right_attach_ids[] = $file->id;
-			}
-			if (@$data['exceptional'] && $data['exceptional']->hasRight()) {
-				foreach ($data['exceptional']->left_filecollections as $fc) {
-					$right_attach_ids[] = $fc->getZipFile()->id;
+				if ($data['exceptional'] && $data['exceptional']->hasLeft()) {
+					foreach ($data['exceptional']->left_filecollections as $fc) {
+						$left_attach_ids[] = $fc->getZipFile()->id;
+					}
 				}
+				$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
 			}
-			$email_el->right_email_text = $this->generateEmailForSide($data,'right');
-		}
 
-		// send email
-		if ($email_el->save()) {
+			if ($data['diagnosis']->hasRight()) {
+
+				if ($file = $this->createPDFForSide($data, 'right')) {
+					//$email_el->right_application_id = $file->id;
+					$right_attach_ids[] = $file->id;
+				}
+				if (@$data['exceptional'] && $data['exceptional']->hasRight()) {
+					foreach ($data['exceptional']->left_filecollections as $fc) {
+						$right_attach_ids[] = $fc->getZipFile()->id;
+					}
+				}
+				$email_el->right_email_text = $this->generateEmailForSide($data,'right');
+			}
+
+			if (!$email_el->save()) {
+				throw new Exception("Unable to save therapy application email element: ".print_r($email_el->save(),true));
+			}
+
 			if (count($left_attach_ids)) {
 				$email_el->updateAttachments(SplitEventTypeElement::LEFT, $left_attach_ids);
 			}
 			if (count($right_attach_ids)) {
 				$email_el->updateAttachments(SplitEventTypeElement::RIGHT, $right_attach_ids);
 			}
-			$email_el->sendEmail();
-		} else {
+		}
+
+		if ($email_el->sent) {
+			throw new Exception("Attempt to re-submit therapy application that has already been sent.");
+		}
+
+		if (!$email_el->sendEmail()) {
+			OELog::log("Failed to send email for therapy application event_id $email_el->event_id");
 			return false;
 		}
 
-		// TODO: do audit
+		$email_el->sent = 1;
+
+		if (!$email_el->save()) {
+			throw new Exception("Unable to save therapy application email element: ".print_r($email_el->save(),true));
+		}
+
+		$email_el->event->audit('therapy-application','submit');
 
 		return true;
 	}

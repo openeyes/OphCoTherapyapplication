@@ -18,13 +18,20 @@
 */
 
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+$ccg = CommissioningBodyType::model()->find('shortname=?',array('CCG'));
+$cb = $patient->getCommissioningBodyOfType($ccg);
+$gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
 ?>
 
 This email was generated from the OpenEyes Therapy Application event
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
-
+VA: Right eye: <?php echo $exam_api->getLetterVisualAcuityRight($patient)?>, left eye: <?php echo $exam_api->getLetterVisualAcuityLeft($patient) . "\n" ?>
+<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {?>
+<?php echo "$question: $answer\n" ?>
+<?php }?>
+NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'Yes' : 'No')."\n" ?>
 Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
 <?php 
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
@@ -48,13 +55,13 @@ NHS Number: <?php echo $patient->nhs_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
 Gender: <?php echo $patient->gender . "\n" ?>
 Address: <?php echo ($address = $patient->contact->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
-PCT Code: TBD
-PCT Description: TBD
-PCT Address: TBD
+CCG Code: <?php echo $cb ? $cb->code."\n" : "Unknown\n" ?>
+CCG Description: <?php echo $cb ? $cb->name."\n" : "Unknown\n" ?>
+CCG Address: <?php echo $cb && $cb->contact->address ? $cb->contact->address->getLetterLine() . "\n" : "Unknown\n"; ?>
 
 GP Details:
-Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : 'Unknown\n'; ?>
-Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?>
-PCT Code: TBD
-PCT Description: TBD
-PCT Address: TBD
+Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
+Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine."\n" : "Unknown\n"; ?>
+CCG Code: <?php echo $gp_cb ? $gp_cb->code."\n" : "Unknown\n" ?>
+CCG Description: <?php echo $gp_cb ? $gp_cb->name."\n" : "Unknown\n" ?>
+CCG Address: <?php echo $gp_cb && $gp_cb->contact->address ? $gp_cb->contact->address->getLetterLine() . "\n" : "Unknown\n" ?>

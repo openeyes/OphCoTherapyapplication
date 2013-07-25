@@ -456,10 +456,11 @@ Protection Regulations.</p>
 				?>
 				<table>
 					<thead>
-					<tr>
+					<tr class="inner">
 						<th>Dates</th>
 						<th>Intervention</th>
 						<th>Reason for stopping / Response acheived</th>
+						<th>Comments</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -469,7 +470,8 @@ Protection Regulations.</p>
 					<tr>
 						<td><?php echo Helper::convertDate2NHS($previntervention->treatment_date) ?></td>
 						<td><?php echo $previntervention->treatment->name ?></td>
-						<td><?php echo $previntervention->stopreason->name ?></td>
+						<td><?php echo $previntervention->getStopReasonText() ?></td>
+						<td><?php echo $previntervention->comments ? $previntervention->comments : '-' ?></td>
 					</tr>
 					<?php
 				}
