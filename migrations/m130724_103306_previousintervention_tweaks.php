@@ -14,8 +14,10 @@ class m130724_103306_previousintervention_tweaks extends CDbMigration
 
 	public function down()
 	{
-		echo "m130724_103306_previousintervention_tweaks does not support migration down.\n";
-		return false;
+		$this->dropColumn('ophcotherapya_exceptional_previntervention', 'comments');
+		$this->dropColumn('ophcotherapya_exceptional_previntervention', 'stopreason_other');
+		$this->delete('ophcotherapya_exceptional_previntervention_stopreason', 'other = true');
+		$this->dropColumn('ophcotherapya_exceptional_previntervention_stopreason', 'other');
 	}
 
 	/*
