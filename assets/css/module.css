@@ -142,7 +142,7 @@ ul.MultiSelectList {
 #event_content .cols2 .previousintervention .data.comments {
     width: 100%;
 }
-#event_content .cols2 .previousintervention .data.comments textarea {
+#event_content .cols2 .previousintervention .data textarea {
     box-sizing: border-box;
     width: 100%;
 }
