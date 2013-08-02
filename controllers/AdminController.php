@@ -55,6 +55,8 @@ class AdminController extends ModuleAdminController
 
 		$diagnoses = OphCoTherapyapplication_TherapyDisorder::model()->findAll($criteria);
 
+		Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_TherapyDisorder','list',$parent_id);
+
 		$this->render('list_OphCoTherapyapplication_TherapyDisorder', array(
 				'model_class' => 'OphCoTherapyapplication_TherapyDisorder',
 				'model_list' => $diagnoses,
@@ -110,7 +112,7 @@ class AdminController extends ModuleAdminController
 				throw new Exception('Unable to save new therapy disorder ' . print_r($therapy_disorder->getErrors(), true));
 			}
 			Yii::app()->user->setFlash('success', 'Disorder added');
-			Audit::add('OphCoTherapyapplication_TherapyDisorder','created', serialize($therapy_disorder));
+			Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_TherapyDisorder','created', serialize($therapy_disorder));
 		}
 
 		$this->redirect(array('viewdiagnoses', 'parent_id' => @$_POST['parent_id']));
@@ -146,7 +148,7 @@ class AdminController extends ModuleAdminController
 					throw new Exception('unable to delete diagnosis' . print_r($diagnosis->getErrors(), true));
 				}
 				$transaction->commit();
-				Audit::add('OphCoTherapyapplication_TherapyDisorder','delete', serialize(array('disorder_id' => $disorder_id)));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_TherapyDisorder','delete', serialize(array('disorder_id' => $disorder_id)));
 				Yii::app()->user->setFlash('success', 'Disorder deleted');
 				$this->redirect(array('viewdiagnoses', 'parent_id' => $parent_id));
 			} catch (Exception $e) {
@@ -186,6 +188,8 @@ class AdminController extends ModuleAdminController
 	{
 		$data_provider=new CActiveDataProvider('OphCoTherapyapplication_Treatment');
 
+		Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_Treatment','list');
+
 		$this->render('list',array(
 				'dataProvider'=>$data_provider,
 				'title'=>'Treatments',
@@ -205,7 +209,7 @@ class AdminController extends ModuleAdminController
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_Treatment','update', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_Treatment','update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Treatment update');
 
 				$this->redirect(array('viewtreatments'));
@@ -230,7 +234,7 @@ class AdminController extends ModuleAdminController
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_Treatment','create', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_Treatment','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Treatment created');
 
 				$this->redirect(array('viewtreatments'));
@@ -248,6 +252,9 @@ class AdminController extends ModuleAdminController
 	public function actionViewDecisionTrees()
 	{
 		$data_provider=new CActiveDataProvider('OphCoTherapyapplication_DecisionTree');
+
+		Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTree','list');
+
 		$this->render('list',array(
 				'dataProvider'=>$data_provider,
 				'title'=>'Decision Trees',
@@ -267,6 +274,8 @@ class AdminController extends ModuleAdminController
 			$node = $model->getRootNode();
 		}
 
+		Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTree','view',$id);
+
 		$this->render('view_OphCoTherapyapplication_DecisionTree', array(
 				'model' => $model,
 				'node' => $node
@@ -282,7 +291,7 @@ class AdminController extends ModuleAdminController
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTree'];
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTree','create', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTree','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree created');
 
 				$this->redirect(array('viewdecisiontree','id'=>$model->id));
@@ -318,7 +327,7 @@ class AdminController extends ModuleAdminController
 			}
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTreeNode','create', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTreeNode','create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree node created');
 
 				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
@@ -343,7 +352,7 @@ class AdminController extends ModuleAdminController
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNode'];
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTreeNode', 'update', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTreeNode', 'update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree node updated');
 
 				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
@@ -367,7 +376,7 @@ class AdminController extends ModuleAdminController
 			$model->node_id = $node->id;
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'create', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTreeNodeRule', 'create', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree Node rule created');
 
 				$this->redirect(array('viewdecisiontree', 'id' => $node->decisiontree_id, 'node_id' => $node->id));
@@ -389,7 +398,7 @@ class AdminController extends ModuleAdminController
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
 
 			if ($model->save()) {
-				Audit::add('OphCoTherapyapplication_DecisionTreeNodeRule', 'update', serialize($model->attributes));
+				Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_DecisionTreeNodeRule', 'update', serialize($model->attributes));
 				Yii::app()->user->setFlash('success', 'Decision Tree Node Rule updated');
 
 				$this->redirect(array('viewdecisiontree', 'id' => $model->node->decisiontree_id, 'node_id' => $model->node->id));
@@ -408,6 +417,9 @@ class AdminController extends ModuleAdminController
 	public function actionViewFileCollections()
 	{
 		$data_provider = new CActiveDataProvider('OphCoTherapyapplication_FileCollection');
+
+		Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_FileCollection','list');
+
 		$this->render('list',array(
 				'dataProvider'=>$data_provider,
 				'title'=>'File Collections',
@@ -417,6 +429,8 @@ class AdminController extends ModuleAdminController
 	public function actionViewOphCoTherapyapplication_FileCollection($id)
 	{
 		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int) $id);
+
+		Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_FileCollection','view',$id);
 
 		$this->render('view_' . get_class($model), array(
 				'model' => $model)
@@ -467,7 +481,7 @@ class AdminController extends ModuleAdminController
 
 					$model->updateFiles($pfs);
 
-					Audit::add('OphCoTherapyapplication_FileCollection','create', serialize($model->attributes));
+					Audit::add('admin-OphCoTherapyapplication-OphCoTherapyapplication_FileCollection','create', serialize($model->attributes));
 					Yii::app()->user->setFlash('success', 'File Collection created');
 
 					$this->redirect(array('viewfilecollections'));
