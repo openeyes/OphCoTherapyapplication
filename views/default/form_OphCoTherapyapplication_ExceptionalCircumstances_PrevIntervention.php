@@ -20,7 +20,7 @@
 
 <?php
 $name_stub = $element_name . '[' . $side . '_previnterventions]';
-$all_treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->findAll();
+$all_treatments = OphCoTherapyapplication_Treatment::model()->findAll();
 $show_stop_other = false;
 if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions']) {
 	if (@$_POST[$element_name][$side . '_previnterventions'][$key]) {

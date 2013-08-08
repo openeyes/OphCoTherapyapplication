@@ -64,6 +64,8 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	{
 		return 'ophcotherapya_treatment';
 	}
+	
+	
 
 	/**
 	 * @return array validation rules for model attributes.
@@ -159,7 +161,10 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 
 	protected function getName()
 	{
-		return $this->drug->name;
+		if ($this->drug) {
+			return $this->drug->name;
+		}
+		return $this->intervention_name;
 	}
 
 	public function getDisplayCost()
