@@ -186,7 +186,7 @@ class AdminController extends ModuleAdminController
 	 */
 	public function actionViewTreatments()
 	{
-		$data_provider=new CActiveDataProvider('OphCoTherapyapplication_Treatment');
+		$data_provider=new CActiveDataProvider(OphCoTherapyapplication_Treatment::model()->allScope() );
 
 		Audit::add('admin','list',null,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
 
@@ -203,7 +203,7 @@ class AdminController extends ModuleAdminController
 	 */
 	public function actionUpdateOphCoTherapyapplication_Treatment($id)
 	{
-		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int) $id);
+		$model = OphCoTherapyapplication_Treatment::model()->allScope()->findByPk((int) $id);
 
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
@@ -437,63 +437,154 @@ class AdminController extends ModuleAdminController
 		);
 	}
 
+	/**
+	 * processes uploaded files for a collection - will add errors to the collection if there are problems
+	 * with any of the files. Otherwise returns array of protected file ids that have been created
+	 *
+	 * @param $collection
+	 * @param $uploaded_files
+	 * @throws Exception
+	 * @return array $protectedfile_ids
+	 */
+	protected function processFileCollectionFileUpload($collection, $uploaded_files)
+	{
+		$files = array();
+		foreach ($uploaded_files['tmp_name'] as $i => $f) {
+			if (!empty($uploaded_files['error'][$i])) {
+				$model->addError("files", "file $i had an error");
+			} elseif (!empty($f) && is_uploaded_file($f)) {
+				$name = $uploaded_files['name'][$i];
+				// check the file mimetype
+				if (OphCoTherapyapplication_FileCollection::checkMimeType($f)) {
+					$files[] = array('tmpfile' => $f, 'name' => $name);
+				} else {
+					$collection->addError("files", "File $name is not a valid filetype");
+				}
+			}
+		}
+
+		$pfs = array();
+		$pf_ids = array();
+
+		if (!count($collection->getErrors())) {
+			foreach ($files as $fdet) {
+				$pf = ProtectedFile::createFromFile($fdet['tmpfile']);
+				$pf->name = $fdet['name'];
+				if ($pf->save()) {
+					$pfs[] = $pf;
+					$pf_ids[] = $pf->id;
+ 				} else {
+					$collection->addError("files", "There was a problem storing file " . $pf->name);
+					Yii::log("couldn't save file object" . print_r($pf->getErrors(), true), 'error');
+
+					// need to remove any protected files that have been created so far (note that because
+					// ProtectedFile affects the filesystem, we are relying on the delete clean up method)
+					foreach ($pfs as $pf) {
+						$pf->delete();
+					}
+					// return an empty array - no protected files successfully created.
+					return array();
+				}
+			}
+		}
+
+		return $pf_ids;
+
+	}
+
+	/**
+	 * abstraction to process FileCollection form
+	 *
+	 * @param OphCoTherapyapplication_FileCollection $model
+	 * @param string $audit_type
+	 */
+	protected function processFileCollectionForm($model, $audit_type = 'create')
+	{
+		$model->attributes = $_POST['OphCoTherapyapplication_FileCollection'];
+
+		// validate the model
+		$model->validate();
+
+		$transaction = Yii::app()->getDb()->beginTransaction();
+		// slightly complex rollback process because of files being copied into the protected file store
+		// we want to be able to roll this back as well as the db process.
+		try {
+			$pf_ids = $this->processFileCollectionFileUpload($model, $_FILES['OphCoTherapyapplication_FileCollection_files']);
+			if (!count($model->getErrors())) {
+				if ($model->save()) {
+					// because this might be an update, we get the current files on the model so that we don't remove files
+					// from it
+					$curr_pf_ids = array();
+					foreach ($model->files as $file) {
+						$curr_pf_ids[] = $file->id;
+					}
+					$model->updateFiles(array_merge($curr_pf_ids, $pf_ids));
+
+					Audit::add('admin',$audit_type,serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
+					Yii::app()->user->setFlash('success', 'File Collection created');
+
+					$transaction->commit();
+					$this->redirect(array('viewfilecollections'));
+
+				}
+			}
+
+			// clear out any protected files that might have been created.
+			$criteria = new CDbCriteria();
+			$criteria->addInCondition('id', $pf_ids);
+			foreach (ProtectedFile::model()->findAll($criteria) as $pf) {
+				$pf->delete();
+			}
+			// if we've got this far, something is amiss
+			$transaction->rollback();
+		}
+		catch (Exception $e) {
+			Yii::log("OphCoTherapyapplication_FileCollection creation error: " . $e->getMessage(),  'error');
+			Yii::app()->user->setFlash('error', 'An unexpected error has occurred');
+
+			// clear out any protected files that might have been created.
+			$criteria = new CDbCriteria();
+			$criteria->addInCondition('id', $pf_ids);
+			foreach (ProtectedFile::model()->findAll($criteria) as $pf) {
+				$pf->delete();
+			}
+
+			$transaction->rollback();
+		}
+	}
+
+	/**
+	 * action for creating a new File Collection
+	 *
+	 */
 	public function actionCreateOphCoTherapyapplication_FileCollection()
 	{
 		$model = new OphCoTherapyapplication_FileCollection();
 
 		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
-			$model->attributes = $_POST['OphCoTherapyapplication_FileCollection'];
-
-			// validate the model
-			$model->validate();
-
-			$file_errs = array();
-			$files = array();
-			foreach ($_FILES['OphCoTherapyapplication_FileCollection_files']['tmp_name'] as $i => $f) {
-				if (!empty($_FILES['OphCoTherapyapplication_FileCollection_files']['error'][$i])) {
-					$file_errs[] = "file $i had an error";
-				} elseif (!empty($f) && is_uploaded_file($f)) {
-					$name = $_FILES['OphCoTherapyapplication_FileCollection_files']['name'][$i];
-					// check the file mimetype
-					if (OphCoTherapyapplication_FileCollection::checkMimeType($f)) {
-						$files[] = array('tmpfile' => $f, 'name' => $name);
-					} else {
-						$model->addError("files", "File $name is not a valid filetype");
-					}
-				}
-			}
-
-			// do the actual create
-			if (!count($model->getErrors()) ) {
-				$pfs = array();
-				foreach ($files as $fdet) {
-					$pf = ProtectedFile::createFromFile($fdet['tmpfile']);
-					$pf->name = $fdet['name'];
-					if ($pf->save()) {
-						$pfs[] = $pf->id;
-					} else {
-						throw new Exception('Could not save file object');
-						Yii::log("couldn't save file object" . print_r($pf->getErrors(), true), 'error');
-					}
-				}
-
-				if ($model->save()) {
-
-					$model->updateFiles($pfs);
-
-					Audit::add('admin','create',serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
-					Yii::app()->user->setFlash('success', 'File Collection created');
-
-					$this->redirect(array('viewfilecollections'));
-				} else {
-					//TODO: delete the files again
-				}
-			}
+			$this->processFileCollectionForm($model);
 		}
 
 		$this->render('create', array(
 				'model' => $model,
 				'title' => 'File Collection',
 		));
+	}
+
+	public function actionUpdateOphCoTherapyapplication_FileCollection($id)
+	{
+
+		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int) $id);
+
+		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
+			$this->processFileCollectionForm($model, 'update');
+		}
+		Audit::add('admin','view',$id,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
+
+		$this->render('create', array(
+				'model' => $model,
+				'title' => 'File Collection'
+			)
+		);
 	}
 }

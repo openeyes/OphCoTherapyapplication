@@ -31,7 +31,7 @@
 	$criteria = new CDbCriteria();
 	$criteria->addCondition('decisiontree_id IS NOT NULL');
 	
-	$treatments = OphCoTherapyapplication_Treatment::model()->with('drug')->findAll($criteria);
+	$treatments = OphCoTherapyapplication_Treatment::model()->findAll($criteria);
 	
 	$html_options = array(
 			'options' => array(),

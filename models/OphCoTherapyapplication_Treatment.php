@@ -65,7 +65,35 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return 'ophcotherapya_treatment';
 	}
 	
+	/*
+	 * scope to get all records including those marked as unavailable
+	*
+	*/
+	public function allScope()
+	{
+		$alias = $this->getTableAlias(false);
 	
+		$this->resetScope()->getDbCriteria()->mergeWith(array(
+				'with' => array("drug"),
+				'order' => 'drug.display_order ASC',
+		));
+		return $this;
+	}
+	
+	/**
+	 * only return those where the drug is available
+	 * 
+	 * (non-PHPdoc)
+	 * @see CActiveRecord::defaultScope()
+	 */
+	public function defaultScope()
+	{
+		return array(
+				'with' => array("drug"),
+				'order' => 'drug.display_order ASC',
+				'condition' => 'drug.available = true'
+		);
+	}
 
 	/**
 	 * @return array validation rules for model attributes.
@@ -166,7 +194,29 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		}
 		return $this->intervention_name;
 	}
-
+	
+	/**
+	 * return a list of treatment drugs for use in admin
+	 * 
+	 * @return OphTrIntravitrealinjection_Treatment_Drug[]
+	 */
+	public function getTreatmentDrugs()
+	{
+		$drugs = OphTrIntravitrealinjection_Treatment_Drug::model()->findAll();
+		if ($this->drug_id) {
+			$drug_array = array();
+			foreach ($drugs as $drug) {
+				if ($drug->id == $this->drug_id) {
+					return $drugs;
+				}
+				$drug_array[] = $drug;
+			}
+			
+			$drugs[] = $this->drug;
+		}
+		return $drugs;
+	}
+	
 	public function getDisplayCost()
 	{
 		return $this->cost . " per "  . $this->cost_type->name;

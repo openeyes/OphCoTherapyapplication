@@ -18,14 +18,70 @@
  */
 ?>
 
-<?php echo $form->textField($model,'name',array('size'=>40,'maxlength'=>40)); ?>
+<?php
+	echo $form->textField($model,'name',array('size'=>40,'maxlength'=>40));
+	echo $form->textArea($model, 'summary', array('rows' => 8, 'cols' => 60) );
+?>
+
+<?php
+	if ($model->files) {
+?>
+	<div>
+		<a href="<?php echo Yii::app()->createUrl('/OphCoTherapyapplication/Default/downloadFileCollection', array('id' => $model->id)) ?>">Download zip</a>
+	</div>
+	<ul>
+	<?php
+		foreach ($model->files as $file) {
+	?>
+		<li><a href="<?php echo $file->getDownloadURL() ?>"><?php echo $file->name ?></a></li>
+	<?php
+		}
+	?>
+	</ul>
+<?php
+	}
+?>
+
+<i>
+	Maximum file size is <?php echo ini_get('upload_max_filesize'); ?>,
+	Maximum number of files is <?php echo ini_get('max_file_uploads'); ?>,
+	Maximum total upload size is <?php echo ini_get('post_max_size'); ?>
+</i>
+
+<?php
+/**
+ * utility function that should probably sit somewhere else, but is only for this template at the moment
+ * calculates the byte size of the passed in value
+ *
+ * @param $size_str
+ * @return int
+ */
+function return_bytes ($size_str)
+{
+	switch (substr ($size_str, -1))
+	{
+		case 'M': case 'm': return (int)$size_str * 1048576;
+		case 'K': case 'k': return (int)$size_str * 1024;
+		case 'G': case 'g': return (int)$size_str * 1073741824;
+		default: return $size_str;
+	}
+}
+?>
+
 
 <div id="div_OphCoTherapyapplication_FileCollection_file" class="eventDetail">
 	<div class="label">File(s):</div>
 	<div class="data">
-
+	<input type="file" class="OphCoTherapyapplication_FileCollection_file" name="OphCoTherapyapplication_FileCollection_files[]"
+		   	multiple="multiple"
+		   	data-count-limit="<?php echo return_bytes(ini_get('max_file_uploads')); ?>"
+			data-max-filesize="<?php echo return_bytes(ini_get('upload_max_filesize')); ?>"
+			data-total-max-size="<?php echo return_bytes(ini_get('post_max_size')); ?>" />
+	<!--
+	if non-html5 browser being used, this could be reinstated to add multiple files
 	<button class="addFile classy green mini" type="button">
 		<span class="button-span button-span-green">Add File</span>
 	</button>
+	-->
 	</div>
 </div>

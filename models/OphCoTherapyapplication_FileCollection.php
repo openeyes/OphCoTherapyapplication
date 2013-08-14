@@ -18,12 +18,15 @@
  */
 
 /**
- * This is the model class for table "ophcotherapya_decisiontree".
+ * This is the model class for table "ophcotherapya_filecoll".
  *
- * Each decision tree can be used to answer a series of questions to arrive at OphCoTherapyapplication_DecisionTreeOutcome
+ * A File Collection points to one or more PDF that can be attached to a therapy application
  *
- * @property integer $id The tree id
- * @property string $name The name of the tree, this is only used for administrative purposes to identify the tree.
+ * @property integer $id The file collection id
+ * @property string $name The collection name
+ * @property string $summary The summary text for this file collection
+ * @property ProtectedFile[] $files - The files in the collection
+ * @property ProtectedFile $compressed_file - A zipfile of the files in this collection
  *
  **/
 
@@ -77,17 +80,18 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord
 	public function rules()
 	{
 		return array(
-				array('name', 'safe'),
-				array('name', 'required'),
+				array('name, summary', 'safe'),
+				array('name, summary', 'required'),
 				// The following rule is used by search().
 				// Please remove those attributes that should not be searched.
-				array('id, name', 'safe', 'on' => 'search'),
+				array('id, summary, name', 'safe', 'on' => 'search'),
 		);
 	}
 
-	/*
+	/**
 	 * get a compressed zip file containing all the files in the collection
 	 *
+	 * @throws Exception
 	 * @return ProtectedFile
 	 */
 	public function getZipFile()
@@ -135,8 +139,7 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord
 	/**
 	 * update the files for this collection.
 	 *
-	 * @param string $side
-	 * @param integer[] $protectedfile_ids - array of ProtectedFile ids to assign to the collection
+	 * @param integer[] $file_ids - array of ProtectedFile ids to assign to the collection
 	 */
 	public function updateFiles($file_ids)
 	{
