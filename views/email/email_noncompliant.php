@@ -48,12 +48,12 @@ Reason for urgency: <?php echo $exceptional->{$side . '_urgency_reason'}."\n"?>
 <?php }?>
 
 Patient Details:
-Full Name: <?php echo $patient->getFullName() . "\n" ?>
+Full Name: <?php echo $patient->fullname . "\n" ?>
 Number: <?php echo $patient->hos_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
 Gender: <?php echo $patient->gender . "\n" ?>
-Address: <?php echo ($address = $patient->contact->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
+Address: <?php echo ($address = $patient->getLetterAddress(array('delimiter' => ', '))) ? $address . "\n" : "Unknown\n"; ?>
 
 GP Details:
-Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
-Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine."\n" : "Unknown\n"; ?>
+Name: <?php echo ($patient->gp) ? $patient->gp->fullName . "\n" : "Unknown\n"; ?>
+Address: <?php echo ($patient->practice && $address = $patient->practice->getLetterAddress(array('delimiter' => ', '))) ? $address."\n" : "Unknown\n"; ?>

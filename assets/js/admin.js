@@ -161,7 +161,9 @@ $(document).ready(function () {
 	$('#div_OphCoTherapyapplication_FileCollection_file').delegate('.OphCoTherapyapplication_FileCollection_file', 'change', function (e) {
 		var error = false;
 		if (this.files.length > parseInt($(this).data('count-limit'))) {
-			alert('Cannot have more than ' + $(this).data('count-limit') + ' files');
+			new OpenEyes.Dialog.Alert({
+				content: 'Cannot have more than ' + $(this).data('count-limit') + ' files'
+			}).open();
 			error = true;
 		}
 		else {
@@ -171,13 +173,17 @@ $(document).ready(function () {
 			for (var i = 0; i < this.files.length; i++) {
 				var file = this.files[i];
 				if (file.size > mx_filesize) {
-					alert('File ' + file.name + ' is too large');
+					new OpenEyes.Dialog.Alert({
+						content: 'File ' + file.name + ' is too large'
+					}).open();
 					error = true;
 					break;
 				}
 				total += file.size;
 				if (total > mx_total) {
-					alert('Total size of files is too large');
+					new OpenEyes.Dialog.Alert({
+						content: 'Total size of files is too large'
+					}).open();
 					error = true;
 					break;
 				}
@@ -188,6 +194,52 @@ $(document).ready(function () {
 			$(this).val('');
 		}
 
+	});
+
+	$('.removeFile').live('click',function() {
+		$('#remove_file_id').val($(this).parent().data('file-id'));
+
+		$('#confirm_remove_file_dialog').dialog({
+			resizable: false,
+			modal: true,
+			width: 560
+		});
+
+		return false;
+	});
+
+	$('button.btn_remove_file').click(function() {
+		$("#confirm_remove_file_dialog").dialog("close");
+
+		var file_id = $('#remove_file_id').val();
+
+		$.ajax({
+			'type': 'GET',
+			'url': baseUrl+'/OphCoTherapyapplication/admin/removeFileCollection_File?filecollection_id='+ filecollection_id +'&file_id='+file_id,
+			'dataType': 'json',
+			'success': function(resp) {
+				if (resp.success) {
+					var row = $('#currentFiles li[data-file-id="' + file_id + '"]');
+					row.remove();
+				} else {
+					new OpenEyes.Dialog.Alert({
+						content: "Sorry, an internal error occurred and we were unable to remove the file.\n\nPlease contact support for assistance."
+					}).open();
+				}
+			},
+			'error': function() {
+				new OpenEyes.Dialog.Alert({
+					content: "Sorry, an internal error occurred and we were unable to remove the file.\n\nPlease contact support for assistance."
+				}).open();
+			}
+		});
+
+		return false;
+	});
+
+	$('button.btn_cancel_remove_file').click(function() {
+		$("#confirm_remove_file_dialog").dialog("close");
+		return false;
 	});
 
 	$('.sortable').sortable({

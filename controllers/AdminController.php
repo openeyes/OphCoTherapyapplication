@@ -571,10 +571,16 @@ class AdminController extends ModuleAdminController
 		));
 	}
 
+	/**
+	 * action for updating file collection identified by $id
+	 *
+	 * @param int $id
+	 */
 	public function actionUpdateOphCoTherapyapplication_FileCollection($id)
 	{
 
 		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int) $id);
+		$this->jsVars['filecollection_id'] = $model->id;
 
 		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
 			$this->processFileCollectionForm($model, 'update');
@@ -586,5 +592,20 @@ class AdminController extends ModuleAdminController
 				'title' => 'File Collection'
 			)
 		);
+	}
+
+	public function actionRemoveFileCollection_File()
+	{
+		try {
+			if ($collection = OphCoTherapyapplication_FileCollection::model()->findByPk(@$_GET['filecollection_id'])) {
+				if ($collection->removeFileById(@$_GET['file_id'])) {
+					echo json_encode(array('success' => true));
+				}
+			}
+		}
+		catch (Exception $e) {
+			Yii::log("couldn't remove file (" . @$_GET['file_id'] . ") from collection (" . @$_GET['filecollection_id'] . ")" . $e->getMessage(), 'error');
+			echo json_encode(array('success' => false));
+		}
 	}
 }

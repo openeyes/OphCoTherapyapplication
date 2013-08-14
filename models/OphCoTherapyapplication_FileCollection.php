@@ -25,6 +25,7 @@
  * @property integer $id The file collection id
  * @property string $name The collection name
  * @property string $summary The summary text for this file collection
+ * @property integer $zipfile_id - The id of the protected file that is compressed file
  * @property ProtectedFile[] $files - The files in the collection
  * @property ProtectedFile $compressed_file - A zipfile of the files in this collection
  *
@@ -137,6 +138,30 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord
 	}
 
 	/**
+	 * removes the compressed file association for this collection. Should be called when the files for it are
+	 * changed so that a new compressed file is created when needed.
+	 *
+	 * will also call the delete function on the protected file itself to remove orphaned files
+	 *
+	 */
+	protected function cleanCompressedFile()
+	{
+		// note we have to work on the file id not the relation
+		if ($id = $this->zipfile_id) {
+			$this->zipfile_id = null;
+			if ($this->save()) {
+				$pf = ProtectedFile::model()->findByPk($id);
+				try {
+					$pf->delete();
+				}
+				catch (Exception $e) {
+					// ignore this exception as it's because the compressed file is referenced elsewhere
+				}
+			}
+		}
+	}
+
+	/**
 	 * update the files for this collection.
 	 *
 	 * @param integer[] $file_ids - array of ProtectedFile ids to assign to the collection
@@ -171,12 +196,29 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord
 			$curr->delete();
 		}
 
-		// ensure the compressed file is removed
-		if ($cf = $this->compressed_file) {
-			$this->compressed_file = null;
-			$this->save();
-			$cf->delete();
-		}
+		$this->cleanCompressedFile();
 	}
 
+	/**
+	 * removes a protected file associated with the collection
+	 *
+	 * @param $file_id
+	 * @return bool
+	 */
+	public function removeFileById($file_id)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->addCondition('collection_id = :cid');
+		$criteria->addCondition('file_id = :fid');
+		$criteria->params = array(':cid' => $this->id, ':fid' => $file_id);
+		if ($assoc = OphCoTherapyapplication_FileCollectionAssignment::model()->find($criteria)) {
+			if ($assoc->delete()) {
+				$this->cleanCompressedFile();
+				return true;
+			}
+		}
+		else {
+			return false;
+		}
+	}
 }

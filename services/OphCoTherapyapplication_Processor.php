@@ -353,8 +353,8 @@ class OphCoTherapyapplication_Processor
 					//$email_el->right_application_id = $file->id;
 					$right_attach_ids[] = $file->id;
 				}
-				if (@$data['exceptional'] && $data['exceptional']->hasRight()) {
-					foreach ($data['exceptional']->left_filecollections as $fc) {
+				if ($data['exceptional'] && $data['exceptional']->hasRight()) {
+					foreach ($data['exceptional']->right_filecollections as $fc) {
 						$right_attach_ids[] = $fc->getZipFile()->id;
 					}
 				}

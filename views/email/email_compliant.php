@@ -54,14 +54,14 @@ Number:<?php echo $patient->hos_num . "\n" ?>
 NHS Number: <?php echo $patient->nhs_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
 Gender: <?php echo $patient->gender . "\n" ?>
-Address: <?php echo ($address = $patient->contact->address) ? $address->getLetterLine() . "\n" : "Unknown\n"; ?>
+Address: <?php echo ($address = $patient->getLetterAddress(array('delimiter' => ', '))) ? $address . "\n" : "Unknown\n"; ?>
 CCG Code: <?php echo $cb ? $cb->code."\n" : "Unknown\n" ?>
 CCG Description: <?php echo $cb ? $cb->name."\n" : "Unknown\n" ?>
-CCG Address: <?php echo $cb && $cb->contact->address ? $cb->contact->address->getLetterLine() . "\n" : "Unknown\n"; ?>
+CCG Address: <?php echo $cb && $address = $cb->getLetterAddress(array('delimiter' => ', ')) ? $address . "\n" : "Unknown\n"; ?>
 
 GP Details:
 Name: <?php echo ($patient->gp) ? $patient->gp->contact->fullName . "\n" : "Unknown\n"; ?>
-Address: <?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine."\n" : "Unknown\n"; ?>
+Address: <?php echo ($patient->practice && $address = $patient->practice->getLetterAddress(array('delimiter' => ','))) ? $address ."\n" : "Unknown\n"; ?>
 CCG Code: <?php echo $gp_cb ? $gp_cb->code."\n" : "Unknown\n" ?>
 CCG Description: <?php echo $gp_cb ? $gp_cb->name."\n" : "Unknown\n" ?>
-CCG Address: <?php echo $gp_cb && $gp_cb->contact->address ? $gp_cb->contact->address->getLetterLine() . "\n" : "Unknown\n" ?>
+CCG Address: <?php echo $gp_cb && $address = $gp_cb->getLetterAddress(array('delimiter' => ', ')) ? $address . "\n" : "Unknown\n" ?>

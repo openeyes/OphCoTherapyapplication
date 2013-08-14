@@ -29,11 +29,11 @@
 	<div>
 		<a href="<?php echo Yii::app()->createUrl('/OphCoTherapyapplication/Default/downloadFileCollection', array('id' => $model->id)) ?>">Download zip</a>
 	</div>
-	<ul>
+	<ul id="currentFiles">
 	<?php
 		foreach ($model->files as $file) {
 	?>
-		<li><a href="<?php echo $file->getDownloadURL() ?>"><?php echo $file->name ?></a></li>
+		<li data-file-id="<?php echo $file->id ?>"><a href="<?php echo $file->getDownloadURL() ?>"><?php echo $file->name ?></a> | <a href="#" class="removeFile">delete</a></li>
 	<?php
 		}
 	?>
@@ -83,5 +83,24 @@ function return_bytes ($size_str)
 		<span class="button-span button-span-green">Add File</span>
 	</button>
 	-->
+	</div>
+</div>
+
+<div id="confirm_remove_file_dialog" title="Confirm remove file" style="display: none;">
+	<div>
+		<div id="delete_file">
+			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+				<strong>WARNING: This will remove the file from the collection. The file will still be attached to any applications that have been processed.</strong>
+			</div>
+			<p>
+				<strong>Are you sure you want to proceed?</strong>
+			</p>
+			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+				<input type="hidden" id="remove_file_id" value="" />
+				<button type="submit" class="classy red venti btn_remove_file"><span class="button-span button-span-red">Remove file</span></button>
+				<button type="submit" class="classy green venti btn_cancel_remove_file"><span class="button-span button-span-green">Cancel</span></button>
+				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			</div>
+		</div>
 	</div>
 </div>

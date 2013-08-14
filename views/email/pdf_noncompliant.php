@@ -172,8 +172,8 @@ Protection Regulations.</p>
 							<td>
 								<?php echo $patient->getFullName() ?><br />
 								<?php
-								if ($address = $patient->contact->address) {
-									echo $address->getLetterLine();
+								if ($address = $patient->getLetterAddress(array('delimiter' => ', '))) {
+									echo $address;
 								} else {
 									echo "Unknown";
 								}
@@ -206,7 +206,11 @@ Protection Regulations.</p>
 						</tr>
 						<tr>
 							<th>Registered GP Address</th>
-							<td><?php echo ($patient->practice && $patient->practice->contact->address) ? $patient->practice->contact->address->letterLine : 'Unknown'; ?></td>
+							<td><?php echo ($patient->practice &&
+									$address = $patient->practice->getLetterAddress(array('delimiter' => ', '))) ?
+									$address :
+									'Unknown';
+							?></td>
 						</tr>
 						<tr>
 							<th>Referred By (other than GP)</th>
@@ -545,7 +549,13 @@ Protection Regulations.</p>
 			<td><span class="form-text">PUBLISHED trials/data<br />
 (Full published papers, rather than abstracts, should be submitted, unless the application relates to the use of an intervention in a rare disease where published data are not available. Electronic copies of the papers/web links for peer-reviewed papers must be supplied, where available.)</span><br /><br />
 <?php if ($exceptional->{$side . '_filecollections'}) {
-	echo "(Please see attached papers and supporting documents.)"; 
+	echo "(Please see attached papers and supporting documents.)<ul>";
+	foreach ($exceptional->{$side . '_filecollections'} as $fc) {
+		foreach ($fc->files as $f) {
+			echo "<li>" . $f->name . "</li>";
+		}
+	}
+	echo "</ul>";
 } else {
 	echo "None";
 }?></td>
