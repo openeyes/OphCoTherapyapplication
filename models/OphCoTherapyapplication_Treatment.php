@@ -65,8 +65,8 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return 'ophcotherapya_treatment';
 	}
 	
-	/*
-	 * scope to get all records including those marked as unavailable
+	/**
+	* scope to get all records including those marked as unavailable
 	*
 	*/
 	public function allScope()

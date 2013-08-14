@@ -37,6 +37,37 @@ class OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod extends BaseA
 	}
 
 	/**
+	 * scope to get all records including those not enabled
+	 *
+	 */
+	public function allScope()
+	{
+		$alias = $this->getTableAlias(false);
+
+		$this->resetScope()->getDbCriteria()->mergeWith(array(
+				'order' => $alias.'display_order ASC',
+				'alias' => $alias
+			));
+		return $this;
+	}
+
+	/**
+	 * only return enabled periods
+	 *
+	 * (non-PHPdoc)
+	 * @see CActiveRecord::defaultScope()
+	 */
+	public function defaultScope()
+	{
+		$alias = $this->getTableAlias(false);
+
+		return array(
+			'order' => $alias . 'display_order ASC',
+			'condition' => $alias . 'enabled = true'
+		);
+	}
+
+	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
