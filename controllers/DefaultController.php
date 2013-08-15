@@ -260,32 +260,42 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * process the POST data for previous interventions for the given side
+	 * process the POST data for past interventions for the given side
 	 *
 	 * @param Element_OphCoTherapyapplication_ExceptionCircumstances $element
-	 * @param string $side
+	 * @param string $side - left or right
 	 */
-	private function _POSTPrevinterventions($element, $side)
+	private function _POSTPastinterventions($element, $side)
 	{
-		if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_previnterventions']) ) {
-			$previnterventions = array();
-			foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_previnterventions'] as $idx => $attributes) {
-				// we have 1 or more entries that are just indexed by a counter. They may or may not already be in the db
-				// but at this juncture we don't care, we just want to create a previous intervention for this side and attach to
-				// the element
-				$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
-				$prev->attributes = Helper::convertNHS2MySQL($attributes);
-				if ($side == 'left') {
-					$prev->exceptional_side_id = SplitEventTypeElement::LEFT;
-				} else {
-					$prev->exceptional_side_id = SplitEventTypeElement::RIGHT;
+		foreach (array('_previnterventions' => 'false', '_relatedinterventions' => 'true') as $past_type => $is_related) {
+			if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type]) ) {
+				$pastinterventions = array();
+				foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type] as $idx => $attributes) {
+					// we have 1 or more entries that are just indexed by a counter. They may or may not already be in the db
+					// but at this juncture we don't care, we just want to create a previous intervention for this side and attach to
+					// the element
+					$past = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
+					$past->attributes = Helper::convertNHS2MySQL($attributes);
+					if ($side == 'left') {
+						$past->exceptional_side_id = SplitEventTypeElement::LEFT;
+					} else {
+						$past->exceptional_side_id = SplitEventTypeElement::RIGHT;
+					}
+					$past->is_related = $is_related;
+
+					$pastinterventions[] = $past;
 				}
-				$previnterventions[] = $prev;
+				$element->{$side . $past_type} = $pastinterventions;
 			}
-			$element->{$side . '_previnterventions'} = $previnterventions;
 		}
 	}
 
+	/**
+	 * process the POST data for deviation reasons for the given side
+	 *
+	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
+	 * @param string $side - left or right
+	 */
 	private function _POSTDeviationReasons($element, $side)
 	{
 		if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons']) ) {
@@ -306,8 +316,8 @@ class DefaultController extends BaseEventTypeController
 	protected function setPOSTManyToMany($element)
 	{
 		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
-			$this->_POSTPrevinterventions($element, 'left');
-			$this->_POSTPrevinterventions($element, 'right');
+			$this->_POSTPastinterventions($element, 'left');
+			$this->_POSTPastinterventions($element, 'right');
 			$this->_POSTDeviationReasons($element, 'left');
 			$this->_POSTDeviationReasons($element, 'right');
 		}
@@ -325,11 +335,12 @@ class DefaultController extends BaseEventTypeController
 		return $id;
 	}
 
-	/*
+	/**
 	 * similar to setPOSTManyToMany, but will actually call methods on the elements that will create database entries
-	* should be called on create and update.
-	*
-	*/
+	 * should be called on create and update.
+	 *
+	 * @param Element[] - array of elements being created
+	 */
 	protected function storePOSTManyToMany($elements)
 	{
 		foreach ($elements as $el) {
@@ -346,30 +357,24 @@ class DefaultController extends BaseEventTypeController
 						array());
 
 			} elseif (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
-				$el->updateDeviationReasons(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_deviationreasons']) ?
-						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_deviationreasons']) :
-						array());
-				$el->updateDeviationReasons(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_deviationreasons']) ?
-						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_deviationreasons']) :
-						array());
-				$el->updatePreviousInterventions(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_previnterventions']) ?
-						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_previnterventions']) :
-						array());
-				$el->updatePreviousInterventions(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_previnterventions']) ?
-						Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_previnterventions']) :
-						array());
-				$el->updateFileCollections(Element_OphCoTherapyapplication_ExceptionalCircumstances::LEFT,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_filecollections']) ?
-						$_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['left_filecollections'] :
-						array());
-				$el->updateFileCollections(Element_OphCoTherapyapplication_ExceptionalCircumstances::RIGHT,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_filecollections']) ?
-						$_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances']['right_filecollections'] :
-						array());
+				foreach (array('left' => Eye::LEFT, 'right' => Eye::RIGHT) as $side_str => $side_id) {
+					$el->updateDeviationReasons($side_id,
+							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) ?
+							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) :
+							array());
+					$el->updatePreviousInterventions($side_id,
+							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) ?
+							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) :
+							array());
+					$el->updateRelatedInterventions($side_id,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relatedinterventions']) ?
+							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relatedinterventions']) :
+							array());
+					$el->updateFileCollections($side_id,
+							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections']) ?
+							$_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections'] :
+							array());
+				}
 			}
 		}
 	}

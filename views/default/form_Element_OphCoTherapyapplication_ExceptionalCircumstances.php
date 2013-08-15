@@ -58,12 +58,25 @@
 
 <script id="previntervention_template" type="text/html">
 	<?php
-	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
+	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
 			'key' => '{{key}}',
 			'side' => '{{side}}',
 			'element_name' => get_class($element),
 			'form' => $form,
-			'previntervention' => new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention(),
+			'pastintervention' => new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention(),
 	));
+	?>
+</script>
+<script id="relatedintervention_template" type="text/html">
+	<?php
+	$pastintervention = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
+	$pastintervention->is_related = true;
+	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+			'key' => '{{key}}',
+			'side' => '{{side}}',
+			'element_name' => get_class($element),
+			'form' => $form,
+			'pastintervention' => $pastintervention,
+		));
 	?>
 </script>

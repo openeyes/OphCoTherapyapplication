@@ -138,12 +138,27 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_intervention' => array(self::BELONGS_TO,
 				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'left_intervention_id'),
-			'right_intervention' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention', 'right_intervention_id'),
-			'previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id'),
-			'left_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
-					'on' => 'left_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::LEFT),
-			'right_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', 'exceptional_id',
-					'on' => 'right_previnterventions.exceptional_side_id = ' . SplitEventTypeElement::RIGHT),
+			'right_intervention' => array(self::BELONGS_TO,
+				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'right_intervention_id'),
+			'previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
+				'condition' => 'is_related = :related',
+				'params' => array(':related' => false)),
+			'left_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
+				'condition' => 'is_related = :related AND exceptional_side_id = :side',
+				'params' => array(':related' => false, ':side' => Eye::LEFT)),
+			'right_previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
+				'condition' => 'is_related = :related AND exceptional_side_id = :side',
+				'params' => array(':related' => false, ':side' => Eye::RIGHT)),
+			'relatedinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
+				'condition' => 'is_related = :related',
+				'params' => array(':related' => true)),
+			'left_relatedinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
+				'condition' => 'is_related = :related AND exceptional_side_id = :side',
+				'params' => array(':related' => true, ':side' => Eye::LEFT)),
+			'right_relatedinterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
+				'condition' => 'is_related = :related AND exceptional_side_id = :side',
+				'params' => array(':related' => true, ':side' => Eye::RIGHT)),
 			'deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment' , 'element_id' ),
 			'left_deviationreasons' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason', 'deviationreason_id',
 				'through' => 'deviationreasons', 'on' => 'deviationreasons.side_id = ' . Eye::LEFT),
@@ -153,9 +168,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'right_start_period' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod', 'right_start_period_id'),
 			'filecollection_assignments' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment' , 'exceptional_id' ),
 			'left_filecollections' => array(self::HAS_MANY, 'OphCoTherapyapplication_FileCollection', 'collection_id',
-				'through' => 'filecollection_assignments', 'on' => 'filecollection_assignments.exceptional_side_id = ' . SplitEventTypeElement::LEFT),
+				'through' => 'filecollection_assignments', 'on' => 'filecollection_assignments.exceptional_side_id = ' . Eye::LEFT),
 			'right_filecollections' => array(self::HAS_MANY, 'OphCoTherapyapplication_FileCollection', 'collection_id',
-				'through' => 'filecollection_assignments', 'on' => 'filecollection_assignments.exceptional_side_id = ' . SplitEventTypeElement::RIGHT),
+				'through' => 'filecollection_assignments', 'on' => 'filecollection_assignments.exceptional_side_id = ' . Eye::RIGHT),
 		);
 	}
 
@@ -187,6 +202,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_patient_factors' => 'Patient Factors',
 			'left_patient_factor_details' => 'Patient Factor Details',
 			'left_previnterventions' => 'Previous Interventions',
+			'left_relatedinterventions' => 'Related Interventions',
 			'left_patient_expectations' => 'Patient Expectations',
 			'left_start_period_id' => 'Anticipated Start Date',
 			'left_urgency_reason' => 'State clinical reason for urgency',
@@ -204,6 +220,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'right_patient_factors' => 'Patient Factors',
 			'right_patient_factor_details' => 'Patient Factor Details',
 			'right_previnterventions' => 'Previous Interventions',
+			'right_relatedinterventions' => 'Related Interventions',
 			'right_patient_expectations' => 'Patient Expectations',
 			'right_start_period_id' => 'Anticipated Start Date',
 			'right_urgency_reason' => 'State clinical reason for urgency',
@@ -261,17 +278,26 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 
 	protected function afterValidate()
 	{
-		foreach (array('left', 'right') as $side) {
-			foreach ($this->{$side . '_previnterventions'} as $i => $prev) {
-				if (!$prev->validate()) {
-					foreach ($prev->getErrors() as $fld => $err) {
-						$this->addError($side . '_previntervention', 'Right previous intervention (' .($i+1) . '): ' . implode(', ', $err) );
+		foreach (array('left' => 'hasLeft', 'right' => 'hasRight') as $side => $checkFunc) {
+			if ($this->$checkFunc()) {
+				foreach ($this->{$side . '_previnterventions'} as $i => $prev) {
+					if (!$prev->validate()) {
+						foreach ($prev->getErrors() as $fld => $err) {
+							$this->addError($side . '_previntervention', ucfirst($side) . ' previous intervention (' .($i+1) . '): ' . implode(', ', $err) );
+						}
+					}
+				}
+				foreach ($this->{$side . '_relatedinterventions'} as $i => $related) {
+					if (!$related->validate()) {
+						foreach ($related->getErrors() as $fld => $err) {
+							$this->addError($side . '_relatedintervention', ucfirst($side) . ' related intervention (' .($i+1) . '): ' . implode(', ', $err) );
+						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * get list of valid standard interventions for this element on the given side
 	 *
@@ -406,12 +432,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			}
 		}
 	}
-	
+
 	/**
 	 * validates attribute if there is standard intervention and it is not being used
-	 * 
+	 *
 	 * @param string $attribute
-	 * @param array $params 
+	 * @param array $params
 	 */
 	public function requiredIfStandardInterventionNotUsed($attribute, $params)
 	{
@@ -423,7 +449,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			}
 		}
 	}
-	
+
 	public function requiredIfPatientFactors($attribute, $params)
 	{
 		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
@@ -486,12 +512,13 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
-	 * set the previous interventions for the specified side
+	 * set the past interventions for the specified side and type
 	 *
 	 * @param integer $side - SplitEventTypeElement::LEFT or SplitEventTypeElement::RIGHT
 	 * @param array $interventions - array of arrays(treatment_id, stopreason_id, (optional) id)
+	 * @param boolean $related
 	 */
-	public function updatePreviousInterventions($side, $interventions)
+	protected function updatePastInterventions($side, $interventions, $related = false)
 	{
 		$curr_by_id = array();
 		$save = array();
@@ -500,7 +527,14 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		// that might have taken place for the purposes of validation
 		// TODO: when looking at OE-2927 it might be better if we update the interventions in a different way
 		// where the changes are stored when set for validation, and then afterSave is used to do the actual database changes
-		foreach ($this->previnterventions as $curr) {
+		if ($related) {
+			$curr_objs = $this->relatedinterventions;
+		}
+		else {
+			$curr_objs = $this->previnterventions;
+		}
+
+		foreach ($curr_objs as $curr) {
 			if ($curr->exceptional_side_id == $side) {
 				$curr_by_id[$curr->id] = $curr;
 			}
@@ -512,8 +546,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 				$save[] = $curr_by_id[$intervention['id']];
 				unset($curr_by_id[$intervention['id']]);
 			} else {
-				$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention();
+				$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
 				$prev->attributes = $intervention;
+				$prev->is_related = $related;
 				$prev->exceptional_id = $this->id;
 				$prev->exceptional_side_id = $side;
 				$save[] = $prev;
@@ -529,7 +564,17 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		}
 	}
 
-	/*
+	public function updatePreviousInterventions($side, $interventions)
+	{
+		$this->updatePastInterventions($side, $interventions, false);
+	}
+
+	public function updateRelatedInterventions($side, $interventions)
+	{
+		$this->updatePastInterventions($side, $interventions, true);
+	}
+
+	/**
 	 * update the file collections to support the exceptional circumstances of this application for the given side
 	 *
 	 * @param int $side - Eye::LEFT or Eye::RIGHT

@@ -399,9 +399,8 @@ function OphCoTherapyapplication_ExceptionalCircumstances_check(side) {
 	}
 }
 
-
-function OphCoTherapyapplication_previntervention_getNextKey(side) {
-	var keys = $('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .previousintervention').map(function(index, el) {
+function OphCoTherapyapplication_pastintervention_getNextKey(cls, side) {
+	var keys = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+ '_'+cls+' .pastintervention').map(function(index, el) {
 		return parseInt($(el).attr('data-key'));
 	}).get();
 	// ensure we start at zero
@@ -412,13 +411,36 @@ function OphCoTherapyapplication_previntervention_getNextKey(side) {
 function OphCoTherapyapplication_addPrevintervention(side) {
 	var template = $('#previntervention_template').html();
 	var data = {
-		"key" : OphCoTherapyapplication_previntervention_getNextKey(side),
+		"key" : OphCoTherapyapplication_pastintervention_getNextKey('previnterventions', side),
 		"side" : side,
 	};
 	var form = Mustache.render(template, data);
 	var container = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_' + side + '_previnterventions .previntervention-container');
 	container.append(form);
-	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_previnterventions_" + data.key + "_treatment_date").datepicker({
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_previnterventions_" + data.key + "_start_date").datepicker({
+		'maxDate': 'today',
+		'showAnim': 'fold',
+		'dateFormat': nhs_date_format});
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_previnterventions_" + data.key + "_end_date").datepicker({
+		'maxDate': 'today',
+		'showAnim': 'fold',
+		'dateFormat': nhs_date_format});
+}
+
+function OphCoTherapyapplication_addRelatedintervention(side) {
+	var template = $('#relatedintervention_template').html();
+	var data = {
+		"key" : OphCoTherapyapplication_pastintervention_getNextKey('relatedinterventions', side),
+		"side" : side,
+	};
+	var form = Mustache.render(template, data);
+	var container = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_' + side + '_relatedinterventions .relatedintervention-container');
+	container.append(form);
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_relatedinterventions_" + data.key + "_start_date").datepicker({
+		'maxDate': 'today',
+		'showAnim': 'fold',
+		'dateFormat': nhs_date_format});
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_relatedinterventions_" + data.key + "_end_date").datepicker({
 		'maxDate': 'today',
 		'showAnim': 'fold',
 		'dateFormat': nhs_date_format});
@@ -593,8 +615,8 @@ $(document).ready(function() {
 	});
 
 	// Manage previous interventions in exceptional circumstances element
-	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePrevintervention', 'click', function(e) {
-		$(this).closest('.previousintervention').remove();
+	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePastintervention', 'click', function(e) {
+		$(this).closest('.pastintervention').remove();
 		e.preventDefault();
 	});
 
@@ -603,6 +625,13 @@ $(document).ready(function() {
 		OphCoTherapyapplication_addPrevintervention(side);
 		e.preventDefault();
 	});
+
+	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .addRelatedintervention', 'click', function(e) {
+		var side = getSplitElementSide($(this));
+		OphCoTherapyapplication_addRelatedintervention(side);
+		e.preventDefault();
+	});
+
 
 	$(this).delegate('.stop-reasons', 'change', function(e) {
 		var is_other = false;

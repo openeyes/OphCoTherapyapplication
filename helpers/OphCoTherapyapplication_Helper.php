@@ -76,7 +76,6 @@ class OphCoTherapyapplication_Helper {
 	{
 		if ($this->_va_list_for_form == null) {
 			$res = array();
-			error_log(print_r($this->getVAList(), true));
 			foreach ($this->getVAList() as $v) {
 				$res[$v] = $v;
 			}

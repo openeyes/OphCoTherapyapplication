@@ -81,11 +81,26 @@
 		<div class="data">
 		<?php
 			foreach ($element->{$side . '_previnterventions'} as $previntervention) {
-				$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention', array(
-					'previntervention' => $previntervention,
+				$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+					'pastintervention' => $previntervention,
 				));
 			}
 		?>
+		</div>
+	</div>
+<?php } ?>
+
+<?php if ($element->{$side . '_relatedinterventions'}) { ?>
+	<div class="eventDetail aligned">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_relatedinterventions') ?>:</div>
+		<div class="data">
+			<?php
+			foreach ($element->{$side . '_relatedinterventions'} as $relatedintervention) {
+				$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+						'pastintervention' => $relatedintervention,
+					));
+			}
+			?>
 		</div>
 	</div>
 <?php } ?>

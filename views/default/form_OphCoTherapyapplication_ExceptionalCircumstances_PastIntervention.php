@@ -19,7 +19,12 @@
 ?>
 
 <?php
-$name_stub = $element_name . '[' . $side . '_previnterventions]';
+$name_stub = $element_name . '[' . $side;
+if ($pastintervention->is_related) {
+	$name_stub .= '_relatedinterventions]';
+} else {
+	$name_stub .= '_previnterventions]';
+}
 $all_treatments = OphCoTherapyapplication_Treatment::model()->findAll();
 $show_stop_other = false;
 if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions']) {
@@ -32,7 +37,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 		}
 	}
 } else {
-	if ($previntervention->stopreason && $previntervention->stopreason->other) {
+	if ($pastintervention->stopreason && $pastintervention->stopreason->other) {
 		$show_stop_other = true;
 	}
 }
@@ -44,16 +49,16 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 
 ?>
 
-<div class="previousintervention" data-key="<?php echo $key ?>">
-	<a class="removePrevintervention removeElementForm" href="#">Remove</a>
-	<?php if ($previntervention && $previntervention->id) { ?>
+<div class="pastintervention" data-key="<?php echo $key ?>">
+	<a class="removePastintervention removeElementForm" href="#">Remove</a>
+	<?php if ($pastintervention && $pastintervention->id) { ?>
 		<input type="hidden"
 			name="<?php echo $name_stub; ?>[<?php echo $key ?>][id]"
-			value="<?php echo $previntervention->id?>" />
+			value="<?php echo $pastintervention->id?>" />
 	<?php } ?>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('start_date'); ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('start_date'); ?></div>
 		<div class="data">
 			<?php
 				$d_name = $name_stub . "[$key][start_date]";
@@ -61,7 +66,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 
 				// using direct widget call to allow custom name for the field
 				$form->widget('application.widgets.DatePicker',array(
-					'element' => $previntervention,
+					'element' => $pastintervention,
 					'name' => $d_name,
 					'field' => 'start_date',
 					'options' => array('maxDate' => 'today'),
@@ -71,7 +76,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('end_date'); ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('end_date'); ?></div>
 		<div class="data">
 			<?php
 			$d_name = $name_stub . "[$key][end_date]";
@@ -79,7 +84,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 
 			// using direct widget call to allow custom name for the field
 			$form->widget('application.widgets.DatePicker',array(
-					'element' => $previntervention,
+					'element' => $pastintervention,
 					'name' => $d_name,
 					'field' => 'end_date',
 					'options' => array('maxDate' => 'today'),
@@ -87,39 +92,39 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 			?>
 		</div>
 	</div>
-	
+
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id');?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('treatment_id');?></div>
 		<div class="data">
 	<?php
-	echo CHtml::activeDropDownList($previntervention, 'treatment_id', CHtml::listData($all_treatments,'id','name'),
+	echo CHtml::activeDropDownList($pastintervention, 'treatment_id', CHtml::listData($all_treatments,'id','name'),
 		array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][treatment_id]", 'nowrapper' => true));
 	?>
 		</div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('start_va');?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('start_va');?></div>
 		<div class="data">
 			<?php
-			echo CHtml::activeDropDownList($previntervention, 'start_va', $previntervention->getVaOptions(),
+			echo CHtml::activeDropDownList($pastintervention, 'start_va', $pastintervention->getVaOptions(),
 				array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][start_va]", 'nowrapper' => true));
 			?>
 		</div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('end_va');?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('end_va');?></div>
 		<div class="data">
 			<?php
-			echo CHtml::activeDropDownList($previntervention, 'end_va', $previntervention->getVaOptions(),
+			echo CHtml::activeDropDownList($pastintervention, 'end_va', $pastintervention->getVaOptions(),
 				array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][end_va]", 'nowrapper' => true));
 			?>
 		</div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id')?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('stopreason_id')?></div>
 		<div class="data">
 		<?php
 
@@ -137,7 +142,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 			);
 		}
 
-		echo CHtml::activeDropDownList($previntervention, 'stopreason_id',
+		echo CHtml::activeDropDownList($pastintervention, 'stopreason_id',
 			CHtml::listData($reasons,'id','name'),
 			$html_options);
 		 ?>
@@ -145,15 +150,15 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	</div>
 
 	<div class="<?php if (!$show_stop_other) { echo "hidden "; } ?>stop-reason-other">
-		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_other'); ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('stopreason_other'); ?></div>
 		<div class="data">
-		<?php echo CHtml::activeTextArea($previntervention, 'stopreason_other',array('name' => $name_stub . "[$key][stopreason_other]", 'rows' => 2, 'cols' => 25, 'nowrapper' => true))?>
+		<?php echo CHtml::activeTextArea($pastintervention, 'stopreason_other',array('name' => $name_stub . "[$key][stopreason_other]", 'rows' => 2, 'cols' => 25, 'nowrapper' => true))?>
 		</div>
 	</div>
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('comments')?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('comments')?></div>
 		<div class="data comments">
-		<?php echo CHtml::activeTextArea($previntervention, 'comments',array('placeholder' => 'Please provide pre and post treatment CMT', 'name' => $name_stub . "[$key][comments]", 'rows' => 3, 'cols' => 25, 'nowrapper' => true))?>
+		<?php echo CHtml::activeTextArea($pastintervention, 'comments',array('placeholder' => 'Please provide pre and post treatment CMT', 'name' => $name_stub . "[$key][comments]", 'rows' => 3, 'cols' => 25, 'nowrapper' => true))?>
 		</div>
 	</div>
 </div>

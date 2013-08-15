@@ -19,49 +19,49 @@
 ?>
 
 
-<div class="previntervention-view">
+<div class="pastintervention-view">
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('start_date'); ?>:</div>
-		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->start_date) ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('start_date'); ?>:</div>
+		<div class="data"><?php echo Helper::convertMySQL2NHS($pastintervention->start_date) ?></div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('end_date'); ?>:</div>
-		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->end_date) ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('end_date'); ?>:</div>
+		<div class="data"><?php echo Helper::convertMySQL2NHS($pastintervention->end_date) ?></div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id'); ?>:</div>
-		<div class="data"><?php echo $previntervention->treatment->drug->name ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('treatment_id'); ?>:</div>
+		<div class="data"><?php echo $pastintervention->treatment->drug->name ?></div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('start_va'); ?>:</div>
-		<div class="data"><?php echo $previntervention->start_va ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('start_va'); ?>:</div>
+		<div class="data"><?php echo $pastintervention->start_va ?></div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('end_va'); ?>:</div>
-		<div class="data"><?php echo $previntervention->end_va ?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('end_va'); ?>:</div>
+		<div class="data"><?php echo $pastintervention->end_va ?></div>
 	</div>
 
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id'); ?>:</div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('stopreason_id'); ?>:</div>
 		<div class="data">
-			<?php if ($previntervention->stopreason_other) {
-				echo $previntervention->stopreason_other;
+			<?php if ($pastintervention->stopreason_other) {
+				echo $pastintervention->stopreason_other;
 			} else {
-				echo $previntervention->stopreason->name;
+				echo $pastintervention->stopreason->name;
 			} ?>
 		</div>
 	</div>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('comments'); ?>:</div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('comments'); ?>:</div>
 		<div class="data comments">
-		<?php if ($previntervention->comments) {
-			echo $previntervention->comments;
+		<?php if ($pastintervention->comments) {
+			echo $pastintervention->comments;
 		} else {
 			echo "None";
 		}

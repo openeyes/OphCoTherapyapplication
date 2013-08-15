@@ -119,38 +119,39 @@ ul.MultiSelectList {
  Exceptional Circumstances >> Previous interventions (edit mode)
  */
 #event_content .cols2 .previntervention-container,
-#event_content .cols2 .previousintervention,
-#event_content .cols2 .previousintervention div {
+#event_content .cols2 .relatedintervention-container,
+#event_content .cols2 .pastintervention,
+#event_content .cols2 .pastintervention div {
     display: block;
 }
-#event_content .cols2 .previousintervention {
+#event_content .cols2 .pastintervention {
     background: rgba(255,255,255,0.6);
     padding: 5px;
     margin-bottom: 8px;
     border-radius: 5px;
     position: relative;
 }
-#event_content .cols2 .previousintervention > div {
+#event_content .cols2 .pastintervention > div {
     padding-bottom: 4px;
     width: 100%;
     overflow: hidden;
 }
-#event_content .cols2 .previousintervention .data {
+#event_content .cols2 .pastintervention .data {
     width: 160px;
 }
-#event_content .cols2 .previousintervention .data select,
-#event_content .cols2 .previousintervention .data.comments {
+#event_content .cols2 .pastintervention .data select,
+#event_content .cols2 .pastintervention .data.comments {
     width: 100%;
 }
-#event_content .cols2 .previousintervention .data textarea {
+#event_content .cols2 .pastintervention .data textarea {
     box-sizing: border-box;
     width: 100%;
 }
-#event_content .cols2 .previousintervention .label {
+#event_content .cols2 .pastintervention .label {
     float: left;
     width: 140px !important;
 }
-#event_content .cols2 .previousintervention .removePrevintervention {
+#event_content .cols2 .pastintervention .removePastintervention {
     position: absolute;
     right: 0;
     top: 0;
@@ -159,26 +160,26 @@ ul.MultiSelectList {
 /*
  Exceptional Circumstances >> Previous interventions (view mode)
  */
-#event_content .cols2 .previntervention-view  > div {
+#event_content .cols2 .pastintervention-view  > div {
     overflow: hidden;
     padding-bottom: 8px;
 }
-#event_content .cols2 .previntervention-view .label {
+#event_content .cols2 .pastintervention-view .label {
     float: left;
 }
-#event_content .cols2 .previntervention-view .data {
+#event_content .cols2 .pastintervention-view .data {
     float: right;
     width: 162px;
 }
-#event_content .cols2 .previntervention-view .data.comments {
+#event_content .cols2 .pastintervention-view .data.comments {
     width: 100%;
 }
-#event_content .cols2 .previntervention-view {
+#event_content .cols2 .pastintervention-view {
     margin-bottom: 10px;
     border-radius: 5px;
     background: rgba(255,255,255,0.6);
     padding: 5px;
 }
-#event_content .cols2 .previntervention-view:last-child {
+#event_content .cols2 .pastintervention-view:last-child {
     margin: 0;
 }

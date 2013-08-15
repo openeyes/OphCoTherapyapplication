@@ -39,7 +39,7 @@
  * @property OphCoTherapyapplication_StopReason $stop_reason
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -186,8 +186,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 		}
 		return $this->_va_list;
 	}
-	
-	
+
+
 	/**
 	 * validate that a reason is given if the stop reason select is of type other
 	 * @param unknown $attribute
