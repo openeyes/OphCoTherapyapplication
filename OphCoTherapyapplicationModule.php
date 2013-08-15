@@ -40,6 +40,7 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 			'OphCoTherapyapplication.models.*',
 			'OphCoTherapyapplication.components.*',
 			'OphCoTherapyapplication.services.*',
+			'OphCoTherapyapplication.helpers.*',
 			'OphTrIntravitrealinjection.models.*',
 		));
 

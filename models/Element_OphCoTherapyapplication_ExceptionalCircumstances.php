@@ -29,12 +29,14 @@
  * @property string $left_description
  * @property integer $left_patient_factors
  * @property string $left_patient_factor_details
+ * @property string $left_patient_expectations
  * @property boolean $right_standard_intervention_exists
  * @property string $right_details
  * @property integer $right_intervention_id
  * @property string $right_description
  * @property integer $right_patient_factors
  * @property string $right_patient_factor_details
+ * @property string $right_patient_expectations
  *
  * The followings are the available model relations:
  *
@@ -84,9 +86,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 					'right_patient_different, right_patient_gain, right_patient_factors, right_patient_factor_details, ' .
 					'right_start_period_id, right_urgency_reason', 'safe'),
 			array('left_standard_intervention_exists, left_patient_different, left_patient_gain, left_patient_factors,' .
-					'left_start_period_id',	'requiredIfSide', 'side' => 'left'),
+					'left_patient_expectations, left_start_period_id',	'requiredIfSide', 'side' => 'left'),
 			array('right_standard_intervention_exists, right_patient_different, right_patient_gain,  right_patient_factors,' .
-					'right_start_period_id', 'requiredIfSide', 'side' => 'right'),
+					'right_patient_expectations, right_start_period_id', 'requiredIfSide', 'side' => 'right'),
 			array('left_standard_intervention_id, left_standard_previous, left_intervention_id, left_description',
 					'requiredIfStandardInterventionExists', 'side' => 'left'),
 			array('right_standard_intervention_id, right_standard_previous, right_intervention_id, right_description',
@@ -105,11 +107,11 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, left_standard_intervention_exists, left_standard_intervention_id, left_standard_previous,' .
 					'left_condition_rare, left_incidence, left_details, left_intervention_id, left_description, left_patient_different, '.
-					'left_patient_gain, left_patient_factors, left_patient_factor_details, left_start_period_id, left_urgency_reason,' .
-					'right_standard_intervention_exists, right_standard_intervention_id, right_standard_previous,' .
-					'right_condition_rare, right_incidence, right_details, right_intervention_id, right_description, ' .
-					'right_patient_different, right_patient_gain, right_patient_factors, right_patient_factor_details,' .
-					'right_start_period_id, right_urgency_reason', 'safe', 'on' => 'search'),
+					'left_patient_gain, left_patient_factors, left_patient_factor_details, left_patient_expectations, ' .
+					'left_start_period_id, left_urgency_reason, right_standard_intervention_exists, right_standard_intervention_id,' .
+					'right_standard_previous, right_condition_rare, right_incidence, right_details, right_intervention_id,' .
+					'right_description, right_patient_different, right_patient_gain, right_patient_factors, right_patient_factor_details,' .
+					'right_patient_expectations, right_start_period_id, right_urgency_reason', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -161,7 +163,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	{
 		return array('standard_intervention_exists', 'standard_intervention_id', 'standard_previous', 'condition_rare',
 					'incidence', 'intervention_id', 'description', 'patient_different', 'patient_gain', 'patient_factors',
-					'patient_factor_details', 'start_period_id', 'urgency_reason');
+					'patient_factor_details', 'patient_expectations', 'start_period_id', 'urgency_reason');
 	}
 
 	/**
@@ -185,6 +187,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'left_patient_factors' => 'Patient Factors',
 			'left_patient_factor_details' => 'Patient Factor Details',
 			'left_previnterventions' => 'Previous Interventions',
+			'left_patient_expectations' => 'Patient Expectations',
 			'left_start_period_id' => 'Anticipated Start Date',
 			'left_urgency_reason' => 'State clinical reason for urgency',
 			'left_filecollections' => 'File Sets',
@@ -201,6 +204,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			'right_patient_factors' => 'Patient Factors',
 			'right_patient_factor_details' => 'Patient Factor Details',
 			'right_previnterventions' => 'Previous Interventions',
+			'right_patient_expectations' => 'Patient Expectations',
 			'right_start_period_id' => 'Anticipated Start Date',
 			'right_urgency_reason' => 'State clinical reason for urgency',
 			'right_filecollections' => 'File Sets',
@@ -221,9 +225,6 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
 		$criteria = new CDbCriteria;
 		//TODO: update search criteria
 		$criteria->compare('id', $this->id, true);
@@ -416,7 +417,8 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	{
 		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
 			if ($this->{$params['side'] . '_standard_intervention_exists'} && !$this->{$params['side'] . '_standard_previous'}
-				&& $this->{$params['side'] . '_intervention'}->is_deviation && !$this->$attribute) {
+				&& $this->{$params['side'] . '_intervention'} && $this->{$params['side'] . '_intervention'}->is_deviation
+				&& !$this->$attribute) {
 				$this->addError($attribute, ucfirst($params['side'])." ".$this->getAttributeLabel($attribute)." cannot be blank.");
 			}
 		}

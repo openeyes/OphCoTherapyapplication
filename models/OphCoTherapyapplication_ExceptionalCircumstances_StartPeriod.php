@@ -45,7 +45,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod extends BaseA
 		$alias = $this->getTableAlias(false);
 
 		$this->resetScope()->getDbCriteria()->mergeWith(array(
-				'order' => $alias.'display_order ASC',
+				'order' => $alias.'.display_order ASC',
 				'alias' => $alias
 			));
 		return $this;
@@ -59,11 +59,11 @@ class OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod extends BaseA
 	 */
 	public function defaultScope()
 	{
-		$alias = $this->getTableAlias(false);
+		$alias = $this->getTableAlias(false, false);
 
 		return array(
-			'order' => $alias . 'display_order ASC',
-			'condition' => $alias . 'enabled = true'
+			'order' => $alias . '.display_order ASC',
+			'condition' => $alias . '.enabled = true'
 		);
 	}
 

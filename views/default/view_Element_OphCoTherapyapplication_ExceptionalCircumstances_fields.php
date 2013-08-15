@@ -102,6 +102,11 @@
 <?php } ?>
 
 <div class="eventDetail aligned">
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_expectations') ?>:</div>
+	<div class="data"><?php echo $element->{$side . '_patient_expectations'} ?></div>
+</div>
+
+<div class="eventDetail aligned">
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_start_period_id') ?>:</div>
 	<div class="data"><?php echo $element->{$side . '_start_period'}->name ?></div>
 </div>

@@ -21,14 +21,30 @@
 
 <div class="previntervention-view">
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_date'); ?>:</div>
-		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->treatment_date) ?></div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('start_date'); ?>:</div>
+		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->start_date) ?></div>
+	</div>
+
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('end_date'); ?>:</div>
+		<div class="data"><?php echo Helper::convertMySQL2NHS($previntervention->end_date) ?></div>
 	</div>
 
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id'); ?>:</div>
 		<div class="data"><?php echo $previntervention->treatment->drug->name ?></div>
 	</div>
+
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('start_va'); ?>:</div>
+		<div class="data"><?php echo $previntervention->start_va ?></div>
+	</div>
+
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('end_va'); ?>:</div>
+		<div class="data"><?php echo $previntervention->end_va ?></div>
+	</div>
+
 
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id'); ?>:</div>

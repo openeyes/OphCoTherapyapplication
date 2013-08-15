@@ -188,6 +188,11 @@
 		<div class="data"><?php echo $form->textArea($element, $side . '_patient_factor_details', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
 	</div>
 
+	<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_expectations" class="elementField">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_expectations'); ?></div>
+		<div class="data"><?php echo $form->textArea($element, $side . '_patient_expectations', array('rows' => 4, 'cols' => 30, 'nowrapper' => true))?></div>
+	</div>
+
 	<?php
 		$posted_sp = null;
 		$urgent = false;

@@ -53,22 +53,41 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	<?php } ?>
 
 	<div>
-		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_date'); ?></div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('start_date'); ?></div>
 		<div class="data">
 			<?php
-				$d_name = $name_stub . "[$key][treatment_date]";
-				$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_treatment_date";
+				$d_name = $name_stub . "[$key][start_date]";
+				$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_start_date";
 
 				// using direct widget call to allow custom name for the field
 				$form->widget('application.widgets.DatePicker',array(
 					'element' => $previntervention,
 					'name' => $d_name,
-					'field' => 'treatment_date',
+					'field' => 'start_date',
 					'options' => array('maxDate' => 'today'),
 					'htmlOptions' => array('id' => $d_id, 'nowrapper' => true, 'style'=>'width: 90px;')));
 			?>
 		</div>
 	</div>
+
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('end_date'); ?></div>
+		<div class="data">
+			<?php
+			$d_name = $name_stub . "[$key][end_date]";
+			$d_id = preg_replace('/\[/', '_', substr($name_stub, 0, -1)) . "_". $key ."_end_date";
+
+			// using direct widget call to allow custom name for the field
+			$form->widget('application.widgets.DatePicker',array(
+					'element' => $previntervention,
+					'name' => $d_name,
+					'field' => 'end_date',
+					'options' => array('maxDate' => 'today'),
+					'htmlOptions' => array('id' => $d_id, 'nowrapper' => true, 'style'=>'width: 90px;')));
+			?>
+		</div>
+	</div>
+	
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('treatment_id');?></div>
 		<div class="data">
@@ -78,6 +97,27 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	?>
 		</div>
 	</div>
+
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('start_va');?></div>
+		<div class="data">
+			<?php
+			echo CHtml::activeDropDownList($previntervention, 'start_va', $previntervention->getVaOptions(),
+				array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][start_va]", 'nowrapper' => true));
+			?>
+		</div>
+	</div>
+
+	<div>
+		<div class="label"><?php echo $previntervention->getAttributeLabel('end_va');?></div>
+		<div class="data">
+			<?php
+			echo CHtml::activeDropDownList($previntervention, 'end_va', $previntervention->getVaOptions(),
+				array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][end_va]", 'nowrapper' => true));
+			?>
+		</div>
+	</div>
+
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('stopreason_id')?></div>
 		<div class="data">
@@ -113,7 +153,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 	<div>
 		<div class="label"><?php echo $previntervention->getAttributeLabel('comments')?></div>
 		<div class="data comments">
-		<?php echo CHtml::activeTextArea($previntervention, 'comments',array('name' => $name_stub . "[$key][comments]", 'rows' => 3, 'cols' => 25, 'nowrapper' => true))?>
+		<?php echo CHtml::activeTextArea($previntervention, 'comments',array('placeholder' => 'Please provide pre and post treatment CMT', 'name' => $name_stub . "[$key][comments]", 'rows' => 3, 'cols' => 25, 'nowrapper' => true))?>
 		</div>
 	</div>
 </div>

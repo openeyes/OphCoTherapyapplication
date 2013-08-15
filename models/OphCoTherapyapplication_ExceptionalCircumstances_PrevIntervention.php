@@ -23,8 +23,11 @@
  * @property string $id
  * @property integer $exceptional_id
  * @property integer $exceptional_side_id
- * @property date $treatment_date
+ * @property date $start_date
+ * @property date $end_date
  * @property integer $treatment_id
+ * @property string $start_va
+ * @property string $end_va
  * @property integer $stopreason_id
  * @property string $stopreason_other
  * @property string $comments
@@ -63,12 +66,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('treatment_date, treatment_id, stopreason_id, stopreason_other, comments', 'safe'),
-			array('treatment_date, treatment_id, stopreason_id', 'required'),
+			array('start_date, end_date, treatment_id, start_va, end_va, stopreason_id, stopreason_other, comments', 'safe'),
+			array('start_date, end_date, treatment_id, start_va, end_va, stopreason_id', 'required'),
 			array('stopreason_other', 'requiredIfStopReasonIsOther'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, treatment_date, treatment_id, stopreason_id, stopreason_other, comments', 'safe', 'on' => 'search'),
+			array('id, start_date, end_date, treatment_id, start_va, end_va, stopreason_id, stopreason_other, comments', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -93,8 +96,11 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 	{
 		return array(
 			'id' => 'ID',
-			'treatment_date' => 'Date',
+			'start_date' => 'Start date',
+			'end_date' => 'End date',
 			'treatment_id' => 'Treatment',
+			'start_va' => 'Pre treatment VA',
+			'end_va' => 'Post treatment VA',
 			'stopreason_id' => 'Reason for stopping',
 			'stopreason_other' => 'Please describe the reason for stopping',
 			'comments' => 'Comments'
@@ -107,14 +113,17 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('date', $this->date, true);
+		$criteria->compare('start_date', $this->start_date, true);
+		$criteria->compare('end_date', $this->end_date, true);
+		$criteria->compare('treatment_id', $this->treatment_id, true);
+		$criteria->compare('start_va', $this->start_va, true);
+		$criteria->compare('end_va', $this->end_va, true);
+		$criteria->compare('stopreason_id', $this->stopreason_id, true);
+		$criteria->compare('stopreason_other', $this->stopreason_other, true);
+		$criteria->compare('comments', $this->comments, true);
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
@@ -142,6 +151,42 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 	{
 		return parent::beforeValidate();
 	}
+
+	// internal store of valid va values that can be selected for start and end VA
+	protected $_va_list = null;
+
+	/**
+	 * gets the valid VA values for use in a form.
+	 *
+	 * @return array key, value pair list
+	 */
+	public function getVaOptions()
+	{
+		if (is_null($this->_va_list)) {
+			$va_list = OphCoTherapyapplication_Helper::getInstance()->getVaListForForm();
+			if (!$this->isNewRecord) {
+				$start_seen = false;
+				$end_seen = false;
+				foreach ($va_list as $key => $val) {
+					if ($this->start_va == $key) {
+						$start_seen = true;
+					}
+					if ($this->end_va == $key) {
+						$end_seen = true;
+					}
+				}
+				if (!$start_seen) {
+					$va_list[] = array($this->start_va => $this->start_va);
+				}
+				if (!$end_seen) {
+					$va_list[] = array($this->end_va => $this->end_va);
+				}
+			}
+			$this->_va_list = $va_list;
+		}
+		return $this->_va_list;
+	}
+	
 	
 	/**
 	 * validate that a reason is given if the stop reason select is of type other
@@ -154,7 +199,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention extends 
 			$this->addError($attribute, $this->getAttributeLabel($attribute)." is required when stop reason is set to " . $this->stopreason->name);
 		}
 	}
-	
+
+	/**
+	 * get the text for the stopping reason for this treatment
+	 *
+	 * @return string
+	 */
 	public function getStopReasonText() {
 		if ($this->stopreason) {
 			if ($this->stopreason->other) {
