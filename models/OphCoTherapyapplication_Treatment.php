@@ -64,7 +64,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	{
 		return 'ophcotherapya_treatment';
 	}
-	
+
 	/**
 	* scope to get all records including those marked as unavailable
 	*
@@ -72,17 +72,17 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	public function allScope()
 	{
 		$alias = $this->getTableAlias(false);
-	
+
 		$this->resetScope()->getDbCriteria()->mergeWith(array(
 				'with' => array("drug"),
 				'order' => 'drug.display_order ASC',
 		));
 		return $this;
 	}
-	
+
 	/**
 	 * only return those where the drug is available
-	 * 
+	 *
 	 * (non-PHPdoc)
 	 * @see CActiveRecord::defaultScope()
 	 */
@@ -91,6 +91,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return array(
 				'with' => array("drug"),
 				'order' => 'drug.display_order ASC',
+				'together' => true,
 				'condition' => 'drug.available = true'
 		);
 	}
@@ -194,10 +195,10 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		}
 		return $this->intervention_name;
 	}
-	
+
 	/**
 	 * return a list of treatment drugs for use in admin
-	 * 
+	 *
 	 * @return OphTrIntravitrealinjection_Treatment_Drug[]
 	 */
 	public function getTreatmentDrugs()
@@ -211,12 +212,12 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 				}
 				$drug_array[] = $drug;
 			}
-			
+
 			$drugs[] = $this->drug;
 		}
 		return $drugs;
 	}
-	
+
 	public function getDisplayCost()
 	{
 		return $this->cost . " per "  . $this->cost_type->name;

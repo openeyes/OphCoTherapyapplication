@@ -52,7 +52,7 @@ class OphCoTherapyapplication_API extends BaseAPI
 
 			$criteria->addInCondition('eye_id', $eye_ids);
 
-			if ($suit = Element_OphCoTherapyapplication_PatientSuitability::model()->with('event', $side . '_treatment', $side . '_treatment.drug')->find($criteria)) {
+			if ($suit = Element_OphCoTherapyapplication_PatientSuitability::model()->with('event', $side . '_treatment')->find($criteria)) {
 				return $suit->{$side . '_treatment'}->drug;
 			}
 
