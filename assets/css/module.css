@@ -119,7 +119,7 @@ ul.MultiSelectList {
  Exceptional Circumstances >> Previous interventions (edit mode)
  */
 #event_content .cols2 .previntervention-container,
-#event_content .cols2 .relatedintervention-container,
+#event_content .cols2 .relevantintervention-container,
 #event_content .cols2 .pastintervention,
 #event_content .cols2 .pastintervention div {
     display: block;

@@ -90,14 +90,14 @@
 	</div>
 <?php } ?>
 
-<?php if ($element->{$side . '_relatedinterventions'}) { ?>
+<?php if ($element->{$side . '_relevantinterventions'}) { ?>
 	<div class="eventDetail aligned">
-		<div class="label"><?php echo $element->getAttributeLabel($side . '_relatedinterventions') ?>:</div>
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_relevantinterventions') ?>:</div>
 		<div class="data">
 			<?php
-			foreach ($element->{$side . '_relatedinterventions'} as $relatedintervention) {
+			foreach ($element->{$side . '_relevantinterventions'} as $relevantintervention) {
 				$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
-						'pastintervention' => $relatedintervention,
+						'pastintervention' => $relevantintervention,
 					));
 			}
 			?>

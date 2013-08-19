@@ -28,6 +28,7 @@
  * @property integer $treatment_id
  * @property string $start_va
  * @property string $end_va
+ * @property boolean $is_relevant
  * @property integer $stopreason_id
  * @property string $stopreason_other
  * @property string $comments
@@ -36,7 +37,7 @@
  *
  * @property Element_OphCoTherapyapplication_ExceptionalCircumstances $exceptionalcircumstances
  * @property OphCoTherapyapplication_Treatment $treatment
- * @property OphCoTherapyapplication_StopReason $stop_reason
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason $stop_reason
  */
 
 class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecord
@@ -55,7 +56,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	 */
 	public function tableName()
 	{
-		return 'ophcotherapya_exceptional_previntervention';
+		return 'ophcotherapya_exceptional_pastintervention';
 	}
 
 	/**
@@ -85,7 +86,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		return array(
 			'exceptionalcircumstances' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'circumstances_id'),
 			'treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'treatment_id'),
-			'stopreason' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason', 'stopreason_id'),
+			'stopreason' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason', 'stopreason_id'),
 		);
 	}
 

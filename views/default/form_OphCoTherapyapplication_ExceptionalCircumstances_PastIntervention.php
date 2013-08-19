@@ -20,17 +20,18 @@
 
 <?php
 $name_stub = $element_name . '[' . $side;
-if ($pastintervention->is_related) {
-	$name_stub .= '_relatedinterventions]';
+if ($pastintervention->is_relevant) {
+	$inttype_name = '_relevantinterventions';
 } else {
-	$name_stub .= '_previnterventions]';
+	$inttype_name = '_previnterventions';
 }
+$name_stub .= $inttype_name . ']';
 $all_treatments = OphCoTherapyapplication_Treatment::model()->findAll();
 $show_stop_other = false;
-if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions']) {
-	if (@$_POST[$element_name][$side . '_previnterventions'][$key]) {
-		if ($stop_id = $_POST[$element_name][$side . '_previnterventions'][$key]['stopreason_id']) {
-			$stopreason = OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findByPk((int)$stop_id);
+if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name]) {
+	if (@$_POST[$element_name][$side . $inttype_name][$key]) {
+		if ($stop_id = $_POST[$element_name][$side . $inttype_name][$key]['stopreason_id']) {
+			$stopreason = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->findByPk((int)$stop_id);
 			if ($stopreason->other) {
 				$show_stop_other = true;
 			}
@@ -128,7 +129,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . '_previnterventions
 		<div class="data">
 		<?php
 
-		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason::model()->findAll();
+		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->findAll();
 		$html_options = array(
 				'class' => 'stop-reasons',
 				'empty' => '- Please select -',

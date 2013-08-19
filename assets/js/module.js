@@ -427,20 +427,20 @@ function OphCoTherapyapplication_addPrevintervention(side) {
 		'dateFormat': nhs_date_format});
 }
 
-function OphCoTherapyapplication_addRelatedintervention(side) {
-	var template = $('#relatedintervention_template').html();
+function OphCoTherapyapplication_addRelevantintervention(side) {
+	var template = $('#relevantintervention_template').html();
 	var data = {
-		"key" : OphCoTherapyapplication_pastintervention_getNextKey('relatedinterventions', side),
+		"key" : OphCoTherapyapplication_pastintervention_getNextKey('relevantinterventions', side),
 		"side" : side,
 	};
 	var form = Mustache.render(template, data);
-	var container = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_' + side + '_relatedinterventions .relatedintervention-container');
+	var container = $('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_' + side + '_relevantinterventions .relevantintervention-container');
 	container.append(form);
-	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_relatedinterventions_" + data.key + "_start_date").datepicker({
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_relevantinterventions_" + data.key + "_start_date").datepicker({
 		'maxDate': 'today',
 		'showAnim': 'fold',
 		'dateFormat': nhs_date_format});
-	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_relatedinterventions_" + data.key + "_end_date").datepicker({
+	$("#Element_OphCoTherapyapplication_ExceptionalCircumstances_" + side + "_relevantinterventions_" + data.key + "_end_date").datepicker({
 		'maxDate': 'today',
 		'showAnim': 'fold',
 		'dateFormat': nhs_date_format});
@@ -626,9 +626,9 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
-	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .addRelatedintervention', 'click', function(e) {
+	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .addRelevantintervention', 'click', function(e) {
 		var side = getSplitElementSide($(this));
-		OphCoTherapyapplication_addRelatedintervention(side);
+		OphCoTherapyapplication_addRelevantintervention(side);
 		e.preventDefault();
 	});
 

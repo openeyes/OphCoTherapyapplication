@@ -267,7 +267,7 @@ class DefaultController extends BaseEventTypeController
 	 */
 	private function _POSTPastinterventions($element, $side)
 	{
-		foreach (array('_previnterventions' => 'false', '_relatedinterventions' => 'true') as $past_type => $is_related) {
+		foreach (array('_previnterventions' => 'false', '_relevantinterventions' => 'true') as $past_type => $is_relevant) {
 			if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type]) ) {
 				$pastinterventions = array();
 				foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type] as $idx => $attributes) {
@@ -281,7 +281,7 @@ class DefaultController extends BaseEventTypeController
 					} else {
 						$past->exceptional_side_id = SplitEventTypeElement::RIGHT;
 					}
-					$past->is_related = $is_related;
+					$past->is_relevant = $is_relevant;
 
 					$pastinterventions[] = $past;
 				}
@@ -366,9 +366,9 @@ class DefaultController extends BaseEventTypeController
 							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) ?
 							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) :
 							array());
-					$el->updateRelatedInterventions($side_id,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relatedinterventions']) ?
-							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relatedinterventions']) :
+					$el->updateRelevantInterventions($side_id,
+						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) ?
+							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) :
 							array());
 					$el->updateFileCollections($side_id,
 							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections']) ?

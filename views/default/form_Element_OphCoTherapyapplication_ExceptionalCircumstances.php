@@ -67,10 +67,10 @@
 	));
 	?>
 </script>
-<script id="relatedintervention_template" type="text/html">
+<script id="relevantintervention_template" type="text/html">
 	<?php
 	$pastintervention = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
-	$pastintervention->is_related = true;
+	$pastintervention->is_relevant = true;
 	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
 			'key' => '{{key}}',
 			'side' => '{{side}}',

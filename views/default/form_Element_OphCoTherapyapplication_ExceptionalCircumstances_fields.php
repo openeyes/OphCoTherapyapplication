@@ -22,7 +22,7 @@
 		// Getting flags together for determining which elements to show
 		$need_reason = false;
 		$previnterventions = array();
-		$relatedinterventions = array();
+		$relevantinterventions = array();
 		if (@$_POST[get_class($element)]) {
 			$exists = $_POST[get_class($element)][$side . '_standard_intervention_exists'];
 			$intervention_id = $_POST[get_class($element)][$side . '_intervention_id'];
@@ -38,16 +38,16 @@
 				foreach ($_POST[get_class($element)][$side . '_previnterventions'] as $attrs) {
 					$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
 					$prev->attributes = $attrs;
-					$prev->is_related = false;
+					$prev->is_relevant = false;
 					$previnterventions[] = $prev;
 				}
 			}
-			if (isset($_POST[get_class($element)][$side . '_relatedinterventions'])) {
-				foreach ($_POST[get_class($element)][$side . '_relatedinterventions'] as $attrs) {
+			if (isset($_POST[get_class($element)][$side . '_relevantinterventions'])) {
+				foreach ($_POST[get_class($element)][$side . '_relevantinterventions'] as $attrs) {
 					$past = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
 					$past->attributes = $attrs;
-					$past->is_related = true;
-					$relatedinterventions[] = $past;
+					$past->is_relevant = true;
+					$relevantinterventions[] = $past;
 				}
 			}
 			$patient_factors = $_POST[get_class($element)][$side . '_patient_factors'];
@@ -56,7 +56,7 @@
 			$intervention_id = $element->{$side . '_intervention_id'};
 			$need_reason = $element->needDeviationReasonForSide($side);
 			$previnterventions = $element->{$side . '_previnterventions'};
-			$relatedinterventions = $element->{$side . '_relatedinterventions'};
+			$relevantinterventions = $element->{$side . '_relevantinterventions'};
 			$patient_factors = $element->{$side . '_patient_factors'};
 		}
 	?>
@@ -189,16 +189,16 @@
 		</div>
 	</div>
 
-	<div class="elementField" id="div_<?php echo get_class($element) . "_" . $side; ?>_relatedinterventions">
-		<div class="label"><?php echo $element->getAttributeLabel($side . '_relatedinterventions') ?></div>
+	<div class="elementField" id="div_<?php echo get_class($element) . "_" . $side; ?>_relevantinterventions">
+		<div class="label"><?php echo $element->getAttributeLabel($side . '_relevantinterventions') ?></div>
 		<div class="data">
-			<div class="relatedintervention-container">
+			<div class="relevantintervention-container">
 				<?php
 				$key = 0;
-				foreach ($relatedinterventions as $related) {
+				foreach ($relevantinterventions as $relevant) {
 					$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
 							'key' => $key,
-							'pastintervention' => $related,
+							'pastintervention' => $relevant,
 							'side' => $side,
 							'element_name' => get_class($element),
 							'form' => $form,
@@ -207,7 +207,7 @@
 				}
 				?>
 			</div>
-			<button class="addRelatedintervention classy green mini" type="button">
+			<button class="addRelevantintervention classy green mini" type="button">
 				<span class="button-span button-span-green">Add</span>
 			</button>
 		</div>

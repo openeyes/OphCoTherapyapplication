@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReason extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -33,16 +33,16 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention_StopReas
 	 */
 	public function tableName()
 	{
-		return 'ophcotherapya_exceptional_previntervention_stopreason';
+		return 'ophcotherapya_exceptional_pastintervention_stopreason';
 	}
-	
+
 	public function defaultScope()
 	{
 		return array(
-			'order' => 'display_order ASC'	
+			'order' => 'display_order ASC'
 		);
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
