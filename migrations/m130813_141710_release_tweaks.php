@@ -15,7 +15,7 @@ class m130813_141710_release_tweaks extends CDbMigration
 		$this->addColumn('ophcotherapya_exceptional_previntervention', 'end_date', 'datetime NOT NULL');
 		$this->addColumn('ophcotherapya_exceptional_previntervention', 'is_relevant', 'boolean NOT NULL DEFAULT false');
 		$this->renameTable('ophcotherapya_exceptional_previntervention', 'ophcotherapya_exceptional_pastintervention');
-		$this->renameTable('ophcotherapya_relevanttreatment', 'ophcotherapya_exceptional_pastintervention_stopreason');
+		$this->renameTable('ophcotherapya_exceptional_previntervention_stopreason', 'ophcotherapya_exceptional_pastintervention_stopreason');
 
 		$this->createTable('ophcotherapya_relevanttreatment', array(
 			'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
@@ -56,7 +56,7 @@ class m130813_141710_release_tweaks extends CDbMigration
 		$this->dropForeignKey('ophcotherapya_pastintervention_rtui_fk', 'ophcotherapya_exceptional_pastintervention');
 		$this->dropColumn('ophcotherapya_exceptional_pastintervention', 'relevanttreatment_id');
 		$this->dropTable('ophcotherapya_relevanttreatment');
-		$this->renameTable('ophcotherapya_exceptional_pastintervention_stopreason', 'ophcotherapya_relevanttreatment');
+		$this->renameTable('ophcotherapya_exceptional_pastintervention_stopreason', 'ophcotherapya_exceptional_previntervention_stopreason');
 		$this->renameTable('ophcotherapya_exceptional_pastintervention', 'ophcotherapya_exceptional_previntervention');
 		$this->dropColumn('ophcotherapya_exceptional_previntervention', 'is_relevant');
 		$this->dropColumn('ophcotherapya_exceptional_previntervention', 'end_date');
