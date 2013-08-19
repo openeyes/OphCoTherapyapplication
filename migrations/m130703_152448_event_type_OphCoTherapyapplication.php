@@ -558,11 +558,9 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_exceptional_startperiod_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'Routine', 'display_order'=>1));
-		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'Two months', 'display_order'=>2));
-		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'One month', 'urgent' => true, 'display_order'=>3));
-		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'Two weeks', 'urgent' => true, 'display_order'=>4));
-		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'Immediate quality of life sustaining measures', 'urgent' => true, 'display_order'=>5));
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'4 weeks', 'display_order'=>1));
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'2 weeks', 'urgent' => true, 'display_order'=>2));
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'1 week', 'urgent' => true, 'display_order'=>3));
 
 		// create the table for this element type: Element_OphCoTherapyapplication_ExceptionalCircumstances
 		$this->createTable('et_ophcotherapya_exceptional', array(

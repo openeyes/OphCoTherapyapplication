@@ -47,6 +47,28 @@ class m130813_141710_release_tweaks extends CDbMigration
 		$this->addColumn('ophcotherapya_exceptional_pastintervention', 'relevanttreatment_other', 'varchar(255)');
 		$this->alterColumn('ophcotherapya_exceptional_pastintervention', 'treatment_id', 'int(10) unsigned');
 
+		$this->addColumn('ophcotherapya_exceptional_startperiod', 'application_description', 'varchar(511)');
+
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'Routine', 'display_order'=>1,
+				'application_description' => 'IFR request for planned/elective treatment'));
+
+		$this->insert('ophcotherapya_exceptional_startperiod',array('name'=>'Two months', 'display_order'=>2,
+				'application_description' => 'IFR request for treatment where the patient requires a funding decision within two months'));
+
+		$this->update('ophcotherapya_exceptional_startperiod', array(
+				'application_description' => 'IFR request for treatment where the patient requires a funding decision within one month',
+				'display_order' => 3, 'name' => '1 month'), 'name = :nm', array(':nm' => '4 weeks')
+		);
+		$this->update('ophcotherapya_exceptional_startperiod', array(
+				'application_description' => 'IFR request for treatment where the patient requires a funding decision within two weeks',
+				'display_order' => 4), 'name = :nm', array(':nm' => '2 weeks')
+		);
+		$this->update('ophcotherapya_exceptional_startperiod', array(
+				'application_description' => 'IFR for patients whose condition requires immediate life/quality of life sustaining measures',
+				'display_order' => 5, 'name' => 'Immediate quality of life sustaining measures'), 'name = :nm', array(':nm' => '1 week')
+		);
+
+
 	}
 
 	public function down()
