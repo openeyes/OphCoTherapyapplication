@@ -632,11 +632,10 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
-
-	$(this).delegate('.stop-reasons', 'change', function(e) {
+	function getOther(el) {
 		var is_other = false;
-		var selVal = $(this).val();
-		$(this).find('option').each(function() {
+		var selVal = el.val();
+		el.find('option').each(function() {
 			if (selVal == $(this).val()) {
 				if ($(this).data('other') == '1') {
 					is_other = true;
@@ -644,11 +643,28 @@ $(document).ready(function() {
 				}
 			}
 		});
+		return is_other;
+	}
+
+	$(this).delegate('.stop-reasons', 'change', function(e) {
+		var is_other = getOther($(this));
+
 		if (is_other) {
-			$(this).parents('.previousintervention').find('.stop-reason-other').removeClass('hidden');
+			$(this).parents('.pastintervention').find('.stop-reason-other').removeClass('hidden');
 		}
 		else {
-			$(this).parents('.previousintervention').find('.stop-reason-other').addClass('hidden');
+			$(this).parents('.pastintervention').find('.stop-reason-other').addClass('hidden');
+		}
+	});
+
+	$(this).delegate('.past-treatments', 'change', function(e) {
+		var is_other = getOther($(this));
+
+		if (is_other) {
+			$(this).parents('.pastintervention').find('.treatment-other').removeClass('hidden');
+		}
+		else {
+			$(this).parents('.pastintervention').find('.treatment-other').addClass('hidden');
 		}
 	});
 

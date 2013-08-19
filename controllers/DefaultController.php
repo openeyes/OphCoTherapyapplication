@@ -267,7 +267,7 @@ class DefaultController extends BaseEventTypeController
 	 */
 	private function _POSTPastinterventions($element, $side)
 	{
-		foreach (array('_previnterventions' => 'false', '_relevantinterventions' => 'true') as $past_type => $is_relevant) {
+		foreach (array('_previnterventions' => false, '_relevantinterventions' => true) as $past_type => $is_relevant) {
 			if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type]) ) {
 				$pastinterventions = array();
 				foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type] as $idx => $attributes) {

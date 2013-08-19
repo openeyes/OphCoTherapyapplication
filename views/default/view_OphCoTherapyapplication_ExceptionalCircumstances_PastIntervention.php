@@ -32,7 +32,7 @@
 
 	<div>
 		<div class="label"><?php echo $pastintervention->getAttributeLabel('treatment_id'); ?>:</div>
-		<div class="data"><?php echo $pastintervention->treatment->drug->name ?></div>
+		<div class="data"><?php echo $pastintervention->getTreatmentName() ?></div>
 	</div>
 
 	<div>

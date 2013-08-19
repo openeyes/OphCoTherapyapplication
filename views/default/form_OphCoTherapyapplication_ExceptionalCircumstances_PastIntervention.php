@@ -22,24 +22,41 @@
 $name_stub = $element_name . '[' . $side;
 if ($pastintervention->is_relevant) {
 	$inttype_name = '_relevantinterventions';
+	$treatmentattribute = 'relevanttreatment_id';
 } else {
 	$inttype_name = '_previnterventions';
+	$treatmentattribute = 'treatment_id';
 }
 $name_stub .= $inttype_name . ']';
-$all_treatments = OphCoTherapyapplication_Treatment::model()->findAll();
+
 $show_stop_other = false;
-if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name]) {
-	if (@$_POST[$element_name][$side . $inttype_name][$key]) {
-		if ($stop_id = $_POST[$element_name][$side . $inttype_name][$key]['stopreason_id']) {
-			$stopreason = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->findByPk((int)$stop_id);
-			if ($stopreason->other) {
-				$show_stop_other = true;
-			}
+$show_treatment_other = false;
+if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
+    @$_POST[$element_name][$side . $inttype_name][$key]) {
+
+	if ($stop_id = $_POST[$element_name][$side . $inttype_name][$key]['stopreason_id']) {
+		$stopreason = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->findByPk((int)$stop_id);
+		if ($stopreason->other) {
+			$show_stop_other = true;
+		}
+	}
+	if ($pastintervention->is_relevant &&
+		$treatment_id = $_POST[$element_name][$side . $inttype_name][$key]['relevanttreatment_id']) {
+
+		$treatment = OphCoTherapyapplication_RelevantTreatment::model()->findByPk((int) $treatment_id);
+		if ($treatment->other) {
+			$show_treatment_other = true;
 		}
 	}
 } else {
 	if ($pastintervention->stopreason && $pastintervention->stopreason->other) {
 		$show_stop_other = true;
+	}
+	if ($pastintervention->is_relevant &&
+		$pastintervention->relevanttreatment &&
+		$pastintervention->relevanttreatment->other) {
+
+		$show_treatment_other = true;
 	}
 }
 
@@ -95,12 +112,35 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name]) {
 	</div>
 
 	<div>
-		<div class="label"><?php echo $pastintervention->getAttributeLabel('treatment_id');?></div>
+		<div class="label"><?php echo $pastintervention->getAttributeLabel($treatmentattribute);?></div>
 		<div class="data">
 	<?php
-	echo CHtml::activeDropDownList($pastintervention, 'treatment_id', CHtml::listData($all_treatments,'id','name'),
-		array('empty'=>'- Please select -', 'name' => $name_stub . "[$key][treatment_id]", 'nowrapper' => true));
+		$all_treatments = $pastintervention->getTreatmentOptions();
+		$html_options = array(
+			'class' => 'past-treatments',
+			'empty' => '- Please select -',
+			'name' => $name_stub . "[$key][$treatmentattribute]",
+			'options' => array(),
+		);
+
+		if ($pastintervention->is_relevant) {
+			foreach ($all_treatments as $treatment) {
+				$html_options['options'][$treatment->id] = array(
+					'data-other' => $treatment->other,
+				);
+			}
+		}
+
+		echo CHtml::activeDropDownList($pastintervention, $treatmentattribute, CHtml::listData($all_treatments,'id','name'),
+			$html_options);
 	?>
+		</div>
+	</div>
+
+	<div class="<?php if (!$show_treatment_other) { echo "hidden "; } ?>treatment-other">
+		<div class="label"><?php echo $pastintervention->getAttributeLabel('relevanttreatment_other'); ?></div>
+		<div class="data">
+			<?php echo CHtml::activeTextField($pastintervention, 'relevanttreatment_other',array('name' => $name_stub . "[$key][relevanttreatment_other]")); ?>
 		</div>
 	</div>
 
@@ -156,6 +196,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name]) {
 		<?php echo CHtml::activeTextArea($pastintervention, 'stopreason_other',array('name' => $name_stub . "[$key][stopreason_other]", 'rows' => 2, 'cols' => 25, 'nowrapper' => true))?>
 		</div>
 	</div>
+
 	<div>
 		<div class="label"><?php echo $pastintervention->getAttributeLabel('comments')?></div>
 		<div class="data comments">

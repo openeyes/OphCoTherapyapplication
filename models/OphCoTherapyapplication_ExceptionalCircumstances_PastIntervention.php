@@ -26,6 +26,8 @@
  * @property date $start_date
  * @property date $end_date
  * @property integer $treatment_id
+ * @property integer $relevanttreatment_id
+ * @property string $relevanttreatment_other
  * @property string $start_va
  * @property string $end_va
  * @property boolean $is_relevant
@@ -37,6 +39,7 @@
  *
  * @property Element_OphCoTherapyapplication_ExceptionalCircumstances $exceptionalcircumstances
  * @property OphCoTherapyapplication_Treatment $treatment
+ * @property OphCoTherapyapplication_RelevantTreatment $relevanttreatment
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason $stop_reason
  */
 
@@ -68,7 +71,10 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		// will receive user inputs.
 		return array(
 			array('start_date, end_date, treatment_id, start_va, end_va, stopreason_id, stopreason_other, comments', 'safe'),
-			array('start_date, end_date, treatment_id, start_va, end_va, stopreason_id', 'required'),
+			array('start_date, end_date, start_va, end_va, stopreason_id', 'required'),
+			array('treatment_id', 'requiredDependingOnTreatmentType', 'relevant' => false),
+			array('relevanttreatment_id', 'requiredDependingOnTreatmentType', 'relevant' => true),
+			array('relevanttreatment_other', 'requiredIfRelevantTreatmentIsOther'),
 			array('stopreason_other', 'requiredIfStopReasonIsOther'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -86,6 +92,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		return array(
 			'exceptionalcircumstances' => array(self::BELONGS_TO, 'Element_OphCoTherapyapplication_ExceptionalCircumstances', 'circumstances_id'),
 			'treatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Treatment', 'treatment_id'),
+			'relevanttreatment' => array(self::BELONGS_TO, 'OphCoTherapyapplication_RelevantTreatment', 'relevanttreatment_id'),
 			'stopreason' => array(self::BELONGS_TO, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason', 'stopreason_id'),
 		);
 	}
@@ -100,6 +107,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 			'start_date' => 'Start date',
 			'end_date' => 'End date',
 			'treatment_id' => 'Treatment',
+			'relevanttreatment_id' => 'Treatment',
+			'relevanttreatment_other' => 'Please provide treatment name',
 			'start_va' => 'Pre treatment VA',
 			'end_va' => 'Post treatment VA',
 			'stopreason_id' => 'Reason for stopping',
@@ -120,6 +129,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		$criteria->compare('start_date', $this->start_date, true);
 		$criteria->compare('end_date', $this->end_date, true);
 		$criteria->compare('treatment_id', $this->treatment_id, true);
+		$criteria->compare('relevanttreatment_id', $this->relevanttreatment_id, true);
+		$criteria->compare('relevanttreatment_other', $this->relevanttreatment_other, true);
 		$criteria->compare('start_va', $this->start_va, true);
 		$criteria->compare('end_va', $this->end_va, true);
 		$criteria->compare('stopreason_id', $this->stopreason_id, true);
@@ -188,16 +199,75 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		return $this->_va_list;
 	}
 
+	/**
+	 * get the treatment options for this intervention
+	 *
+	 * @return array $options key,value pair list
+	 */
+	public function getTreatmentOptions() {
+		if ($this->is_relevant) {
+			return OphCoTherapyapplication_RelevantTreatment::model()->findAll();
+		}
+		else {
+			return OphCoTherapyapplication_Treatment::model()->allScope()->findAll();
+		}
+
+	}
+
+	/**
+	 * validate the right type of treatment is set on the model depending on the treatment type
+	 *
+	 * @param string $attribute
+	 * @param array $params - must include boolean flag for key of relevant
+	 */
+	public function requiredDependingOnTreatmentType($attribute, $params)
+	{
+		if ($this->is_relevant == $params['relevant'] && $this->$attribute == null) {
+			error_log(gettype($this->is_relevant) . ":::" . print_r($params, true) . "::" . $attribute . ':' . $this->is_relevant . ":" . $params['relevant']);
+			$this->addError($attribute, $this->getAttributeLabel($attribute) . " is required");
+		}
+	}
 
 	/**
 	 * validate that a reason is given if the stop reason select is of type other
-	 * @param unknown $attribute
-	 * @param unknown $params
+	 * @param string $attribute
+	 * @param array $params
 	 */
 	public function requiredIfStopReasonIsOther($attribute, $params)
 	{
 		if ($this->stopreason && $this->stopreason->other && $this->$attribute == null) {
 			$this->addError($attribute, $this->getAttributeLabel($attribute)." is required when stop reason is set to " . $this->stopreason->name);
+		}
+	}
+
+	/**
+	 * validate that a treatment is given if the treatment is 'other'
+	 *
+	 * @param string $attribute
+	 * @param array $params
+	 */
+	public function requiredIfRelevantTreatmentIsOther($attribute, $params)
+	{
+		if ($this->relevanttreatment && $this->relevanttreatment->other && $this->$attribute == null) {
+			$this->addError($attribute, $this->getAttributeLabel($attribute)." is required when stop reason is set to " . $this->stopreason->name);
+		}
+	}
+
+	/**
+	 * get the treatment name for this past intervention
+	 *
+	 * @return string
+	 */
+	public function getTreatmentName() {
+		if ($this->is_relevant) {
+			if ($this->relevanttreatment->other) {
+				return $this->relevanttreatment_other;
+			} else {
+				return $this->relevanttreatment->name;
+			}
+		}
+		else {
+			return $this->treatment->drug->name;
 		}
 	}
 

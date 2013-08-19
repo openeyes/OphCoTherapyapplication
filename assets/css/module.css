@@ -139,6 +139,12 @@ ul.MultiSelectList {
 #event_content .cols2 .pastintervention .data {
     width: 160px;
 }
+
+#event_content .cols2 .pastintervention .data > input {
+	box-sizing: border-box;
+	width: 100%;
+}
+
 #event_content .cols2 .pastintervention .data select,
 #event_content .cols2 .pastintervention .data.comments {
     width: 100%;
@@ -171,6 +177,7 @@ ul.MultiSelectList {
     float: right;
     width: 162px;
 }
+
 #event_content .cols2 .pastintervention-view .data.comments {
     width: 100%;
 }
