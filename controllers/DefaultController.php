@@ -146,7 +146,6 @@ class DefaultController extends BaseEventTypeController
 	 * (non-PHPdoc)
 	 * @see BaseEventTypeController::setPOSTManyToMany()
 	 */
-	 */
 	public function getDefaultElements($action, $event_type_id=false, $event=false)
 	{
 		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
