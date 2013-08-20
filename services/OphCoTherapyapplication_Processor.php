@@ -19,6 +19,9 @@
 
 class OphCoTherapyapplication_Processor
 {
+
+	const SNOMED_INTRAVITREAL_INJECTION = 231755001;
+
 	private $events_by_id = array();
 	private $controller = null;
 
@@ -123,17 +126,17 @@ class OphCoTherapyapplication_Processor
 		$can_process = true;
 		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
 			// need to determine if the appropriate information has been captured for the relevant eyes in examination
-			if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
-				$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
-				$sides = array();
-				$missing_sides = array();
+			$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
+			$sides = array();
+			if ($el_diag->hasLeft()) {
+				$sides[] = 'left';
+			}
+			if ($el_diag->hasRight()) {
+				$sides[] = 'right';
+			}
 
-				if ($el_diag->hasLeft()) {
-					$sides[] = 'left';
-				}
-				if ($el_diag->hasRight()) {
-					$sides[] = 'right';
-				}
+			if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
+				$missing_sides = array();
 
 				foreach ($sides as $side) {
 					if (!$api->getInjectionManagementComplexInEpisodeForDisorder(
@@ -165,6 +168,15 @@ class OphCoTherapyapplication_Processor
 			} else {
 				error_log('Therapy application requires OphCIExamination module');
 				$can_process = false;
+			}
+			if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
+				$procedure = Procedure::model()->find(array('condition' => 'snomed_code = :snomed', 'params' => array(':snomed' => $this::SNOMED_INTRAVITREAL_INJECTION)));
+				foreach ($sides as $side) {
+					if (!$api->hasConsentForProcedure($event->episode, $procedure, $side)) {
+						$this->addProcessWarning($event_id, 'Consent form is required for ' . $side . ' eye.');
+						$can_process = false;
+					}
+				}
 			}
 		} else {
 			return !$elements['Element_OphCoTherapyapplication_Email']['sent'];

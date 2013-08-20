@@ -42,13 +42,13 @@ if ($service->canProcessEvent($this->event->id)) {
 
 <div>
 	<?php
-	if (count($warnings)) {
-		echo "Application cannot be submitted for the following reasons:<ul>";
-		foreach ($warnings as $warning) {
-			echo "<li>" . $warning . "</li>";
+		if (count($warnings)) {
+			echo "<div class=\"warningBox\">Application cannot be submitted for the following reasons:<ul>";
+			foreach ($warnings as $warning) {
+				echo "<li>" . $warning . "</li>";
+			}
+			echo "</ul></div>";
 		}
-		echo "</ul>";
-	}
 	?>
 
 	<?php $this->renderDefaultElements($this->action->id)?>

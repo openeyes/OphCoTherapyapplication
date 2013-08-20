@@ -60,7 +60,7 @@ class OphCoTherapyapplication_API extends BaseAPI
 	}
 
 	/**
-	 * returns the side of the most recent application (see SplitEventTypeElement for definition of constants that indicate side or both)
+	 * returns the side of the most recent application (see Eye for definition of constants that indicate side or both)
 	 *
 	 * @param unknown $patient
 	 * @param unknown $episode
