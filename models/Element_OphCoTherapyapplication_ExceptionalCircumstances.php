@@ -24,19 +24,33 @@
  * @property string $id
  * @property integer $event_id
  * @property boolean $left_standard_intervention_exists
- * @property string $left_details
+ * @property integer $left_standard_intervention_id
+ * @property boolean $left_standard_previous
+ * @property boolean $left_condition_rare
+ * @property string $left_incidence
  * @property integer $left_intervention_id
  * @property string $left_description
+ * @property string $left_patient_different
+ * @property string $left_patient_gain
  * @property integer $left_patient_factors
  * @property string $left_patient_factor_details
  * @property string $left_patient_expectations
+ * @property integer $left_start_period_id
+ * @property string $left_urgency_reason
  * @property boolean $right_standard_intervention_exists
- * @property string $right_details
+ * @property integer $right_standard_intervention_id
+ * @property boolean $right_standard_previous
+ * @property boolean $right_condition_rare
+ * @property string $right_incidence
  * @property integer $right_intervention_id
  * @property string $right_description
+ * @property string $right_patient_different
+ * @property string $right_patient_gain
  * @property integer $right_patient_factors
  * @property string $right_patient_factor_details
  * @property string $right_patient_expectations
+ * @property integer $right_start_period_id
+ * @property string $right_urgency_reason
  *
  * The followings are the available model relations:
  *
@@ -45,8 +59,25 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
- * @property array(OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention) $left_previnterventions
- * @property array(OphCoTherapyapplication_ExceptionalCircumstances_PrevIntervention) $right_previnterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $left_standard_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $right_standard_intervention
+ * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
+ * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $previnterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $left_previnterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $right_previnterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $relevantinterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $left_relevantinterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $right_relevantinterventions
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment[] $deviationreasons
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason[] $left_deviationreasons
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason[] $right_deviationreasons
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod $left_start_period
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod $right_start_period
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment[] $filecollection_assignments
+ * @property OphCoTherapyapplication_FileCollection[] $left_filecollections
+ * @property OphCoTherapyapplication_FileCollection[] $right_filecollections
+ *
  */
 
 class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEventTypeElement
@@ -299,6 +330,24 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
+	 * returns true if this application has been submitted. false otherwise
+	 *
+	 * @return bool
+	 */
+	public function isSubmitted()
+	{
+		if (!$this->isNewRecord) {
+			if ($email_el = Element_OphCoTherapyapplication_Email::model()->find(array(
+					'condition' => 'event_id = :eid',
+					'params' => array(':eid' => $this->event_id)
+				))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * get list of valid standard interventions for this element on the given side
 	 *
 	 * @param string $side
@@ -407,8 +456,11 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		return $sps;
 	}
 
-	/*
+	/**
 	 * check that the standard intervention description is given if the element is flagged appropriately
+	 *
+	 * @param string $attribute
+	 * @param array $params
 	 */
 	public function requiredIfStandardInterventionExists($attribute, $params)
 	{
@@ -450,6 +502,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		}
 	}
 
+	/**
+	 *
+	 *
+	 * @param string $attribute
+	 * @param array $params
+	 */
 	public function requiredIfPatientFactors($attribute, $params)
 	{
 		if (($params['side'] == 'left' && $this->eye_id != Eye::RIGHT) || ($params['side'] == 'right' && $this->eye_id != Eye::LEFT)) {
@@ -515,7 +573,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 * set the past interventions for the specified side and type
 	 *
 	 * @param integer $side - SplitEventTypeElement::LEFT or SplitEventTypeElement::RIGHT
-	 * @param array $interventions - array of arrays(treatment_id, stopreason_id, (optional) id)
+	 * @param array $interventions - array of arrays(attributes for OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention)
 	 * @param boolean $relevant
 	 */
 	protected function updatePastInterventions($side, $interventions, $relevant = false)
@@ -564,11 +622,24 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		}
 	}
 
+	/**
+	 * update previous interventions - wrapper for updatePastInterventions
+	 *
+	 * @param integer $side
+	 * @param array $interventions
+	 *
+	 */
 	public function updatePreviousInterventions($side, $interventions)
 	{
 		$this->updatePastInterventions($side, $interventions, false);
 	}
 
+	/**
+	 * update relevant interventions - wrapper for updatePastInterventions
+	 *
+	 * @param integer $side
+	 * @param array $interventions
+	 */
 	public function updateRelevantInterventions($side, $interventions)
 	{
 		$this->updatePastInterventions($side, $interventions, true);
@@ -599,14 +670,14 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			} else {
 				unset($curr_by_id[$coll_id]);
 			}
+		}
 
-			foreach ($save as $s) {
-				$s->save();
-			}
+		foreach ($save as $s) {
+			$s->save();
+		}
 
-			foreach ($curr_by_id as $curr) {
-				$curr->delete();
-			}
+		foreach ($curr_by_id as $curr) {
+			$curr->delete();
 		}
 	}
 }
