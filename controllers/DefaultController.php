@@ -67,36 +67,50 @@ class DefaultController extends BaseEventTypeController
 
 	private $event_model_cache = array();
 
-	public function actionPreviewExceptionalCircumstances()
+	/**
+	 * preview of the application - will generate both left and right forms into one PDF
+	 *
+	 * @throws CHttpException
+	 */
+	public function actionPreviewApplication()
 	{
-		if (isset($_REQUEST['element_id']) && isset($_REQUEST['side'])) {
-			if ($ec = Element_OphCoTherapyapplication_ExceptionalCircumstances::model()->findByPk((int) $_REQUEST['element_id'])) {
-				if ($_REQUEST['side'] == 'left') {
-					if (!$ec->hasLeft()) {
-						throw new CHttpException('404', 'EC does not have left side');
-					}
-				} elseif ($_REQUEST['side'] == 'right') {
-					if (!$ec->hasRight()) {
-						throw new CHttpException('404', 'EC does not have right side');
-					}
-				} else {
-					throw new CHttpException('400', 'Invalid request');
-				}
-				$service = new OphCoTherapyapplication_Processor();
-				if ($pdf = $service->generateEventPDFForSide($ec->event_id, $_REQUEST['side']) ) {
-					$pdf->Output($pdf->getDocref().".pdf", "I");
-				} else {
-					throw new CHttpException('400', 'PDF not valid');
-				}
-			} else {
-				throw new CHttpException('404', 'Exceptional Circumstances not found');
-			}
+		if (isset($_REQUEST['event_id'])) {
+			if ($ec = Element_OphCoTherapyapplication_ExceptionalCircumstances::model()->find(array(
+					'condition' => 'event_id = :evid',
+					'params' => array(':evid' => (int) $_REQUEST['event_id']))) ) {
 
+				$pdfbodies = array();
+				$service = new OphCoTherapyapplication_Processor();
+				if ($ec->hasRight()) {
+					$pdfbodies[] = $service->generateEventPDFTemplateForSide($ec->event_id, 'right');
+				}
+				if ($ec->hasLeft()) {
+					$pdfbodies[] = $service->generateEventPDFTemplateForSide($ec->event_id, 'left');
+				}
+
+				// have to use a wrapper to combine multiple forms
+				$pdfwrapper = new OETCPDF();
+				$pdfwrapper->SetAuthor($ec->usermodified->fullName);
+				$pdfwrapper->SetTitle('Therapy application preview');
+				$pdfwrapper->SetSubject('Therapy application');
+
+				foreach($pdfbodies as $body) {
+					$body->render($pdfwrapper);
+				}
+				$pdfwrapper->Output("Therapy Application.pdf", "I");
+			} else {
+				throw new CHttpException('404', 'Exceptional Circumstances not found for event');
+			}
 		} else {
 			throw new CHttpException('400', 'Invalid request');
 		}
 	}
 
+	/**
+	 * actually generates and submits the therapy application
+	 *
+	 * @throws CHttpException
+	 */
 	public function actionProcessApplication()
 	{
 		if (isset($_REQUEST['event_id'])) {
@@ -126,6 +140,13 @@ class DefaultController extends BaseEventTypeController
 		throw new CHttpException('400', 'File Collection does not exist');
 	}
 
+	/**
+	 * extends the base function to set various defaults that depend on other events etc
+	 *
+	 * (non-PHPdoc)
+	 * @see BaseEventTypeController::setPOSTManyToMany()
+	 */
+	 */
 	public function getDefaultElements($action, $event_type_id=false, $event=false)
 	{
 		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);

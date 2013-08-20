@@ -186,13 +186,15 @@ class OphCoTherapyapplication_Processor
 
 	}
 
-	protected function generatePDFForSide($data, $side)
+	/**
+	 * generate the PDF blob from the appropriate template for the given data and side
+	 *
+	 * @param $data
+	 * @param $side
+	 * @return null|OETCPDF
+	 */
+	protected function generatePDFTemplateForSide($data, $side)
 	{
-		$pdf = new OETCPDF();
-		$pdf->setAuthor('OpenEyes');
-		$pdf->setTitle('Therapy Application');
-		$pdf->SetSubject('Therapy Application');
-
 		$template_data = array();
 		foreach ($data as $k => $v) {
 			$template_data[$k] = $v;
@@ -225,17 +227,33 @@ class OphCoTherapyapplication_Processor
 			$letter = new OELetter();
 			$letter->setBarcode("E:" . $data['event']->id);
 			$letter->addBody($body);
-			$letter->render($pdf);
-
-			return $pdf;
+			return $letter;
 		}
 		return null;
 	}
 
+
+	/**
+	 * create the PDF file as a ProtectedFile for the given data and side
+	 *
+	 * @param $data
+	 * @param $side
+	 * @return ProtectedFile
+	 * @throws Exception
+	 */
 	protected function createPDFForSide($data, $side)
 	{
-		$pdf = $this->generatePDFForSide($data, $side);
-		if ($pdf) {
+		$pdfdoc = $this->generatePDFTemplateForSide($data, $side);
+		if ($pdfdoc) {
+
+
+			$pdf = new OETCPDF();
+			$pdf->setAuthor('OpenEyes');
+			$pdf->setTitle('Therapy Application');
+			$pdf->SetSubject('Therapy Application');
+
+			$letter->render($pdf);
+
 			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $data['patient']->hos_num . '.pdf');
 			$pdf->Output($pfile->getPath(), "F");
 			if (!$pfile->save()) {
@@ -246,6 +264,13 @@ class OphCoTherapyapplication_Processor
 		}
 	}
 
+	/**
+	 * generate the email text for the given data and side
+	 *
+	 * @param $data
+	 * @param $side
+	 * @return string
+	 */
 	protected function generateEmailForSide($data, $side)
 	{
 		$template_data = array();
@@ -281,6 +306,13 @@ class OphCoTherapyapplication_Processor
 		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->{$side . '_nice_compliance'};
 	}
 
+	/**
+	 * generates a data structure containing all the relevant elements and other objects for the given event id
+	 * to be used for various processor methods
+	 *
+	 * @param $event_id
+	 * @return array
+	 */
 	protected function _generateEventDataForProcessing($event_id)
 	{
 		/*
@@ -319,10 +351,10 @@ class OphCoTherapyapplication_Processor
 	* @param string $side 'left' or 'right'
 	* @return OETCPDF or null
 	*/
-	public function generateEventPDFForSide($event_id, $side)
+	public function generateEventPDFTemplateForSide($event_id, $side)
 	{
 		$event_data = $this->_generateEventDataForProcessing($event_id);
-		return $this->generatePDFForSide($event_data, $side);
+		return $this->generatePDFTemplateForSide($event_data, $side);
 	}
 
 	/**

@@ -29,15 +29,11 @@ h5 {
 }
 
 body {
-	font-size: 16px;
+	font-size: 32px;
 }
 
 p {
 	font-size: 24px;
-}
-
-.large {
-	font-size: 36px;
 }
 
 table.clinical-urgency {
@@ -108,7 +104,7 @@ table.inner tr.last th {
 
 </style>
 
-<body></body>
+<body>
 <?php
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 $ccg = $patient->getCommissioningBodyOfType($cbody_type);
@@ -355,7 +351,7 @@ Please provide further information below relating to the clinical urgency and / 
 			</td>
 		</tr>
 		<tr nobr="true">
-			<td class="row-title">&nbsp;What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
+			<td class="row-title">What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
 			<td class="row-data"><?php echo $exceptional->{$side . '_patient_different'} ?></td>
 		</tr>
 
@@ -488,7 +484,7 @@ Please provide further information below relating to the clinical urgency and / 
 							<tr>
 								<td><?php echo Helper::convertDate2NHS($previntervention->start_date) ?></td>
 								<td><?php echo Helper::convertDate2NHS($previntervention->end_date) ?></td>
-								<td><?php echo $previntervention->treatment->name ?></td>
+								<td><?php echo $previntervention->getTreatmentName() ?></td>
 								<td><?php echo $previntervention->getStopReasonText() ?></td>
 								<td><?php
 									echo "Start VA: " . $previntervention->start_va . "<br />";
@@ -509,7 +505,7 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Please provide details of other relevant treatment</td>
+			<td class="row-title">Please provide details of other relevant treatment</td>
 			<td class="row-data">
 				<?php
 				if ($exceptional->{$side . '_relevantinterventions'}) {
@@ -517,7 +513,8 @@ Please provide further information below relating to the clinical urgency and / 
 					<table class="inner">
 						<thead>
 						<tr>
-							<th>Dates</th>
+							<th>Start Date</th>
+							<th>End Date</th>
 							<th>Intervention</th>
 							<th>Reason for stopping / Response acheived</th>
 							<th>Comments</th>
@@ -551,7 +548,7 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;In case of intervention for NON-CANCER</td>
+			<td class="row-title">In case of intervention for NON-CANCER</td>
 			<td class="row-data">
 				<table class="inner">
 					<tr>
@@ -572,7 +569,7 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;In case of intervention for CANCER</td>
+			<td class="row-title">In case of intervention for CANCER</td>
 			<td class="row-data"><table class="inner">
 					<tr>
 						<th>Please indicate whether the intervention is for:
@@ -602,12 +599,12 @@ Please provide further information below relating to the clinical urgency and / 
 
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;What is the anticipated toxicity of the intervention for this patient?</td>
+			<td class="row-title">What is the anticipated toxicity of the intervention for this patient?</td>
 			<td class="row-data"><?php echo nl2br($treatment->toxicity) ?></td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;What are the criteria for stopping treatment</td>
+			<td class="row-title">What are the criteria for stopping treatment</td>
 			<td class="row-data"><ol>
 					<li>Failure of treatment indicated by persistent deterioration in visual acuity</li>
 					<li>Absence of disease activity</li>
@@ -618,12 +615,12 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;How will you monitor the effectiveness of the intervention?</td>
+			<td class="row-title">How will you monitor the effectiveness of the intervention?</td>
 			<td class="row-data">Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG</td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;What would you consider to be a successful outcome for this intervention in this patient?</td>
+			<td class="row-title">What would you consider to be a successful outcome for this intervention in this patient?</td>
 			<td class="row-data"><ol>
 				<li>Stabilisation / improvement in visual acuity</li>
 				<li>Resolution of subretinal fluid on OCT</li>
@@ -637,7 +634,7 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Costing information</td>
+			<td class="row-title">Costing information</td>
 			<td class="row-data">
 				<table class="inner">
 					<tr>
@@ -661,16 +658,16 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Date form completed:</td>
+			<td class="row-title">Date form completed:</td>
 			<td class="row-data"><?php echo $event->NHSDate('last_modified_date') ?></td>
 		</tr>
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Trust reference number</td>
+			<td class="row-title">Trust reference number</td>
 			<td class="row-data">&nbsp;</td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Form completed by:</td>
+			<td class="row-title">Form completed by:</td>
 			<td class="row-data"><?php echo $event->usermodified->getFullname() ?></td>
 		</tr>
 

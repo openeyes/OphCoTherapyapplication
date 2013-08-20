@@ -17,9 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="eventDetail aligned">
-	<a href="<?php echo Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewExceptionalCircumstances/?element_id='.$element->id.'&side='.$side);?>">Preview application</a>
-</div>
+
 <div class="eventDetail aligned">
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_exists') ?>:</div>
 	<div class="data"><?php echo $element->{$side . '_standard_intervention_exists'} ? 'Yes' : 'No'?></div>
