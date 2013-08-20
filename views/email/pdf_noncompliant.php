@@ -82,14 +82,14 @@ td.header {
 	background-color: #ccffff;
 }
 
-td.table-title {
-	width: 650px;
-}
-
 td.row-title {
 	background-color: #ccffcc;
-	width: 180px;
+	width: 120px;
 	font-size: 24px;
+}
+
+td.row-data {
+	width: 387px;
 }
 
 table.inner td,
@@ -147,14 +147,16 @@ Please provide further information below relating to the clinical urgency and / 
 </table>
 <tcpdf method="AddPage" />
 <table nobr="true">
+	<tbody>
 	<tr>
 		<td class="header"><h2>&nbsp;Contact Information</h2></td>
 	</tr>
 	<tr>
 		<td>
 		<table class="layout">
+			<tbody>
 			<tr nobr="true">
-				<td class="row-title">&nbsp;1. <?php echo $cbody_type->shortname ?> Code &amp; Name</td>
+				<td class="row-title">&nbsp;<?php echo $cbody_type->shortname ?> Code &amp; Name</td>
 				<td class="row-data">
 				<?php if ($ccg) {
 					echo '<span class="form-text">' . $cbody_type->shortname . " Code:</span> " . $ccg->code . "<br />";
@@ -164,15 +166,17 @@ Please provide further information below relating to the clinical urgency and / 
 				}?>
 				</td>
 			</tr>
+			</tbody>
 		</table>
 		</td>
 	</tr>
+	</tbody>
 </table>
 
 <table class="layout">
 	<tbody>
 		<tr nobr="true">
-			<td class="row-title">2. <?php echo $cbody_type->shortname ?> Address</td>
+			<td class="row-title"><?php echo $cbody_type->shortname ?> Address</td>
 			<td class="row-data">
 			<?php if ($ccg) {
 				echo $ccg->getLetterAddress(array('delimiter' => ', '));
@@ -182,7 +186,7 @@ Please provide further information below relating to the clinical urgency and / 
 			</td>
 		</tr>
 		<tr nobr="true">
-			<td class="row-title">3. Trust Applicant Details</td>
+			<td class="row-title">Trust Applicant Details</td>
 			<td class="row-data">
 				<table class="inner">
 					<tbody>
@@ -213,7 +217,7 @@ Please provide further information below relating to the clinical urgency and / 
 			</td>
 		</tr>
 		<tr nobr="true">
-			<td class="row-title">4. Patient Details</td>
+			<td class="row-title">Patient Details</td>
 			<td class="row-data">
 				<table class="inner">
 					<tbody>
@@ -264,7 +268,7 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr>
-			<td class="row-title">5. Application reviewed by Chief Pharmacist or nominated deputy e.g. relevant specialist pharmacist (in the case of a drug intervention)</td>
+			<td class="row-title">Application reviewed by Chief Pharmacist or nominated deputy e.g. relevant specialist pharmacist (in the case of a drug intervention)</td>
 			<td>
 				<table class="inner">
 					<tbody>
@@ -301,22 +305,24 @@ Please provide further information below relating to the clinical urgency and / 
 	<tr>
 		<td>
 		<table class="layout">
+			<tbody>
 				<tr nobr="true">
-				<td class="row-title">&nbsp;Patient Diagnosis (for which intervention is requested)</td>
-				<td>
-				<span class="form-text">Eye affected:</span> <?php echo ucfirst($side) ?><br />
-				<span class="form-text">Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
-				<span class="form-text">Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
-				<span class="form-text">OCT Thickness:</span>
-				<?php
-					$oct_str = "Not measured";
-					if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
-						$oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
-					}
-					echo $oct_str;
-				?>
-				</td>
-			</tr>
+					<td class="row-title">&nbsp;Patient Diagnosis (for which intervention is requested)</td>
+					<td class="row-data">
+					<span class="form-text">&nbsp;Eye affected:</span> <?php echo ucfirst($side) ?><br />
+					<span class="form-text">&nbsp;Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
+					<span class="form-text">&nbsp;Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
+					<span class="form-text">&nbsp;OCT Thickness:</span>
+					<?php
+						$oct_str = "Not measured";
+						if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
+							$oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
+						}
+						echo $oct_str;
+					?>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 		</td>
 	</tr>
@@ -326,8 +332,8 @@ Please provide further information below relating to the clinical urgency and / 
 <table class="layout">
 	<tbody>
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Details of intervention for which funding is requested</td>
-			<td>
+			<td class="row-title">Details of intervention for which funding is requested</td>
+			<td class="row-data">
 			<table class="inner">
 				<tr>
 					<th>Name of intervention:</th>
@@ -350,13 +356,12 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 		<tr nobr="true">
 			<td class="row-title">&nbsp;What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
-			<td><?php echo $exceptional->{$side . '_patient_different'} ?><br /><br />
-				<?php echo $exceptional->{$side . '_patient_gain'}?></td>
+			<td class="row-data"><?php echo $exceptional->{$side . '_patient_different'} ?></td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Are there any patient factors (clinical or personal) that need to be considered?</td>
-			<td><?php
+			<td class="row-title">Are there any patient factors (clinical or personal) that need to be considered?</td>
+			<td class="row-data"><?php
 				if ($exceptional->{$side . '_patient_factors'}) {
 					echo "Yes <br /><br />" . $exceptional->{$side . '_patient_factor_details'};
 				} else {
@@ -366,17 +371,17 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">10. Is requested intervention part of a clinical trial?</td>
-			<td>&nbsp;No</td>
+			<td class="row-title">Is requested intervention part of a clinical trial?</td>
+			<td class="row-data">No</td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Is requested intervention licensed in the UK for use in the requested indication?</td>
-			<td>&nbsp;NO<br /><br />&nbsp;<span class="form-text">If No, is it licensed for use in another indication:</span> YES.</td>
+			<td class="row-title">Is requested intervention licensed in the UK for use in the requested indication?</td>
+			<td class="row-data">NO<br /><br /><span class="form-text">If No, is it licensed for use in another indication:</span> YES.</td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Details of the papers submitted</td>
+			<td class="row-title">Details of the papers submitted</td>
 			<td>
 				<?php if ($exceptional->{$side . '_filecollections'}) {
 					echo "Please see attached papers and supporting documents.<br /><br />";
@@ -395,8 +400,8 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp; Has the Trust Drugs and Therapeutics Committee or equivalent Committee approved the requested intervention for use? (if drug or medical device)</td>
-			<td><span class="form-text">If No, Committee Chair or Chief Pharmacist who approved?<br />
+			<td class="row-title">Has the Trust Drugs and Therapeutics Committee or equivalent Committee approved the requested intervention for use? (if drug or medical device)</td>
+			<td class="row-data"><span class="form-text">If No, Committee Chair or Chief Pharmacist who approved?<br />
 			Evidence must be supplied e.g. D&amp;TC minutes, Chairs actions, etc<br />
 			<b>NB: the PCT cannot consider the case in the absence of this evidence.</b></span><br /><br />
 				YES.
@@ -404,8 +409,8 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Is there a standard intervention at this stage?</td>
-			<td>
+			<td class="row-title">Is there a standard intervention at this stage?</td>
+			<td class="row-data">
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {?>
 					The standard intervention is <?php echo $exceptional->{$side . '_standard_intervention'}->name;?>.<br /><br />
 					This intervention has <?php if (!$exceptional->{$side . '_standard_previous'}) { echo "not"; }?> been applied previously.<br /><br />
@@ -417,38 +422,44 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
-			<td>(b)
-				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
-					echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;?><br /><br />
-					<?php echo $exceptional->{$side . '_description'};?>
-					<?php if ($exceptional->needDeviationReasonForSide($side)) {?>
-						<br /><br />The standard intervention cannot be used because of
-						<?php
-						$reason_count = count($exceptional->{$side . '_deviationreasons'});
-						foreach ($exceptional->{$side . '_deviationreasons'} as $i => $dr) {
-							echo $dr->name;
-							if ($i == $reason_count - 1) {
-								echo ".";
-							} elseif ($i == $reason_count - 2) {
-								echo " and ";
-							} else {
-								echo ", ";
+			<td class="row-title">Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
+			<td class="row-data"><?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
+					echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;?>
+					<br /><br />
+					<?php
+						echo $exceptional->{$side . '_description'};
+						if ($exceptional->needDeviationReasonForSide($side)) { ?>
+							<br /><br />The standard intervention cannot be used because of
+							<?php
+							$reason_count = count($exceptional->{$side . '_deviationreasons'});
+							foreach ($exceptional->{$side . '_deviationreasons'} as $i => $dr) {
+								echo $dr->name;
+								if ($i == $reason_count - 1) {
+									echo ".";
+								} elseif ($i == $reason_count - 2) {
+									echo " and ";
+								} else {
+									echo ", ";
+								}
 							}
-						}?>
-					<?php } ?>
-				<?php } ?>
+						}
+					}
+					else {
+						echo "N/A";
+					}
+				?>
 			</td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;What is the anticipated benefit of the intervention compared to the standard?</td>
-			<td><span class="form-text">In case of intervention for cancer please provide details of expected survival benefit.</span><br />
+			<td class="row-title">What is the anticipated benefit of the intervention compared to the standard?</td>
+			<td class="row-data"><span class="form-text">In case of intervention for cancer please provide details of expected survival benefit.</span><br /><br />
+				<?php echo $exceptional->{$side . '_patient_gain'}?>
 			</td>
 		</tr>
 
 		<tr nobr="true">
-			<td class="row-title">&nbsp;Summary of previous intervention(s) this patient has received for the condition.<br />
+			<td class="row-title">Summary of previous intervention(s) this patient has received for the condition.<br />
 				* Reasons for stopping may include:
 				<ul>
 					<li>Course completed</li>
@@ -456,13 +467,13 @@ Please provide further information below relating to the clinical urgency and / 
 					<li>Disease progression</li>
 					<li>Adverse effects/poorly tolerated</li>
 				</ul></td>
-			<td>
+			<td class="row-data">
 				<?php
 				if ($exceptional->{$side . '_previnterventions'}) {
 					?>
-					<table>
+					<table class="inner">
 						<thead>
-						<tr class="inner">
+						<tr>
 							<th>Start date</th>
 							<th>End date</th>
 							<th>Intervention</th>
@@ -499,13 +510,13 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;Please provide details of other relevant treatment</td>
-			<td>
+			<td class="row-data">
 				<?php
 				if ($exceptional->{$side . '_relevantinterventions'}) {
 					?>
-					<table>
+					<table class="inner">
 						<thead>
-						<tr class="inner">
+						<tr>
 							<th>Dates</th>
 							<th>Intervention</th>
 							<th>Reason for stopping / Response acheived</th>
@@ -541,7 +552,7 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;In case of intervention for NON-CANCER</td>
-			<td>
+			<td class="row-data">
 				<table class="inner">
 					<tr>
 						<th>What is the patient's clinical severity? (Where possible use standard scoring systems e.g. WHO, DAS scores, walk test, cardiac index etc)</th>
@@ -562,7 +573,7 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;In case of intervention for CANCER</td>
-			<td><table class="inner">
+			<td class="row-data"><table class="inner">
 					<tr>
 						<th>Please indicate whether the intervention is for:
 							<ul>
@@ -592,12 +603,12 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;What is the anticipated toxicity of the intervention for this patient?</td>
-			<td><?php echo nl2br($treatment->toxicity) ?></td>
+			<td class="row-data"><?php echo nl2br($treatment->toxicity) ?></td>
 		</tr>
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;What are the criteria for stopping treatment</td>
-			<td><ol>
+			<td class="row-data"><ol>
 					<li>Failure of treatment indicated by persistent deterioration in visual acuity</li>
 					<li>Absence of disease activity</li>
 					<li>Adverse effects related to the drug</li>
@@ -608,12 +619,12 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;How will you monitor the effectiveness of the intervention?</td>
-			<td>Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG</td>
+			<td class="row-data">Visual acuity, Clinical examination, OCT, and when necessary, FFA and ICG</td>
 		</tr>
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;What would you consider to be a successful outcome for this intervention in this patient?</td>
-			<td><ol>
+			<td class="row-data"><ol>
 				<li>Stabilisation / improvement in visual acuity</li>
 				<li>Resolution of subretinal fluid on OCT</li>
 				<li>Absence of leak on FFA/ICG</li>
@@ -622,12 +633,12 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr>
 			<td class="row-title">What are the patient expectations for the outcome of the treatment? Have these been discussed with the patient and their family?</td>
-			<td><?php echo $exceptional->{$side . '_patient_expectations'} ?></td>
+			<td class="row-data"><?php echo $exceptional->{$side . '_patient_expectations'} ?></td>
 		</tr>
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;Costing information</td>
-			<td>
+			<td class="row-data">
 				<table class="inner">
 					<tr>
 						<th>Anticipated monthly cost, or cost per cycle (inc VAT) (Seek advice from Pharmacy)</th>
@@ -651,16 +662,16 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;Date form completed:</td>
-			<td><?php echo $event->NHSDate('last_modified_date') ?></td>
+			<td class="row-data"><?php echo $event->NHSDate('last_modified_date') ?></td>
 		</tr>
 		<tr nobr="true">
 			<td class="row-title">&nbsp;Trust reference number</td>
-			<td>&nbsp;</td>
+			<td class="row-data">&nbsp;</td>
 		</tr>
 
 		<tr nobr="true">
 			<td class="row-title">&nbsp;Form completed by:</td>
-			<td><?php echo $event->usermodified->getFullname() ?></td>
+			<td class="row-data"><?php echo $event->usermodified->getFullname() ?></td>
 		</tr>
 
 	</tbody>
