@@ -252,7 +252,7 @@ class OphCoTherapyapplication_Processor
 			$pdf->setTitle('Therapy Application');
 			$pdf->SetSubject('Therapy Application');
 
-			$letter->render($pdf);
+			$pdfdoc->render($pdf);
 
 			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $data['patient']->hos_num . '.pdf');
 			$pdf->Output($pfile->getPath(), "F");
