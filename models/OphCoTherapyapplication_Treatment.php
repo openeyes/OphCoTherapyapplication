@@ -66,22 +66,23 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	}
 
 	/**
-	* scope to get all records including those marked as unavailable
+	* scope to only get treatments where the drug is available
 	*
 	*/
-	public function allScope()
+	public function availableScope()
 	{
-		$alias = $this->getTableAlias(false);
-
 		$this->resetScope()->getDbCriteria()->mergeWith(array(
-				'with' => array("drug"),
-				'order' => 'drug.display_order ASC',
-		));
+				'with' => array(
+					"drug" => array(
+						'condition' => 'drug.available = true', 'order' => 'drug.display_order ASC'),
+					),
+				'condition' => 'decisiontree_id IS NOT NULL'));
+
 		return $this;
 	}
 
 	/**
-	 * only return those where the drug is available
+	 * set the ordering based on the drug for the treatment
 	 *
 	 * (non-PHPdoc)
 	 * @see CActiveRecord::defaultScope()
@@ -89,10 +90,9 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	public function defaultScope()
 	{
 		return array(
-				'with' => array("drug"),
-				'order' => 'drug.display_order ASC',
-				'together' => true,
-				'condition' => 'drug.available = true'
+			'with' => array(
+				"drug" => array(
+					'order' => 'drug.display_order ASC'))
 		);
 	}
 

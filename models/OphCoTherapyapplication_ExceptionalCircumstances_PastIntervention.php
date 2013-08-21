@@ -209,9 +209,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 			return OphCoTherapyapplication_RelevantTreatment::model()->findAll();
 		}
 		else {
-			return OphCoTherapyapplication_Treatment::model()->allScope()->findAll();
+			return OphCoTherapyapplication_Treatment::model()->findAll();
 		}
-
 	}
 
 	/**

@@ -146,25 +146,41 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		));
 	}
 
+	// only want to query list of available treatments once
+	protected $_available_treatments = null;
 
-
-	protected function beforeSave()
+	/**
+	 * returns list of treatment for the given side
+	 *
+	 * @param string $side - left or right
+	 * @return OphTrIntravitrealinjection_Treatment_Drug[]
+	 */
+	public function getTreatments($side)
 	{
-		return parent::beforeSave();
+		if (is_null($this->_available_treatments)) {
+			$this->_available_treatments = OphCoTherapyapplication_Treatment::model()->availableScope()->findAll();
+		}
+		$treatments = $this->_available_treatments;
+
+		if ($curr_id = $this->{$side . '_treatment_id'}) {
+			$treatment_array = array();
+
+			foreach ($treatments as $treatment) {
+				if ($curr_id == $treatment->id) {
+					// current treatment is in the list so we don't need to append
+					return $treatments;
+				}
+				$treatment_array[] = $treatment;
+			}
+
+			// got this far so the current drug for this side is no longer available
+			$treatment_array[] = $this->{$side . '_treatment'};
+			$treatments = $treatment_array;
+		}
+		return $treatments;
 	}
 
-	protected function afterSave()
-	{
-
-		return parent::afterSave();
-	}
-
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
-	}
-
-	/*
+	/**
 	 * if either the left or right treatment requires the contraindications to be provided, returns true. otherwise returns false
 	 *
 	 * @return boolean $required

@@ -25,29 +25,12 @@
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
 	<h4 class="elementTypeName"><?php echo $element->elementType->name; ?></h4>
 
-	<?php
-	// only want treatments that are marked as available, and have been configured
-	// with a decision tree for determining compliance
-	$criteria = new CDbCriteria();
-	$criteria->addCondition('decisiontree_id IS NOT NULL');
-	
-	$treatments = OphCoTherapyapplication_Treatment::model()->findAll($criteria);
-	
-	$html_options = array(
-			'options' => array(),
-			'empty'=>'- Please select -',
-			'nowrapper' => true,
-	);
-	foreach ($treatments as $treatment) {
-		$html_options['options'][(string) $treatment->id] = array('data-treeid' => $treatment->decisiontree_id, 'data-contraindications' => $treatment->contraindications_required);
-	}
-	?>
 	<div class="cols2 clearfix">
 		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
 		<div class="side left eventDetail<?php if (!$element->hasRight()) { ?> inactive<?php } ?>" data-side="right">
 			<div class="activeForm">
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
-					array('side' => 'right', 'element' => $element, 'form' => $form, 'treatments' => $treatments, 'treat_opts' => $html_options, 'data' => $data)); ?>
+					array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 			</div>
 			<div class="inactiveForm">
 				Select a diagnosis
@@ -56,7 +39,7 @@
 		<div class="side right eventDetail<?php if (!$element->hasLeft()) { ?> inactive<?php } ?>" data-side="left">
 			<div class="activeForm">
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
-					array('side' => 'left', 'element' => $element, 'form' => $form, 'treatments' => $treatments, 'treat_opts' => $html_options, 'data' => $data)); ?>
+					array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 			</div>
 			<div class="inactiveForm">
 				Select a diagnosis

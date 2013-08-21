@@ -186,7 +186,7 @@ class AdminController extends ModuleAdminController
 	 */
 	public function actionViewTreatments()
 	{
-		$data_provider=new CActiveDataProvider(OphCoTherapyapplication_Treatment::model()->allScope() );
+		$data_provider=new CActiveDataProvider(OphCoTherapyapplication_Treatment::model() );
 
 		Audit::add('admin','list',null,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
 
@@ -203,7 +203,7 @@ class AdminController extends ModuleAdminController
 	 */
 	public function actionUpdateOphCoTherapyapplication_Treatment($id)
 	{
-		$model = OphCoTherapyapplication_Treatment::model()->allScope()->findByPk((int) $id);
+		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int) $id);
 
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];

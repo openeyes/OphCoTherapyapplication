@@ -18,14 +18,28 @@
  */
 ?>
 
+<?php
+
+	$treatments = $element->getTreatments($side);
+
+	$treat_opts = array(
+		'options' => array(),
+		'empty'=>'- Please select -',
+		'nowrapper' => true,
+	);
+	foreach ($treatments as $treatment) {
+		$treat_opts['options'][(string) $treatment->id] = array('data-treeid' => $treatment->decisiontree_id, 'data-contraindications' => $treatment->contraindications_required);
+	}
+?>
+
 <div class="elementField">
-<div class="label"><?php echo $element->getAttributeLabel($side . '_treatment_id'); ?></div>
-<div class="data"><?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts); ?></div>
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_treatment_id'); ?></div>
+	<div class="data"><?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts); ?></div>
 </div>
 
 <div class="elementField">
-<div class="label"><?php echo $element->getAttributeLabel($side . '_angiogram_baseline_date'); ?></div>
-<div class="data"><?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array('style'=>'width: 110px;', 'nowrapper' => true))?></div>
+	<div class="label"><?php echo $element->getAttributeLabel($side . '_angiogram_baseline_date'); ?></div>
+	<div class="data"><?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array('style'=>'width: 110px;', 'nowrapper' => true))?></div>
 </div>
 
 <div id="nice_compliance_<?php echo $side?>" class="elementField">
