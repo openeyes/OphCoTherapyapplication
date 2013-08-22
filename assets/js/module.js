@@ -191,17 +191,43 @@ ComplianceCalculator.prototype.checkNode = function(node_id)
 
 };
 
+/**
+ * conversion function to allow comparisons of select values that may not have convenient numeric values. Currently
+ * in place purely for VA, which doesn't use base value in this area (to maintain db independence from VA implementation
+ * for now)
+ *
+ * @param node_id
+ * @param value
+ * @returns int
+ */
+ComplianceCalculator.prototype.getComparisonValue = function(node_id,value) {
+	var return_val = value;
+	if (this._nodes[node_id]['data-type'] == 'va') {
+		// mock up a base value so that comparison operators can work
+		return_val = this._elem.find('#' + this._side + '_node_' + node_id).find('select option').length;
+		this._elem.find('#' + this._side + '_node_' + node_id).find('select option').each(function() {
+			if (value == $(this).val()) {
+				return false;
+			}
+			return_val--;
+		});
+	}
+	return return_val;
+}
+
 /*
  * Checks the rules for the node of the given node id against the value. Returns
  * true if the node should be shown according to the rules
  */
 ComplianceCalculator.prototype.checkNodeRule = function(node_id, value) {
+	value = this.getComparisonValue(this._nodes[node_id]['parent_id'], value);
+
 	if (this._nodes[node_id]['rules'].length) {
 		var res = true;
 
 		for (var i = 0; i < this._nodes[node_id]['rules'].length; i++) {
 			var cmp =  this._nodes[node_id]['rules'][i]['parent_check'];
-			var chk_val = this._nodes[node_id]['rules'][i]['parent_check_value'];
+			var chk_val = this.getComparisonValue(this._nodes[node_id]['parent_id'], this._nodes[node_id]['rules'][i]['parent_check_value']);
 			switch (cmp)
 			{
 				case "eq":

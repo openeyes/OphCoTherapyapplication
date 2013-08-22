@@ -138,6 +138,7 @@ class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord
 		// return a definition of the node
 		$defn = array();
 		$defn['id']         = $this->id;
+		$defn['data-type']  = $this->response_type ? $this->response_type->datatype : null;
 		$defn['question']   = $this->question;
 		$defn['outcome_id'] = $this->outcome_id;
 		$defn['parent_id']  = $this->parent_id;
