@@ -729,6 +729,8 @@ $(document).ready(function() {
 		}
 	});
 
+	OphCoTherapyapplication_PatientSuitability_check('left');
+	OphCoTherapyapplication_PatientSuitability_check('right');
 	// check whether we need exceptional circumstances or not
 	OphCoTherapyapplication_ExceptionalCircumstances_check('left');
 	OphCoTherapyapplication_ExceptionalCircumstances_check('right');
