@@ -27,7 +27,7 @@
 
 	<div class="cols2 clearfix">
 		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
-		<div class="side left eventDetail<?php if (!$element->hasRight()) { ?> inactive<?php } ?>" data-side="right">
+		<div class="side left eventDetail<?php if (!$element->hasRight() || !$this->hasDiagnosisForSide($element->event_id,'right')) { ?> inactive<?php } ?>" data-side="right">
 			<div class="activeForm">
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
 					array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
@@ -36,7 +36,7 @@
 				Select a diagnosis
 			</div>
 		</div>
-		<div class="side right eventDetail<?php if (!$element->hasLeft()) { ?> inactive<?php } ?>" data-side="left">
+		<div class="side right eventDetail<?php if (!$element->hasLeft() || !$this->hasDiagnosisForSide($element->event_id,'left')) { ?> inactive<?php } ?>" data-side="left">
 			<div class="activeForm">
 				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
 					array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
@@ -45,6 +45,5 @@
 				Select a diagnosis
 			</div>
 		</div>
-
 	</div>
 </div>
