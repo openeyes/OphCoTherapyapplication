@@ -74,4 +74,43 @@ class OphCoTherapyapplication_API extends BaseAPI
 		}
 	}
 
+	/**
+	 * return all the disorders for level 1
+	 *
+	 * @return Disorder[]
+	 */
+	public function getLevel1Disorders()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->condition = 'parent_id IS NULL';
+		$criteria->order = 'display_order asc';
+
+		$therapy_disorders = OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria);
+		$disorders = array();
+		foreach ($therapy_disorders as $td) {
+			$disorders[] = $td->disorder;
+		}
+
+		return $disorders;
+	}
+
+	/**
+	 * return all the disorders that are level 2 for the given $disorder_id
+	 *
+	 * @param integer $disorder_id
+	 * @return Disorder[]
+	 */
+	public function getLevel2Disorders($disorder_id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->condition = 'parent_id IS NULL AND disorder_id = :did';
+		$criteria->params = array(':did' => $disorder_id);
+		$disorders = array();
+
+		if ($td = OphCoTherapyapplication_TherapyDisorder::model()->find($criteria)) {
+			$disorders = $td->getLevel2Disorders();
+		}
+
+		return $disorders;
+	}
 }
