@@ -1,19 +1,41 @@
 OphCoTherapyApplication Module
 ==============================
 
-This module is in active development and is targetted for 1.4 release.
+This module is intended to generate applications for funding for therapies for patients. Once a therapy application event
+is created, it can be submitted. The submission process generates the PDF application form(s) and sends this in an email
+to the configured address(es).
 
-It's pre-alpha, and not recommended for use or analysis by any but the significantly masochistic.
+The first release version of this module is 1.4.
+
+Configuration
+=============
+
+See config/common.php for details of configuration variables.
+
+Initialisation
+==============
+
+The createtherapyapplicationfilecollections command will import files from a nested directory structure.
+
+./yiic help createtherapyapplicationfilecollections
+
+for details
 
 Dependencies
 ============
 
-1. Requires OphTrIntravitrealinjection
+1. Requires the following modules:
+	OphTrIntravitrealinjection
+	OphCiExamination
+2. An email server supported by SwiftMailer
 
-Elements
-========
+Items of note
+=============
 
-The Element_OphCoTherapyapplication_Email class is an element that is created by the processing of the application. As such it is not an element that should be directly edited.
+1. The Element_OphCoTherapyapplication_Email class is an element that is created by the processing of the application.
+As such it is not an element that should be directly edited.
+2. For an application to be submitted, an Injection Management element needs to have been defined for the eye(s) to be
+applied for in the current episode. Similarly, visual acuity must have been recorded for both eyes.
 
 Templates
 =========
@@ -29,7 +51,9 @@ views/email/
 	\------- pdf_noncompliant.php - pdf template for non compliant applications
 	\------- pdf_noncompliant_[template_code].php - pdf template for non compliant applications
 
-If a specific drug needs a different attachment, then it should be assigned a template code in the admin for treatments. The appropiately named template can then be included in the email directory.
+If a specific drug needs a different attachment, then it should be assigned a template code in the admin for treatments.
+The appropiately named template can then be included in the email directory.
 
-TODO: implement the same for email text (template override)
+TODO: implement template overrides for email text.
 TODO: setup gitignore appropriately to ignore custom templates that are put here.
+TODO: handle patients who only have one eye.
