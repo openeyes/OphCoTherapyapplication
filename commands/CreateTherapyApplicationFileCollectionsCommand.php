@@ -27,6 +27,8 @@
 class CreateTherapyApplicationFileCollectionsCommand extends CConsoleCommand
 {
 	protected $file_extensions = array("pdf");
+	protected $summary_text_default = "-";
+	protected $summary_filename = "summary.txt";
 
 	public function getName()
 	{
@@ -64,9 +66,10 @@ EOH;
 			$this->usageError("cannot read specified source path " . $args[0]);
 		}
 
-		// read directory structure into data
-		$file_list = $this->buildFileList($args[0], "./");
+		$base_path = $args[0];
 
+		// read directory structure into data
+		$file_list = $this->buildFileList($base_path, "./");
 		$file_ext_regexp = implode("|", $this->file_extensions);
 
 		$sets = array();
@@ -76,21 +79,35 @@ EOH;
 			if (preg_match("/" . $file_ext_regexp . "$/", $fname)) {
 				$path = str_replace(DIRECTORY_SEPARATOR, ' - ', dirname($fname));
 				if (!@$sets[$path]) {
-					$sets[$path] = array($details);
+					$summary_text = $this->summary_text_default;
+					$summary_filepath = $base_path . dirname($fname) . DIRECTORY_SEPARATOR . $this->summary_filename;
+
+					if ($this->summary_filename
+						&& file_exists($summary_filepath)) {
+						// read the summary text in from the file
+						$summary_text = file_get_contents($summary_filepath);
+
+					}
+					$sets[$path] = array(
+						'summary' => $summary_text,
+						'files' => array($details));
 				} else {
-					$sets[$path][] = $details;
+					$sets[$path]['files'][] = $details;
 				}
 			}
 		}
 
-		$success = 0;
+		$created = 0;
+		$modified = 0;
 		// iterate through and create the file collections.
-		foreach ($sets as $set_name => $file_list) {
+		foreach ($sets as $set_name => $set_details) {
+			$created_flag = false;
 			$transaction = Yii::app()->getDb()->beginTransaction();
 			$pf_list = array();
 			$pf_ids = array();
+
 			try {
-				foreach ($file_list as $details) {
+				foreach ($set_details['files'] as $details) {
 
 					$pf = ProtectedFile::createFromFile($details['source']);
 					if ($pf->save()) {
@@ -104,9 +121,18 @@ EOH;
 						break;
 					}
 				}
-				$fc = new OphCoTherapyapplication_FileCollection();
-				$fc->name = $set_name;
-				$fc->summary = "-";
+
+				// update the existing file collection if there is one
+				$criteria = new CDbCriteria();
+				$criteria->addCondition("name = :nm");
+				$criteria->params = array(":nm" => $set_name);
+				if (!$fc = OphCoTherapyapplication_FileCollection::model()->find($criteria)) {
+					$fc = new OphCoTherapyapplication_FileCollection();
+					$fc->name = $set_name;
+					$created_flag = true;
+
+				}
+				$fc->summary = $set_details['summary'];
 
 				if (!$fc->validate()) {
 					echo "unexpected validation error with file collection\n";
@@ -117,7 +143,7 @@ EOH;
 						$fc->updateFiles($pf_ids);
 						Audit::add('admin','create',serialize($fc->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
 						$transaction->commit();
-						$success++;
+						$created_flag ? $created++ : $modified++;
 					} else {
 						foreach ($pf_list as $pf) {
 							$pf->delete();
@@ -135,7 +161,7 @@ EOH;
 			}
 		}
 
-		echo "Processing complete, " . $success . " collections created\n";
+		echo "Processing complete, " . $created . " collections created, " . $modified . " collections updated\n";
 
 	}
 

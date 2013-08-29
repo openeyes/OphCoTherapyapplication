@@ -63,6 +63,21 @@ class OphCoTherapyapplication_FileCollection extends BaseActiveRecord
 	}
 
 	/**
+	 * set the ordering based on the name of the collections
+	 *
+	 * (non-PHPdoc)
+	 * @see CActiveRecord::defaultScope()
+	 */
+	public function defaultScope()
+	{
+		$alias = $this->getTableAlias(false, false);
+
+		return array(
+			'order' => 'UPPER(' . $alias . '.name) ASC',
+		);
+	}
+
+	/**
 	 * @return array relational rules.
 	 */
 	public function relations()
