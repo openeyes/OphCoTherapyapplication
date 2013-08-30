@@ -759,6 +759,21 @@ $(document).ready(function() {
 		OphCoTherapyapplication_ExceptionalCircumstances_check(side);
 	});
 
+	$(this).delegate('#application-preview', 'click', function(e) {
+		e.preventDefault();
+		disableButtons();
+
+		new OpenEyes.Dialog({
+			//content: iframe,
+			iframe: $(this).attr('href'),
+			width: 610,
+			height: 910,
+			title: "Therapy Application Preview",
+			onOpen: function() { enableButtons(); }
+		}).open();
+
+	});
+
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }

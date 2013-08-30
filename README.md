@@ -17,7 +17,7 @@ Initialisation
 
 The createtherapyapplicationfilecollections command will import files from a nested directory structure.
 
-./yiic help createtherapyapplicationfilecollections
+    ./yiic help createtherapyapplicationfilecollections
 
 for details
 
@@ -44,20 +44,17 @@ When an application is processed, an email is generated for each eye. the templa
 <pre>
 views/email/
 	|
-	\------- email_compliant.php  - email text for NICE Compliant therapy applications
-	\------- email_noncomplaint.php - email text for non-NICE Compliant therapy applications
-	\------- pdf_compliant.php - pdf template for compliant applications
-	\------- pdf_compliant_[template_code].php - pdf template for compliant applications
-	\------- pdf_noncompliant.php - pdf template for non compliant applications
-	\------- pdf_noncompliant_[template_code].php - pdf template for non compliant applications
+	\---- email_compliant.php  - email text for NICE Compliant therapy applications
+	\---- email_noncomplaint.php - email text for non-NICE Compliant therapy applications
+	\---- pdf_compliant.php - pdf template for compliant applications
+	\---- pdf_compliant_[template_code].php - pdf template for compliant applications
+	\---- pdf_noncompliant.php - pdf template for non compliant applications
+	\---- pdf_noncompliant_[template_code].php - pdf template for non compliant applications
 </pre>
 
 If a specific drug needs a different attachment, then it should be assigned a template code in the admin for treatments.
 The appropiately named template can then be included in the email directory.
 
-TODO: implement template overrides for email text.
-TODO: setup gitignore appropriately to ignore custom templates that are put here.
-TODO: handle patients who only have one eye.
 
 Known Issues
 ------------
@@ -68,4 +65,5 @@ The admin functionality is not wholly complete. In particular:
  1. Rule Delete
  2. Decision Tree Delete (soft or otherwise)
  3. No way of viewing a whole tree in one go.
-
+2. implement template overrides for email text.
+3. setup gitignore appropriately to ignore custom templates that are put here.
