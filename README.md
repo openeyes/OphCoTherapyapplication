@@ -64,7 +64,7 @@ Known Issues
 
 The admin functionality is not wholly complete. In particular:
 1. Decision Tree management is not functionally complete:
-	1. Rule Delete
-	2. Decision Tree Delete (soft or otherwise)
-	3. No way of viewing a whole tree in one go.
+ 1. Rule Delete
+ 2. Decision Tree Delete (soft or otherwise)
+ 3. No way of viewing a whole tree in one go.
 
