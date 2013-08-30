@@ -25,10 +25,12 @@ Dependencies
 ------------
 
 1. Requires the following modules:
-	OphTrIntravitrealinjection
-	OphCiExamination
+  1. OphTrIntravitrealinjection
 2. An email server supported by SwiftMailer
-
+3. Uses the following modules if they are present:
+  1. OphCiExamination
+  2. OphTrConsent
+  
 Items of note
 -------------
 
