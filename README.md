@@ -22,7 +22,7 @@ The createtherapyapplicationfilecollections command will import files from a nes
 for details
 
 Dependencies
-============
+------------
 
 1. Requires the following modules:
 	OphTrIntravitrealinjection
@@ -30,7 +30,7 @@ Dependencies
 2. An email server supported by SwiftMailer
 
 Items of note
-=============
+-------------
 
 1. The Element_OphCoTherapyapplication_Email class is an element that is created by the processing of the application.
 As such it is not an element that should be directly edited.
@@ -38,10 +38,10 @@ As such it is not an element that should be directly edited.
 applied for in the current episode. Similarly, visual acuity must have been recorded for both eyes.
 
 Templates
-=========
+---------
 
 When an application is processed, an email is generated for each eye. the templates for the content of this email exist in
-
+<pre>
 views/email/
 	|
 	\------- email_compliant.php  - email text for NICE Compliant therapy applications
@@ -50,6 +50,7 @@ views/email/
 	\------- pdf_compliant_[template_code].php - pdf template for compliant applications
 	\------- pdf_noncompliant.php - pdf template for non compliant applications
 	\------- pdf_noncompliant_[template_code].php - pdf template for non compliant applications
+</pre>
 
 If a specific drug needs a different attachment, then it should be assigned a template code in the admin for treatments.
 The appropiately named template can then be included in the email directory.
@@ -57,3 +58,13 @@ The appropiately named template can then be included in the email directory.
 TODO: implement template overrides for email text.
 TODO: setup gitignore appropriately to ignore custom templates that are put here.
 TODO: handle patients who only have one eye.
+
+Known Issues
+------------
+
+The admin functionality is not wholly complete. In particular:
+1. Decision Tree management is not functionally complete:
+	1. Rule Delete
+	2. Decision Tree Delete (soft or otherwise)
+	3. No way of viewing a whole tree in one go.
+
