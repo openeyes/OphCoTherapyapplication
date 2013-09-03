@@ -764,10 +764,10 @@ $(document).ready(function() {
 		disableButtons();
 
 		new OpenEyes.Dialog({
-			//content: iframe,
 			iframe: $(this).attr('href'),
 			width: 610,
 			height: 910,
+			constrainToViewport: true,
 			title: "Therapy Application Preview",
 			onOpen: function() { enableButtons(); }
 		}).open();
