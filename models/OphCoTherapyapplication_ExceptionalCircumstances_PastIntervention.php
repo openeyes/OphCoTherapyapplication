@@ -76,6 +76,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 			array('relevanttreatment_id', 'requiredDependingOnTreatmentType', 'relevant' => true),
 			array('relevanttreatment_other', 'requiredIfRelevantTreatmentIsOther'),
 			array('stopreason_other', 'requiredIfStopReasonIsOther'),
+			array('start_date', 'validateEarlierOrEqualDate', 'later_date' => 'end_date'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, start_date, end_date, treatment_id, start_va, end_va, stopreason_id, stopreason_other, comments', 'safe', 'on' => 'search'),
@@ -249,6 +250,16 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	{
 		if ($this->relevanttreatment && $this->relevanttreatment->other && $this->$attribute == null) {
 			$this->addError($attribute, $this->getAttributeLabel($attribute)." is required when stop reason is set to " . $this->stopreason->name);
+		}
+	}
+
+	public function validateEarlierOrEqualDate($attribute, $params)
+	{
+		$later_date = $params['later_date'];
+		if ($this->$attribute && $this->$later_date
+			&& $this->$attribute > $this->$later_date
+		) {
+			$this->addError($attribute, $this->getAttributeLabel($attribute) . " must be equal to or before " . $this->getAttributeLabel($later_date));
 		}
 	}
 
