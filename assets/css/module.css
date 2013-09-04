@@ -111,6 +111,14 @@ select.MultiSelectList, div.MultiSelectList {
 	vertical-align: top;
 }
 
+select.MultiSelectList {
+	width: 266px;
+}
+
+.start_period select {
+	width: 266px;
+}
+
 ul.MultiSelectList {
 	margin: 0px;
 }
