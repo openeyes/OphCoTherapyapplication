@@ -57,7 +57,7 @@ class m130813_141710_release_tweaks extends CDbMigration
 
 		$this->update('ophcotherapya_exceptional_startperiod', array(
 				'application_description' => 'IFR request for treatment where the patient requires a funding decision within one month',
-				'display_order' => 3, 'name' => '1 month'), 'name = :nm', array(':nm' => '4 weeks')
+				'display_order' => 3, 'name' => 'One month', 'urgent' => true), 'name = :nm', array(':nm' => '4 weeks')
 		);
 		$this->update('ophcotherapya_exceptional_startperiod', array(
 				'application_description' => 'IFR request for treatment where the patient requires a funding decision within two weeks',
