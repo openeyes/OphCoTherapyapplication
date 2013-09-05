@@ -112,6 +112,12 @@ class OphCoTherapyapplication_Processor
 		}
 	}
 
+	public function isEventNonCompliant($event_id)
+	{
+		$event_data = $this->getEvent($event_id);
+		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->isNonCompliant();
+	}
+
 	/**
 	 * determine if the the event can be processed for application
 	 *

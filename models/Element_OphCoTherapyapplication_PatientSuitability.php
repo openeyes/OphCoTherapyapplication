@@ -236,17 +236,31 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		}
 	}
 
-	public function getDecisionTreeForSide($side) {
+	/**
+	 * get the decision tree for the element side $side
+	 *
+	 * @param string $side
+	 * @return OphCoTherapyapplication_DecisionTree
+	 */
+	public function getDecisionTreeForSide($side)
+	{
 		$side_id = $side == 'left' ? SplitEventTypeElement::LEFT : SplitEventTypeElement::RIGHT;
 
 		if ($response = OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse::model()->find("patientsuit_id=? and eye_id=? and value != ?",array($this->id,$side_id,''))) {
 			return $response->node->decisiontree;
 		}
 
-		return false;
+		return null;
 	}
 
-	public function getDecisionTreeAnswersForDisplay($side) {
+	/**
+	 * get the answers for each node in the decision tree (to display)
+	 *
+	 * @param $side
+	 * @return array
+	 */
+	public function getDecisionTreeAnswersForDisplay($side)
+	{
 		if ($tree = $this->getDecisionTreeForSide($side)) {
 			$answers = array();
 
@@ -262,13 +276,21 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 				$treeData[$node->parent_id][] = $node;
 			}
 
-			$answers = $this->calculateAnswers($treeData, $answers);
+			return $this->calculateAnswers($treeData, $answers);
 		}
 
 		return array();
 	}
 
-	public function calculateAnswers($treeData, $answers, $parent=null, $textAnswers=array()) {
+	/**
+	 * @param $treeData
+	 * @param $answers
+	 * @param null $parent
+	 * @param array $textAnswers
+	 * @return array
+	 */
+	public function calculateAnswers($treeData, $answers, $parent=null, $textAnswers=array())
+	{
 		foreach ($treeData[$parent] as $node) {
 			if (isset($answers[$node->id])) {
 				$textAnswers[$node->question] = $answers[$node->id] ? 'Yes' : 'No';
@@ -280,5 +302,42 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		}
 
 		return $textAnswers;
+	}
+
+	/**
+	 * determines if application is non compliant for the given side. If both, returns true if either side is
+	 * non compliant
+	 *
+	 * returns null for invalid requests
+	 *
+	 * @param string $side
+	 * @return bool|null
+	 */
+	public function isNonCompliant($side = 'both')
+	{
+		if ($side == 'left') {
+			if ($this->hasLeft()) {
+				return !$this->left_nice_compliance;
+			}
+			else {
+				return null;
+			}
+		}
+		if ($side == 'right') {
+			if ($this->hasRight()) {
+				return !$this->right_nice_compliance;
+			}
+			else {
+				return null;
+			}
+		}
+		$res = null;
+		if ($this->hasLeft()) {
+			$res = !$this->left_nice_compliance;
+		}
+		if (!$res && $this->hasRight()) {
+			$res = !$this->right_nice_compliance;
+		}
+		return $res;
 	}
 }

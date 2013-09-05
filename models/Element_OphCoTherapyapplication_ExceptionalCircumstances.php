@@ -331,6 +331,42 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
+	 * extends standard delete method to remove related assignments
+	 *
+	 * (non-PHPdoc)
+	 * @see CActiveRecord::delete()
+	 */
+	public function delete()
+	{
+		$transaction = $this->dbConnection->beginTransaction();
+		try {
+			foreach ($this->previnterventions as $prev) {
+				$prev->delete();
+			}
+			foreach ($this->relevantinterventions as $relv) {
+				$relv->delete();
+			}
+			foreach ($this->deviationreasons as $devr) {
+				$devr->delete();
+			}
+			foreach ($this->filecollection_assignments as $fca) {
+				$fca->delete();
+			}
+			if (parent::delete()) {
+				$transaction->commit();
+			}
+			else {
+				throw new Exception('unable to delete');
+			}
+		}
+		catch (Exception $e) {
+			$transaction->rollback();
+			throw $e;
+		}
+
+	}
+
+	/**
 	 * returns true if this application has been submitted. false otherwise
 	 *
 	 * @return bool

@@ -29,7 +29,13 @@ $service = new OphCoTherapyapplication_Processor();
 $warnings = array();
 
 if ($service->canProcessEvent($this->event->id)) {
-	$this->event_actions[] = EventAction::link('Preview Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewApplication/?event_id='.$this->event->id),null, array('id' => 'application-preview'));
+	if ($service->isEventNonCompliant($this->event->id)) {
+		$this->event_actions[] = EventAction::link('Preview Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewApplication/?event_id='.$this->event->id),null, array('id' => 'application-preview'));
+	}
+	else {
+		$this->event_actions[] = EventAction::button('Preview Application',null,array('disabled' => true), array('title' => 'Preview unavailable for NICE compliant applications'));
+	}
+
 	$this->event_actions[] = EventAction::link('Submit Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/processApplication/?event_id='.$this->event->id));
 } else {
 	$warnings = $service->getProcessWarnings($this->event->id);
