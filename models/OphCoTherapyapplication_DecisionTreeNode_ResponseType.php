@@ -95,7 +95,7 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 
 	/**
 	 * translate a given response value into a text value for display
-	 * 
+	 *
 	 * @param $value
 	 * @return string
 	 */
