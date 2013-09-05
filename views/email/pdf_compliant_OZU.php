@@ -29,7 +29,6 @@ h1 {
 
 table td {
 	border: 1px solid #dae6f1;
-	padding: 3px;
 }
 
 td.signature {
@@ -40,11 +39,13 @@ td.signature {
 
 <?php
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+//$ccg = $patient->getCommissioningBodyOfType($cbody_type);
+$gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($cbody_type) : null;
 ?>
 
 <p>Notification for Dexamethasone intravitreal implant for the treatment of macular oedema secondary to retinal vein occlusion.</p>
 
-<table>
+<table cellpadding="5">
 <tr>
 <td>Patient NHS Number:</td>
 <td><?php echo $patient->nhs_num ? $patient->nhs_num : "Unknown" ?></td>
@@ -60,7 +61,7 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 <td>Consultant Making Request:</td>
 <td><?php echo $service_info->consultant->getConsultantName() ?></td>
 <td>GP Practice Code:</td>
-<td>TBD</td>
+<td><?php echo $patient->gp ? $patient->gp->nat_id : "Uknown" ?></td>
 </tr>
 
 <tr>
@@ -69,26 +70,38 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 <td>Proposed MEH Site:</td>
 <td>TBD</td>
 <td>GP Post Code:</td>
-<td><?php echo ($patient->practice && $patient->practice->address) ? $patient->practice->address->postcode : 'Unknown' ?></td>
+<td><?php echo ($patient->practice && $patient->practice->contact->correspondAddress) ? $patient->practice->contact->correspondAddress->postcode : 'Unknown' ?></td>
 </tr>
 
 <tr>
 <td>Patient VA</td>
-<td colspan="5"><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuity($patient, $event->episode, $side)) ) ? $va : "Not measured"; ?></td>
+<td colspan="5"><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?></td>
 </tr>
 
 <tr>
-<td>GP PCT</td>
-<td colspan="5">TBD</td>
+<td>GP CCG</td>
+<td colspan="5"><?php echo $gp_cb ? $gp_cb->code."," . $gp_cb->name . "\n" : "Unknown\n" ?></td>
 </tr>
 
 <tr>
 <td colspan="6"><b>Please indicate which aspect of NICE TA229 applies for the patient:</b></td>
 </tr>
+<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {?>
+<tr>
+	<td colspan="3"><?php echo $question ?></td>
+	<td colspan="3"><?php echo $answer ?></td>
+</tr>
+<?php }?>
+<tr>
+	<td colspan="3">Which eye is the treatment for?</td>
+	<td colspan="3"><?php echo ucfirst($side) ?></td>
+</tr>
 
 <tr>
-<td colspan="6">here we should throw an exception if there is not an appropriate Examination response for an Ozurdex application</td>
+	<td colspan="3">What is the acquisition cost of the drug including VAT (if applicable)</td>
+	<td colspan="3">&pound;1,044 per vial<br /><br />Inpatient (Day Case)<br />PbR Tariff</td>
 </tr>
+
 
 <tr>
 <td colspan="6" class="signature">Signature by Trust Chief Pharmacist:<br /><br /><br /></td>
