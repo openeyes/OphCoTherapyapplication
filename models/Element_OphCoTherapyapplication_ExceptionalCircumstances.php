@@ -133,6 +133,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 			array('right_deviationreasons', 'requiredIfStandardInterventionNotUsed', 'side' => 'right'),
 			array('left_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'left'),
 			array('right_patient_factor_details', 'requiredIfPatientFactors', 'side' => 'right'),
+			array('left_urgency_reason', 'requiredIfUrgent', 'side' => 'left'),
 			array('right_urgency_reason', 'requiredIfUrgent', 'side' => 'right'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
