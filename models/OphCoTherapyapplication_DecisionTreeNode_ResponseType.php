@@ -93,4 +93,21 @@ class OphCoTherapyapplication_DecisionTreeNode_ResponseType extends BaseActiveRe
 		return null;
 	}
 
+	/**
+	 * translate a given response value into a text value for display
+	 * 
+	 * @param $value
+	 * @return string
+	 */
+	public function getDisplayValueforResponse($value)
+	{
+		switch ($this->datatype) {
+			case 'bool':
+				return $value ? 'Yes' : 'No';
+				break;
+			default:
+				return $value;
+		}
+	}
+
 }

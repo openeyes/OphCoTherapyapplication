@@ -62,6 +62,10 @@ class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extend
 		);
 	}
 
+	/**
+	 * @return array
+	 * @see parent::relations()
+	 */
 	public function relations()
 	{
 		return array(

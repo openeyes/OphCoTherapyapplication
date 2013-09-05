@@ -31,13 +31,13 @@ VA: Right eye: <?php echo $exam_api->getLetterVisualAcuityRight($patient)?>, lef
 <?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {?>
 <?php echo "$question: $answer\n" ?>
 <?php }?>
-NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'Yes' : 'No')."\n" ?>
+NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'COMPLIANT' : 'NON-COMPLIANT')."\n" ?>
 Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
-<?php 
+<?php
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
-		$patient, 
-		$event->episode, 
-		$side, 
+		$patient,
+		$event->episode,
+		$side,
 		$diagnosis->{$side . '_diagnosis1_id'},
 		$diagnosis->{$side . '_diagnosis2_id'})) {
 	foreach ($exam_info->{$side . '_answers'} as $answer) {
@@ -53,7 +53,7 @@ Full Name: <?php echo $patient->getFullName() . "\n" ?>
 Number:<?php echo $patient->hos_num . "\n" ?>
 NHS Number: <?php echo $patient->nhs_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
-Gender: <?php echo $patient->gender . "\n" ?>
+Gender: <?php echo $patient->getGenderString() . "\n" ?>
 Address: <?php echo ($address = $patient->getLetterAddress(array('delimiter' => ', '))) ? $address . "\n" : "Unknown\n"; ?>
 CCG Code: <?php echo $cb ? $cb->code."\n" : "Unknown\n" ?>
 CCG Description: <?php echo $cb ? $cb->name."\n" : "Unknown\n" ?>

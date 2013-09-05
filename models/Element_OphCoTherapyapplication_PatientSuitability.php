@@ -265,7 +265,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 			$answers = array();
 
 			foreach ($this->{$side.'_responses'} as $response) {
-				if (strlen($response->value) == 1) {
+				if (strlen($response->value)) {
 					$answers[$response['node_id']] = $response->value;
 				}
 			}
@@ -283,6 +283,8 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 	}
 
 	/**
+	 * traverse the given tree and answers to construct list of questions and answers
+	 *
 	 * @param $treeData
 	 * @param $answers
 	 * @param null $parent
@@ -293,7 +295,7 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 	{
 		foreach ($treeData[$parent] as $node) {
 			if (isset($answers[$node->id])) {
-				$textAnswers[$node->question] = $answers[$node->id] ? 'Yes' : 'No';
+				$textAnswers[$node->question] = $node->response_type->getDisplayValueforResponse($answers[$node->id]);
 			}
 
 			if (isset($treeData[$node->id])) {

@@ -41,7 +41,7 @@ if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
 }
 ?>
 
-NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'Yes' : 'No')."\n" ?>
+NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'COMPLIANT' : 'NON-COMPLIANT')."\n" ?>
 Urgent: <?php echo ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent) ? 'Yes' : 'No')."\n" ?>
 <?php if ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent)) {?>
 Reason for urgency: <?php echo $exceptional->{$side . '_urgency_reason'}."\n"?>
@@ -51,7 +51,7 @@ Patient Details:
 Full Name: <?php echo $patient->fullname . "\n" ?>
 Number: <?php echo $patient->hos_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
-Gender: <?php echo $patient->gender . "\n" ?>
+Gender: <?php echo $patient->getGenderString() . "\n" ?>
 Address: <?php echo ($address = $patient->getLetterAddress(array('delimiter' => ', '))) ? $address . "\n" : "Unknown\n"; ?>
 
 GP Details:
