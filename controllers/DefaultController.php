@@ -176,9 +176,6 @@ class DefaultController extends BaseEventTypeController
 					$episode = $this->episode;
 
 					if ($episode) {
-						if ($episode->eye_id) {
-							$element->eye_id = $episode->eye_id;
-						}
 
 						// foreach eye
 						$exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
@@ -213,6 +210,21 @@ class DefaultController extends BaseEventTypeController
 				elseif (get_class($element) == 'Element_OphCoTherapyapplication_MrServiceInformation') {
 					$element->consultant_id = Yii::app()->session['selected_firm_id'];
 				}
+
+				// set the correct eye_id on the element for rendering
+				if(isset($element->left_diagnosis1_id) && isset($element->right_diagnosis1_id))
+				{
+					$element->eye_id = SplitEventTypeElement::BOTH;
+				}
+				else if(isset($element->left_diagnosis1_id))
+				{
+					$element->eye_id = SplitEventTypeElement::LEFT;
+				}
+				else if(isset($element->right_diagnosis1_id))
+				{
+					$element->eye_id = SplitEventTypeElement::RIGHT;
+				}
+
 			}
 		}
 		return $elements;
