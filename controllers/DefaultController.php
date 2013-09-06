@@ -212,16 +212,13 @@ class DefaultController extends BaseEventTypeController
 				}
 
 				// set the correct eye_id on the element for rendering
-				if(isset($element->left_diagnosis1_id) && isset($element->right_diagnosis1_id))
-				{
+				if(isset($element->left_diagnosis1_id) && isset($element->right_diagnosis1_id)){
 					$element->eye_id = SplitEventTypeElement::BOTH;
 				}
-				else if(isset($element->left_diagnosis1_id))
-				{
+				else if(isset($element->left_diagnosis1_id)){
 					$element->eye_id = SplitEventTypeElement::LEFT;
 				}
-				else if(isset($element->right_diagnosis1_id))
-				{
+				else if(isset($element->right_diagnosis1_id)){
 					$element->eye_id = SplitEventTypeElement::RIGHT;
 				}
 
