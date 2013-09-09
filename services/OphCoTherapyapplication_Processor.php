@@ -162,12 +162,13 @@ class OphCoTherapyapplication_Processor
 						'No Injection Management has been created for ' . $missing . ' diagnosis.');
 				}
 
-				if (!$api->getLetterVisualAcuityLeft($event->episode->patient)) {
+				//TODO: the exam api should be consolidated at some point, and these methods may be deprecated
+				if (!$api->getLetterVisualAcuityForEpisodeLeft($event->episode)) {
 					$this->addProcessWarning($event_id, 'Visual acuity not found for left eye.');
 					$can_process = false;
 				}
 
-				if (!$api->getLetterVisualAcuityRight($event->episode->patient)) {
+				if (!$api->getLetterVisualAcuityForEpisodeRight($event->episode)) {
 					$this->addProcessWarning($event_id, 'Visual acuity not found for right eye.');
 					$can_process = false;
 				}
