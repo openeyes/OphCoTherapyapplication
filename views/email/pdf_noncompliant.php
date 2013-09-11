@@ -247,15 +247,15 @@ Please provide further information below relating to the clinical urgency and / 
 						</tr>
 						<tr>
 							<th>Referred By (other than GP)</th>
-							<td>TBD</td>
+							<td>N/A</td>
 						</tr>
 						<tr>
 							<th>Referred From</th>
-							<td>TBD</td>
+							<td>N/A</td>
 						</tr>
 						<tr class="last">
 							<th>Date of Referral</th>
-							<td>TBD</td>
+							<td>N/A</td>
 						</tr>
 
 					</tbody>
