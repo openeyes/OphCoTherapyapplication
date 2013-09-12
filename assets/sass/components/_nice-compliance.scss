@@ -1,0 +1,19 @@
+.compliance-container .outcome {
+	padding: 5px;
+	font-size: 20px;
+	border-width: 2px;
+	border-style: solid;
+	display: inline-block;
+	&.unknown {
+		color: #999;
+		border-color: #999;
+	}
+	&.compliant {
+		color: #0c0;
+		border-color: #0c0;
+	}
+	&.non-compliant {
+		color: #f00;
+		border-color: #f00;
+	}
+}

@@ -16,3 +16,50 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+/* line 2, ../sass/components/_event.scss */
+.event.therapy-application {
+  border-color: #86cdff;
+}
+/* line 4, ../sass/components/_event.scss */
+.event.therapy-application .event-content {
+  background-image: url('../img/new/watermark.png?1378981916');
+}
+/* line 7, ../sass/components/_event.scss */
+.event.therapy-application .event-title {
+  background-image: url('../img/new/medium.png?1378981414');
+}
+
+/* line 2, ../sass/components/_panels.scss */
+.panel.previous-interventions {
+  background: rgba(255, 255, 255, 0.6);
+  margin-bottom: .5em;
+  position: relative;
+}
+/* line 6, ../sass/components/_panels.scss */
+.panel.previous-interventions .field-row {
+  padding-bottom: .4em;
+}
+
+/* line 1, ../sass/components/_nice-compliance.scss */
+.compliance-container .outcome {
+  padding: 5px;
+  font-size: 20px;
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
+}
+/* line 7, ../sass/components/_nice-compliance.scss */
+.compliance-container .outcome.unknown {
+  color: #999;
+  border-color: #999;
+}
+/* line 11, ../sass/components/_nice-compliance.scss */
+.compliance-container .outcome.compliant {
+  color: #0c0;
+  border-color: #0c0;
+}
+/* line 15, ../sass/components/_nice-compliance.scss */
+.compliance-container .outcome.non-compliant {
+  color: #f00;
+  border-color: #f00;
+}
