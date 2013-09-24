@@ -413,7 +413,7 @@ Please provide further information below relating to the clinical urgency and / 
 				<?php } else { ?>
 					There is no standard intervention<br /><br />
 					This is <?php if (!$exceptional->{$side . '_condition_rare'}) { echo 'not'; }?> a rare condition.<br />
-					The incidence of it is: <?php echo $exceptional->{$side . '_incidence'}; ?>
+					The incidence of it is: <?php echo CHtml::encode($exceptional->{$side . '_incidence'}); ?>
 				<?php }?></td>
 		</tr>
 
