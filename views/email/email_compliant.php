@@ -20,7 +20,7 @@
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 $ccg = CommissioningBodyType::model()->find('shortname=?',array('CCG'));
 $cb = $patient->getCommissioningBodyOfType($ccg);
-$gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
+$gp_cb = ($patient->gp && $patient->practice) ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
 ?>
 
 This email was generated from the OpenEyes Therapy Application event
