@@ -12,7 +12,7 @@ class m131014_072253_add_site extends CDbMigration
 
 	public function down()
 	{
-		$this->dropForeignKey('et_ophcotherapya_mrservicein_site_id_fk');
+		$this->dropForeignKey('et_ophcotherapya_mrservicein_site_id_fk', 'et_ophcotherapya_mrservicein');
 		$this->dropColumn('et_ophcotherapya_mrservicein', 'site_id');
 	}
 
