@@ -382,19 +382,28 @@ class OphCoTherapyapplication_Processor
 			// set the eye value to that of the diagnosis
 			$email_el->eye_id = $data['diagnosis']->eye_id;
 			$left_attach_ids = array();
+			$left_attach_size = 0;
 			$right_attach_ids = array();
+			$right_attach_size = 0;
 
 			if ($data['diagnosis']->hasLeft()) {
 
 				if ($file = $this->createPDFForSide($data, 'left')) {
 					//$email_el->left_application_id = $file->id;
 					$left_attach_ids[] = $file->id;
+					$left_attach_size += $file->size;
 				}
 				if (@$data['exceptional'] && $data['exceptional']->hasLeft()) {
 					foreach ($data['exceptional']->left_filecollections as $fc) {
 						$left_attach_ids[] = $fc->getZipFile()->id;
+						$left_attach_size += $fc->getZipFile()->size;
 					}
 				}
+				$data['left_link_to_attachments'] = false;
+				if ($left_attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']) ) {
+					$data['left_link_to_attachments'] = true;
+				}
+
 				$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
 			}
 
@@ -403,12 +412,19 @@ class OphCoTherapyapplication_Processor
 				if ($file = $this->createPDFForSide($data, 'right')) {
 					//$email_el->right_application_id = $file->id;
 					$right_attach_ids[] = $file->id;
+					$right_attach_size += $file->size;
 				}
 				if (@$data['exceptional'] && $data['exceptional']->hasRight()) {
 					foreach ($data['exceptional']->right_filecollections as $fc) {
 						$right_attach_ids[] = $fc->getZipFile()->id;
+						$right_attach_size += $fc->getZipFile()->size;
 					}
 				}
+				$data['right_link_to_attachments'] = false;
+				if ($right_attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']) ) {
+					$data['right_link_to_attachments'] = true;
+				}
+
 				$email_el->right_email_text = $this->generateEmailForSide($data,'right');
 			}
 

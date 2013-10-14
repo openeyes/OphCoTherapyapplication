@@ -54,6 +54,7 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 				'OphCoTherapyapplication_applicant_email',
 				'OphCoTherapyapplication_chief_pharmacist',
 				'OphCoTherapyapplication_chief_pharmacist_contact',
+				'OphCoTherapyapplication_email_size_limit',
 				) as $required_config) {
 
 			if (!isset(Yii::app()->params[$required_config])) {

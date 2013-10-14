@@ -220,8 +220,16 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 
 		$message->setBody($this->{$side . '_email_text'});
 		if ($attach = $this->{$side . '_attachments'}) {
+			// need to ensure that we are not going to go over the limits of file sizes on the mail server
+			// (note that the text changes in the email body are manipulated in the processor for this)
+			$size = 0;
 			foreach ($attach as $att) {
-				$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name) );
+				$size += $att->size;
+			}
+			if ($size <= Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit'])) {
+				foreach ($attach as $att) {
+					$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name) );
+				}
 			}
 		}
 
@@ -236,6 +244,7 @@ class Element_OphCoTherapyapplication_Email extends SplitEventTypeElement
 	 *
 	 * @param string $side
 	 * @return boolean
+	 * @throws Exception
 	 */
 	protected function isSideCompliant($side)
 	{
