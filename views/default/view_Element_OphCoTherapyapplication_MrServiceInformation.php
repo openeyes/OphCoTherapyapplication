@@ -21,6 +21,13 @@
 <h4 class="elementTypeName"><?php echo $element->elementType->name?></h4>
 
 <div class="eventDetail">
-	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?></div>
+	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?>:</div>
 	<div class="data"><?php echo $element->consultant ? $element->consultant->name : 'None'?></div>
 </div>
+
+<?php if ($site = $element->site) { ?>
+	<div class="eventDetail">
+		<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?>:</div>
+		<div class="data"><?php echo $site->name ?></div>
+	</div>
+<? }
