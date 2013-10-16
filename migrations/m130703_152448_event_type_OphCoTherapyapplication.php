@@ -204,7 +204,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 				'CONSTRAINT `ophcotherapya_therapydisorder_di_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`)',
 				'CONSTRAINT `ophcotherapya_therapydisorder_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_therapydisorder` (`id`)',
 		), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
-
+/*
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>75971007,'display_order'=>1));
 		$cnv_id = Yii::app()->db->getLastInsertID();
 
@@ -232,7 +232,7 @@ class m130703_152448_event_type_OphCoTherapyapplication extends CDbMigration
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>360455002,'display_order'=>5));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>128473001,'display_order'=>6));
 		$this->insert('ophcotherapya_therapydisorder',array('disorder_id'=>78370002,'display_order'=>7));
-
+*/
 		// --- EVENT TYPE ENTRIES ---
 
 		// create an event_type entry for this event type name if one doesn't already exist
