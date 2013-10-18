@@ -17,16 +17,16 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 /* line 2, ../sass/components/_event.scss */
-.event.therapy-application {
+.event.ophcotherapyapplication {
   border-color: #86cdff;
 }
 /* line 4, ../sass/components/_event.scss */
-.event.therapy-application .event-content {
-  background-image: url('../img/new/watermark.png?1378981916');
+.event.ophcotherapyapplication .event-content {
+  background-image: url('../img/new/watermark.png?1382086321');
 }
 /* line 7, ../sass/components/_event.scss */
-.event.therapy-application .event-title {
-  background-image: url('../img/new/medium.png?1378981414');
+.event.ophcotherapyapplication .event-title {
+  background-image: url('../img/new/medium.png?1382086321');
 }
 
 /* line 2, ../sass/components/_panels.scss */
