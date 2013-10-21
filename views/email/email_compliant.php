@@ -24,6 +24,9 @@ $gp_cb = ($patient->gp && $patient->practice) ? $patient->practice->getCommissio
 ?>
 
 This email was generated from the OpenEyes Therapy Application event
+
+<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; } ?>
+
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>

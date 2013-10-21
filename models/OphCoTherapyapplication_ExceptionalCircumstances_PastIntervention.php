@@ -254,6 +254,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		}
 	}
 
+	/**
+	 * validate a date is earlier or equal to another
+	 *
+	 * @param $attribute - the element attribute that must be an earlier date
+	 * @param $params - 'later_date' is the attribute to compare it with
+	 */
 	public function validateEarlierOrEqualDate($attribute, $params)
 	{
 		$later_date = $params['later_date'];
