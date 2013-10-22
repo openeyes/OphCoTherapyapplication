@@ -20,6 +20,7 @@
 
 <h4 class="elementTypeName"><?php echo $element->elementType->name?></h4>
 
+<div class="element">
 <div class="eventDetail clearfix">
 	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('cerebrovascular_accident'))?>:</div>
 	<div class="data"><?php echo $element->cerebrovascular_accident ? 'Yes' : 'No'?></div>
@@ -33,4 +34,5 @@
 <div class="eventDetail">
 	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('myocardial_infarction'))?>:</div>
 	<div class="data"><?php echo $element->myocardial_infarction ? 'Yes' : 'No'?></div>
+</div>
 </div>

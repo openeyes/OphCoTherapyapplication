@@ -43,6 +43,9 @@ if ($service->canProcessEvent($this->event->id)) {
 } else {
 	$warnings = $service->getProcessWarnings($this->event->id);
 }
+if ($this->canPrint()) {
+	$this->event_actions[] = EventAction::button('Print', 'print');
+}
 
 ?>
 
