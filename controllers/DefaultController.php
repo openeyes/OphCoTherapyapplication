@@ -148,85 +148,41 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function getDefaultElements($action, $event_type_id=false, $event=false)
 	{
-		$all_elements = parent::getDefaultElements($action, $event_type_id, $event);
+		$elements = parent::getDefaultElements($action, $event_type_id, $event);
 
-		if (in_array($action, array('create', 'edit'))) {
-			// clear out the email element as we don't want to display or edit it
-			$elements = array();
-			foreach ($all_elements as $element) {
-				if (get_class($element) != 'Element_OphCoTherapyapplication_Email') {
-					$elements[] = $element;
-				}
-			}
-		} else {
-			$elements = $all_elements;
-		}
+		$ecPresent = false;
 
-		if ($action == 'create' && empty($_POST)) {
-			// set any calculated defaults on the elements
-			foreach ($elements as $element) {
-				if (get_class($element) == 'Element_OphCoTherapyapplication_Therapydiagnosis') {
-					// get the list of valid diagnosis codes
-					$valid_disorders = OphCoTherapyapplication_TherapyDisorder::model()->findAll();
-					$vd_ids = array();
-					foreach ($valid_disorders as $vd) {
-						$vd_ids[] = $vd->disorder_id;
+		foreach ($elements as $key => $element) {
+			switch(get_class($element)) {
+				case 'Element_OphCoTherapyapplication_Therapydiagnosis':
+					if ($action == 'create' && empty($_POST)) {
+						$this->setDiagnosisDefaults($element);
 					}
-
-					$episode = $this->episode;
-
-					if ($episode) {
-
-						// foreach eye
-						$exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
-						foreach (array(SplitEventTypeElement::LEFT, SplitEventTypeElement::RIGHT) as $eye_id) {
-							$prefix = $eye_id == SplitEventTypeElement::LEFT ? 'left' : 'right';
-							// get specific disorder from injection management
-							if ($exam_api && $exam_imc = $exam_api->getInjectionManagementComplexInEpisodeForSide($this->patient, $episode, $prefix)) {
-								$element->{$prefix . '_diagnosis1_id'} = $exam_imc->{$prefix . '_diagnosis1_id'};
-								$element->{$prefix . '_diagnosis2_id'} = $exam_imc->{$prefix . '_diagnosis2_id'};
-							}
-							// check if the episode diagnosis applies
-							elseif ( ($episode->eye_id == $eye_id || $episode->eye_id == SplitEventTypeElement::BOTH)
-								&& in_array($episode->disorder_id, $vd_ids) ) {
-								$element->{$prefix . '_diagnosis1_id'} = $episode->disorder_id;
-							}
-							// otherwise get ordered list of diagnoses for the eye in this episode, and check
-							else {
-								if ($exam_api) {
-									$disorders = $exam_api->getOrderedDisorders($this->patient, $episode);
-									foreach ($disorders as $disorder) {
-										if ( ($disorder['eye_id'] == $eye_id || $disorder['eye_id'] == 3) && in_array($disorder['disorder_id'], $vd_ids)) {
-											$element->{$prefix . '_diagnosis1_id'} = $disorder['disorder_id'];
-											break;
-										}
-									}
-								}
-							}
-						}
+					break;
+				case 'Element_OphCoTherapyapplication_MrServiceInformation':
+					if ($action == 'create' && empty($_POST)) {
+						$element->consultant_id = Yii::app()->session['selected_firm_id'];
+						$element->site_id = Yii::app()->session['selected_site_id'];
 					}
-
-				} // end Therapydiagnosis setup
-				elseif (get_class($element) == 'Element_OphCoTherapyapplication_MrServiceInformation') {
-					$element->consultant_id = Yii::app()->session['selected_firm_id'];
-					$element->site_id = Yii::app()->session['selected_site_id'];
-				}
-
-				// set the correct eye_id on the element for rendering
-				if(isset($element->left_diagnosis1_id) && isset($element->right_diagnosis1_id)){
-					$element->eye_id = SplitEventTypeElement::BOTH;
-				}
-				else if(isset($element->left_diagnosis1_id)){
-					$element->eye_id = SplitEventTypeElement::LEFT;
-				}
-				else if(isset($element->right_diagnosis1_id)){
-					$element->eye_id = SplitEventTypeElement::RIGHT;
-				}
-
+					break;
+				case 'Element_OphCoTherapyapplication_ExceptionalCircumstances':
+					$ecPresent = true;
+					break;
+				case 'Element_OphCoTherapyapplication_Email':
+					if (in_array($action, array('create', 'update'))) {
+						// clear out the email element as we don't want to display or edit it
+						unset($elements[$key]);
+					}
+					break;
 			}
 		}
+
+		// Exceptional circumstances needs to be present even if it wasn't in the POST data because compliance may change
+		if ($action == 'create' && !$ecPresent) {
+			$elements[] = new Element_OphCoTherapyapplication_ExceptionalCircumstances;
+		}
+
 		return $elements;
-
 	}
 
 	/**
@@ -435,5 +391,66 @@ class DefaultController extends BaseEventTypeController
 			}
 		}
 		return false;
+	}
+
+    /**
+	 * Set default values for the diagnosis element
+	 *
+	 * This can't be done using setDefaultOptions on the element class because it needs to know about the episode
+	 *
+	 * @param Element_OphCoTherapyapplication_Therapydiagnosis $element
+	 */
+	private function setDiagnosisDefaults(Element_OphCoTherapyapplication_Therapydiagnosis $element)
+	{
+		$episode = $this->episode;
+
+		if ($episode) {
+
+			// get the list of valid diagnosis codes
+			$valid_disorders = OphCoTherapyapplication_TherapyDisorder::model()->findAll();
+			$vd_ids = array();
+			foreach ($valid_disorders as $vd) {
+				$vd_ids[] = $vd->disorder_id;
+			}
+
+			// foreach eye
+			$exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+			foreach (array(Eye::LEFT, Eye::RIGHT) as $eye_id) {
+				$prefix = $eye_id == Eye::LEFT ? 'left' : 'right';
+				// get specific disorder from injection management
+				if ($exam_api && $exam_imc = $exam_api->getInjectionManagementComplexInEpisodeForSide($this->patient, $episode, $prefix)) {
+					$element->{$prefix . '_diagnosis1_id'} = $exam_imc->{$prefix . '_diagnosis1_id'};
+					$element->{$prefix . '_diagnosis2_id'} = $exam_imc->{$prefix . '_diagnosis2_id'};
+				}
+				// check if the episode diagnosis applies
+				elseif ( ($episode->eye_id == $eye_id || $episode->eye_id == Eye::BOTH)
+				&& in_array($episode->disorder_id, $vd_ids) ) {
+					$element->{$prefix . '_diagnosis1_id'} = $episode->disorder_id;
+				}
+				// otherwise get ordered list of diagnoses for the eye in this episode, and check
+				else {
+					if ($exam_api) {
+						$disorders = $exam_api->getOrderedDisorders($this->patient, $episode);
+						foreach ($disorders as $disorder) {
+							if ( ($disorder['eye_id'] == $eye_id || $disorder['eye_id'] == Eye::BOTH) && in_array($disorder['disorder_id'], $vd_ids)) {
+								$element->{$prefix . '_diagnosis1_id'} = $disorder['disorder_id'];
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			// set the correct eye_id on the element for rendering
+			if(isset($element->left_diagnosis1_id) && isset($element->right_diagnosis1_id)){
+				$element->eye_id = Eye::BOTH;
+			}
+			else if(isset($element->left_diagnosis1_id)){
+				$element->eye_id = Eye::LEFT;
+			}
+			else if(isset($element->right_diagnosis1_id)){
+				$element->eye_id = Eye::RIGHT;
+			}
+		}
 	}
 }
