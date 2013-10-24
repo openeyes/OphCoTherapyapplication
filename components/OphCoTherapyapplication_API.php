@@ -230,13 +230,13 @@ class OphCoTherapyapplication_API extends BaseAPI
 	{
 		$res = "";
 		if ($right = $this->getLetterApplicationTreatmentRight($patient)) {
-			$res .= "Right eye: " . $right;
+			$res .= $right . " to the right eye";
 		}
 		if ($left = $this->getLetterApplicationTreatmentLeft($patient)) {
 			if ($right) {
-				$res .= "\n";
+				$res .= " and ";
 			}
-			$res .= "Left eye: " . $left;
+			$res .= $left . " to the left eye";
 		}
 		if (strlen($res)) {
 			return $res;
