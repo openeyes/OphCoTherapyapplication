@@ -95,6 +95,12 @@ class OphCoTherapyapplication_Processor
 		return $this->_viewpath;
 	}
 
+	/**
+	 * add warning to the event
+	 *
+	 * @param $event_id
+	 * @param $warning
+	 */
 	public function addProcessWarning($event_id, $warning)
 	{
 		if (!isset($this->events_by_id[$event_id]['warnings']) ) {
@@ -103,19 +109,126 @@ class OphCoTherapyapplication_Processor
 		$this->events_by_id[$event_id]['warnings'][] = $warning;
 	}
 
-	public function getProcessWarnings($event_id)
+	/**
+	 * check the status of dependent data for the event, and set appropriate process warnings
+	 *
+	 * @param $event_id
+	 */
+	protected function generateProcessWarnings($event_id)
 	{
-		if (isset($this->events_by_id[$event_id]['warnings'])) {
-			return $this->events_by_id[$event_id]['warnings'];
-		} else {
-			return array();
+		$event_data = $this->getEvent($event_id);
+		$elements = $event_data['elements'];
+		$event = $event_data['event'];
+
+		$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
+		$sides = array();
+		if ($el_diag->hasLeft()) {
+			$sides[] = 'left';
 		}
+		if ($el_diag->hasRight()) {
+			$sides[] = 'right';
+		}
+
+		if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
+			$missing_sides = array();
+
+			foreach ($sides as $side) {
+				if (!$api->getInjectionManagementComplexInEpisodeForDisorder(
+					$event->episode->patient,
+					$event->episode,
+					$side,
+					$el_diag->{$side . '_diagnosis1_id'},
+					$el_diag->{$side . '_diagnosis2_id'})) {
+					$missing_sides[] = $side;
+				}
+			}
+
+			// log warnings - false falls out at the end
+			foreach ($missing_sides as $missing) {
+				$this->addProcessWarning($event_id,
+					'No Injection Management has been created for ' . $missing . ' diagnosis.');
+			}
+
+			//TODO: the exam api should be consolidated at some point, and these methods may be deprecated
+			if (!$api->getLetterVisualAcuityForEpisodeLeft($event->episode)) {
+				$this->addProcessWarning($event_id, 'Visual acuity not found for left eye.');
+			}
+
+			if (!$api->getLetterVisualAcuityForEpisodeRight($event->episode)) {
+				$this->addProcessWarning($event_id, 'Visual acuity not found for right eye.');
+			}
+		} else {
+			error_log('Therapy application requires OphCIExamination module');
+		}
+		if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
+			$procedure = Procedure::model()->find(array('condition' => 'snomed_code = :snomed', 'params' => array(':snomed' => $this::SNOMED_INTRAVITREAL_INJECTION)));
+			foreach ($sides as $side) {
+				if (!$api->hasConsentForProcedure($event->episode, $procedure, $side)) {
+					$this->addProcessWarning($event_id, 'Consent form is required for ' . $side . ' eye.');
+				}
+			}
+		}
+
 	}
 
+	/**
+	 * get warnings for the event
+	 *
+	 * @param $event_id
+	 * @return array|null
+	 */
+	public function getProcessWarnings($event_id)
+	{
+		if (!isset($this->events_by_id[$event_id]['warnings'])) {
+			$this->events_by_id[$event_id]['warnings'] = array();
+			$this->generateProcessWarnings($event_id);
+		}
+		return $this->events_by_id[$event_id]['warnings'];
+	}
+
+	/**
+	 * return boolean to indicate whether the given event is non compliant or not
+	 *
+	 * @param $event_id
+	 * @return mixed
+	 * @see Element_OphCoTherapyapplication_PatientSuitability::isNonCompliant()
+	 */
 	public function isEventNonCompliant($event_id)
 	{
 		$event_data = $this->getEvent($event_id);
 		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->isNonCompliant();
+	}
+
+	/**
+	 * returns boolean as to whether the event has been submitted (successfully) or not.
+	 *
+	 * @param $event_id
+	 * @return bool
+	 */
+	public function isEventSubmitted($event_id)
+	{
+		$event_data = $this->getEvent($event_id);
+		if ($email = @$event_data['elements']['Element_OphCoTherapyapplication_Email']) {
+			return $email->sent;
+		}
+		return null;
+	}
+
+	/**
+	 * check if the event has any process warnings or not
+	 *
+	 * @param $event_id
+	 * @return bool
+	 */
+	public function eventHasProcessWarnings($event_id)
+	{
+		$warnings = $this->getProcessWarnings($event_id);
+
+		if (sizeof($warnings) > 0) {
+			return true;
+		}
+		return false;
+
 	}
 
 	/**
@@ -126,71 +239,18 @@ class OphCoTherapyapplication_Processor
 	 */
 	public function canProcessEvent($event_id)
 	{
-		$event_data = $this->getEvent($event_id);
-		$elements = $event_data['elements'];
-		$event = $event_data['event'];
-		$can_process = true;
-		if (!isset($elements['Element_OphCoTherapyapplication_Email'])) {
-			// need to determine if the appropriate information has been captured for the relevant eyes in examination
-			$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
-			$sides = array();
-			if ($el_diag->hasLeft()) {
-				$sides[] = 'left';
-			}
-			if ($el_diag->hasRight()) {
-				$sides[] = 'right';
-			}
-
-			if ($api = Yii::app()->moduleAPI->get('OphCiExamination')) {
-				$missing_sides = array();
-
-				foreach ($sides as $side) {
-					if (!$api->getInjectionManagementComplexInEpisodeForDisorder(
-							$event->episode->patient,
-							$event->episode,
-							$side,
-							$el_diag->{$side . '_diagnosis1_id'},
-							$el_diag->{$side . '_diagnosis2_id'})) {
-						$missing_sides[] = $side;
-						$can_process = false;
-					}
-				}
-
-				// log warnings - false falls out at the end
-				foreach ($missing_sides as $missing) {
-					$this->addProcessWarning($event_id,
-						'No Injection Management has been created for ' . $missing . ' diagnosis.');
-				}
-
-				//TODO: the exam api should be consolidated at some point, and these methods may be deprecated
-				if (!$api->getLetterVisualAcuityForEpisodeLeft($event->episode)) {
-					$this->addProcessWarning($event_id, 'Visual acuity not found for left eye.');
-					$can_process = false;
-				}
-
-				if (!$api->getLetterVisualAcuityForEpisodeRight($event->episode)) {
-					$this->addProcessWarning($event_id, 'Visual acuity not found for right eye.');
-					$can_process = false;
-				}
-			} else {
-				error_log('Therapy application requires OphCIExamination module');
-				$can_process = false;
-			}
-			if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
-				$procedure = Procedure::model()->find(array('condition' => 'snomed_code = :snomed', 'params' => array(':snomed' => $this::SNOMED_INTRAVITREAL_INJECTION)));
-				foreach ($sides as $side) {
-					if (!$api->hasConsentForProcedure($event->episode, $procedure, $side)) {
-						$this->addProcessWarning($event_id, 'Consent form is required for ' . $side . ' eye.');
-						$can_process = false;
-					}
-				}
-			}
-		} else {
-			return !$elements['Element_OphCoTherapyapplication_Email']['sent'];
+		// if there is an email object, we can process the event if the email was not sent successfully
+		$email_sent = $this->isEventSubmitted($event_id);
+		if ($email_sent != null) {
+			return !$email_sent;
 		}
 
-		return $can_process;
-
+		// otherwise
+		$warnings = $this->getProcessWarnings($event_id);
+		if (sizeof($warnings) > 0) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
