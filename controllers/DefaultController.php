@@ -282,7 +282,7 @@ class DefaultController extends BaseEventTypeController
 	/**
 	 * process the POST data for past interventions for the given side
 	 *
-	 * @param Element_OphCoTherapyapplication_ExceptionCircumstances $element
+	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
 	 * @param string $side - left or right
 	 */
 	private function _POSTPastinterventions($element, $side)
