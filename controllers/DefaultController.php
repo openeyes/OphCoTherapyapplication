@@ -32,37 +32,71 @@ class DefaultController extends BaseEventTypeController
 		return $res;
 	}
 
+	/**
+	 * define the print actions
+	 *
+	 * @return array
+	 * @see parent::printActions()
+	 */
 	public function printActions()
 	{
 		return array('print', 'processApplication');
 	}
 
+	/**
+	 * function to define the js vars needed in editing a therapy application
+	 *
+	 */
 	public function addEditJSVars()
 	{
 		$this->jsVars['decisiontree_url'] = Yii::app()->createUrl('OphCoTherapyapplication/default/getDecisionTree/');
 		$this->jsVars['nhs_date_format'] = Helper::NHS_DATE_FORMAT_JS;
 	}
 
+	/**
+	 * ensure js vars are set before carrying out standard functionality
+	 *
+	 * @return bool|string|void
+	 */
 	public function actionCreate()
 	{
 		$this->addEditJSVars();
 		parent::actionCreate();
 	}
 
+	/**
+	 * ensure js vars are set before carrying out standard functionality
+	 *
+	 * @param $id
+	 */
 	public function actionUpdate($id)
 	{
 		$this->addEditJSVars();
 		parent::actionUpdate($id);
 	}
 
-	public function actionView($id)
+	/**
+	 * if an application has been submitted, then it can be printed.
+	 * alternatively, if it can be processed (submitted) it can also be printed.
+	 *
+	 * essentially this prevents printing of applications that have any warnings against them.
+	 *
+	 * @return bool
+	 */
+	public function canPrint()
 	{
-		parent::actionView($id);
-	}
+		$can_print = parent::canPrint();
 
-	public function actionPrint($id)
-	{
-		parent::actionPrint($id);
+		if ($can_print && $this->event) {
+			$service = new OphCoTherapyapplication_Processor();
+			if ($service->isEventSubmitted($this->event->id) !== null) {
+				$can_print = true;
+			}
+			else {
+				$can_print = $service->canProcessEvent($this->event->id);
+			}
+		}
+		return $can_print;
 	}
 
 	private $event_model_cache = array();
