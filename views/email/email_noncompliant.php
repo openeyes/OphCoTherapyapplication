@@ -22,6 +22,9 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 ?>
 
 This email was generated from an OpenEyes Therapy Application event
+
+<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; } ?>
+
 AMD EC-Form this patient sent to Contracts for PCT approval.
 AMD EC-Form document sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 
@@ -58,3 +61,10 @@ Address: <?php echo ($address = $patient->getLetterAddress(array('delimiter' => 
 GP Details:
 Name: <?php echo ($patient->gp) ? $patient->gp->fullName . "\n" : "Unknown\n"; ?>
 Address: <?php echo ($patient->practice && $address = $patient->practice->getLetterAddress(array('delimiter' => ', '))) ? $address."\n" : "Unknown\n"; ?>
+
+<?php
+if (${$side . '_link_to_attachments'}) {
+?>
+The application files can be found on openeyes. Please enter the following text into the search box to reach download links:
+	E:<?php echo $suitability->event_id ?>
+<?php }

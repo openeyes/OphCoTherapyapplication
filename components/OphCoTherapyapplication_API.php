@@ -113,4 +113,87 @@ class OphCoTherapyapplication_API extends BaseAPI
 
 		return $disorders;
 	}
+
+	/**
+	 *
+	 * return the diagnosis string for the patient on the given side
+	 * @param $patient
+	 * @param $episode
+	 * @param $side
+	 */
+	public function getLetterApplicationDiagnosisForSide($patient, $episode, $side)
+	{
+		if ($el = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphCoTherapyapplication_Therapydiagnosis')) {
+			return $el->getDiagnosisStringForSide($side);
+		}
+	}
+
+	/**
+	 * get the therapy application diagnosis description for the left
+	 *
+	 * @param $patient
+	 * @return mixed
+	 */
+	public function getLetterApplicationDiagnosisLeft($patient)
+	{
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			return $this->getLetterApplicationDiagnosisForSide($patient, $episode, 'left');
+		}
+	}
+
+	/**
+	 * get the therapy application diagnosis description for the right if there is one
+	 *
+	 * @param $patient
+	 * @return mixed
+	 */
+	public function getLetterApplicationDiagnosisRight($patient)
+	{
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			return $this->getLetterApplicationDiagnosisForSide($patient, $episode, 'right');
+		}
+	}
+
+	/**
+	 * Get the therapy application treatment for the given side if there is one.
+	 *
+	 * @param $patient
+	 * @param $episode
+	 * @param $side
+	 * @return mixed
+	 */
+	public function getLetterApplicationTreatmentForSide($patient, $episode, $side)
+	{
+		if ($el = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphCoTherapyapplication_PatientSuitability')) {
+			if ($drug = $el->{$side . '_treatment'}) {
+				return $drug->name;
+			}
+		}
+	}
+
+	/**
+	 * get the left side therapy application treatment if there is one
+	 *
+	 * @param $patient
+	 * @return mixed
+	 */
+	public function getLetterApplicationTreatmentLeft($patient)
+	{
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			return $this->getLetterApplicationTreatmentForSide($patient, $episode, 'left');
+		}
+	}
+
+	/**
+	 * get the right side therapy application treatment if there is one
+	 *
+	 * @param $patient
+	 * @return mixed
+	 */
+	public function getLetterApplicationTreatmentRight($patient)
+	{
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			return $this->getLetterApplicationTreatmentForSide($patient, $episode, 'right');
+		}
+	}
 }

@@ -76,6 +76,7 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 			array('relevanttreatment_id', 'requiredDependingOnTreatmentType', 'relevant' => true),
 			array('relevanttreatment_other', 'requiredIfRelevantTreatmentIsOther'),
 			array('stopreason_other', 'requiredIfStopReasonIsOther'),
+			array('start_date, end_date', 'date', 'format' => 'yyyy-MM-dd'),
 			array('start_date', 'validateEarlierOrEqualDate', 'later_date' => 'end_date'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -253,6 +254,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		}
 	}
 
+	/**
+	 * validate a date is earlier or equal to another
+	 *
+	 * @param $attribute - the element attribute that must be an earlier date
+	 * @param $params - 'later_date' is the attribute to compare it with
+	 */
 	public function validateEarlierOrEqualDate($attribute, $params)
 	{
 		$later_date = $params['later_date'];

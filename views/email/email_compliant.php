@@ -20,10 +20,13 @@
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 $ccg = CommissioningBodyType::model()->find('shortname=?',array('CCG'));
 $cb = $patient->getCommissioningBodyOfType($ccg);
-$gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
+$gp_cb = ($patient->gp && $patient->practice) ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
 ?>
 
 This email was generated from the OpenEyes Therapy Application event
+
+<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; } ?>
+
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>

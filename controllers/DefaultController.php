@@ -144,7 +144,7 @@ class DefaultController extends BaseEventTypeController
 	 * extends the base function to set various defaults that depend on other events etc
 	 *
 	 * (non-PHPdoc)
-	 * @see BaseEventTypeController::setPOSTManyToMany()
+	 * @see BaseEventTypeController::getDefaultElements($action, $event_type_id, $event)
 	 */
 	public function getDefaultElements($action, $event_type_id=false, $event=false)
 	{
@@ -209,6 +209,7 @@ class DefaultController extends BaseEventTypeController
 				} // end Therapydiagnosis setup
 				elseif (get_class($element) == 'Element_OphCoTherapyapplication_MrServiceInformation') {
 					$element->consultant_id = Yii::app()->session['selected_firm_id'];
+					$element->site_id = Yii::app()->session['selected_site_id'];
 				}
 
 				// set the correct eye_id on the element for rendering
