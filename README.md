@@ -34,9 +34,7 @@ Dependencies
 Items of note
 -------------
 
-1. The Element_OphCoTherapyapplication_Email class is an element that is created by the processing of the application.
-As such it is not an element that should be directly edited.
-2. For an application to be submitted, an Injection Management element needs to have been defined for the eye(s) to be
+1. For an application to be submitted, an Injection Management element needs to have been defined for the eye(s) to be
 applied for in the current episode. Similarly, visual acuity must have been recorded for both eyes.
 
 Templates

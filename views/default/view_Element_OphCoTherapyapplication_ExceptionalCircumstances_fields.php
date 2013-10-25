@@ -131,7 +131,7 @@
 	</div>
 <?php } ?>
 
-<?php if ($element->{$side . '_filecollections'} && !$element->isSubmitted()) { ?>
+<?php if ($element->{$side . '_filecollections'}) { ?>
 <div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>
 		<div class="data"><ul style="display: inline-block">

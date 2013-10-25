@@ -16,50 +16,22 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+
+$right_emails = $service->getRightSentEmails();
+$left_emails = $service->getLeftSentEmails();
+
+if ($right_emails || $left_emails) {
 ?>
 <h4 class="elementTypeName">Application</h4>
 
 <div class="element">
-<?php if (!$element->sent) {?>
-	<p><strong>This application has been prepared but not sent due to a system failure sending the email - please try again.</strong></p>
-<?php }?>
-
 <div class="cols2 clearfix">
 	<div class="left eventDetail">
-		<?php if ($element->hasRight()) {?>
-			<div class="eventDetail aligned">
-				<div class="label">Application files</div>
-				<div class="data">
-					<ul style="margin: 0px;">
-						<?php foreach ($element->right_attachments as $att) {?>
-							<li><a href="<?php echo $att->getDownloadURL()?>"><?php echo $att->name; ?></a></li>
-						<?php } ?>
-					</ul>
-				</div>
-			</div>
-		<?php } else { ?>
-		N/A
-		<?php } ?>
+		<?php $this->renderPartial('emails_side', array('emails' => $right_emails)); ?>
 	</div>
 	<div class="right eventDetail">
-		<?php if ($element->hasLeft()) {?>
-			<div class="eventDetail aligned">
-				<div class="label">Application files</div>
-				<div class="data">
-					<ul style="margin: 0px;">
-						<?php foreach ($element->left_attachments as $att) {?>
-							<li><a href="<?php echo $att->getDownloadURL()?>"><?php echo $att->name; ?></a></li>
-						<?php } ?>
-					</ul>
-				</div>
-			</div>
-		<?php } else { ?>
-		N/A
-		<?php } ?>
+		<?php $this->renderPartial('emails_side', array('emails' => $left_emails)); ?>
 	</div>
 </div>
-<div class="metaData">
-Application sent by <span class="user"><?php echo $element->user->fullname ?></span> on <?php echo $element->NHSDate('created_date') ?>
-		at <?php echo date('H:i', strtotime($element->created_date)) ?>
 </div>
-</div>
+<?php }

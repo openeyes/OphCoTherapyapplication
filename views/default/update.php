@@ -38,6 +38,12 @@
 
 	?>
 
+	<?php
+		$service = new OphCoTherapyapplication_Processor($this->event);
+		if ($service->getApplicationStatus() == $service::STATUS_SENT) { ?>
+		<div class="alertBox">
+			<strong>WARNING: This application has already been sent.  Editing it will allow it to be re-sent.</strong>
+		</div> <?php } ?>
 	<?php $this->displayErrors($errors)?>
 	<?php $this->renderDefaultElements($this->action->id, $form)?>
 	<?php $this->renderOptionalElements($this->action->id, $form)?>

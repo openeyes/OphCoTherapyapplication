@@ -19,108 +19,59 @@
 
 class OphCoTherapyapplication_Processor
 {
-
 	const SNOMED_INTRAVITREAL_INJECTION = 231755001;
 
-	private $events_by_id = array();
-	private $controller = null;
+	const STATUS_PENDING = 'pending';
+	const STATUS_SENT = 'sent';
+	const STATUS_REOPENED = 're-opened';
 
-	private $_viewpath = null;
+	private $event;
 
 	/**
-	 * wrapper for crude caching of event data by id - might need a flushing mechanism if this class gets wider
-	 * usage to manage the events in this module
-	 *
-	 * @param unknown $event_id
-	 * @return multitype:
+	 * @param Event $event Must be an OphCoTherapyapplication event
 	 */
-	private function getEvent($event_id)
+	public function __construct(Event $event)
 	{
-		if (!isset($this->events_by_id[$event_id])) {
-
-			$event = Event::model()->findByPk($event_id);
-			$this->events_by_id[$event_id]['event'] = $event;
-
-			$event_type = EventType::model()->find('class_name = ?',array('OphCoTherapyapplication'));
-
-			$criteria = new CDbCriteria;
-			$criteria->compare('event_type_id',$event_type->id);
-			$criteria->order = 'display_order asc';
-
-			$elements = array();
-
-
-			foreach (ElementType::model()->findAll($criteria) as $element_type) {
-				$element_class = $element_type->class_name;
-
-				if ($element = $element_class::model()->find('event_id = ?',array($event->id))) {
-					$elements[$element_class] = $element;
-				}
-			}
-
-			$this->events_by_id[$event_id]['elements'] = $elements;
+		$event_type = $event->eventType->class_name;
+		if ($event_type != 'OphCoTherapyapplication') {
+			throw new Exception("Passed an event of type '$event_type'");
 		}
 
-		return $this->events_by_id[$event_id];
+		$this->event = $event;
 	}
 
 	/**
-	 * get a controller class for use with rendering etc
-	 *
-	 * @return CController $controller
-	 */
-	protected function getController()
-	{
-		if (!$this->controller) {
-			if (isset(Yii::app()->controller)) {
-				$this->controller = Yii::app()->controller;
-			} else {
-				$this->controller = new CController('OphCoTherapyapplication');
-			}
-		}
-		return $this->controller;
-	}
-
-	/**
-	 * get the view path for email templates
+	 * Returns status of applicant: pending, sent, re-opened
 	 *
 	 * @return string
 	 */
-	protected function getViewPath()
+	public function getApplicationStatus()
 	{
-		if (!$this->_viewpath) {
-			$module = Yii::app()->getModule('OphCoTherapyapplication');
-			$this->_viewpath = $module->getViewPath() . DIRECTORY_SEPARATOR . 'email';
+		$emails = OphCoTherapyapplication_Email::model()->forEvent($this->event);
+		if (!$emails->exists()) {
+			return self::STATUS_PENDING;
 		}
-		return $this->_viewpath;
+
+		$diag = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
+
+		if ($diag->hasLeft() && !$emails->leftEye()->unarchived()->exists() ||
+		    $diag->hasRight() && !$emails->rightEye()->unarchived()->exists()) {
+			return self::STATUS_REOPENED;
+		} else {
+			return self::STATUS_SENT;
+		}
 	}
 
 	/**
-	 * add warning to the event
+	 * Get any relevant warnings
 	 *
-	 * @param $event_id
-	 * @param $warning
+	 * @return array
 	 */
-	public function addProcessWarning($event_id, $warning)
+	public function getProcessWarnings()
 	{
-		if (!isset($this->events_by_id[$event_id]['warnings']) ) {
-			$this->events_by_id[$event_id]['warnings'] = array();
-		}
-		$this->events_by_id[$event_id]['warnings'][] = $warning;
-	}
+		$warnings = array();
 
-	/**
-	 * check the status of dependent data for the event, and set appropriate process warnings
-	 *
-	 * @param $event_id
-	 */
-	protected function generateProcessWarnings($event_id)
-	{
-		$event_data = $this->getEvent($event_id);
-		$elements = $event_data['elements'];
-		$event = $event_data['event'];
-
-		$el_diag  = $elements['Element_OphCoTherapyapplication_Therapydiagnosis'];
+		$el_diag  = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
 		$sides = array();
 		if ($el_diag->hasLeft()) {
 			$sides[] = 'left';
@@ -134,8 +85,8 @@ class OphCoTherapyapplication_Processor
 
 			foreach ($sides as $side) {
 				if (!$api->getInjectionManagementComplexInEpisodeForDisorder(
-					$event->episode->patient,
-					$event->episode,
+					$this->event->episode->patient,
+					$this->event->episode,
 					$side,
 					$el_diag->{$side . '_diagnosis1_id'},
 					$el_diag->{$side . '_diagnosis2_id'})) {
@@ -143,19 +94,17 @@ class OphCoTherapyapplication_Processor
 				}
 			}
 
-			// log warnings - false falls out at the end
 			foreach ($missing_sides as $missing) {
-				$this->addProcessWarning($event_id,
-					'No Injection Management has been created for ' . $missing . ' diagnosis.');
+				$warnings[] = 'No Injection Management has been created for ' . $missing . ' diagnosis.';
 			}
 
 			//TODO: the exam api should be consolidated at some point, and these methods may be deprecated
-			if (!$api->getLetterVisualAcuityForEpisodeLeft($event->episode)) {
-				$this->addProcessWarning($event_id, 'Visual acuity not found for left eye.');
+			if (!$api->getLetterVisualAcuityForEpisodeLeft($this->event->episode)) {
+				$warnings[] = 'Visual acuity not found for left eye.';
 			}
 
-			if (!$api->getLetterVisualAcuityForEpisodeRight($event->episode)) {
-				$this->addProcessWarning($event_id, 'Visual acuity not found for right eye.');
+			if (!$api->getLetterVisualAcuityForEpisodeRight($this->event->episode)) {
+				$warnings[] = 'Visual acuity not found for right eye.';
 			}
 		} else {
 			error_log('Therapy application requires OphCIExamination module');
@@ -163,122 +112,154 @@ class OphCoTherapyapplication_Processor
 		if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
 			$procedure = Procedure::model()->find(array('condition' => 'snomed_code = :snomed', 'params' => array(':snomed' => $this::SNOMED_INTRAVITREAL_INJECTION)));
 			foreach ($sides as $side) {
-				if (!$api->hasConsentForProcedure($event->episode, $procedure, $side)) {
-					$this->addProcessWarning($event_id, 'Consent form is required for ' . $side . ' eye.');
+				if (!$api->hasConsentForProcedure($this->event->episode, $procedure, $side)) {
+					$warnings[] = 'Consent form is required for ' . $side . ' eye.';
 				}
 			}
 		}
 
-	}
-
-	/**
-	 * get warnings for the event
-	 *
-	 * @param $event_id
-	 * @return array|null
-	 */
-	public function getProcessWarnings($event_id)
-	{
-		if (!isset($this->events_by_id[$event_id]['warnings'])) {
-			$this->events_by_id[$event_id]['warnings'] = array();
-			$this->generateProcessWarnings($event_id);
-		}
-		return $this->events_by_id[$event_id]['warnings'];
+		return $warnings;
 	}
 
 	/**
 	 * return boolean to indicate whether the given event is non compliant or not
 	 *
-	 * @param $event_id
-	 * @return mixed
+	 * @return boolean
 	 * @see Element_OphCoTherapyapplication_PatientSuitability::isNonCompliant()
 	 */
-	public function isEventNonCompliant($event_id)
+	public function isEventNonCompliant()
 	{
-		$event_data = $this->getEvent($event_id);
-		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->isNonCompliant();
+		return $this->getElement('Element_OphCoTherapyapplication_PatientSuitability')->isNonCompliant();
 	}
 
 	/**
-	 * returns boolean as to whether the event has been submitted (successfully) or not.
-	 *
-	 * @param $event_id
-	 * @return bool
+	 * @return OphCoTherapyapplication_Email[]
 	 */
-	public function isEventSubmitted($event_id)
+	public function getLeftSentEmails()
 	{
-		$event_data = $this->getEvent($event_id);
-		if ($email = @$event_data['elements']['Element_OphCoTherapyapplication_Email']) {
-			return $email->sent;
-		}
-		return null;
+		return OphCoTherapyapplication_Email::model()->forEvent($this->event)->leftEye()->findAll();
 	}
 
 	/**
-	 * check if the event has any process warnings or not
-	 *
-	 * @param $event_id
-	 * @return bool
+	 * @return OphCoTherapyapplication_Email[]
 	 */
-	public function eventHasProcessWarnings($event_id)
+	public function getRightSentEmails()
 	{
-		$warnings = $this->getProcessWarnings($event_id);
-
-		if (sizeof($warnings) > 0) {
-			return true;
-		}
-		return false;
-
+		return OphCoTherapyapplication_Email::model()->forEvent($this->event)->rightEye()->findAll();
 	}
 
 	/**
-	 * determine if the the event can be processed for application
+	 * Generate PDFs in a wrapper for preview purposes
 	 *
-	 * @param unknown $event_id
+	 * Note that this is currently only used for non-compliant applications.
+	 *
+	 * @param CController $controller
+	 * @return OETCPDF|null
+	 */
+	public function generatePreviewPdf($controller)
+	{
+		$ec = $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances');
+		if (!$ec) return null;
+
+		$template_data = $this->getTemplateData();
+
+		$pdfbodies = array();
+
+		if ($ec->hasLeft()) {
+			$left_template_data = $template_data + $this->getSideSpecificTemplateData('left');
+			$pdfbodies[] = $this->generatePdfForSide($controller, $left_template_data, 'left');
+		}
+
+		if ($ec->hasRight()) {
+			$right_template_data = $template_data + $this->getSideSpecificTemplateData('right');
+			$pdfbodies[] = $this->generatePdfForSide($controller, $right_template_data, 'right');
+		}
+
+		$pdfwrapper = new OETCPDF();
+		$pdfwrapper->SetAuthor($ec->usermodified->fullName);
+		$pdfwrapper->SetTitle('Therapy application preview');
+		$pdfwrapper->SetSubject('Therapy application');
+
+		foreach($pdfbodies as $body) {
+			$body->render($pdfwrapper);
+		}
+
+		return $pdfwrapper;
+	}
+
+	/**
+	 * processes the application for the event with id $event_id returns a boolean to indicate whether this was successful
+	 * or not.
+	 *
+	 * @param CController $controller
+	 * @throws Exception
 	 * @return boolean
 	 */
-	public function canProcessEvent($event_id)
+	public function processEvent(CController $controller)
 	{
-		// if there is an email object, we can process the event if the email was not sent successfully
-		$email_sent = $this->isEventSubmitted($event_id);
-		if ($email_sent != null) {
-			return !$email_sent;
-		}
-
-		// otherwise
-		$warnings = $this->getProcessWarnings($event_id);
-		if (sizeof($warnings) > 0) {
+		if ($this->getApplicationStatus() == self::STATUS_SENT || $this->getProcessWarnings()) {
 			return false;
 		}
-		return true;
+
+		$success = true;
+
+		$template_data = $this->getTemplateData();
+
+		$diag = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
+
+		if ($diag->hasLeft() && !$this->processEventForEye($controller, $template_data, Eye::LEFT)) {
+			$success = false;
+		}
+
+		if ($diag->hasRight() && !$this->processEventForEye($controller, $template_data, Eye::RIGHT)) {
+			$success = false;
+		}
+
+		return $success;
 	}
 
 	/**
-	 * generate the PDF blob from the appropriate template for the given data and side
+	 * Get an element object by class name
 	 *
-	 * @param $data
-	 * @param $side
-	 * @return null|OETCPDF
+	 * We could potentially add a caching layer here if performance becomes a problem, but would have to watch out for stale data
+	 *
+	 * @todo This should really be available as a public method on Event in the core
+	 *
+	 * @param string $class_name
+	 * @return BaseEventTypeElement|null
 	 */
-	protected function generatePDFTemplateForSide($data, $side)
+	protected function getElement($class_name)
 	{
-		$template_data = array();
-		foreach ($data as $k => $v) {
-			$template_data[$k] = $v;
-		}
-		$template_data['side'] = $side;
-		$template_data['treatment'] = $template_data['suitability']->{$side . '_treatment'};
+		return $class_name::model()->findByAttributes(array('event_id' => $this->event->id));
+	}
 
-		$controller = $this->getController();
+	/**
+	 * @return string
+	 */
+	private function getViewPath()
+	{
+		return Yii::app()->getModule('OphCoTherapyapplication')->getViewPath() . DIRECTORY_SEPARATOR . 'email';
+	}
 
-		if ($data['suitability']->{$side . "_nice_compliance"}) {
+	/**
+	 * Generate PDF for the given side, if applicable, otherwise return null
+	 *
+	 * @param CController $controller
+	 * @param array $template_data
+	 * @param string $side
+	 * @return OETCPDF|null
+	 */
+	private function generatePdfForSide(CController $controller, array $template_data, $side)
+	{
+		if ($template_data['suitability']->{$side . "_nice_compliance"}) {
 			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_compliant';
 		} else {
 			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_noncompliant';
 		}
 
-		if ($template_data['treatment']->template_code) {
-			$specific = $file . "_" . $template_data['treatment']->template_code . ".php";
+		$template_code = $template_data['treatment']->template_code;
+		if ($template_code) {
+			$specific = $file . "_" . $template_code . ".php";
 			if (file_exists($specific)) {
 				$file = $specific;
 			} else {
@@ -292,28 +273,26 @@ class OphCoTherapyapplication_Processor
 			$body = $controller->renderInternal($file, $template_data, true);
 
 			$letter = new OELetter();
-			$letter->setBarcode("E:" . $data['event']->id);
+			$letter->setBarcode("E:" . $this->event->id);
 			$letter->addBody($body);
 			return $letter;
 		}
 		return null;
 	}
 
-
 	/**
-	 * create the PDF file as a ProtectedFile for the given data and side
+	 * create the PDF file as a ProtectedFile for the given side
 	 *
-	 * @param $data
-	 * @param $side
-	 * @return ProtectedFile
+	 * @param CController $controller
+	 * @parama array $template_data
+	 * @param string $side
+	 * @return ProtectedFile|null
 	 * @throws Exception
 	 */
-	protected function createPDFForSide($data, $side)
+	protected function createAndSavePdfForSide(CController $controller, array $template_data, $side)
 	{
-		$pdfdoc = $this->generatePDFTemplateForSide($data, $side);
+		$pdfdoc = $this->generatePdfForSide($controller, $template_data, $side);
 		if ($pdfdoc) {
-
-
 			$pdf = new OETCPDF();
 			$pdf->setAuthor('OpenEyes');
 			$pdf->setTitle('Therapy Application');
@@ -321,202 +300,155 @@ class OphCoTherapyapplication_Processor
 
 			$pdfdoc->render($pdf);
 
-			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $data['patient']->hos_num . '.pdf');
+			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $template_data['patient']->hos_num . '.pdf');
 			$pdf->Output($pfile->getPath(), "F");
 			if (!$pfile->save()) {
 				throw new Exception('unable to save protected file');
 			}
 
 			return $pfile;
+		} else {
+			return null;
 		}
 	}
 
 	/**
-	 * generate the email text for the given data and side
+	 * generate the email text for the given side
 	 *
-	 * @param $data
-	 * @param $side
+	 * @param CController $controller
+	 * @param array $template_data
+	 * @param string $side
 	 * @return string
 	 */
-	protected function generateEmailForSide($data, $side)
+	protected function generateEmailForSide(CController $controller, array $template_data, $side)
 	{
-		$template_data = array();
-		foreach ($data as $k => $v) {
-			$template_data[$k] = $v;
-		}
-		$template_data['side'] = $side;
-		$template_data['treatment'] = $template_data['suitability']->{$side . '_treatment'};
-
-		if ($this->eventSideIsCompliant($data['event']->id, $side)) {
+		if ($template_data['compliant']) {
 			$file = 'email_compliant.php';
 		} else {
 			$file = 'email_noncompliant.php';
 		}
 
 		$view = $this->getViewPath() . DIRECTORY_SEPARATOR . $file;
-		$controller = $this->getController();
 
 		return $controller->renderInternal($view, $template_data, true);
-
 	}
 
 	/**
-	 * determine if the side of the event is compliant
-	 *
-	 * @param unknown $event_id
-	 * @param unknown $side
-	 */
-	public function eventSideIsCompliant($event_id, $side)
-	{
-		$event_data = $this->getEvent($event_id);
-		// TODO: check that the side is relevant for the application
-		return $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability']->{$side . '_nice_compliance'};
-	}
-
-	/**
-	 * generates a data structure containing all the relevant elements and other objects for the given event id
-	 * to be used for various processor methods
-	 *
-	 * @param $event_id
 	 * @return array
 	 */
-	protected function _generateEventDataForProcessing($event_id)
+	private function getTemplateData()
 	{
-		/*
-		 * because we don't really have an event object, create an associative array with all the appropriate properties
-		 */
-		$event_data = $this->getEvent($event_id);
-
-		$event = $event_data['event'];
 		// at the moment we are using a fixed type of commissioning body, but it's possible that in the future this
 		// might need to be determined in a more complex fashion, so we pass the type through to the templates
 		$cbody_type = CommissioningBodyType::model()->findByPk(1);
-		$data = array(
-				'patient' => $event->episode->patient,
-				'cbody_type' => $cbody_type,
-				'event' => $event,
-				'diagnosis' => $event_data['elements']['Element_OphCoTherapyapplication_Therapydiagnosis'],
-				'suitability' => $event_data['elements']['Element_OphCoTherapyapplication_PatientSuitability'],
-				'service_info' => $event_data['elements']['Element_OphCoTherapyapplication_MrServiceInformation'],
-				'contraindications' => @$event_data['elements']['Element_OphCoTherapyapplication_Relativecontraindications'],
+
+		return array(
+			'event' => $this->event,
+			'patient' => $this->event->episode->patient,
+			'cbody_type' => $cbody_type,
+			'diagnosis' => $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis'),
+			'suitability' => $this->getElement('Element_OphCoTherapyapplication_PatientSuitability'),
+			'service_info' => $this->getElement('Element_OphCoTherapyapplication_MrServiceInformation'),
+			'exceptional' => $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances'),
 		);
-		if (isset($event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'])) {
-			$data['exceptional'] = $event_data['elements']['Element_OphCoTherapyapplication_ExceptionalCircumstances'];
-		}
-
-		return $data;
 	}
 
 	/**
-	* generate the pdf for the application for the given event. This is basically a bit of a hack to enable
-	* previewing of the application. If we get time, will try to refactor this a bit to make the service model
-	* a bit more logical in how this works.
-	*
-	* (I continue to blame the absence of an event model for all this jiggery pokery anyway)
-	*
-	* @param int $event_id
-	* @param string $side 'left' or 'right'
-	* @return OETCPDF or null
-	*/
-	public function generateEventPDFTemplateForSide($event_id, $side)
+	 * @param string $side
+	 * @return array
+	 */
+	private function getSideSpecificTemplateData($side)
 	{
-		$event_data = $this->_generateEventDataForProcessing($event_id);
-		return $this->generatePDFTemplateForSide($event_data, $side);
+		$suitability = $this->getElement('Element_OphCoTherapyapplication_PatientSuitability');
+
+		return array(
+			'side' => $side,
+			'treatment' => $suitability->{"${side}_treatment"},
+			'compliant' => $suitability->{"${side}_nice_compliance"}
+		);
 	}
 
 	/**
-	 * processes the application for the event with id $event_id returns a boolean to indicate whether this was successful
-	 * or not.
-	 *
-	 * @param integer $event_id
-	 * @throws Exception
+	 * @param CController $controller
+	 * @param array $template_data
+	 * @param int $eye_id
 	 * @return boolean
 	 */
-	public function processEvent($event_id)
+	private function processEventForEye(CController $controller, array $template_data, $eye_id)
 	{
-		$data = $this->_generateEventDataForProcessing($event_id);
+		switch($eye_id) {
+			case Eye::LEFT:
+				$eye_name = 'left';
+				break;
+			case Eye::RIGHT:
+				$eye_name = 'right';
+				break;
+			default:
+				throw new Exception("Invalid eye ID: '$eye_id'");
+		}
 
-		if (!$email_el = Element_OphCoTherapyapplication_Email::model()->find('event_id=?',array($event_id))) {
-			$email_el = new Element_OphCoTherapyapplication_Email();
-			$email_el->event_id = $event_id;
-			// set the eye value to that of the diagnosis
-			$email_el->eye_id = $data['diagnosis']->eye_id;
-			$left_attach_ids = array();
-			$left_attach_size = 0;
-			$right_attach_ids = array();
-			$right_attach_size = 0;
+		$template_data += $this->getSideSpecificTemplateData($eye_name);
 
-			if ($data['diagnosis']->hasLeft()) {
+		$attachments = array();
+		$attach_size = 0;
 
-				if ($file = $this->createPDFForSide($data, 'left')) {
-					//$email_el->left_application_id = $file->id;
-					$left_attach_ids[] = $file->id;
-					$left_attach_size += $file->size;
-				}
-				if (@$data['exceptional'] && $data['exceptional']->hasLeft()) {
-					foreach ($data['exceptional']->left_filecollections as $fc) {
-						$left_attach_ids[] = $fc->getZipFile()->id;
-						$left_attach_size += $fc->getZipFile()->size;
-					}
-				}
-				$data['left_link_to_attachments'] = false;
-				if ($left_attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']) ) {
-					$data['left_link_to_attachments'] = true;
-				}
+		if (($app_file = $this->createAndSavePdfForSide($controller, $template_data, $eye_name))) {
+			$attachments[] = $app_file;
+			$attach_size += $app_file->size;
+		}
 
-				$email_el->left_email_text = $this->generateEmailForSide($data, 'left');
-			}
-
-			if ($data['diagnosis']->hasRight()) {
-
-				if ($file = $this->createPDFForSide($data, 'right')) {
-					//$email_el->right_application_id = $file->id;
-					$right_attach_ids[] = $file->id;
-					$right_attach_size += $file->size;
-				}
-				if (@$data['exceptional'] && $data['exceptional']->hasRight()) {
-					foreach ($data['exceptional']->right_filecollections as $fc) {
-						$right_attach_ids[] = $fc->getZipFile()->id;
-						$right_attach_size += $fc->getZipFile()->size;
-					}
-				}
-				$data['right_link_to_attachments'] = false;
-				if ($right_attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']) ) {
-					$data['right_link_to_attachments'] = true;
-				}
-
-				$email_el->right_email_text = $this->generateEmailForSide($data,'right');
-			}
-
-			if (!$email_el->save()) {
-				throw new Exception("Unable to save therapy application email element: ".print_r($email_el->save(),true));
-			}
-
-			if (count($left_attach_ids)) {
-				$email_el->updateAttachments(SplitEventTypeElement::LEFT, $left_attach_ids);
-			}
-			if (count($right_attach_ids)) {
-				$email_el->updateAttachments(SplitEventTypeElement::RIGHT, $right_attach_ids);
+		if (($ec = $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances'))) {
+			foreach ($ec->{"${eye_name}_filecollections"} as $fc) {
+				$attachments[] = $fc->getZipFile();
+				$attach_size += $fc->getZipFile()->size;
 			}
 		}
 
-		if ($email_el->sent) {
-			throw new Exception("Attempt to re-submit therapy application that has already been sent.");
+		$link_to_attachments = ($attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']));
+
+		$template_data['link_to_attachments'] = $link_to_attachments;
+		$email_text = $this->generateEmailForSide($controller, $template_data, $eye_name);
+
+		$message = Yii::app()->mailer->newMessage();
+		$message->setSubject('Therapy Application');
+		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
+		if ($template_data['compliant']) {
+			$message->setTo(Yii::app()->params['OphCoTherapyapplication_compliant_recipient_email']);
+		} else {
+			$message->setTo(Yii::app()->params['OphCoTherapyapplication_noncompliant_recipient_email']);
+		}
+		$message->setBody($email_text);
+
+		if (!$link_to_attachments) {
+			foreach ($attachments as $att) {
+				$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name));
+			}
 		}
 
-		if (!$email_el->sendEmail()) {
-			OELog::log("Failed to send email for therapy application event_id $email_el->event_id");
+		$success = Yii::app()->mailer->sendMessage($message);
+
+		if ($success) {
+			$email = new OphCoTherapyapplication_Email;
+			$email->event_id = $this->event->id;
+			$email->eye_id = $eye_id;
+			$email->email_text = $email_text;
+			$email->save();
+
+			$email->addAttachments($attachments);
+
+			$this->event->audit('therapy-application', 'submit');
+
+			$this->event->info = self::STATUS_SENT;
+			$this->event->save();
+
+			return true;
+		} else {
+			OELog::log("Failed to send email for therapy application event_id '{$this->event->id}', eye_id '{$eye_id}'");
+
+			// clean up
+			if ($app_file) $app_file->delete();
+
 			return false;
 		}
-
-		$email_el->sent = 1;
-
-		if (!$email_el->save()) {
-			throw new Exception("Unable to save therapy application email element: ".print_r($email_el->save(),true));
-		}
-
-		$email_el->event->audit('therapy-application','submit');
-
-		return true;
 	}
 }

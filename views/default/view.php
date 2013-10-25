@@ -25,13 +25,13 @@
 <?php
 $this->renderPartial('//base/_messages');
 
-$service = new OphCoTherapyapplication_Processor();
-$warnings = array();
+$service = new OphCoTherapyapplication_Processor($this->event);
+$status = $service->getApplicationStatus();
+$warnings = $service->getProcessWarnings();
 $submit_button_text = 'Submit Application';
 
-if ($service->canProcessEvent($this->event->id)) {
-	if ($service->isEventNonCompliant($this->event->id)) {
-
+if (!$warnings && ($status != $service::STATUS_SENT)) {
+	if ($service->isEventNonCompliant()) {
 		$this->event_actions[] = EventAction::link('Preview Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewApplication/?event_id='.$this->event->id),null, array('id' => 'application-preview'));
 	}
 	else {
@@ -40,8 +40,6 @@ if ($service->canProcessEvent($this->event->id)) {
 	}
 
 	$this->event_actions[] = EventAction::link($submit_button_text, Yii::app()->createUrl($this->event->eventType->class_name.'/default/processApplication/?event_id='.$this->event->id));
-} else {
-	$warnings = $service->getProcessWarnings($this->event->id);
 }
 if ($this->canPrint()) {
 	$this->event_actions[] = EventAction::button('Print', 'print');
@@ -51,7 +49,7 @@ if ($this->canPrint()) {
 
 <?php  $this->renderPartial('//patient/event_actions'); ?>
 
-<h3 class="withEventIcon" style="background:transparent url(<?php echo $this->assetPath?>/img/medium.png) center left no-repeat;"><?php echo $this->event_type->name?></h3>
+<h3 class="withEventIcon" style="background:transparent url(<?php echo $this->assetPath?>/img/medium.png) center left no-repeat;"><?= "{$this->event_type->name} ($status)" ?></h3>
 
 <div>
 	<?php
@@ -66,6 +64,7 @@ if ($this->canPrint()) {
 
 	<?php $this->renderDefaultElements($this->action->id)?>
 	<?php $this->renderOptionalElements($this->action->id)?>
+	<?php $this->renderPartial('emails', array('service' => $service)) ?>
 	<div class="cleartall"></div>
 </div>
 
