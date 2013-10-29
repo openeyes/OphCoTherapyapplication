@@ -532,7 +532,7 @@ $(document).ready(function() {
 	});
 
 	// handle treatment selection when editing
-	$('#event_content').delegate('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id, ' +
+	$('.event').delegate('#Element_OphCoTherapyapplication_PatientSuitability_left_treatment_id, ' +
 			'#Element_OphCoTherapyapplication_PatientSuitability_right_treatment_id', 'change', function() {
 		var selected = $(this).val();
 		var side = getSplitElementSide($(this));
@@ -631,28 +631,28 @@ $(document).ready(function() {
 
 		if ($(this).val()) {
 			if ($(this).data('description-label')) {
-				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').find('.label').text($(this).data('description-label'));
+				$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.field-row').find('label').text($(this).data('description-label'));
 			}
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').show();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.field-row').show();
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.elementField').hide();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_description').closest('.field-row').hide();
 		}
 	});
 
 	// Manage previous interventions in exceptional circumstances element
-	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePastintervention', 'click', function(e) {
+	$(this).delegate('.event .Element_OphCoTherapyapplication_ExceptionalCircumstances .removePastintervention', 'click', function(e) {
 		$(this).closest('.pastintervention').remove();
 		e.preventDefault();
 	});
 
-	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .addPrevintervention', 'click', function(e) {
+	$(this).delegate('.event .Element_OphCoTherapyapplication_ExceptionalCircumstances .addPrevintervention', 'click', function(e) {
 		var side = getSplitElementSide($(this));
 		OphCoTherapyapplication_addPrevintervention(side);
 		e.preventDefault();
 	});
 
-	$(this).delegate('#event_content .Element_OphCoTherapyapplication_ExceptionalCircumstances .addRelevantintervention', 'click', function(e) {
+	$(this).delegate('.event .Element_OphCoTherapyapplication_ExceptionalCircumstances .addRelevantintervention', 'click', function(e) {
 		var side = getSplitElementSide($(this));
 		OphCoTherapyapplication_addRelevantintervention(side);
 		e.preventDefault();
@@ -737,7 +737,7 @@ $(document).ready(function() {
 
 
 	// extend the removal behaviour for diagnosis to affect the dependent elements
-	$(this).delegate('#event_content .side .activeForm a.removeSide', 'click', function(e) {
+	$(this).delegate('.event .side .activeForm a.removeSide', 'click', function(e) {
 		side = getSplitElementSide($(this));
 		var other_side = 'left';
 		if (side == 'left') {
@@ -752,7 +752,7 @@ $(document).ready(function() {
 	});
 
 	// extend the adding behaviour for diagnosis to affect dependent elements
-	$(this).delegate('#event_content .side .inactiveForm a', 'click', function(e) {
+	$(this).delegate('.event .side .inactiveForm a', 'click', function(e) {
 		side = getSplitElementSide($(this));
 		OphCoTherapyapplication_PatientSuitability_check(side);
 		OphCoTherapyapplication_ContraIndications_check();
