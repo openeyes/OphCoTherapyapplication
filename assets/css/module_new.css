@@ -22,20 +22,23 @@
 }
 /* line 4, ../sass/components/_event.scss */
 .event.ophcotherapyapplication .event-content {
-  background-image: url('../img/new/watermark.png?1382086321');
+  background-image: url('../img/new/watermark.png?1382611009');
 }
 /* line 7, ../sass/components/_event.scss */
 .event.ophcotherapyapplication .event-title {
-  background-image: url('../img/new/medium.png?1382086321');
+  background-image: url('../img/new/medium.png?1382611009');
 }
 
 /* line 2, ../sass/components/_panels.scss */
 .panel.previous-interventions {
   background: rgba(255, 255, 255, 0.6);
-  margin-bottom: .5em;
   position: relative;
 }
-/* line 6, ../sass/components/_panels.scss */
+/* line 4, ../sass/components/_panels.scss */
+.edit .panel.previous-interventions, .edit .panel.previous-interventions:last-child {
+  margin-bottom: .5em;
+}
+/* line 8, ../sass/components/_panels.scss */
 .panel.previous-interventions .field-row {
   padding-bottom: .4em;
 }
