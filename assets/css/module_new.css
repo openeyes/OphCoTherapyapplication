@@ -35,11 +35,15 @@
   position: relative;
 }
 /* line 4, ../sass/components/_panels.scss */
+.panel.previous-interventions:last-child {
+  margin: 0;
+}
+/* line 7, ../sass/components/_panels.scss */
 .edit .panel.previous-interventions, .edit .panel.previous-interventions:last-child {
   margin-bottom: .5em;
 }
-/* line 8, ../sass/components/_panels.scss */
-.panel.previous-interventions .field-row {
+/* line 11, ../sass/components/_panels.scss */
+.panel.previous-interventions .field-row, .panel.previous-interventions .data-row {
   padding-bottom: .4em;
 }
 
