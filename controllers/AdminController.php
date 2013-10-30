@@ -103,7 +103,7 @@ class AdminController extends ModuleAdminController
 
 			if ($parent) {
 				$therapy_disorder->parent_id = $parent->id;
-	 			$query .= ' WHERE parent_id = ' . $parent->id;
+				$query .= ' WHERE parent_id = ' . $parent->id;
 			}
 
 			$val = Yii::app()->db->createCommand($query)->queryRow();
@@ -118,15 +118,9 @@ class AdminController extends ModuleAdminController
 		$this->redirect(array('viewdiagnoses', 'parent_id' => @$_POST['parent_id']));
 	}
 
-	/**
-	 * delete the specified diagnosis, and its children
-	 *
-	 * @param unknown $diagnosis_id
-	 * @throws Exception
-	 */
-	public function actionDeleteDiagnosis($diagnosis_id)
+	public function actionDeleteDiagnoses()
 	{
-		if ($diagnosis = OphCoTherapyapplication_TherapyDisorder::model()->findByPk((int) $diagnosis_id)) {
+		foreach (OphCoTherapyapplication_TherapyDisorder::model()->findAllByPK($_POST['diagnoses']) as $diagnosis) {
 			$parent_id = $diagnosis->parent_id;
 			$disorder_id = $diagnosis->disorder_id;
 
@@ -149,15 +143,13 @@ class AdminController extends ModuleAdminController
 				}
 				$transaction->commit();
 				Audit::add('admin','delete',serialize(array('disorder_id' => $disorder_id)),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_TherapyDisorder'));
-				Yii::app()->user->setFlash('success', 'Disorder deleted');
-				$this->redirect(array('viewdiagnoses', 'parent_id' => $parent_id));
 			} catch (Exception $e) {
 				$transaction->rollback();
 				throw $e;
 			}
-		} else {
-			throw new Exception('Diagnosis not found with id ' . $diagnosis_id);
 		}
+
+		echo "1";
 	}
 
 	/**
@@ -473,7 +465,7 @@ class AdminController extends ModuleAdminController
 				if ($pf->save()) {
 					$pfs[] = $pf;
 					$pf_ids[] = $pf->id;
- 				} else {
+				} else {
 					$collection->addError("files", "There was a problem storing file " . $pf->name);
 					Yii::log("couldn't save file object" . print_r($pf->getErrors(), true), 'error');
 
@@ -539,7 +531,7 @@ class AdminController extends ModuleAdminController
 			$transaction->rollback();
 		}
 		catch (Exception $e) {
-			Yii::log("OphCoTherapyapplication_FileCollection creation error: " . $e->getMessage(),  'error');
+			Yii::log("OphCoTherapyapplication_FileCollection creation error: " . $e->getMessage(),	'error');
 			Yii::app()->user->setFlash('error', 'An unexpected error has occurred');
 
 			// clear out any protected files that might have been created.
