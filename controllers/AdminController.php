@@ -178,13 +178,12 @@ class AdminController extends ModuleAdminController
 	 */
 	public function actionViewTreatments()
 	{
-		$data_provider=new CActiveDataProvider(OphCoTherapyapplication_Treatment::model() );
-
 		Audit::add('admin','list',null,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
 
-		$this->render('list',array(
-				'dataProvider'=>$data_provider,
-				'title'=>'Treatments',
+		$this->render('list_OphCoTherapyapplication_Treatment', array(
+				'model_class' => 'OphCoTherapyapplication_Treatment',
+				'model_list' => OphCoTherapyapplication_Treatment::model()->findAll(array('order'=>'display_order asc')),
+				'title' => 'Treatments',
 		));
 	}
 
@@ -193,7 +192,7 @@ class AdminController extends ModuleAdminController
 	 *
 	 * @param integer $id
 	 */
-	public function actionUpdateOphCoTherapyapplication_Treatment($id)
+	public function actionEditTreatment($id)
 	{
 		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int) $id);
 
@@ -202,7 +201,7 @@ class AdminController extends ModuleAdminController
 
 			if ($model->save()) {
 				Audit::add('admin','update',serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
-				Yii::app()->user->setFlash('success', 'Treatment update');
+				Yii::app()->user->setFlash('success', 'Treatment updated');
 
 				$this->redirect(array('viewtreatments'));
 			}
@@ -217,7 +216,7 @@ class AdminController extends ModuleAdminController
 	/**
 	 * create a treatment
 	 */
-	public function actionCreateOphCoTherapyapplication_Treatment()
+	public function actionAddTreatment()
 	{
 		$model = new OphCoTherapyapplication_Treatment();
 
@@ -237,6 +236,19 @@ class AdminController extends ModuleAdminController
 				'model' => $model,
 				'title'=>'Treatment'
 		));
+	}
+
+	public function actionDeleteTreatments()
+	{
+		$result = 1;
+
+		foreach (OphCoTherapyapplication_Treatment::model()->findAllByPK($_POST['treatments']) as $treatment) {
+			if (!$treatment->delete()) {
+				$result = 0;
+			}
+		}
+
+		echo $result;
 	}
 
 	// -- decision tree actions --

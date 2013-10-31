@@ -143,7 +143,8 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 			'drug_id' => 'Drug',
 			'decisiontree_id' => 'Default Decision Tree',
 			'available' => 'Available',
-			'contraindications_required' => 'Needs Contraindications Element'
+			'contraindications_required' => 'Needs Contraindications Element',
+			'cost_type_id' => 'Cost',
 		);
 	}
 
