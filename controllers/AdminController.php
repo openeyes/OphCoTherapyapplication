@@ -112,7 +112,11 @@ class AdminController extends ModuleAdminController
 				throw new Exception('Unable to save new therapy disorder ' . print_r($therapy_disorder->getErrors(), true));
 			}
 			Yii::app()->user->setFlash('success', 'Disorder added');
-			Audit::add('admin','create',serialize($therapy_disorder),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_TherapyDisorder'));
+			Audit::add('admin','create',serialize($therapy_disorder),false,array(
+				'module' => 'OphCoTherapyapplication',
+				'model' => 'OphCoTherapyapplication_TherapyDisorder',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewDiagnoses',
+			));
 		}
 
 		$this->redirect(array('viewdiagnoses', 'parent_id' => @$_POST['parent_id']));
@@ -234,7 +238,8 @@ class AdminController extends ModuleAdminController
 
 		$this->render('create', array(
 				'model' => $model,
-				'title'=>'Treatment'
+				'title' => 'Treatment',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewTreatments',
 		));
 	}
 
@@ -304,7 +309,7 @@ class AdminController extends ModuleAdminController
 
 		$this->render('create',array(
 				'model'=>$model,
-				'title'=>'Decision Tree'
+				'title'=>'Decision Tree',
 		));
 
 	}
@@ -420,13 +425,27 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewFileCollections()
 	{
-		$data_provider = new CActiveDataProvider('OphCoTherapyapplication_FileCollection');
-
 		Audit::add('admin','list',null,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
 
-		$this->render('list',array(
-				'dataProvider'=>$data_provider,
-				'title'=>'File Collections',
+		$this->render('list_OphCoTherapyapplication_FileCollection', array(
+				'model_class' => 'OphCoTherapyapplication_FileCollection',
+				'model_list' => OphCoTherapyapplication_FileCollection::model()->findAll(),
+				'title' => 'File Collections',
+		));
+	}
+
+	public function actionAddFileCollection()
+	{
+		$model = new OphCoTherapyapplication_FileCollection();
+
+		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
+			$this->processFileCollectionForm($model);
+		}
+
+		$this->render('create', array(
+				'model' => $model,
+				'title' => 'File Collection',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewFileCollections',
 		));
 	}
 
@@ -455,7 +474,7 @@ class AdminController extends ModuleAdminController
 		$files = array();
 		foreach ($uploaded_files['tmp_name'] as $i => $f) {
 			if (!empty($uploaded_files['error'][$i])) {
-				$model->addError("files", "file $i had an error");
+				$collection->addError("files", "file $i had an error");
 			} elseif (!empty($f) && is_uploaded_file($f)) {
 				$name = $uploaded_files['name'][$i];
 				// check the file mimetype
@@ -558,31 +577,12 @@ class AdminController extends ModuleAdminController
 	}
 
 	/**
-	 * action for creating a new File Collection
-	 *
-	 */
-	public function actionCreateOphCoTherapyapplication_FileCollection()
-	{
-		$model = new OphCoTherapyapplication_FileCollection();
-
-		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
-			$this->processFileCollectionForm($model);
-		}
-
-		$this->render('create', array(
-				'model' => $model,
-				'title' => 'File Collection',
-		));
-	}
-
-	/**
 	 * action for updating file collection identified by $id
 	 *
 	 * @param int $id
 	 */
-	public function actionUpdateOphCoTherapyapplication_FileCollection($id)
+	public function actionEditFileCollection($id)
 	{
-
 		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int) $id);
 		$this->jsVars['filecollection_id'] = $model->id;
 
@@ -593,7 +593,8 @@ class AdminController extends ModuleAdminController
 
 		$this->render('create', array(
 				'model' => $model,
-				'title' => 'File Collection'
+				'title' => 'File Collection',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewFileCollections',
 			)
 		);
 	}
