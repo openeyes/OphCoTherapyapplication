@@ -613,4 +613,29 @@ class AdminController extends ModuleAdminController
 			echo json_encode(array('success' => false));
 		}
 	}
+
+	public function actionDeleteFileCollections()
+	{
+		$result = 1;
+
+		foreach ($_POST['file_collections'] as $file_collection_id) {
+			try {
+				if ($collection = OphCoTherapyapplication_FileCollection::model()->findByPk($file_collection_id)) {
+					foreach ($collection->file_assignments as $file_assignment) {
+						if (!$collection->removeFileById($file_assignment->file_id)) {
+							$result = 0;
+						}
+					}
+					if (!$collection->delete()) {
+						$result = 0;
+					}
+				}
+			} catch (Exception $e) {
+				Yii::log("couldn't remove file collection $file_collection_id: ".$e->getMessage(), 'error');
+				$result = 0;
+			}
+		}
+
+		echo $result;
+	}
 }
