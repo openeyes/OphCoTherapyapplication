@@ -284,10 +284,10 @@ class OphCoTherapyapplication_Processor
 	 * create the PDF file as a ProtectedFile for the given side
 	 *
 	 * @param CController $controller
-	 * @parama array $template_data
+	 * @param array $template_data
 	 * @param string $side
-	 * @return ProtectedFile|null
 	 * @throws Exception
+	 * @return ProtectedFile|null
 	 */
 	protected function createAndSavePdfForSide(CController $controller, array $template_data, $side)
 	{
@@ -372,6 +372,7 @@ class OphCoTherapyapplication_Processor
 	 * @param CController $controller
 	 * @param array $template_data
 	 * @param int $eye_id
+	 * @throws Exception
 	 * @return boolean
 	 */
 	private function processEventForEye(CController $controller, array $template_data, $eye_id)

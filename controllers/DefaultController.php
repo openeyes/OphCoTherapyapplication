@@ -402,7 +402,7 @@ class DefaultController extends BaseEventTypeController
 	protected function afterCreateElements($event)
 	{
 		$event->info = OphCoTherapyapplication_Processor::STATUS_PENDING;
-		$event->save;
+		$event->save();
 	}
 
 	/**
