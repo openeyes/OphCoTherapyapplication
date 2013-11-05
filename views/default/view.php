@@ -62,7 +62,7 @@ if ($this->canPrint()) {
 		}
 	?>
 
-	<?php $this->renderDefaultElements($this->action->id)?>
+	<?php $this->renderDefaultElements($this->action->id, false, array('status' => $status))?>
 	<?php $this->renderOptionalElements($this->action->id)?>
 	<?php $this->renderPartial('emails', array('service' => $service)) ?>
 	<div class="cleartall"></div>

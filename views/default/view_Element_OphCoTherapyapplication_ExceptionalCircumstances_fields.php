@@ -131,7 +131,7 @@
 	</div>
 <?php } ?>
 
-<?php if ($element->{$side . '_filecollections'}) { ?>
+<?php if ($element->{$side . '_filecollections'} && (isset($status) && ($status != OphCoTherapyapplication_Processor::STATUS_SENT))) { ?>
 <div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>
 		<div class="data"><ul style="display: inline-block">

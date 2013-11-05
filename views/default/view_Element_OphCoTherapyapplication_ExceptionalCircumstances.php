@@ -25,7 +25,7 @@
 	<div class="left eventDetail">
 		<?php if ($element->hasRight()) {
 			$this->renderPartial('view_' . get_class($element) . '_fields',
-				array('side' => 'right', 'element' => $element));
+				array('side' => 'right', 'element' => $element, 'status' => $data['status']));
 		} else { ?>
 		Not recorded
 		<?php } ?>
@@ -33,7 +33,7 @@
 	<div class="right eventDetail">
 		<?php if ($element->hasLeft()) {
 			$this->renderPartial('view_' . get_class($element) . '_fields',
-				array('side' => 'left', 'element' => $element));
+				array('side' => 'left', 'element' => $element, 'status' => $data['status']));
 		} else { ?>
 		Not recorded
 		<?php } ?>
