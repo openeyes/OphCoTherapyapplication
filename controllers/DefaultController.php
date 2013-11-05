@@ -395,28 +395,13 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * Mark event as pending after creation
-	 *
-	 * @param Event $event
-	 */
-	protected function afterCreateElements($event)
-	{
-		$event->info = OphCoTherapyapplication_Processor::STATUS_PENDING;
-		$event->save();
-	}
-
-	/**
-	 * After an update, mark any existing emails as archived and mark event as re-opened
+	 * After an update, mark any existing emails as archived
 	 *
 	 * @param Event $event
 	 */
 	protected function afterUpdateElements($event)
 	{
 		OphCoTherapyapplication_Email::model()->forEvent($event)->archiveAll();
-
-		// FIXME: this doesn't actually work because the base controller overwrites it afterwards (unlike create)
-		$event->info = OphCoTherapyapplication_Processor::STATUS_REOPENED;
-		$event->save();
 	}
 
 	/**

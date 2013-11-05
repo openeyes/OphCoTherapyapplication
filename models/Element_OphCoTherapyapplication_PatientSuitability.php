@@ -359,4 +359,18 @@ class Element_OphCoTherapyapplication_PatientSuitability extends SplitEventTypeE
 		}
 	}
 
+	/**
+	 * Set the event info text to the current status
+	 *
+	 * @return string
+	 */
+	public function getInfotext()
+	{
+		if ($this->event) {
+			$service = new OphCoTherapyapplication_Processor($this->event);
+			return $service->getApplicationStatus();
+		} else {
+			return OphCoTherapyapplication_Processor::STATUS_PENDING;
+		}
+	}
 }
