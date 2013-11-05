@@ -19,6 +19,7 @@
 ?>
 <h4 class="elementTypeName">Application</h4>
 
+<div class="element">
 <?php if (!$element->sent) {?>
 	<p><strong>This application has been prepared but not sent due to a system failure sending the email - please try again.</strong></p>
 <?php }?>
@@ -60,4 +61,5 @@
 <div class="metaData">
 Application sent by <span class="user"><?php echo $element->user->fullname ?></span> on <?php echo $element->NHSDate('created_date') ?>
 		at <?php echo date('H:i', strtotime($element->created_date)) ?>
+</div>
 </div>
