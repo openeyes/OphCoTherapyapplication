@@ -509,6 +509,10 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
+	handleButton($('#et_print'),function(e) {
+		printIFrameUrl(OE_print_url);
+	});
+
 	$('select.populate_textarea').unbind('change').change(function() {
 		if ($(this).val() != '') {
 			var cLass = $(this).parent().parent().parent().attr('class').match(/Element.*/);

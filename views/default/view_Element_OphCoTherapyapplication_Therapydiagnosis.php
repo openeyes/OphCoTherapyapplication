@@ -20,6 +20,7 @@
 
 <h4 class="elementTypeName"><?php echo $element->elementType->name?></h4>
 
+<div class="element">
 	<div class="cols2 clearfix">
 		<div class="left eventDetail">
 			<?php if ($element->hasRight()) {
@@ -38,3 +39,4 @@
 			<?php } ?>
 		</div>
 	</div>
+</div>
