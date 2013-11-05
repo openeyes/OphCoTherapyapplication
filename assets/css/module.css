@@ -1,200 +1,72 @@
-@CHARSET "UTF-8";
-
-#event_content.watermarkBox { background-image: url(../img/watermark.png); background-position: -5px 0; background-repeat: repeat-y; border-color: #86cdff; }
-
-#event_content .cols2 .data {
-	width: 316px;
-	float: right;
+/** Therapy Application module styles */
+/**
+ * OpenEyes
+ *
+ * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+ * (C) OpenEyes Foundation, 2011-2013
+ * This file is part of OpenEyes.
+ * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package OpenEyes
+ * @link http://www.openeyes.org.uk
+ * @author OpenEyes <info@openeyes.org.uk>
+ * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+ * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+ */
+/* line 2, ../sass/components/_event.scss */
+.event.ophcotherapyapplication {
+  border-color: #86cdff;
 }
-#event_content .eventDetail > .label {
-	padding-right: 8px;
+/* line 4, ../sass/components/_event.scss */
+.event.ophcotherapyapplication .event-content {
+  background-image: url('../img/new/watermark.png?1382611009');
 }
-#event_content .eventDetail > .eventDetail {
-	padding-left: 0;
-	padding-right: 0;
-}
-
-.elementField {
-	overflow: hidden;
-}
-
-.elementField .data table {
-	width: 100%;
-}
-
-.elementField .data th,
-.eventDetail .data th {
-	text-align: left;
-}
-.eventDetail .data th {
-	padding: 0 2px 2px 0;
-}
-
-.dt-node {
-	margin-bottom: 10px;
-	display: inline-block;
+/* line 7, ../sass/components/_event.scss */
+.event.ophcotherapyapplication .event-title {
+  background-image: url('../img/new/medium.png?1382611009');
 }
 
-.outcome {
-	font-size: 1.2em;
-	display: inline-block;
+/* line 2, ../sass/components/_panels.scss */
+.panel.previous-interventions {
+  background: rgba(255, 255, 255, 0.6);
+  position: relative;
+}
+/* line 4, ../sass/components/_panels.scss */
+.panel.previous-interventions:last-child {
+  margin: 0;
+}
+/* line 7, ../sass/components/_panels.scss */
+.edit .panel.previous-interventions, .edit .panel.previous-interventions:last-child {
+  margin-bottom: .5em;
+}
+/* line 11, ../sass/components/_panels.scss */
+.panel.previous-interventions .field-row, .panel.previous-interventions .data-row {
+  padding-bottom: .4em;
 }
 
-.cols2 div.elementField {
-	padding-bottom: 5px;
-}
-
-.cols2 div.elementField div.label {
-	font-size: 15px;
-	width: 170px !important;
-	display: inline-block !important;
-
-}
-
-.cols2 div.elementField div.data div {
-	display: inline-block;
-
-}
-
-#OphCoTherapyapplication_ComplianceCalculator div {
-	display: inline-block;
-}
-
-.eventDetail .aligned {
-	clear: both;
-}
-
-.eventDetail .data {
-	font-size: 15px;
-}
-
-.compliance-container {
-	width: 320px;
-	float: right;
-}
-
-.compliance-container div.data {
-	float:left;
-}
-
-th.previntervention-date {
-	width: 80px;
-}
-
-th.previntervention-treatment {
-	width: 90px;
-}
-
+/* line 1, ../sass/components/_nice-compliance.scss */
 .compliance-container .outcome {
-	padding: 5px;
-	font-size: 20px;
-	border-width: 2px;
-	border-style: solid;
+  padding: 5px;
+  font-size: 20px;
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
 }
-
+/* line 7, ../sass/components/_nice-compliance.scss */
 .compliance-container .outcome.unknown {
-	color: #999;
-	border-color: #999;
+  color: #999;
+  border-color: #999;
 }
-
+/* line 11, ../sass/components/_nice-compliance.scss */
 .compliance-container .outcome.compliant {
-	color: #0c0;
-	border-color: #0c0;
+  color: #0c0;
+  border-color: #0c0;
 }
-
+/* line 15, ../sass/components/_nice-compliance.scss */
 .compliance-container .outcome.non-compliant {
-	color: #f00;
-	border-color: #f00;
-}
-
-select.MultiSelectList, div.MultiSelectList {
-	vertical-align: top;
-}
-
-select.MultiSelectList {
-	width: 266px;
-}
-
-.start_period select {
-	width: 266px;
-}
-
-ul.MultiSelectList {
-	margin: 0px;
-}
-
-/*
- Exceptional Circumstances >> Previous interventions (edit mode)
- */
-#event_content .cols2 .previntervention-container,
-#event_content .cols2 .relevantintervention-container,
-#event_content .cols2 .pastintervention,
-#event_content .cols2 .pastintervention div {
-    display: block;
-}
-#event_content .cols2 .pastintervention {
-    background: rgba(255,255,255,0.6);
-    padding: 5px;
-    margin-bottom: 8px;
-    border-radius: 5px;
-    position: relative;
-}
-#event_content .cols2 .pastintervention > div {
-    padding-bottom: 4px;
-    width: 100%;
-    overflow: hidden;
-}
-#event_content .cols2 .pastintervention .data {
-    width: 160px;
-}
-
-#event_content .cols2 .pastintervention .data > input {
-	box-sizing: border-box;
-	width: 100%;
-}
-
-#event_content .cols2 .pastintervention .data select,
-#event_content .cols2 .pastintervention .data.comments {
-    width: 100%;
-}
-#event_content .cols2 .pastintervention .data textarea {
-    box-sizing: border-box;
-    width: 100%;
-}
-#event_content .cols2 .pastintervention .label {
-    float: left;
-    width: 140px !important;
-}
-#event_content .cols2 .pastintervention .removePastintervention {
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-/*
- Exceptional Circumstances >> Previous interventions (view mode)
- */
-#event_content .cols2 .pastintervention-view  > div {
-    overflow: hidden;
-    padding-bottom: 8px;
-}
-#event_content .cols2 .pastintervention-view .label {
-    float: left;
-}
-#event_content .cols2 .pastintervention-view .data {
-    float: right;
-    width: 162px;
-}
-
-#event_content .cols2 .pastintervention-view .data.comments {
-    width: 100%;
-}
-#event_content .cols2 .pastintervention-view {
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background: rgba(255,255,255,0.6);
-    padding: 5px;
-}
-#event_content .cols2 .pastintervention-view:last-child {
-    margin: 0;
+  color: #f00;
+  border-color: #f00;
 }
