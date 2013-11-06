@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -21,37 +20,33 @@
 
 <?php
 
+	$layoutColumns = array('label'=>4, 'field'=>8);
+
 	$treatments = $element->getTreatments($side);
 
 	$treat_opts = array(
 		'options' => array(),
 		'empty'=>'- Please select -',
-		'nowrapper' => true,
 	);
 	foreach ($treatments as $treatment) {
 		$treat_opts['options'][(string) $treatment->id] = array('data-treeid' => $treatment->decisiontree_id, 'data-contraindications' => $treatment->contraindications_required);
 	}
 ?>
 
-<div class="elementField">
-	<div class="label"><?php echo $element->getAttributeLabel($side . '_treatment_id'); ?></div>
-	<div class="data"><?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts); ?></div>
-</div>
+<?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts, false,$layoutColumns); ?>
+<?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array(),array_merge($layoutColumns, array('field' => 3)))?>
 
-<div class="elementField">
-	<div class="label"><?php echo $element->getAttributeLabel($side . '_angiogram_baseline_date'); ?></div>
-	<div class="data"><?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array('style'=>'width: 110px;', 'nowrapper' => true))?></div>
-</div>
-
-<div id="nice_compliance_<?php echo $side?>" class="elementField">
-	<div class="label">NICE Compliance</div>
-	<div class="data compliance-container">
-		<?php $this->renderPartial(
-			'form_OphCoTherapyapplication_DecisionTree',
-			array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),
-			false, false
-		)?>
-
+<div id="nice_compliance_<?php echo $side?>" class="row field-row">
+	<div class="large-<?php echo $layoutColumns['label']?> column">
+		<div class="field-label">NICE Compliance:</div>
 	</div>
-
+	<div class="large-<?php echo $layoutColumns['field']?> column">
+		<div class="compliance-container">
+			<?php $this->renderPartial(
+				'form_OphCoTherapyapplication_DecisionTree',
+				array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),
+				false, false
+			)?>
+		</div>
+	</div>
 </div>

@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -19,18 +18,30 @@
  */
 ?>
 
-<h4 class="elementTypeName"><?php echo $element->elementType->name?></h4>
+<section class="element">
+	<header class="element-header">
+		<h3 class="element-title"><?php echo $element->elementType->name?></h3>
+	</header>
 
-<div class="element">
-<div class="eventDetail">
-	<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?>:</div>
-	<div class="data"><?php echo $element->consultant ? $element->consultant->name : 'None'?></div>
-</div>
-
-<?php if ($site = $element->site) { ?>
-	<div class="eventDetail">
-		<div class="label"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?>:</div>
-		<div class="data"><?php echo $site->name ?></div>
+	<div class="element-data">
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?></div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $element->consultant ? $element->consultant->name : 'None'?></div>
+			</div>
+		</div>
+		<?php if ($site = $element->site) { ?>
+			<div class="row data-row">
+				<div class="large-2 column">
+					<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?>:</div>
+				</div>
+				<div class="large-10 column">
+					<div class="data-value"><?php echo $site->name ?></div>
+				</div>
+			</div>
+		<? } ?>
 	</div>
-<? } ?>
-</div>
+
+</section>

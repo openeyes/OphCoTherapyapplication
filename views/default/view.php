@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -20,44 +19,39 @@
 ?>
 
 <?php
-	$this->header();
+$this->beginContent('//patient/event_container');
 ?>
 
-<?php
-$this->renderPartial('//base/_messages');
+	<h2 class="event-title"><?php echo $this->event_type->name?></h2>
 
-$service = new OphCoTherapyapplication_Processor();
-$warnings = array();
-$submit_button_text = 'Submit Application';
+	<?php
+	$this->renderPartial('//base/_messages');
 
-if ($service->canProcessEvent($this->event->id)) {
-	if ($service->isEventNonCompliant($this->event->id)) {
+	$service = new OphCoTherapyapplication_Processor();
+	$warnings = array();
+	$submit_button_text = 'Submit Application';
 
-		$this->event_actions[] = EventAction::link('Preview Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewApplication/?event_id='.$this->event->id),null, array('id' => 'application-preview'));
+	if ($service->canProcessEvent($this->event->id)) {
+		if ($service->isEventNonCompliant($this->event->id)) {
+			$this->event_actions[] = EventAction::link('Preview Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewApplication/?event_id='.$this->event->id),null, array('id' => 'application-preview'));
+		}
+		else {
+			$submit_button_text = 'Submit Notification';
+			$this->event_actions[] = EventAction::button('Preview Application',null,array('disabled' => true), array('title' => 'Preview unavailable for NICE compliant applications'));
+		}
+
+		$this->event_actions[] = EventAction::link($submit_button_text, Yii::app()->createUrl($this->event->eventType->class_name.'/default/processApplication/?event_id='.$this->event->id));
+	} else {
+		$warnings = $service->getProcessWarnings($this->event->id);
 	}
-	else {
-		$submit_button_text = 'Submit Notification';
-		$this->event_actions[] = EventAction::button('Preview Application',null,array('disabled' => true), array('title' => 'Preview unavailable for NICE compliant applications'));
+	if ($this->canPrint()) {
+		$this->event_actions[] = EventAction::button('Print', 'print');
 	}
+	?>
 
-	$this->event_actions[] = EventAction::link($submit_button_text, Yii::app()->createUrl($this->event->eventType->class_name.'/default/processApplication/?event_id='.$this->event->id));
-} else {
-	$warnings = $service->getProcessWarnings($this->event->id);
-}
-if ($this->canPrint()) {
-	$this->event_actions[] = EventAction::button('Print', 'print');
-}
-
-?>
-
-<?php  $this->renderPartial('//patient/event_actions'); ?>
-
-<h3 class="withEventIcon" style="background:transparent url(<?php echo $this->assetPath?>/img/medium.png) center left no-repeat;"><?php echo $this->event_type->name?></h3>
-
-<div>
 	<?php
 		if (count($warnings)) {
-			echo "<div class=\"warningBox\">Application cannot be submitted for the following reasons:<ul>";
+			echo "<div class=\"alert-box alert with-icon validation-errors top\"><p>Application cannot be submitted for the following reasons:</p><ul>";
 			foreach ($warnings as $warning) {
 				echo "<li>" . $warning . "</li>";
 			}
@@ -67,7 +61,5 @@ if ($this->canPrint()) {
 
 	<?php $this->renderDefaultElements($this->action->id)?>
 	<?php $this->renderOptionalElements($this->action->id)?>
-	<div class="cleartall"></div>
-</div>
 
-<?php $this->footer()?>
+<?php $this->endContent() ;?>
