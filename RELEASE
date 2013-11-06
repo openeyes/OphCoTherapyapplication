@@ -1,6 +1,10 @@
 Release History
 ===============
 
+UNRELEASED
+----------
++ bugfix to html encode user input for PDF generation.
+
 1.4.7
 -----
 + both eye shortcode support for correspondence
