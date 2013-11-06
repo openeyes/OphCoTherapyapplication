@@ -1,8 +1,8 @@
 Release History
 ===============
 
-UNRELEASED
-----------
+1.4.8
+-----
 + bugfix to html encode user input for PDF generation.
 
 1.4.7
