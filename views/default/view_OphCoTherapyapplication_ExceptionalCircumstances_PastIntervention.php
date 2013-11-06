@@ -50,7 +50,7 @@
 		<div class="label"><?php echo $pastintervention->getAttributeLabel('stopreason_id'); ?>:</div>
 		<div class="data">
 			<?php if ($pastintervention->stopreason_other) {
-				echo $pastintervention->stopreason_other;
+				echo Yii::app()->format->Ntext($pastintervention->stopreason_other);
 			} else {
 				echo $pastintervention->stopreason->name;
 			} ?>
@@ -61,7 +61,7 @@
 		<div class="label"><?php echo $pastintervention->getAttributeLabel('comments'); ?>:</div>
 		<div class="data comments">
 		<?php if ($pastintervention->comments) {
-			echo $pastintervention->comments;
+			echo Yii::app()->format->Ntext($pastintervention->comments);
 		} else {
 			echo "None";
 		}

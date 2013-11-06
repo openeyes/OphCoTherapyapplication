@@ -134,7 +134,7 @@ Please provide further information below relating to the clinical urgency and / 
 		<td>
 			<?php
 				if ($exceptional->{$side . '_urgency_reason'}) {
-					echo CHtml::encode($exceptional->{$side . '_urgency_reason'});
+					echo Yii::app()->format->Ntext($exceptional->{$side . '_urgency_reason'});
 				}
 			?>
 			&nbsp;
@@ -352,14 +352,14 @@ Please provide further information below relating to the clinical urgency and / 
 		</tr>
 		<tr nobr="true">
 			<td class="row-title">What are the exceptional circumstances that make the standard intervention inappropriate for this patient?</td>
-			<td class="row-data"><?php echo CHtml::encode($exceptional->{$side . '_patient_different'}) ?></td>
+			<td class="row-data"><?php echo Yii::app()->format->Ntext($exceptional->{$side . '_patient_different'}) ?></td>
 		</tr>
 
 		<tr nobr="true">
 			<td class="row-title">Are there any patient factors (clinical or personal) that need to be considered?</td>
 			<td class="row-data"><?php
 				if ($exceptional->{$side . '_patient_factors'}) {
-					echo "Yes <br /><br />" . CHtml::encode($exceptional->{$side . '_patient_factor_details'});
+					echo "Yes <br /><br />" . Yii::app()->format->Ntext($exceptional->{$side . '_patient_factor_details'});
 				} else {
 					echo "No";
 				}
@@ -413,7 +413,7 @@ Please provide further information below relating to the clinical urgency and / 
 				<?php } else { ?>
 					There is no standard intervention<br /><br />
 					This is <?php if (!$exceptional->{$side . '_condition_rare'}) { echo 'not'; }?> a rare condition.<br />
-					The incidence of it is: <?php echo CHtml::encode($exceptional->{$side . '_incidence'}); ?>
+					The incidence of it is: <?php echo Yii::app()->format->Ntext($exceptional->{$side . '_incidence'}); ?>
 				<?php }?></td>
 		</tr>
 
@@ -485,11 +485,11 @@ Please provide further information below relating to the clinical urgency and / 
 								<td><?php echo Helper::convertDate2NHS($previntervention->start_date) ?></td>
 								<td><?php echo Helper::convertDate2NHS($previntervention->end_date) ?></td>
 								<td><?php echo $previntervention->getTreatmentName() ?></td>
-								<td><?php echo CHtml::encode($previntervention->getStopReasonText()) ?></td>
+								<td><?php echo Yii::app()->format->Ntext($previntervention->getStopReasonText()) ?></td>
 								<td><?php
 									echo "Start VA: " . $previntervention->start_va . "<br />";
 									echo "End VA: " . $previntervention->end_va . "<br />";
-									if ($previntervention->comments) { echo CHtml::encode($previntervention->comments); } ?></td>
+									if ($previntervention->comments) { echo Yii::app()->format->Ntext($previntervention->comments); } ?></td>
 							</tr>
 						<?php
 						}
@@ -528,11 +528,11 @@ Please provide further information below relating to the clinical urgency and / 
 								<td><?php echo Helper::convertDate2NHS($relevantintervention->start_date) ?></td>
 								<td><?php echo Helper::convertDate2NHS($relevantintervention->end_date) ?></td>
 								<td><?php echo $relevantintervention->getTreatmentName() ?></td>
-								<td><?php echo CHtml::encode($relevantintervention->getStopReasonText()) ?></td>
+								<td><?php echo Yii::app()->format->Ntext($relevantintervention->getStopReasonText()) ?></td>
 								<td><?php
 									echo "Start VA: " . $relevantintervention->start_va . "<br />";
 									echo "End VA: " . $relevantintervention->end_va . "<br />";
-									if ($relevantintervention->comments) { echo CHtml::encode($relevantintervention->comments); } ?></td>
+									if ($relevantintervention->comments) { echo Yii::app()->format->Ntext($relevantintervention->comments); } ?></td>
 							</tr>
 						<?php
 						}
@@ -630,7 +630,7 @@ Please provide further information below relating to the clinical urgency and / 
 
 		<tr>
 			<td class="row-title">What are the patient expectations for the outcome of the treatment? Have these been discussed with the patient and their family?</td>
-			<td class="row-data"><?php echo CHtml::encode($exceptional->{$side . '_patient_expectations'}) ?></td>
+			<td class="row-data"><?php echo Yii::app()->format->Ntext($exceptional->{$side . '_patient_expectations'}) ?></td>
 		</tr>
 
 		<tr nobr="true">
