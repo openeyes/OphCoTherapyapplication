@@ -29,6 +29,7 @@ class OphCoTherapyapplication_Processor
 
 	/**
 	 * @param Event $event Must be an OphCoTherapyapplication event
+	 * @throws Exception
 	 */
 	public function __construct(Event $event)
 	{
@@ -216,6 +217,19 @@ class OphCoTherapyapplication_Processor
 		}
 
 		return $success;
+	}
+
+	/**
+	 * returns boolean as to whether the event has been submitted (successfully) or not.
+	 *
+	 * @return bool
+	 */
+	public function isEventSubmitted()
+	{
+		if ($this->getApplicationStatus() == self::STATUS_SENT) {
+			return true;
+		}
+		return null;
 	}
 
 	/**

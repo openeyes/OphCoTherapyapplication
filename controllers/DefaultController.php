@@ -76,7 +76,10 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * An application can be printed if there are no warnings against it
+	 * if an application has been submitted, then it can be printed.
+	 * alternatively, if it can be processed (submitted) it can also be printed.
+	 *
+	 * essentially this prevents printing of applications that have any warnings against them.
 	 *
 	 * @return bool
 	 */
@@ -86,7 +89,10 @@ class DefaultController extends BaseEventTypeController
 
 		if ($can_print && $this->event) {
 			$service = new OphCoTherapyapplication_Processor($this->event);
-			if ($service->getProcessWarnings()) {
+			if ($service->isEventSubmitted() !== null) {
+				$can_print = true;
+			}
+			elseif ($service->getProcessWarnings()) {
 				$can_print = false;
 			}
 		}
@@ -156,7 +162,6 @@ class DefaultController extends BaseEventTypeController
 	public function getDefaultElements($action, $event_type_id=false, $event=false)
 	{
 		$elements = parent::getDefaultElements($action, $event_type_id, $event);
-
 		$ecPresent = false;
 
 		foreach ($elements as $key => $element) {
@@ -393,6 +398,7 @@ class DefaultController extends BaseEventTypeController
 		}
 		return false;
 	}
+
 
 	/**
 	 * After an update, mark any existing emails as archived
