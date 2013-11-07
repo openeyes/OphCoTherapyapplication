@@ -39,7 +39,7 @@
 	</div>
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_description') ?>:</div>
-		<div class="data"><?php echo $element->{$side . '_description'} ?></div>
+		<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_description'}); ?></div>
 	</div>
 	<?php if ($element->needDeviationReasonForSide($side)) { ?>
 		<div class="eventDetail aligned">
@@ -60,17 +60,17 @@
 	</div>
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_incidence') ?>:</div>
-		<div class="data"><?php echo $element->{$side . '_incidence'} ?></div>
+		<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_incidence'}); ?></div>
 	</div>
 <?php }?>
 
 <div class="eventDetail aligned">
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_different') ?>:</div>
-	<div class="data"><?php echo $element->{$side . '_patient_different'} ?></div>
+	<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_different'}); ?></div>
 </div>
 <div class="eventDetail aligned">
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_gain') ?>:</div>
-	<div class="data"><?php echo $element->{$side . '_patient_gain'} ?></div>
+	<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_gain'}); ?></div>
 </div>
 
 <?php if ($element->{$side . '_previnterventions'}) { ?>
@@ -110,13 +110,13 @@
 <?php if ($element->{$side . '_patient_factors'}) { ?>
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details') ?>:</div>
-		<div class="data"><?php echo $element->{$side . '_patient_factor_details'} ?></div>
+		<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_factor_details'}); ?></div>
 	</div>
 <?php } ?>
 
 <div class="eventDetail aligned">
 	<div class="label"><?php echo $element->getAttributeLabel($side . '_patient_expectations') ?>:</div>
-	<div class="data"><?php echo $element->{$side . '_patient_expectations'} ?></div>
+	<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_expectations'}); ?></div>
 </div>
 
 <div class="eventDetail aligned">
@@ -127,7 +127,7 @@
 <?php if ($element->{$side . "_start_period"}->urgent) { ?>
 	<div class="eventDetail aligned">
 		<div class="label"><?php echo $element->getAttributeLabel($side . '_urgency_reason') ?>:</div>
-		<div class="data"><?php echo $element->{$side . '_urgency_reason'} ?></div>
+		<div class="data"><?php echo Yii::app()->format->Ntext($element->{$side . '_urgency_reason'}); ?></div>
 	</div>
 <?php } ?>
 

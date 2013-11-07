@@ -1,6 +1,10 @@
 Release History
 ===============
 
+UNRELEASED
+----------
++ formatting of freetext fields in display and PDF
+
 1.4.8
 -----
 + bugfix to html encode user input for PDF generation.
