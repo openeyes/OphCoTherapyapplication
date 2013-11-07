@@ -34,13 +34,39 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 
 	public function up()
 	{
+		if (!$this->consolidate(
+			array(
+				"m130703_152448_event_type_OphCoTherapyapplication",
+				"m130724_103306_previousintervention_tweaks",
+				"m130725_075105_status_flag_for_therapy_application_email_element",
+				"m130813_141710_release_tweaks",
+			)
+		)
+		) {
+			return $this->createTables();
+		}
+	}
 
+	public function createTables()
+	{
 		if (!Yii::app()->hasModule('OphTrIntravitrealinjection')) {
-			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
+			echo "
+			-----------------------------------
+			Skipping OphTrIntravitrealinjection - missing module dependency
+			-----------------------------------
+			";
+			return false;
+			//throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
 
 		if (!in_array('ophtrintravitinjection_treatment_drug',Yii::app()->db->getSchema()->tableNames)) {
-			throw new Exception("OphTrIntravitrealinjection is required for this module to work");
+			echo "
+			-----------------------------------
+			Skipping OphTrIntravitrealinjection - missing module table ophtrintravitinjection_treatment_drug dependency
+			-----------------------------------
+			";
+			return false;
+			//throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
 
 		$this->setData();
