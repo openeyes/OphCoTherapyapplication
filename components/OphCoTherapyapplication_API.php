@@ -131,7 +131,7 @@ class OphCoTherapyapplication_API extends BaseAPI
 	/**
 	 * get the therapy application diagnosis description for the left
 	 *
-	 * @param $patient
+	 * @param Patient $patient
 	 * @return mixed
 	 */
 	public function getLetterApplicationDiagnosisLeft($patient)
@@ -144,13 +144,36 @@ class OphCoTherapyapplication_API extends BaseAPI
 	/**
 	 * get the therapy application diagnosis description for the right if there is one
 	 *
-	 * @param $patient
+	 * @param Patient $patient
 	 * @return mixed
 	 */
 	public function getLetterApplicationDiagnosisRight($patient)
 	{
 		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
 			return $this->getLetterApplicationDiagnosisForSide($patient, $episode, 'right');
+		}
+	}
+
+	/**
+	 * get the therapy application diagnosis description for all sides that have one for this patient.
+	 *
+	 * @param Patient $patient
+	 * @return string
+	 */
+	public function getLetterApplicationDiagnosisBoth($patient)
+	{
+		$res = "";
+		if ($right = $this->getLetterApplicationDiagnosisRight($patient)) {
+			$res .= "Right eye: " . $right;
+		}
+		if ($left = $this->getLetterApplicationDiagnosisLeft($patient)) {
+			if ($right) {
+				$res .= "\n";
+			}
+			$res .= "Left eye: " . $left;
+		}
+		if (strlen($res)) {
+			return $res;
 		}
 	}
 
@@ -194,6 +217,29 @@ class OphCoTherapyapplication_API extends BaseAPI
 	{
 		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
 			return $this->getLetterApplicationTreatmentForSide($patient, $episode, 'right');
+		}
+	}
+
+	/**
+	 * get the therapy application treatment for all sides that have one for this patient.
+	 *
+	 * @param Patient $patient
+	 * @return string
+	 */
+	public function getLetterApplicationTreatmentBoth($patient)
+	{
+		$res = "";
+		if ($right = $this->getLetterApplicationTreatmentRight($patient)) {
+			$res .= $right . " to the right eye";
+		}
+		if ($left = $this->getLetterApplicationTreatmentLeft($patient)) {
+			if ($right) {
+				$res .= " and ";
+			}
+			$res .= $left . " to the left eye";
+		}
+		if (strlen($res)) {
+			return $res;
 		}
 	}
 }
