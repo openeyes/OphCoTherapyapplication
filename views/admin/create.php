@@ -18,6 +18,7 @@
  */
 ?>
 <div class="box admin">
+
 	<h2>Add <?php echo $title?></h2>
 
 	<?php
@@ -26,6 +27,10 @@
 		'enableAjaxValidation'=>false,
 		'htmlOptions' => array(
 				'enctype' => 'multipart/form-data'
+		),
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5
 		)
 	))?>
 

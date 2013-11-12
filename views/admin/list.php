@@ -20,10 +20,15 @@
 $this->renderPartial('_menu_main');
 ?>
 
-<h1><?php echo $title ? $title : "Therapy Application Admin" ?></h1>
-
-<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/create' . $dataProvider->modelClass); ?>">Add New</a>
-<?php $this->widget('zii.widgets.CListView', array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'list_' . $dataProvider->modelClass,
-)); ?>
+<div class="box admin">
+	<header class="box-header">
+		<h2 class="box-title"><?php echo $title ? $title : "Therapy Application Admin" ?></h2>
+		<div class="box-actions">
+			<a href="<?php echo Yii::app()->createUrl('OphCoTherapyapplication/admin/create' . $dataProvider->modelClass); ?>" class="button small">Add New</a>
+		</div>
+	</header>
+	<?php $this->widget('zii.widgets.CListView', array(
+		'dataProvider'=>$dataProvider,
+		'itemView'=>'list_' . $dataProvider->modelClass,
+	)); ?>
+</div>

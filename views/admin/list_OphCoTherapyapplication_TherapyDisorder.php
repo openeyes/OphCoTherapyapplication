@@ -17,9 +17,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<h1><?php echo $title ?></h1>
-<?php $this->renderPartial('//base/_messages')?>
 <div class="box admin">
+	<h2><?php echo $title ?></h2>
+	<?php $this->renderPartial('//base/_messages')?>
 	<form id="admin_diagnoses">
 		<table class="grid">
 			<thead>

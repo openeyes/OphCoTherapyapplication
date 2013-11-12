@@ -1,49 +1,14 @@
-.question {
-	
-}
-
-.node {
-	width: 80%;
-	border: 1px solid black;
-}
-
-.children {
-	display: inline-block;
-	border: 1px solid black;
-	width: 500px;
-	margin: 3px 0px 30px 0px;
-}
-
-.children .child {
-	float: left;
-	border: 1px solid black;
-	width: 100px;
-	margin-left: 20px;
-	background-color: #ddd;
-}
-
-.rules {
-	display: inline-block;
-	border: 1px solid black;
-	width: 500px;
-	margin: 3px 0px 30px 0px;
-}
-
-.question {
-	clear: left;
-}
-	
+/* line 1, ../sass/admin.scss */
 .OphCoTherapyapplication_DecisionTreeNodeRule {
-	float: left;
-	border: 1px dotted black;
-	width: 100px;
-	margin-left: 20px;
-	background-color: #ddd;
+  float: left;
+  border: 1px dotted black;
+  width: 100px;
+  margin-left: 20px;
+  background-color: #ddd;
 }
 
-label {
-	width: 200px;
+/* line 9, ../sass/admin.scss */
+.current-files {
+  margin-left: 1.5em;
+  margin-bottom: 0;
 }
-
-ul.grid li .column_name { width: 780px; display: inline-block; }
-ul.grid li .column_actions { width: 50px; display: inline-block; }

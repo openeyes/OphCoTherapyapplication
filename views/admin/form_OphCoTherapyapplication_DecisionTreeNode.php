@@ -17,40 +17,32 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="element">
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+<?
+$form->layoutColumns = array(
+	'label' => 3,
+	'field' => 9
+);
+?>
 
-	<?php echo $form->errorSummary($model); ?>
+<p class="note">Fields with <span class="required">*</span> are required.</p>
 
-	<div class="row question eventDetail">
-		<div class="label"><?php echo $form->labelEx($model,'question'); ?></div>
-		<div class="data"><?php echo $form->textField($model,'question',array('size'=>40,'maxlength'=>256, 'nowrapper' => true)); ?></div>
-		<?php echo $form->error($model,'question'); ?>
+<?php echo $form->errorSummary($model); ?>
+<?php echo $form->textField($model,'question',array('maxlength'=>256)); ?>
+<?php echo $form->dropdownlist($model,'outcome_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll(),'id','name'),array('empty'=>'- Please select -')); ?>
+
+<?php
+$func_list = array();
+foreach ($model->getDefaultFunctions() as $func) {
+	$func_list[$func] = $func;
+}
+echo $form->dropdownlist($model, 'default_function', $func_list, array('empty' => '- Please select -')); ?>
+
+
+<div class="row field-row">
+	<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+		<?php echo $form->labelEx($model,'default_value'); ?>
 	</div>
-
-	<div class="row outcomeAdmin eventDetail">
-		<div class="label"><?php echo $form->labelEx($model,'outcome_id'); ?></div>
-		<div class="data"><?php echo $form->dropdownlist($model,'outcome_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll(),'id','name'),array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
-		<?php echo $form->error($model,'outcome_id'); ?>
-	</div>
-
-	<div class="row default_function  eventDetail">
-		<div class="label"><?php echo $form->labelEx($model,'default_function'); ?></div>
-		<div class="data">
-		<?php
-		$func_list = array();
-		foreach ($model->getDefaultFunctions() as $func) {
-			$func_list[$func] = $func;
-		}
-
-		echo $form->dropdownlist($model, 'default_function', $func_list, array('empty' => '- Please select -', 'nowrapper' => true)); ?>
-		</div>
-		<?php echo $form->error($model,'default_function'); ?>
-	</div>
-
-	<div class="row default_value eventDetail">
-		<div class="label"><?php echo $form->labelEx($model,'default_value'); ?></div>
-		<div class="data">
+	<div class="large-<?php echo $form->layoutColumns['field'];?> column end">
 		<?php
 			if ($model->response_type && $model->response_type->datatype == 'bool') {
 				$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
@@ -67,45 +59,38 @@
 				));
 			}
 		?>
-		</div>
-		<?php echo $form->error($model,'default_value'); ?>
-	</div>
-
-	<div class="row response_type eventDetail">
-		<div class="label"><?php echo $form->labelEx($model,'response_type'); ?></div>
-
-		<div class="data">
-		<?php
-		$html_options = array(
-				'options' => array(),
-				'empty'=>'- Please select -',
-				'nowrapper' => true
-		);
-		foreach (OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll() as $rt) {
-			$html_options['options'][(string) $rt->id] = array('data-datatype' => $rt->datatype);
-		}
-
-		echo $form->dropdownlist($model,'response_type_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll(),'id','label'),$html_options); ?>
-		</div>
-		<?php echo $form->error($model,'response_type'); ?>
 	</div>
 </div>
 
+<?php
+$html_options = array(
+		'options' => array(),
+		'empty'=>'- Please select -',
+);
+foreach (OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll() as $rt) {
+	$html_options['options'][(string) $rt->id] = array('data-datatype' => $rt->datatype);
+}
+
+echo $form->dropdownlist($model,'response_type_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeNode_ResponseType::model()->findAll(),'id','label'),$html_options); ?>
 <script id="template_default_value_default" type="text/html">
 	<?php
 		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_default',
-						array('name' => '{{name}}',
-						'id' => '{{id}}',
-						'val'=> null
-				));
+			array(
+				'name' => '{{name}}',
+				'id' => '{{id}}',
+				'val'=> null
+			)
+		);
 	?>
 </script>
 <script id="template_default_value_bool" type="text/html">
 	<?php
 		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
-					array('name' => '{{name}}',
-					'id' => '{{id}}',
-					'val'=> null,
-			));
+			array(
+				'name' => '{{name}}',
+				'id' => '{{id}}',
+				'val'=> null,
+			)
+		);
 	?>
 </script>
