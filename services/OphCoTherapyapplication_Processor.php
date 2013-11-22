@@ -220,19 +220,6 @@ class OphCoTherapyapplication_Processor
 	}
 
 	/**
-	 * returns boolean as to whether the event has been submitted (successfully) or not.
-	 *
-	 * @return bool
-	 */
-	public function isEventSubmitted()
-	{
-		if ($this->getApplicationStatus() == self::STATUS_SENT) {
-			return true;
-		}
-		return null;
-	}
-
-	/**
 	 * Get an element object by class name
 	 *
 	 * We could potentially add a caching layer here if performance becomes a problem, but would have to watch out for stale data

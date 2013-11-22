@@ -19,27 +19,23 @@
 
 class DefaultController extends BaseEventTypeController
 {
+	static protected $action_types = array(
+		'previewApplication' => self::ACTION_TYPE_PRINT,
+		'processApplication' => self::ACTION_TYPE_EDIT,
+		'downloadFileCollection' => self::ACTION_TYPE_VIEW,
+		'getDecisionTree' => self::ACTION_TYPE_FORM,
+	);
+
 	// TODO: check this is in line with Jamie's change circa 3rd April 2013
 	protected function beforeAction($action)
 	{
-		if (!Yii::app()->getRequest()->getIsAjaxRequest() && !(in_array($action->id,$this->printActions())) ) {
+		if (!Yii::app()->getRequest()->getIsAjaxRequest() && !$this->isPrintAction($action->id)) {
 			Yii::app()->getClientScript()->registerScriptFile(Yii::app()->createUrl('js/spliteventtype.js'));
 		}
 
 		$res = parent::beforeAction($action);
 
 		return $res;
-	}
-
-	/**
-	 * define the print actions
-	 *
-	 * @return array
-	 * @see parent::printActions()
-	 */
-	public function printActions()
-	{
-		return array('print', 'processApplication');
 	}
 
 	/**
@@ -68,30 +64,6 @@ class DefaultController extends BaseEventTypeController
 	{
 		$this->addEditJSVars();
 		parent::initActionUpdate();
-	}
-
-	/**
-	 * if an application has been submitted, then it can be printed.
-	 * alternatively, if it can be processed (submitted) it can also be printed.
-	 *
-	 * essentially this prevents printing of applications that have any warnings against them.
-	 *
-	 * @return bool
-	 */
-	public function canPrint()
-	{
-		$can_print = parent::canPrint();
-
-		if ($can_print && $this->event) {
-			$service = new OphCoTherapyapplication_Processor($this->event);
-			if ($service->isEventSubmitted() !== null) {
-				$can_print = true;
-			}
-			elseif ($service->getProcessWarnings()) {
-				$can_print = false;
-			}
-		}
-		return $can_print;
 	}
 
 	public function initActionPreviewApplication()
