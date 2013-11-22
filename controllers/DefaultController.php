@@ -54,24 +54,20 @@ class DefaultController extends BaseEventTypeController
 
 	/**
 	 * ensure js vars are set before carrying out standard functionality
-	 *
-	 * @return bool|string|void
 	 */
-	public function actionCreate()
+	public function initActionCreate()
 	{
 		$this->addEditJSVars();
-		parent::actionCreate();
+		parent::initActionCreate();
 	}
 
 	/**
 	 * ensure js vars are set before carrying out standard functionality
-	 *
-	 * @param $id
 	 */
-	public function actionUpdate($id)
+	public function initActionUpdate()
 	{
 		$this->addEditJSVars();
-		parent::actionUpdate($id);
+		parent::initActionUpdate();
 	}
 
 	/**
@@ -98,7 +94,10 @@ class DefaultController extends BaseEventTypeController
 		return $can_print;
 	}
 
-	private $event_model_cache = array();
+	public function initActionPreviewApplication()
+	{
+		$this->initWithEventId(@$_REQUEST['event_id']);
+	}
 
 	/**
 	 * preview of the application - will generate both left and right forms into one PDF
@@ -107,11 +106,7 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function actionPreviewApplication()
 	{
-		if (!isset($_REQUEST['event_id']) || !($event = Event::model()->findByPk($_REQUEST['event_id']))) {
-			throw new CHttpException(404);
-		}
-
-		$service = new OphCoTherapyapplication_Processor($event);
+		$service = new OphCoTherapyapplication_Processor($this->event);
 
 		$pdf = $service->generatePreviewPdf($this);
 		if (!$pdf) {
@@ -121,6 +116,11 @@ class DefaultController extends BaseEventTypeController
 		$pdf->Output("Therapy Application.pdf", "I");
 	}
 
+	public function initActionProcessApplication()
+	{
+		$this->initWithEventId(@$_REQUEST['event_id']);
+	}
+
 	/**
 	 * actually generates and submits the therapy application
 	 *
@@ -128,17 +128,13 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function actionProcessApplication()
 	{
-		if (isset($_REQUEST['event_id']) && ($event = Event::model()->findByPk($_REQUEST['event_id']))) {
-			$service = new OphCoTherapyapplication_Processor($event);
-			if ($service->processEvent($this)) {
-				Yii::app()->user->setFlash('success', "Application processed.");
-			} else {
-				Yii::app()->user->setFlash('error', "Unable to process the application at this time.");
-			}
-			$this->redirect(array($this->successUri.$event->id));
+		$service = new OphCoTherapyapplication_Processor($this->event);
+		if ($service->processEvent($this)) {
+			Yii::app()->user->setFlash('success', "Application processed.");
 		} else {
-			throw new CHttpException(404, 'No such event');
+			Yii::app()->user->setFlash('error', "Unable to process the application at this time.");
 		}
+		$this->redirect(array($this->successUri . $this->event->id));
 	}
 
 	public function actionDownloadFileCollection($id)
@@ -150,44 +146,6 @@ class DefaultController extends BaseEventTypeController
 			}
 		}
 		throw new CHttpException('400', 'File Collection does not exist');
-	}
-
-	/**
-	 * extends the base function to set various defaults that depend on other events etc
-	 *
-	 * (non-PHPdoc)
-	 * @see BaseEventTypeController::getDefaultElements($action, $event_type_id, $event)
-	 */
-	public function getDefaultElements($action, $event_type_id=false, $event=false)
-	{
-		$elements = parent::getDefaultElements($action, $event_type_id, $event);
-		$ecPresent = false;
-
-		foreach ($elements as $key => $element) {
-			switch(get_class($element)) {
-				case 'Element_OphCoTherapyapplication_Therapydiagnosis':
-					if ($action == 'create' && empty($_POST)) {
-						$this->setDiagnosisDefaults($element);
-					}
-					break;
-				case 'Element_OphCoTherapyapplication_MrServiceInformation':
-					if ($action == 'create' && empty($_POST)) {
-						$element->consultant_id = Yii::app()->session['selected_firm_id'];
-						$element->site_id = Yii::app()->session['selected_site_id'];
-					}
-					break;
-				case 'Element_OphCoTherapyapplication_ExceptionalCircumstances':
-					$ecPresent = true;
-					break;
-			}
-		}
-
-		// Exceptional circumstances needs to be present even if it wasn't in the POST data because compliance may change
-		if ($action == 'create' && !$ecPresent) {
-			$elements[] = new Element_OphCoTherapyapplication_ExceptionalCircumstances;
-		}
-
-		return $elements;
 	}
 
 	/**
@@ -227,6 +185,42 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
+	 * extends the base function to set various defaults that depend on other events etc
+	 *
+	 * @param BaseElement $element
+	 * @param string $action
+	 */
+	public function setElementDefaultOptions($element, $action)
+	{
+		parent::setElementDefaultOptions($element, $action);
+
+		if ($action == 'create' && empty($_POST)) {
+			switch(get_class($element)) {
+				case 'Element_OphCoTherapyapplication_Therapydiagnosis':
+					$this->setDiagnosisDefaults($element);
+					break;
+				case 'Element_OphCoTherapyapplication_MrServiceInformation':
+					$element->consultant_id = Yii::app()->session['selected_firm_id'];
+					$element->site_id = Yii::app()->session['selected_site_id'];
+					break;
+			}
+		}
+	}
+
+	/*
+	 * FIXME: is this how it's supposed to work?
+	 *
+	 * @param BaseEventTypeElement $element
+	 * @param string $action
+	 * @param BaseCActiveBaseEventTypeCActiveForm $form
+	 * @param array $data
+	 */
+	protected function renderOptionalElement($element, $action, $form, $data)
+	{
+		$this->renderElement($element, $action, $form, $data);
+	}
+
+	/**
 	 * works out the node response value for the given node id on the element. Basically allows us to check for
 	 * submitted values, values stored against the element from being saved, or working out a default value if applicable
 	 *
@@ -251,17 +245,18 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * process the POST data for past interventions for the given side
+	 * process the data for past interventions for the given side
 	 *
+	 * @param array $data
 	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
 	 * @param string $side - left or right
 	 */
-	private function _POSTPastinterventions($element, $side)
+	private function processPastinterventions(array $data, $element, $side)
 	{
 		foreach (array('_previnterventions' => false, '_relevantinterventions' => true) as $past_type => $is_relevant) {
-			if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type]) ) {
+			if (isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type]) ) {
 				$pastinterventions = array();
-				foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type] as $idx => $attributes) {
+				foreach ($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type] as $idx => $attributes) {
 					// we have 1 or more entries that are just indexed by a counter. They may or may not already be in the db
 					// but at this juncture we don't care, we just want to create a previous intervention for this side and attach to
 					// the element
@@ -282,16 +277,17 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * process the POST data for deviation reasons for the given side
+	 * process the data for deviation reasons for the given side
 	 *
+	 * @param array $data
 	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
 	 * @param string $side - left or right
 	 */
-	private function _POSTDeviationReasons($element, $side)
+	private function processDeviationReasons(array $data, $element, $side)
 	{
-		if (isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons']) ) {
+		if (isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons']) ) {
 			$dr_lst = array();
-			foreach ($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons'] as $id) {
+			foreach ($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons'] as $id) {
 				if ($dr = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->findByPk((int) $id)) {
 					$dr_lst[] = $dr;
 				}
@@ -300,86 +296,52 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 * @see BaseEventTypeController::setPOSTManyToMany()
-	 */
-	protected function setPOSTManyToMany($element)
+	protected function setElementComplexAttributesFromData($element, $data, $index = null)
 	{
 		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
-			$this->_POSTPastinterventions($element, 'left');
-			$this->_POSTPastinterventions($element, 'right');
-			$this->_POSTDeviationReasons($element, 'left');
-			$this->_POSTDeviationReasons($element, 'right');
+			$this->processPastinterventions($data, $element, 'left');
+			$this->processPastinterventions($data, $element, 'right');
+			$this->processDeviationReasons($data, $element, 'left');
+			$this->processDeviationReasons($data, $element, 'right');
 		}
 	}
 
-	/*
-	 * ensures Many Many fields processed for elements
-	*/
-	public function createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId)
+	public function saveEventComplexAttributesFromData($data)
 	{
-		if ($id = parent::createElements($elements, $data, $firm, $patientId, $userId, $eventTypeId)) {
-			// create has been successful, store many to many values
-			$this->storePOSTManyToMany($elements);
-		}
-		return $id;
-	}
-
-	/**
-	 * similar to setPOSTManyToMany, but will actually call methods on the elements that will create database entries
-	 * should be called on create and update.
-	 *
-	 * @param Element[] - array of elements being created
-	 */
-	protected function storePOSTManyToMany($elements)
-	{
-		foreach ($elements as $el) {
+		foreach ($this->open_elements as $el) {
 			if (get_class($el) == 'Element_OphCoTherapyapplication_PatientSuitability') {
 				// note we don't do this in POST Validation as we don't need to validate the values of the decision tree selection
 				// this is really just for record keeping - we are mainly interested in whether or not it's got compliance value
 				$el->updateDecisionTreeResponses(Element_OphCoTherapyapplication_PatientSuitability::LEFT,
-						isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse']) ?
-						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse'] :
+						isset($data['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse']) ?
+						$data['Element_OphCoTherapyapplication_PatientSuitability']['left_DecisionTreeResponse'] :
 						array());
 				$el->updateDecisionTreeResponses(Element_OphCoTherapyapplication_PatientSuitability::RIGHT,
-						isset($_POST['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse']) ?
-						$_POST['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse'] :
+						isset($data['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse']) ?
+						$data['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse'] :
 						array());
 
 			} elseif (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
 				foreach (array('left' => Eye::LEFT, 'right' => Eye::RIGHT) as $side_str => $side_id) {
 					$el->updateDeviationReasons($side_id,
-							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) ?
-							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) :
+							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) ?
+							Helper::convertNHS2MySQL($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) :
 							array());
 					$el->updatePreviousInterventions($side_id,
-							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) ?
-							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) :
+							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) ?
+							Helper::convertNHS2MySQL($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) :
 							array());
 					$el->updateRelevantInterventions($side_id,
-						isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) ?
-							Helper::convertNHS2MySQL($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) :
+						isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) ?
+							Helper::convertNHS2MySQL($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) :
 							array());
 					$el->updateFileCollections($side_id,
-							isset($_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections']) ?
-							$_POST['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections'] :
+							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections']) ?
+							$data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections'] :
 							array());
 				}
 			}
 		}
-	}
-
-	/*
-	 * ensures Many Many fields processed for elements
-	*/
-	public function updateElements($elements, $data, $event)
-	{
-		if ($response = parent::updateElements($elements, $data, $event)) {
-			// update has been successful, now need to deal with many to many changes
-			$this->storePOSTManyToMany($elements);
-		}
-		return $response;
 	}
 
 	public function hasDiagnosisForSide($event_id, $side) {
@@ -401,12 +363,10 @@ class DefaultController extends BaseEventTypeController
 
 	/**
 	 * After an update, mark any existing emails as archived
-	 *
-	 * @param Event $event
 	 */
-	protected function afterUpdateElements($event)
+	protected function afterUpdateElements()
 	{
-		OphCoTherapyapplication_Email::model()->forEvent($event)->archiveAll();
+		OphCoTherapyapplication_Email::model()->forEvent($this->event)->archiveAll();
 	}
 
 	/**

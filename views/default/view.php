@@ -56,8 +56,7 @@ $this->beginContent('//patient/event_container');
 		}
 	?>
 
-	<?php $this->renderDefaultElements($this->action->id, false, array('status' => $status))?>
-	<?php $this->renderOptionalElements($this->action->id)?>
+	<?php $this->renderOpenElements($this->action->id, false, array('status' => $status))?>
 	<?php $this->renderPartial('emails', array('service' => $service)) ?>
 	<div class="cleartall"></div>
 </div>
