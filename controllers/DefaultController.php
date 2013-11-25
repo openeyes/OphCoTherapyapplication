@@ -79,13 +79,7 @@ class DefaultController extends BaseEventTypeController
 	public function actionPreviewApplication()
 	{
 		$service = new OphCoTherapyapplication_Processor($this->event);
-
-		$pdf = $service->generatePreviewPdf($this);
-		if (!$pdf) {
-			throw new CHttpException('404', 'Exceptional Circumstances not found for event');
-		}
-
-		$pdf->Output("Therapy Application.pdf", "I");
+		$service->generatePreviewPdf($this)->Output("Therapy Application.pdf", "I");
 	}
 
 	public function initActionProcessApplication()
