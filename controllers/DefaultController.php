@@ -343,22 +343,6 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
-	public function hasDiagnosisForSide($event_id, $side) {
-		if (!empty($_POST)) {
-			return @$_POST['Element_OphCoTherapyapplication_Therapydiagnosis'][$side.'_diagnosis1_id'];
-		} else {
-			if ($event_id) {
-				if ($element = Element_OphCoTherapyapplication_Therapydiagnosis::model()->find('event_id=?',array($event_id))) {
-					if ($side == 'left') {
-						return $element->hasLeft();
-					}
-					return $element->hasRight();
-				}
-			}
-		}
-		return false;
-	}
-
 
 	/**
 	 * After an update, mark any existing emails as archived
