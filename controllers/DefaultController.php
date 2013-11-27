@@ -207,19 +207,6 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
-	/*
-	 * FIXME: is this how it's supposed to work?
-	 *
-	 * @param BaseEventTypeElement $element
-	 * @param string $action
-	 * @param BaseCActiveBaseEventTypeCActiveForm $form
-	 * @param array $data
-	 */
-	protected function renderOptionalElement($element, $action, $form, $data)
-	{
-		$this->renderElement($element, $action, $form, $data);
-	}
-
 	/**
 	 * works out the node response value for the given node id on the element. Basically allows us to check for
 	 * submitted values, values stored against the element from being saved, or working out a default value if applicable
@@ -296,6 +283,13 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
+	/**
+	 * @param BaseEventTypeElement $element
+	 * @param array $data
+	 * @param integer $index
+	 * (non-phpdoc)
+	 * @see parent::setElementComplexAttributesFromData($element, $data, $index)
+	 */
 	protected function setElementComplexAttributesFromData($element, $data, $index = null)
 	{
 		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
@@ -306,6 +300,11 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
+	/**
+	 * @param $data
+	 * (non-phpdoc)
+	 * @see parent::saveEventComplexAttributesFromData($data)
+	 */
 	public function saveEventComplexAttributesFromData($data)
 	{
 		foreach ($this->open_elements as $el) {
