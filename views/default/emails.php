@@ -16,35 +16,25 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
-?>
 
+$right_emails = $service->getRightSentEmails();
+$left_emails = $service->getLeftSentEmails();
+
+if ($right_emails || $left_emails) {
+?>
+<section class="element">
+	<header class="element-header">
+		<h3 class="element-title">Application</h3>
+	</header>
+
+	<div class="element-data element-eyes row">
+		<div class="element-eye right-eye column">
+			<?php $this->renderPartial('emails_side', array('emails' => $right_emails)); ?>
+		</div>
+		<div class="element-eye left-eye column">
+			<?php $this->renderPartial('emails_side', array('emails' => $left_emails)); ?>
+		</div>
+	</div>
+</section>
 <?php
-	$this->beginContent('//patient/event_container');
-?>
-	<h2 class="event-title"><?php echo $this->event_type->name ?></h2>
-
-	<?php
-		$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'clinical-create',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#procedure_id',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 10
-			)
-
-		));
-		$this->event_actions[] = EventAction::button('Save', 'save', array('level'=>'save'), array('form'=>'clinical-create'));
-
-		$service = new OphCoTherapyapplication_Processor($this->event);
-		if ($service->getApplicationStatus() == $service::STATUS_SENT) { ?>
-		<div class="alertBox">
-			<strong>WARNING: This application has already been sent.  Editing it will allow it to be re-sent.</strong>
-		</div> <?php } ?>
-	<?php $this->displayErrors($errors)?>
-	<?php $this->renderDefaultElements($this->action->id, $form)?>
-	<?php $this->renderOptionalElements($this->action->id, $form)?>
-	<?php $this->displayErrors($errors)?>
-
-	<?php $this->endWidget()?>
-<?php $this->endContent() ;?>
+}

@@ -367,24 +367,6 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
-	 * returns true if this application has been submitted. false otherwise
-	 *
-	 * @return bool
-	 */
-	public function isSubmitted()
-	{
-		if (!$this->isNewRecord) {
-			if ($email_el = Element_OphCoTherapyapplication_Email::model()->find(array(
-					'condition' => 'event_id = :eid',
-					'params' => array(':eid' => $this->event_id)
-				))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * get list of valid standard interventions for this element on the given side
 	 *
 	 * @param string $side

@@ -60,7 +60,7 @@
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_description') ?>:</div>
 		</div>
 		<div class="large-8 column">
-			<div class="data-value"><?php echo $element->{$side . '_description'} ?></div>
+			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_description'}) ?></div>
 		</div>
 	</div>
 
@@ -95,7 +95,7 @@
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_incidence') ?>:</div>
 		</div>
 		<div class="large-8 column">
-			<div class="data-value"><?php echo $element->{$side . '_incidence'} ?></div>
+			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_incidence'}) ?></div>
 		</div>
 	</div>
 <?php }?>
@@ -105,7 +105,7 @@
 		<div class="data-label"><?php echo $element->getAttributeLabel($side . '_patient_different') ?>:</div>
 	</div>
 	<div class="large-8 column">
-		<div class="data-value"><?php echo $element->{$side . '_patient_different'} ?></div>
+		<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_different'}) ?></div>
 	</div>
 </div>
 
@@ -114,7 +114,7 @@
 		<div class="data-label"><?php echo $element->getAttributeLabel($side . '_patient_gain') ?>:</div>
 	</div>
 	<div class="large-8 column">
-		<div class="data-value"><?php echo $element->{$side . '_patient_gain'} ?></div>
+		<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_gain'}) ?></div>
 	</div>
 </div>
 
@@ -167,7 +167,7 @@
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details') ?>:</div>
 		</div>
 		<div class="large-8 column">
-			<div class="data-value"><?php echo $element->{$side . '_patient_factor_details'} ?></div>
+			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_factor_details'}) ?></div>
 		</div>
 	</div>
 <?php } ?>
@@ -177,7 +177,7 @@
 		<div class="data-label"><?php echo $element->getAttributeLabel($side . '_patient_expectations') ?>:</div>
 	</div>
 	<div class="large-8 column">
-		<div class="data-value"><?php echo $element->{$side . '_patient_expectations'} ?></div>
+		<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_expectations'}) ?></div>
 	</div>
 </div>
 
@@ -196,12 +196,12 @@
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_urgency_reason') ?>:</div>
 		</div>
 		<div class="large-8 column">
-			<div class="data-value"><?php echo $element->{$side . '_urgency_reason'} ?></div>
+			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_urgency_reason'}) ?></div>
 		</div>
 	</div>
 <?php } ?>
 
-<?php if ($element->{$side . '_filecollections'} && !$element->isSubmitted()) { ?>
+<?php if ($element->{$side . '_filecollections'} && (isset($status) && ($status != OphCoTherapyapplication_Processor::STATUS_SENT))) { ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>

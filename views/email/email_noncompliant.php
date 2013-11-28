@@ -63,7 +63,7 @@ Name: <?php echo ($patient->gp) ? $patient->gp->fullName . "\n" : "Unknown\n"; ?
 Address: <?php echo ($patient->practice && $address = $patient->practice->getLetterAddress(array('delimiter' => ', '))) ? $address."\n" : "Unknown\n"; ?>
 
 <?php
-if (${$side . '_link_to_attachments'}) {
+if ($link_to_attachments) {
 ?>
 The application files can be found on openeyes. Please enter the following text into the search box to reach download links:
 	E:<?php echo $suitability->event_id ?>

@@ -94,7 +94,7 @@
 		<div class="large-6 column">
 			<div class="data-value">
 				<?php if ($pastintervention->stopreason_other) {
-					echo $pastintervention->stopreason_other;
+					echo Yii::app()->format->Ntext($pastintervention->stopreason_other);
 				} else {
 					echo $pastintervention->stopreason->name;
 				} ?>
@@ -109,7 +109,7 @@
 			</div>
 			<div class="data-value comments">
 				<?php if ($pastintervention->comments) {
-					echo $pastintervention->comments;
+					echo Yii::app()->format->Ntext($pastintervention->comments);
 				} else {
 					echo "None";
 				}?>
