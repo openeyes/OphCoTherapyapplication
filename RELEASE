@@ -1,6 +1,11 @@
 Release History
 ===============
 
+1.4.9
+-----
++ allow applications to be edited after submission to generate new forms
++ formatting of freetext fields in display and PDF
+
 1.4.8
 -----
 + bugfix to html encode user input for PDF generation.

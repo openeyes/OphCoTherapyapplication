@@ -87,12 +87,12 @@ class DefaultController extends BaseEventTypeController
 		$can_print = parent::canPrint();
 
 		if ($can_print && $this->event) {
-			$service = new OphCoTherapyapplication_Processor();
-			if ($service->isEventSubmitted($this->event->id) !== null) {
+			$service = new OphCoTherapyapplication_Processor($this->event);
+			if ($service->isEventSubmitted() !== null) {
 				$can_print = true;
 			}
-			else {
-				$can_print = $service->canProcessEvent($this->event->id);
+			elseif ($service->getProcessWarnings()) {
+				$can_print = false;
 			}
 		}
 		return $can_print;
@@ -107,36 +107,18 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function actionPreviewApplication()
 	{
-		if (isset($_REQUEST['event_id'])) {
-			if ($ec = Element_OphCoTherapyapplication_ExceptionalCircumstances::model()->find(array(
-					'condition' => 'event_id = :evid',
-					'params' => array(':evid' => (int) $_REQUEST['event_id']))) ) {
-
-				$pdfbodies = array();
-				$service = new OphCoTherapyapplication_Processor();
-				if ($ec->hasRight()) {
-					$pdfbodies[] = $service->generateEventPDFTemplateForSide($ec->event_id, 'right');
-				}
-				if ($ec->hasLeft()) {
-					$pdfbodies[] = $service->generateEventPDFTemplateForSide($ec->event_id, 'left');
-				}
-
-				// have to use a wrapper to combine multiple forms
-				$pdfwrapper = new OETCPDF();
-				$pdfwrapper->SetAuthor($ec->usermodified->fullName);
-				$pdfwrapper->SetTitle('Therapy application preview');
-				$pdfwrapper->SetSubject('Therapy application');
-
-				foreach($pdfbodies as $body) {
-					$body->render($pdfwrapper);
-				}
-				$pdfwrapper->Output("Therapy Application.pdf", "I");
-			} else {
-				throw new CHttpException('404', 'Exceptional Circumstances not found for event');
-			}
-		} else {
-			throw new CHttpException('400', 'Invalid request');
+		if (!isset($_REQUEST['event_id']) || !($event = Event::model()->findByPk($_REQUEST['event_id']))) {
+			throw new CHttpException(404);
 		}
+
+		$service = new OphCoTherapyapplication_Processor($event);
+
+		$pdf = $service->generatePreviewPdf($this);
+		if (!$pdf) {
+			throw new CHttpException('404', 'Exceptional Circumstances not found for event');
+		}
+
+		$pdf->Output("Therapy Application.pdf", "I");
 	}
 
 	/**
@@ -146,19 +128,16 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function actionProcessApplication()
 	{
-		if (isset($_REQUEST['event_id'])) {
-			$service = new OphCoTherapyapplication_Processor();
-			$event_id = (int) $_REQUEST['event_id'];
-			if ($service->canProcessEvent($event_id)) {
-				if ($service->processEvent($event_id)) {
-					Yii::app()->user->setFlash('success', "Application processed.");
-				} else {
-					Yii::app()->user->setFlash('error', "Unable to process the application at this time.");
-				}
+		if (isset($_REQUEST['event_id']) && ($event = Event::model()->findByPk($_REQUEST['event_id']))) {
+			$service = new OphCoTherapyapplication_Processor($event);
+			if ($service->processEvent($this)) {
+				Yii::app()->user->setFlash('success', "Application processed.");
+			} else {
+				Yii::app()->user->setFlash('error', "Unable to process the application at this time.");
 			}
-			$this->redirect(array($this->successUri.$event_id));
+			$this->redirect(array($this->successUri.$event->id));
 		} else {
-			throw new CHttpException('400', 'Invalid request');
+			throw new CHttpException(404, 'No such event');
 		}
 	}
 
@@ -182,7 +161,6 @@ class DefaultController extends BaseEventTypeController
 	public function getDefaultElements($action, $event_type_id=false, $event=false)
 	{
 		$elements = parent::getDefaultElements($action, $event_type_id, $event);
-
 		$ecPresent = false;
 
 		foreach ($elements as $key => $element) {
@@ -200,12 +178,6 @@ class DefaultController extends BaseEventTypeController
 					break;
 				case 'Element_OphCoTherapyapplication_ExceptionalCircumstances':
 					$ecPresent = true;
-					break;
-				case 'Element_OphCoTherapyapplication_Email':
-					if (in_array($action, array('create', 'update'))) {
-						// clear out the email element as we don't want to display or edit it
-						unset($elements[$key]);
-					}
 					break;
 			}
 		}
@@ -281,7 +253,7 @@ class DefaultController extends BaseEventTypeController
 	/**
 	 * process the POST data for past interventions for the given side
 	 *
-	 * @param Element_OphCoTherapyapplication_ExceptionCircumstances $element
+	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
 	 * @param string $side - left or right
 	 */
 	private function _POSTPastinterventions($element, $side)
@@ -426,7 +398,18 @@ class DefaultController extends BaseEventTypeController
 		return false;
 	}
 
-    /**
+
+	/**
+	 * After an update, mark any existing emails as archived
+	 *
+	 * @param Event $event
+	 */
+	protected function afterUpdateElements($event)
+	{
+		OphCoTherapyapplication_Email::model()->forEvent($event)->archiveAll();
+	}
+
+	/**
 	 * Set default values for the diagnosis element
 	 *
 	 * This can't be done using setDefaultOptions on the element class because it needs to know about the episode
