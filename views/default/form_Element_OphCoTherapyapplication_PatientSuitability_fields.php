@@ -40,7 +40,7 @@
 	<div class="large-<?php echo $layoutColumns['label']?> column">
 		<div class="field-label">NICE Compliance:</div>
 	</div>
-	<div class="large-<?php echo $layoutColumns['field']?> column">
+	<div class="large-5 column end">
 		<div class="compliance-container">
 			<?php $this->renderPartial(
 				'form_OphCoTherapyapplication_DecisionTree',
