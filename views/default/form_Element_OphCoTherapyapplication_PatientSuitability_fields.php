@@ -33,7 +33,7 @@
 	}
 ?>
 
-<?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts, false,$layoutColumns); ?>
+<?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts, false,array_merge($layoutColumns, array('field' => 4))); ?>
 <?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array(),array_merge($layoutColumns, array('field' => 3)))?>
 
 <div id="nice_compliance_<?php echo $side?>" class="row field-row">

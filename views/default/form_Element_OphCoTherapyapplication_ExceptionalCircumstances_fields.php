@@ -70,12 +70,12 @@
 	}
 ?>
 
-<div class="standard_intervention_exists field-row">
+<div class="standard_intervention_exists">
 	<?php echo $form->radioBoolean($element, $side . '_standard_intervention_exists', array(), $layoutColumns)?>
 </div>
 
 <div id="<?php echo get_class($element) . "_" . $side ?>_standard_intervention_details"
-	class="f<?php if ($exists != '1') {	echo ' hidden';}?>>">
+	class="<?php if ($exists != '1') {	echo ' hidden';}?>>">
 
 	<?php
 	echo $form->dropDownList(
@@ -84,10 +84,13 @@
 		CHtml::listData($element->getStandardInterventionsForSide($side), 'id', 'name'),
 		array('empty'=>'- Please select -'),
 		false,
-		$layoutColumns
+		array(
+			'label' => 4,
+			'field' => 6
+		)
 	) ?>
 
-	<div class="standard_previous field-row" id="<?php echo get_class($element) . "_" . $side; ?>_standard_previous">
+	<div class="standard_previous" id="<?php echo get_class($element) . "_" . $side; ?>_standard_previous">
 		<?php echo $form->radioBoolean($element, $side . '_standard_previous', array(), $layoutColumns)?>
 	</div>
 
@@ -99,7 +102,7 @@
 			$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label, 'data-is-deviation' => $intervention->is_deviation);
 		}
 	?>
-	<div class="intervention field-row" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
+	<div class="intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
 		<?php echo $form->radioButtons($element, $side . '_intervention_id', 'et_ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
 	</div>
 
@@ -134,14 +137,20 @@
 			echo $form->multiSelectList(
 				$element,
 				get_class($element) . '[' . $side . '_deviationreasons]',
-				$side . '_deviationreasons', 'id',
+				$side . '_deviationreasons',
+				'id',
 				CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'),
 				array(),
 				$html_options,
 				false,
 				false,
 				false,
-				$layoutColumns
+				false,
+				false,
+				array(
+					'label' => 4,
+					'field' => 6
+				)
 			);
 		?>
 	</div>
@@ -149,7 +158,7 @@
 </div>
 
 <div id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_exists"
-	class="field-row<?php if ($exists != '0') { echo ' hidden';}?>">
+	class="<?php if ($exists != '0') { echo ' hidden';}?>">
 	<?php echo $form->radioBoolean($element, $side . '_condition_rare', array(), $layoutColumns);?>
 	<?php echo $form->textArea($element, $side . '_incidence', array(), false, array(), $layoutColumns);?>
 </div>
@@ -213,19 +222,19 @@
 	</div>
 </div>
 
-<div class="patient_factors field-row">
+<div class="patient_factors">
 	<?php echo $form->radioBoolean($element, $side . '_patient_factors', array(), $layoutColumns)?>
 </div>
 
-<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_factor_details" class="field-row <?php if (!$patient_factors) { echo ' hidden'; } ?>">
+<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_factor_details" class="<?php if (!$patient_factors) { echo ' hidden'; } ?>">
 	<?php echo $form->textArea($element, $side . '_patient_factor_details', array(), false, array(), $layoutColumns)?>
 </div>
 
-<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_expectations" class="field-row">
+<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_expectations">
 	<?php echo $form->textArea($element, $side . '_patient_expectations', array(), false, array(), $layoutColumns)?>
 </div>
 
-<div class="start_period field-row">
+<div class="start_period">
 	<?php
 		$posted_sp = null;
 		$urgent = false;
@@ -249,13 +258,16 @@
 			CHtml::listData($start_periods, 'id', 'name'),
 			$html_options,
 			false,
-			$layoutColumns
+			array(
+				'label' => 4,
+				'field' => 6
+			)
 		);
 	?>
 </div>
 
 <div id="<?php echo get_class($element) . '_' . $side ?>_urgency_reason"
-	class="field-row<?php if (!$urgent) {
+	class="<?php if (!$urgent) {
 	echo ' hidden';} ?>">
 	<?php echo $form->textArea($element, $side . '_urgency_reason', array(), false, array(), $layoutColumns)?>
 </div>
@@ -275,5 +287,5 @@ foreach ($collections as $collection) {
 	$html_options['options'][(string) $collection->id] = array('data-order' => $collection->display_order);
 }
 */
-$form->multiSelectList($element, get_class($element) . '[' . $side . '_filecollections]', $side . '_filecollections', 'id', CHtml::listData($collections,'id','name'), array(), $html_options, false, false, null, false, false, $layoutColumns);
+$form->multiSelectList($element, get_class($element) . '[' . $side . '_filecollections]', $side . '_filecollections', 'id', CHtml::listData($collections,'id','name'), array(), $html_options, false, false, null, false, false, array('label' => 4,'field' => 6));
 ?>
