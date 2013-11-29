@@ -162,7 +162,7 @@ $(document).ready(function () {
 	$('#div_OphCoTherapyapplication_FileCollection_file').delegate('.OphCoTherapyapplication_FileCollection_file', 'change', function (e) {
 		var error = false;
 		if (this.files.length > parseInt($(this).data('count-limit'))) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: 'Cannot have more than ' + $(this).data('count-limit') + ' files'
 			}).open();
 			error = true;
@@ -174,7 +174,7 @@ $(document).ready(function () {
 			for (var i = 0; i < this.files.length; i++) {
 				var file = this.files[i];
 				if (file.size > mx_filesize) {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: 'File ' + file.name + ' is too large'
 					}).open();
 					error = true;
@@ -182,7 +182,7 @@ $(document).ready(function () {
 				}
 				total += file.size;
 				if (total > mx_total) {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: 'Total size of files is too large'
 					}).open();
 					error = true;
@@ -223,13 +223,13 @@ $(document).ready(function () {
 					var row = $('#currentFiles li[data-file-id="' + file_id + '"]');
 					row.remove();
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "Sorry, an internal error occurred and we were unable to remove the file.\n\nPlease contact support for assistance."
 					}).open();
 				}
 			},
 			'error': function() {
-				new OpenEyes.Dialog.Alert({
+				new OpenEyes.UI.Dialog.Alert({
 					content: "Sorry, an internal error occurred and we were unable to remove the file.\n\nPlease contact support for assistance."
 				}).open();
 			}
@@ -254,7 +254,7 @@ $(document).ready(function () {
 				'url': OphCoTherapyapplication_sort_url,
 				'data': {order: ids},
 				'success': function (data) {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: 'Re-ordered'
 					}).open();
 				}

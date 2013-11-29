@@ -767,7 +767,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		disableButtons();
 
-		new OpenEyes.Dialog({
+		new OpenEyes.UI.Dialog({
 			iframe: $(this).attr('href'),
 			width: 610,
 			height: 910,
