@@ -48,8 +48,8 @@
 	</div>
 	<div class="body">
 		<?php
-			$this->renderDefaultElements('view');
-			$this->renderEventMetadata();
+			$this->renderDefaultElements('print');
+			$this->renderEventMetadata('print_event_metadata');
 		?>
 	</div>
 </div>
