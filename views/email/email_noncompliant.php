@@ -29,6 +29,7 @@ AMD EC-Form this patient sent to Contracts for PCT approval.
 AMD EC-Form document sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 
 The Eye to inject is: <?php echo $side . "\n" ?>
+Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
 Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
 <?php
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
