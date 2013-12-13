@@ -7,6 +7,10 @@ Release History
 + Removed Moorfields specific data
 + Refactored views to match core
 
+1.4.10
+------
++ include therapy drug name in email body of non compliant requests
+
 1.4.9
 -----
 + allow applications to be edited after submission to generate new forms
