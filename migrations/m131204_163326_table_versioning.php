@@ -1002,11 +1002,17 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->alterColumn('ophcotherapya_treatment_cost_type_version','version_id','int(10) unsigned NOT NULL AUTO_INCREMENT');
 
 		$this->addColumn('et_ophcotherapya_exceptional','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('et_ophcotherapya_exceptional_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_exceptional_intervention','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('et_ophcotherapya_exceptional_intervention_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_mrservicein','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('et_ophcotherapya_mrservicein_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_patientsuit','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('et_ophcotherapya_patientsuit_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_relativecon','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('et_ophcotherapya_relativecon_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_therapydiag','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('et_ophcotherapya_therapydiag_version','deleted','tinyint(1) unsigned not null');
 
 		$this->addColumn('ophcotherapya_decisiontree','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontree_version','deleted','tinyint(1) unsigned not null');
