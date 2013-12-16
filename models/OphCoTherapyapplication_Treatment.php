@@ -46,7 +46,7 @@
  * @property User $usermodified
  */
 
-class OphCoTherapyapplication_Treatment extends BaseActiveRecord
+class OphCoTherapyapplication_Treatment extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

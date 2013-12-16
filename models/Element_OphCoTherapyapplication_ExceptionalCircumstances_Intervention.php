@@ -33,7 +33,7 @@
  * @property User $usermodified
  */
 
-class Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention extends BaseActiveRecord
+class Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

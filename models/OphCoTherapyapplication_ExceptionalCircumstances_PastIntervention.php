@@ -43,7 +43,7 @@
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason $stop_reason
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

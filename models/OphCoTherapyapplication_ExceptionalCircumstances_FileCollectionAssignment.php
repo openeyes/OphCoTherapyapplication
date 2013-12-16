@@ -31,7 +31,7 @@
  * @property OphCoTherapyapplication_FileCollection $collection
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

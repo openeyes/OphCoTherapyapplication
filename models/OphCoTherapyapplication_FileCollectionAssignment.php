@@ -32,7 +32,7 @@
  * @property User $usermodified
  */
 
-class OphCoTherapyapplication_FileCollectionAssignment extends BaseActiveRecord
+class OphCoTherapyapplication_FileCollectionAssignment extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

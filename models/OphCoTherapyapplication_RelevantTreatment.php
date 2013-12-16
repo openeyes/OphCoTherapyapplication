@@ -28,7 +28,7 @@
  *
  **/
 
-class OphCoTherapyapplication_RelevantTreatment extends BaseActiveRecord
+class OphCoTherapyapplication_RelevantTreatment extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
