@@ -773,7 +773,7 @@ $(document).ready(function() {
 			height: 910,
 			constrainToViewport: true,
 			title: "Therapy Application Preview",
-			onOpen: function() { enableButtons(); }
+			onClose: function() { enableButtons(); }
 		}).open();
 
 	});
