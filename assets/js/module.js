@@ -355,11 +355,11 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 					options += '<option value="' + l2_data[i].id + '">' + l2_data[i].term + '</option>';
 				}
 				$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').html(options);
-				$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
+				$('#' + side + '_diagnosis2_wrapper').show();
 			}
 			else {
 				$('#Element_OphCoTherapyapplication_Therapydiagnosis_' + side + '_diagnosis2_id').val('');
-				$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
+				$('#' + side + '_diagnosis2_wrapper').hide();
 			}
 			// store the parent_id on the selector for later checking
 			l2_el.data('parent_id', el.val());
@@ -367,10 +367,10 @@ function OphCoTherapyapplication_PatientSuitability_check(side) {
 		else {
 			if (l2_data) {
 				// show level 2 if its been hidden previously (by selecting none)
-				$('#' + side + '_diagnosis2_wrapper').removeClass('hidden');
+				$('#' + side + '_diagnosis2_wrapper').show();
 			}
 			else {
-				$('#' + side + '_diagnosis2_wrapper').addClass('hidden');
+				$('#' + side + '_diagnosis2_wrapper').hide();
 			}
 		}
 		showSplitElementSide('Element_OphCoTherapyapplication_PatientSuitability', side);
@@ -477,11 +477,11 @@ function OphCoTherapyapplication_DeviationFields(side) {
 	var intervention_type = $('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_intervention').find('input:checked');
 	if (previously_used == '0' && intervention_type) {
 		if (intervention_type.data('is-deviation')) {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').removeClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').show();
 			return;
 		}
 	}
-	$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').addClass('hidden');
+	$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_deviation_fields').hide();
 }
 
 $(document).ready(function() {
@@ -608,16 +608,16 @@ $(document).ready(function() {
 		var val = $(this).val();
 
 		if (val == '1') {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').removeClass('hidden');
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').addClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').show();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').hide();
 		}
 		else if (val == '0'){
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').addClass('hidden');
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').removeClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').hide();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').show();
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').addClass('hidden');
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').addClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_details').hide();
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_standard_intervention_not_exists').hide();
 		}
 	});
 
@@ -680,10 +680,10 @@ $(document).ready(function() {
 		var is_other = getOther($(this));
 
 		if (is_other) {
-			$(this).parents('.pastintervention').find('.stop-reason-other').removeClass('hidden');
+			$(this).parents('.pastintervention').find('.stop-reason-other').show();
 		}
 		else {
-			$(this).parents('.pastintervention').find('.stop-reason-other').addClass('hidden');
+			$(this).parents('.pastintervention').find('.stop-reason-other').hide();
 		}
 	});
 
@@ -691,10 +691,10 @@ $(document).ready(function() {
 		var is_other = getOther($(this));
 
 		if (is_other) {
-			$(this).parents('.pastintervention').find('.treatment-other').removeClass('hidden');
+			$(this).parents('.pastintervention').find('.treatment-other').show();
 		}
 		else {
-			$(this).parents('.pastintervention').find('.treatment-other').addClass('hidden');
+			$(this).parents('.pastintervention').find('.treatment-other').hide();
 		}
 	});
 
@@ -704,10 +704,10 @@ $(document).ready(function() {
 
 		if ($(this).val() == '1') {
 
-			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').removeClass('hidden');
+			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').show();
 		}
 		else {
-			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').addClass('hidden');
+			$('#div_Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_patient_factor_details').hide();
 		}
 	});
 
@@ -726,10 +726,10 @@ $(document).ready(function() {
 		});
 
 		if (show) {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').removeClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').show();
 		}
 		else {
-			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').addClass('hidden');
+			$('#Element_OphCoTherapyapplication_ExceptionalCircumstances_'+side+'_urgency_reason').hide();
 		}
 	});
 
@@ -773,7 +773,7 @@ $(document).ready(function() {
 			height: 910,
 			constrainToViewport: true,
 			title: "Therapy Application Preview",
-			onOpen: function() { enableButtons(); }
+			onClose: function() { enableButtons(); }
 		}).open();
 
 	});

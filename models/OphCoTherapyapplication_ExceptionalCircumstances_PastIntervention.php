@@ -149,6 +149,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	 */
 	public function setDefaultOptions()
 	{
+		$this->start_date = date(Helper::NHS_DATE_FORMAT);
+		$this->end_date = date(Helper::NHS_DATE_FORMAT);
 	}
 
 	protected function beforeSave()

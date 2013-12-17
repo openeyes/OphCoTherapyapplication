@@ -75,7 +75,7 @@
 </div>
 
 <div id="<?php echo get_class($element) . "_" . $side ?>_standard_intervention_details"
-	class="<?php if ($exists != '1') {	echo ' hidden';}?>>">
+	<?php if (!$exists) { echo 'style="display: none;"'; }?>>
 
 	<?php
 	echo $form->dropDownList(
@@ -123,7 +123,7 @@
 
 	<div id="<?php echo get_class($element) . "_" . $side;?>_deviation_fields"
 		<?php if (!$need_reason) {?>
-		class="hidden"
+		 style="display: none;"
 		<?php } ?>>
 		<?php
 			$html_options = array(
@@ -158,7 +158,7 @@
 </div>
 
 <div id="<?php echo get_class($element) . "_" . $side; ?>_standard_intervention_not_exists"
-	class="<?php if ($exists != '0') { echo ' hidden';}?>">
+	<?php if ($exists != '0') { echo 'style="display: none;"'; }?>">
 	<?php echo $form->radioBoolean($element, $side . '_condition_rare', array(), $layoutColumns);?>
 	<?php echo $form->textArea($element, $side . '_incidence', array(), false, array(), $layoutColumns);?>
 </div>
@@ -226,7 +226,7 @@
 	<?php echo $form->radioBoolean($element, $side . '_patient_factors', array(), $layoutColumns)?>
 </div>
 
-<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_factor_details" class="<?php if (!$patient_factors) { echo ' hidden'; } ?>">
+<div id="div_<?php echo get_class($element) . "_" . $side; ?>_patient_factor_details" <?php if (!$patient_factors) { echo 'style="display: none;"'; } ?>>
 	<?php echo $form->textArea($element, $side . '_patient_factor_details', array(), false, array(), $layoutColumns)?>
 </div>
 
@@ -267,8 +267,8 @@
 </div>
 
 <div id="<?php echo get_class($element) . '_' . $side ?>_urgency_reason"
-	class="<?php if (!$urgent) {
-	echo ' hidden';} ?>">
+	<?php if (!$urgent) {
+		echo 'style="display: none;"';} ?>>
 	<?php echo $form->textArea($element, $side . '_urgency_reason', array(), false, array(), $layoutColumns)?>
 </div>
 
