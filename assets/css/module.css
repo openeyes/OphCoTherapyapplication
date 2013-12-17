@@ -22,11 +22,15 @@
 }
 /* line 19, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1385734207');
+  background-image: url('../img/watermark.png?1387286335');
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-title {
   background-image: url('../img/medium.png?1383822470');
+}
+/* line 26, ../sass/components/_event.scss */
+.event .application-files {
+  margin-bottom: 0;
 }
 
 /* line 18, ../sass/components/_panels.scss */
