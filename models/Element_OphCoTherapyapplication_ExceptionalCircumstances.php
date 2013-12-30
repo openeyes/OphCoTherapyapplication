@@ -338,7 +338,10 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function delete()
 	{
-		$transaction = $this->dbConnection->beginTransaction();
+		$transaction = Yii::app()->db->getCurrentTransaction() === null
+			? Yii::app()->db->beginTransaction()
+			: false;
+
 		try {
 			foreach ($this->previnterventions as $prev) {
 				$prev->delete();
@@ -353,14 +356,19 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 				$fca->delete();
 			}
 			if (parent::delete()) {
-				$transaction->commit();
+				if ($transaction) {
+					$transaction->commit();
+				}
+				return true;
 			}
 			else {
 				throw new Exception('unable to delete');
 			}
 		}
 		catch (Exception $e) {
-			$transaction->rollback();
+			if ($transaction) {
+				$transaction->rollback();
+			}
 			throw $e;
 		}
 
