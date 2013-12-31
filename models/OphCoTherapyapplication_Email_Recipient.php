@@ -15,6 +15,8 @@
 
 class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 {
+	public $use_default_sender;
+
 	public static function model($className = __CLASS__)
 	{
 		return parent::model($className);
@@ -28,8 +30,8 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 	public function rules()
 	{
 		return array(
-			array('site_id, sender_name, sender_email, recipient_name, recipient_email, type_id', 'safe'),
-			array('sender_name, sender_email, recipient_name, recipient_email', 'required'),
+			array('site_id, sender_name, sender_email, recipient_name, recipient_email, type_id, use_default_sender', 'safe'),
+			array('recipient_name, recipient_email', 'required'),
 			array('sender_email', 'email'),
 			array('recipient_email', 'email'),
 		);
@@ -53,7 +55,16 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 			'sender_email' => 'Sender email',
 			'recipient_name' => 'Recipient name',
 			'recipient_email' => 'Recipient email',
+			'use_default_sender' => 'Use default sender',
 		);
+	}
+
+	protected function afterFind()
+	{
+		if (!$this->sender_email || !$this->sender_name) {
+			$this->use_default_sender = true;
+			$this->setDefaultOptions();
+		}
 	}
 
 	public function isAllowed()
@@ -67,6 +78,32 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 			$this->addError('recipient_email','Recipient email is not in the list of allowed domains');
 		}
 
+		if (!$this->use_default_sender) {
+			if (!$this->sender_name) {
+				$this->addError('sender_name','Sender name is required if not using the default sender');
+			}
+			if (!$this->sender_email) {
+				$this->addError('sender_email','Sender email is required is not using the default sender');
+			}
+		}
+
 		return parent::beforeValidate();
+	}
+
+	public function beforeSave()
+	{
+		if ($this->use_default_sender) {
+			$this->sender_email = $this->sender_name = '';
+		}
+
+		return parent::beforeSave();
+	}
+
+	public function setDefaultOptions()
+	{
+		$sender = Yii::app()->params['OphCoTherapyapplication_sender_email'];
+
+		$this->sender_email = key($sender);
+		$this->sender_name = array_pop($sender);
 	}
 }

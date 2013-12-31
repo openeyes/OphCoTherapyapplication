@@ -262,4 +262,33 @@ $(document).ready(function () {
 
 		}
 	});
+
+	$('#OphCoTherapyapplication_Email_Recipient_use_default_sender').click(function() {
+		if ($(this).is(':checked')) {
+			$('#OphCoTherapyapplication_Email_Recipient_sender_name').attr('disabled','disabled');
+			$('#OphCoTherapyapplication_Email_Recipient_sender_email').attr('disabled','disabled');
+			if ($('#OphCoTherapyapplication_Email_Recipient_sender_name').val() != OphCoTherapyapplication_default_sender_name) {
+				old_OphCoTherapyapplication_Email_Recipient_sender_name = $('#OphCoTherapyapplication_Email_Recipient_sender_name').val();
+			}
+			$('#OphCoTherapyapplication_Email_Recipient_sender_name').val(OphCoTherapyapplication_default_sender_name);
+			if ($('#OphCoTherapyapplication_Email_Recipient_sender_email').val() != OphCoTherapyapplication_default_sender_email) {
+				old_OphCoTherapyapplication_Email_Recipient_sender_email = $('#OphCoTherapyapplication_Email_Recipient_sender_email').val();
+			}
+			$('#OphCoTherapyapplication_Email_Recipient_sender_email').val(OphCoTherapyapplication_default_sender_email);
+		} else {
+			$('#OphCoTherapyapplication_Email_Recipient_sender_name').attr('disabled',false);
+			$('#OphCoTherapyapplication_Email_Recipient_sender_email').attr('disabled',false);
+
+			if (old_OphCoTherapyapplication_Email_Recipient_sender_name !== null) {
+				$('#OphCoTherapyapplication_Email_Recipient_sender_name').val(old_OphCoTherapyapplication_Email_Recipient_sender_name);
+			}
+			if (old_OphCoTherapyapplication_Email_Recipient_sender_email !== null) {
+				$('#OphCoTherapyapplication_Email_Recipient_sender_email').val(old_OphCoTherapyapplication_Email_Recipient_sender_email);
+			}
+			$('#OphCoTherapyapplication_Email_Recipient_sender_name').select().focus();
+		}
+	});
 });
+
+var old_OphCoTherapyapplication_Email_Recipient_sender_name = null;
+var old_OphCoTherapyapplication_Email_Recipient_sender_email = null;

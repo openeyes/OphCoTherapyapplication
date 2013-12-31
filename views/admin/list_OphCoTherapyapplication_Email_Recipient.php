@@ -54,11 +54,16 @@
 						<td>
 							<?php echo $model->type ? $model->type->name : 'Both types'?>
 						</td>
-						<td>
-							<?php echo $model->sender_name?>
+						<?php
+						$default_sender = Yii::app()->params['OphCoTherapyapplication_sender_email'];
+						$default_sender_email = key($default_sender);
+						$default_sender_name = array_pop($default_sender);
+						?>
+						<td<?php if ($model->use_default_sender) {?> class="default"<?php }?>>
+							<?php echo $model->use_default_sender ? $default_sender_name : $model->sender_name?>
 						</td>
-						<td>
-							<?php echo $model->sender_email?>
+						<td<?php if ($model->use_default_sender) {?> class="default"<?php }?>>
+							<?php echo $model->use_default_sender ? $default_sender_email : $model->sender_email?>
 						</td>
 						<td>
 							<?php echo $model->recipient_name?>

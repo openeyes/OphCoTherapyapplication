@@ -29,3 +29,8 @@
   margin-left: 1.5em;
   margin-bottom: 0;
 }
+
+/* line 33, ../sass/admin.scss */
+#admin_email_recipients td.default {
+  color: #999;
+}

@@ -25,8 +25,12 @@
 		'id'=>'OphCoTherapyapplication_adminform',
 		'enableAjaxValidation'=>false,
 		'htmlOptions' => array(
-				'enctype' => 'multipart/form-data'
-		)
+			'enctype' => 'multipart/form-data',
+		),
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5,
+		),
 	))?>
 
 	<?php echo $form->errorSummary($model)?>
