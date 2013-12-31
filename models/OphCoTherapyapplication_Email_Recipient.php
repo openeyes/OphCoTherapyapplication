@@ -62,7 +62,6 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 	protected function afterFind()
 	{
 		if (!$this->sender_email || !$this->sender_name) {
-			$this->use_default_sender = true;
 			$this->setDefaultOptions();
 		}
 	}
@@ -101,6 +100,8 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 
 	public function setDefaultOptions()
 	{
+		$this->use_default_sender = true;
+
 		$sender = Yii::app()->params['OphCoTherapyapplication_sender_email'];
 
 		$this->sender_email = key($sender);
