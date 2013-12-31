@@ -435,33 +435,31 @@ class OphCoTherapyapplication_Processor
 			}
 		}
 
-		$success = true;
+		$email_recipients = array();
 
 		foreach ($recipients as $recipient) {
 			if (!$recipient->isAllowed()) {
 				throw new Exception("Recipient email address $recipient->recipient_email is not in the list of allowed domains");
 			}
 
-			$message = Yii::app()->mailer->newMessage();
-			$message->setSubject('Therapy Application');
+			$email_recipients[$recipient->recipient_email] = $recipient->recipient_name;
+		}
 
-			$message->setFrom(array($recipient->sender_email => $recipient->sender_name));
-			$message->setTo(array($recipient->recipient_email => $recipient->recipient_name));
+		$message = Yii::app()->mailer->newMessage();
+		$message->setSubject('Therapy Application');
 
-			$message->setBody($email_text);
+		$message->setFrom(array($recipient->sender_email => $recipient->sender_name));
+		$message->setTo(array($recipient->recipient_email => $recipient->recipient_name));
 
-			if (!$link_to_attachments) {
-				foreach ($attachments as $att) {
-					$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name));
-				}
-			}
+		$message->setBody($email_text);
 
-			if (!Yii::app()->mailer->sendMessage($message)) {
-				$success = false;
+		if (!$link_to_attachments) {
+			foreach ($attachments as $att) {
+				$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name));
 			}
 		}
 
-		if ($success) {
+		if (Yii::app()->mailer->sendMessage($message)) {
 			$email = new OphCoTherapyapplication_Email;
 			$email->event_id = $this->event->id;
 			$email->eye_id = $eye_id;

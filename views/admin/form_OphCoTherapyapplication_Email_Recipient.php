@@ -19,8 +19,5 @@
 ?>
 <?php echo $form->dropDownList($model, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- All sites -'))?>
 <?php echo $form->dropDownList($model, 'type_id', CHtml::listData(OphCoTherapyapplication_Email_Recipient_Type::model()->findAll(array('order'=>'display_order asc')),'id','name'), array('empty' => '- Both types -'))?>
-<?php echo $form->checkBox($model, 'use_default_sender')?>
-<?php echo $form->textField($model, 'sender_name', array('disabled' => $model->use_default_sender ? 'disabled' : ''))?>
-<?php echo $form->textField($model, 'sender_email', array('disabled' => $model->use_default_sender ? 'disabled' : ''))?>
 <?php echo $form->textField($model, 'recipient_name')?>
 <?php echo $form->textField($model, 'recipient_email')?>

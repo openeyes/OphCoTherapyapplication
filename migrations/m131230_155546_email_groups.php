@@ -25,8 +25,6 @@ class m131230_155546_email_groups extends CDbMigration
 		$this->createTable('ophcotherapya_email_recipient', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'site_id' => 'int(10) unsigned null',
-				'sender_name' => 'varchar(255) collate utf8_bin not null',
-				'sender_email' => 'varchar(255) collate utf8_bin not null',
 				'recipient_name' => 'varchar(255) collate utf8_bin not null',
 				'recipient_email' => 'varchar(255) collate utf8_bin not null',
 				'type_id' => 'int(10) unsigned null',

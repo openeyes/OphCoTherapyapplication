@@ -38,9 +38,7 @@
 					<th><input type="checkbox" name="selectall" id="selectall" /></th>
 					<th>Site</th>
 					<th>Letter types</th>
-					<th>Sender name</th>
-					<th>Sender email</th>
-					<th>Recipient name<th>
+					<th>Recipient name</th>
 					<th>Recipient email</th>
 				</tr>
 			</thead>
@@ -54,17 +52,6 @@
 						<td>
 							<?php echo $model->type ? $model->type->name : 'Both types'?>
 						</td>
-						<?php
-						$default_sender = Yii::app()->params['OphCoTherapyapplication_sender_email'];
-						$default_sender_email = key($default_sender);
-						$default_sender_name = array_pop($default_sender);
-						?>
-						<td<?php if ($model->use_default_sender) {?> class="default"<?php }?>>
-							<?php echo $model->use_default_sender ? $default_sender_name : $model->sender_name?>
-						</td>
-						<td<?php if ($model->use_default_sender) {?> class="default"<?php }?>>
-							<?php echo $model->use_default_sender ? $default_sender_email : $model->sender_email?>
-						</td>
 						<td>
 							<?php echo $model->recipient_name?>
 						</td>
@@ -76,7 +63,7 @@
 			</tbody>
 			<tfoot class="pagination-container">
 				<tr>
-					<td colspan="4">
+					<td colspan="5">
 						<?php echo EventAction::button('Add', 'add', null, array('class' => 'small', 'data-uri' => '/OphCoTherapyapplication/admin/addEmailRecipient'))->toHtml()?>
 						<?php echo EventAction::button('Delete', 'delete', null, array('class' => 'small', 'data-uri' => '/OphCoTherapyapplication/admin/deleteEmailRecipients', 'data-object' => 'email_recipients'))->toHtml()?>
 					</td>

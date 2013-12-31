@@ -655,7 +655,6 @@ class AdminController extends ModuleAdminController
 	public function actionAddEmailRecipient()
 	{
 		$model = new OphCoTherapyapplication_Email_Recipient;
-		$model->setDefaultOptions();
 
 		if (isset($_POST['OphCoTherapyapplication_Email_Recipient'])) {
 			// do the actual create
@@ -668,11 +667,6 @@ class AdminController extends ModuleAdminController
 				$this->redirect(array('viewEmailRecipients'));
 			}
 		}
-
-		$default_sender = Yii::app()->params['OphCoTherapyapplication_sender_email'];
-
-		$this->jsVars['OphCoTherapyapplication_default_sender_email'] = key($default_sender);
-		$this->jsVars['OphCoTherapyapplication_default_sender_name'] = array_pop($default_sender);
 
 		$this->render('create', array(
 				'model' => $model,
@@ -695,11 +689,6 @@ class AdminController extends ModuleAdminController
 				$this->redirect(array('viewEmailRecipients'));
 			}
 		}
-
-		$default_sender = Yii::app()->params['OphCoTherapyapplication_sender_email'];
-
-		$this->jsVars['OphCoTherapyapplication_default_sender_email'] = key($default_sender);
-		$this->jsVars['OphCoTherapyapplication_default_sender_name'] = array_pop($default_sender);
 
 		$this->render('update', array(
 				'model' => $model,
