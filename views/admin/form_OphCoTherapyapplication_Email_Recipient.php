@@ -17,27 +17,6 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="box admin">
-	<h2>Edit <?php echo $title?></h2>
-
-	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'OphCoTherapyapplication_adminform',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array(
-				'enctype' => 'multipart/form-data'
-		)
-	))?>
-
-	<?php echo $form->errorSummary($model)?>
-
-	<?php
-	$this->renderPartial('form_'.get_class($model), array(
-			'model' => $model,
-			'form' => $form,
-	))?>
-
-	<?php echo $form->formActions(array('cancel-uri'=>$cancel_uri))?>
-
-	<?php $this->endWidget()?>
-</div>
+<?php echo $form->dropDownList($model, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- Please select -'))?>
+<?php echo $form->textField($model, 'name')?>
+<?php echo $form->textField($model, 'email')?>
