@@ -448,8 +448,8 @@ class OphCoTherapyapplication_Processor
 		$message = Yii::app()->mailer->newMessage();
 		$message->setSubject('Therapy Application');
 
-		$message->setFrom(array($recipient->sender_email => $recipient->sender_name));
-		$message->setTo(array($recipient->recipient_email => $recipient->recipient_name));
+		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
+		$message->setTo($email_recipients);
 
 		$message->setBody($email_text);
 

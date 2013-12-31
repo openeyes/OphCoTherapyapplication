@@ -27,8 +27,7 @@ return array(
 			'File Collections' => '/OphCoTherapyapplication/admin/viewFileCollections',
 			'Email Recipients' => '/OphCoTherapyapplication/admin/viewEmailRecipients',
 		),
-		// The default email address that sends therapy applications (key/value pair of address to name)
-		// This can be overridden using recipient rules in the admin system
+		// The email address that sends therapy applications (key/value pair of address to name)
 		// 'OphCoTherapyapplication_sender_email' => array('email@test.com' => 'Test'),
 		// The email address displayed in the standard non-compliant form
 		// 'OphCoTherapyapplication_applicant_email' => 'armd@nhs.net',
