@@ -37,6 +37,7 @@
 				<tr>
 					<th><input type="checkbox" name="selectall" id="selectall" /></th>
 					<th>Site</th>
+					<th>Letter types</th>
 					<th>Name</th>
 					<th>Email</th>
 				</tr>
@@ -47,6 +48,9 @@
 						<td><input type="checkbox" name="email_recipients[]" value="<?php echo $model->id?>" /></td>
 						<td>
 							<?php echo $model->site->name?>
+						</td>
+						<td>
+							<?php echo $model->type->name?>
 						</td>
 						<td>
 							<?php echo $model->name?>

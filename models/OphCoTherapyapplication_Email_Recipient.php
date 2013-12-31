@@ -28,8 +28,8 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 	public function rules()
 	{
 		return array(
-			array('site_id, name, email', 'safe'),
-			array('site_id, name, email', 'required'),
+			array('site_id, name, email, type_id', 'safe'),
+			array('site_id, name, email, type_id', 'required'),
 			array('email', 'email'),
 		);
 	}
@@ -38,6 +38,7 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 	{
 		return array(
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
+			'type' => array(self::BELONGS_TO, 'OphCoTherapyapplication_Email_Recipient_Type', 'type_id'),
 		);
 	}
 
@@ -46,6 +47,7 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 		return array(
 			'id' => 'ID',
 			'site_id' => 'Site',
+			'type_id' => 'Letter types',
 		);
 	}
 }
