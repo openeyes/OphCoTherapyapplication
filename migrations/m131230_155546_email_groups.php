@@ -19,16 +19,17 @@ class m131230_155546_email_groups extends CDbMigration
 				'CONSTRAINT `ophcotherapya_email_recipient_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('ophcotherapya_email_recipient_type',array('id'=>1,'name'=>'All','display_order'=>1));
-		$this->insert('ophcotherapya_email_recipient_type',array('id'=>2,'name'=>'Compliant','display_order'=>2));
-		$this->insert('ophcotherapya_email_recipient_type',array('id'=>3,'name'=>'Non-compliant','display_order'=>3));
+		$this->insert('ophcotherapya_email_recipient_type',array('id'=>1,'name'=>'Compliant','display_order'=>1));
+		$this->insert('ophcotherapya_email_recipient_type',array('id'=>2,'name'=>'Non-compliant','display_order'=>2));
 
 		$this->createTable('ophcotherapya_email_recipient', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
-				'site_id' => 'int(10) unsigned not null',
-				'name' => 'varchar(255) collate utf8_bin not null',
-				'email' => 'varchar(255) collate utf8_bin not null',
-				'type_id' => 'int(10) unsigned not null',
+				'site_id' => 'int(10) unsigned null',
+				'sender_name' => 'varchar(255) collate utf8_bin not null',
+				'sender_email' => 'varchar(255) collate utf8_bin not null',
+				'recipient_name' => 'varchar(255) collate utf8_bin not null',
+				'recipient_email' => 'varchar(255) collate utf8_bin not null',
+				'type_id' => 'int(10) unsigned null',
 				'display_order' => 'tinyint(1) unsigned not null',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',

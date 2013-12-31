@@ -38,8 +38,10 @@
 					<th><input type="checkbox" name="selectall" id="selectall" /></th>
 					<th>Site</th>
 					<th>Letter types</th>
-					<th>Name</th>
-					<th>Email</th>
+					<th>Sender name</th>
+					<th>Sender email</th>
+					<th>Recipient name<th>
+					<th>Recipient email</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -47,16 +49,22 @@
 					<tr class="clickable" data-id="<?php echo $model->id?>" data-uri="OphCoTherapyapplication/admin/editEmailRecipient/<?php echo $model->id?>">
 						<td><input type="checkbox" name="email_recipients[]" value="<?php echo $model->id?>" /></td>
 						<td>
-							<?php echo $model->site->name?>
+							<?php echo $model->site ? $model->site->name : 'All sites'?>
 						</td>
 						<td>
-							<?php echo $model->type->name?>
+							<?php echo $model->type ? $model->type->name : 'Both types'?>
 						</td>
 						<td>
-							<?php echo $model->name?>
+							<?php echo $model->sender_name?>
 						</td>
 						<td>
-							<?php echo $model->email?>
+							<?php echo $model->sender_email?>
+						</td>
+						<td>
+							<?php echo $model->recipient_name?>
+						</td>
+						<td>
+							<?php echo $model->recipient_email?>
 						</td>
 					</tr>
 				<?php }?>
@@ -71,4 +79,14 @@
 			</tfoot>
 		</table>
 	</form>
+	<h3>How the rules are applied</h3>
+	<p>
+		Rules set for a specific site override rules set for "All sites", so for example you could set a rule for "All sites" and then override it for a few sites that need different rules.
+	</p>
+	<p>
+		If any rules are found that match the current site AND the letter type (compliant/non-compliant), they are ALL used.  So for example if you have three email addresses associated with St Georges and non-compliant, and the letter being sent is non-compliant, they will all be processed and all three recipients will receive the emails.
+	</p>
+	<p>
+		If there are rules that match the current site but not the letter type, or no rules for the current site at all, it will fall back to looking for rules for "All sites" which do match the letter type.  In this case all rules found for "All sites" which match the letter type of the letter being sent will be processed and all recipients defined in these rules will receive the emails.
+	</p>
 </div>

@@ -17,7 +17,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<?php echo $form->dropDownList($model, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- Please select -'))?>
-<?php echo $form->dropDownList($model, 'type_id', CHtml::listData(OphCoTherapyapplication_Email_Recipient_Type::model()->findAll(array('order'=>'display_order asc')),'id','name'), array('empty' => '- Please select -'))?>
-<?php echo $form->textField($model, 'name')?>
-<?php echo $form->textField($model, 'email')?>
+<?php echo $form->dropDownList($model, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- All sites -'))?>
+<?php echo $form->dropDownList($model, 'type_id', CHtml::listData(OphCoTherapyapplication_Email_Recipient_Type::model()->findAll(array('order'=>'display_order asc')),'id','name'), array('empty' => '- Both types -'))?>
+<?php echo $form->textField($model, 'sender_name')?>
+<?php echo $form->textField($model, 'sender_email')?>
+<?php echo $form->textField($model, 'recipient_name')?>
+<?php echo $form->textField($model, 'recipient_email')?>

@@ -27,12 +27,6 @@ return array(
 			'File Collections' => '/OphCoTherapyapplication/admin/viewFileCollections',
 			'Email Recipients' => '/OphCoTherapyapplication/admin/viewEmailRecipients',
 		),
-		// The email address that sends therapy applications (key/value pair of address to name)
-		// 'OphCoTherapyapplication_sender_email' => array('email@test.com' => 'Test'),
-		// The email address(es) that receives compliant therapy applications (key/value pair(s) of address to name)
-		// 'OphCoTherapyapplication_compliant_recipient_email' => array('email@test.com' => 'Email Test'),
-		// The email address(es) that receives NON compliant therapy applications (key/value pair(s) of address to name)
-		// 'OphCoTherapyapplication_noncompliant_recipient_email' => array('email2@test.com' => 'Email Test 2'),
 		// The email address displayed in the standard non-compliant form
 		// 'OphCoTherapyapplication_applicant_email' => 'armd@nhs.net',
 		// postal details of the chief pharmacist (string of name and address)

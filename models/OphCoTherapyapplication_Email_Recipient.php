@@ -28,9 +28,10 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 	public function rules()
 	{
 		return array(
-			array('site_id, name, email, type_id', 'safe'),
-			array('site_id, name, email, type_id', 'required'),
-			array('email', 'email'),
+			array('site_id, sender_name, sender_email, recipient_name, recipient_email, type_id', 'safe'),
+			array('sender_name, sender_email, recipient_name, recipient_email', 'required'),
+			array('sender_email', 'email'),
+			array('recipient_email', 'email'),
 		);
 	}
 
@@ -48,6 +49,10 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 			'id' => 'ID',
 			'site_id' => 'Site',
 			'type_id' => 'Letter types',
+			'sender_name' => 'Sender name',
+			'sender_email' => 'Sender email',
+			'recipient_name' => 'Recipient name',
+			'recipient_email' => 'Recipient email',
 		);
 	}
 }

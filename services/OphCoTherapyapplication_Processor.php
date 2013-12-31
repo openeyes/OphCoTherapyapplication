@@ -426,35 +426,56 @@ class OphCoTherapyapplication_Processor
 
 		$message = Yii::app()->mailer->newMessage();
 		$message->setSubject('Therapy Application');
-		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
-		if ($template_data['compliant']) {
-			$message->setTo(Yii::app()->params['OphCoTherapyapplication_compliant_recipient_email']);
-		} else {
-			$message->setTo(Yii::app()->params['OphCoTherapyapplication_noncompliant_recipient_email']);
-		}
-		$message->setBody($email_text);
 
-		if (!$link_to_attachments) {
-			foreach ($attachments as $att) {
-				$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name));
+		$recipient_type = $template_data['compliant'] ? 'Compliant' : 'Non-compliant';
+
+		if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id = ? and type.id is null or type.name = ?',array(Yii::app()->session['selected_site_id'],$recipient_type))) {
+			if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id is null and type.id is null or type.name = ?',array($recipient_type))) {
+				throw new Exception("No email recipient defined for site ".Site::model()->findByPk(Yii::app()->session['selected_site_id'])->name.", $recipient_type");
 			}
 		}
 
-		$success = Yii::app()->mailer->sendMessage($message);
+		$success = true;
+
+		foreach ($recipients as $recipient) {
+			$message = Yii::app()->mailer->newMessage();
+			$message->setSubject('Therapy Application');
+
+			$message->setFrom(array($recipient->sender_email => $recipient->sender_name));
+			$message->setTo(array($recipient->recipient_email => $recipient->recipient_name));
+
+			$message->setBody($email_text);
+
+			if (!$link_to_attachments) {
+				foreach ($attachments as $att) {
+					$message->attach(Swift_Attachment::fromPath($att->getPath())->setFilename($att->name));
+				}
+			}
+
+			if (!Yii::app()->mailer->sendMessage($message)) {
+				$success = false;
+			}
+		}
 
 		if ($success) {
 			$email = new OphCoTherapyapplication_Email;
 			$email->event_id = $this->event->id;
 			$email->eye_id = $eye_id;
 			$email->email_text = $email_text;
-			$email->save();
+
+			if (!$email->save()) {
+				throw new Exception("Unable to save email: ".print_r($email->getErrors(),true));
+			}
 
 			$email->addAttachments($attachments);
 
 			$this->event->audit('therapy-application', 'submit');
 
 			$this->event->info = self::STATUS_SENT;
-			$this->event->save();
+
+			if (!$this->event->save()) {
+				throw new Exception("Unable to save event: ".print_r($this->event->getErrors(),true));
+			}
 
 			return true;
 		} else {

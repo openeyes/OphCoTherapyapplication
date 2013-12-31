@@ -48,9 +48,7 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 
 		// check for required configuration variables
 		$missing_config = array();
-		foreach (array('OphCoTherapyapplication_sender_email',
-				'OphCoTherapyapplication_compliant_recipient_email',
-				'OphCoTherapyapplication_noncompliant_recipient_email',
+		foreach (array(
 				'OphCoTherapyapplication_applicant_email',
 				'OphCoTherapyapplication_chief_pharmacist',
 				'OphCoTherapyapplication_chief_pharmacist_contact',
