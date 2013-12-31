@@ -33,6 +33,7 @@ return array(
 		// 'OphCoTherapyapplication_chief_pharmacist' => '',
 		// contact details of the chief pharmacist (string)
 		// 'OphCoTherapyapplication_chief_pharmacist_contact' => '',
-		'OphCoTherapyapplication_email_size_limit' => '10MB'
+		'OphCoTherapyapplication_email_size_limit' => '10MB',
+		'OphCoTherapyapplication_email_allowed_domains' => array('moorfields.nhs.uk'),
 	),
 );

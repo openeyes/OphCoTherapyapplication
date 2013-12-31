@@ -438,6 +438,10 @@ class OphCoTherapyapplication_Processor
 		$success = true;
 
 		foreach ($recipients as $recipient) {
+			if (!$recipient->isAllowed()) {
+				throw new Exception("Recipient email address $recipient->recipient_email is not in the list of allowed domains");
+			}
+
 			$message = Yii::app()->mailer->newMessage();
 			$message->setSubject('Therapy Application');
 

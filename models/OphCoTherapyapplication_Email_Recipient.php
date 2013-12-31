@@ -55,4 +55,18 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 			'recipient_email' => 'Recipient email',
 		);
 	}
+
+	public function isAllowed()
+	{
+		return in_array(strtolower(preg_replace('/^.*?@/','',$this->recipient_email)),Yii::app()->params['OphCoTherapyapplication_email_allowed_domains']);
+	}
+
+	protected function beforeValidate()
+	{
+		if (!$this->isAllowed()) {
+			$this->addError('recipient_email','Recipient email is not in the list of allowed domains');
+		}
+
+		return parent::beforeValidate();
+	}
 }
