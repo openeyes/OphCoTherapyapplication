@@ -419,6 +419,10 @@ class OphCoTherapyapplication_Processor
 			}
 		}
 
+		if (!$service_info = $this->getElement('Element_OphCoTherapyapplication_MrServiceInformation')) {
+			throw new Exception("MrServiceInformation element is missing");
+		}
+
 		$link_to_attachments = ($attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']));
 
 		$template_data['link_to_attachments'] = $link_to_attachments;
@@ -429,9 +433,9 @@ class OphCoTherapyapplication_Processor
 
 		$recipient_type = $template_data['compliant'] ? 'Compliant' : 'Non-compliant';
 
-		if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id = ? and type.id is null or type.name = ?',array(Yii::app()->session['selected_site_id'],$recipient_type))) {
+		if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id = ? and type.id is null or type.name = ?',array($service_info->site_id,$recipient_type))) {
 			if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id is null and type.id is null or type.name = ?',array($recipient_type))) {
-				throw new Exception("No email recipient defined for site ".Site::model()->findByPk(Yii::app()->session['selected_site_id'])->name.", $recipient_type");
+				throw new Exception("No email recipient defined for site ".$service_info->site->name.", $recipient_type");
 			}
 		}
 
