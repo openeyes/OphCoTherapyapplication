@@ -106,7 +106,7 @@ function return_bytes ($size_str)
 			<input type="hidden" id="remove_file_id" value="" />
 			<button type="submit" class="warning btn_remove_file">Remove file</button>
 			<button type="submit" class="secondary btn_cancel_remove_file">Cancel</button>
-			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>
