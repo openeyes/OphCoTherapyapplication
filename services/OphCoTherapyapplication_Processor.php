@@ -155,12 +155,12 @@ class OphCoTherapyapplication_Processor
 	 * Note that this is currently only used for non-compliant applications.
 	 *
 	 * @param CController $controller
-	 * @return OETCPDF|null
+	 * @return OETCPDF
 	 */
 	public function generatePreviewPdf($controller)
 	{
 		$ec = $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances');
-		if (!$ec) return null;
+		if (!$ec) throw new Exception("Exceptional circumstances not found for event ID {$this->event->id}");
 
 		$template_data = $this->getTemplateData();
 
@@ -217,19 +217,6 @@ class OphCoTherapyapplication_Processor
 		}
 
 		return $success;
-	}
-
-	/**
-	 * returns boolean as to whether the event has been submitted (successfully) or not.
-	 *
-	 * @return bool
-	 */
-	public function isEventSubmitted()
-	{
-		if ($this->getApplicationStatus() == self::STATUS_SENT) {
-			return true;
-		}
-		return null;
 	}
 
 	/**

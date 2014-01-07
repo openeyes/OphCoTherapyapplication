@@ -35,6 +35,7 @@ class OphCoTherapyapplication_ProcessorTest extends CTestCase
 		$this->event = $this->getMockBuilder('Event')->disableOriginalConstructor()->getMock();
 		$this->event->expects($this->any())->method('__get')->will($this->returnCallback(array($this, 'getEventProperty')));
 		$this->event_props = array(
+			'id' => 1,
 			'eventType' => (object)array('class_name' => 'OphCoTherapyapplication'),
 			'episode' => (object)array('patient' => (object)array())
 		);
@@ -221,11 +222,15 @@ class OphCoTherapyapplication_ProcessorTest extends CTestCase
 		$this->assertFalse($this->processor->isEventNonCompliant());
 	}
 
+	/**
+	 * @expectedException Exception
+	 * @expectedExceptionMessage Exceptional circumstances not found for event ID 1
+	 */
 	public function testGeneratePreviewPdf_NoEc()
 	{
 		$controller = $this->getMockBuilder('CController')->disableOriginalConstructor()->getMock();
 		$this->elements['Element_OphCoTherapyapplication_ExceptionalCircumstances'] = null;
-		$this->assertNull($this->processor->generatePreviewPdf($controller));
+		$this->processor->generatePreviewPdf($controller);
 	}
 
 	public function getEventProperty($name)
