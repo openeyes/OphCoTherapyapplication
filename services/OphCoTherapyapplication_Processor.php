@@ -155,12 +155,12 @@ class OphCoTherapyapplication_Processor
 	 * Note that this is currently only used for non-compliant applications.
 	 *
 	 * @param CController $controller
-	 * @return OETCPDF|null
+	 * @return OETCPDF
 	 */
 	public function generatePreviewPdf($controller)
 	{
 		$ec = $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances');
-		if (!$ec) return null;
+		if (!$ec) throw new Exception("Exceptional circumstances not found for event ID {$this->event->id}");
 
 		$template_data = $this->getTemplateData();
 
@@ -217,19 +217,6 @@ class OphCoTherapyapplication_Processor
 		}
 
 		return $success;
-	}
-
-	/**
-	 * returns boolean as to whether the event has been submitted (successfully) or not.
-	 *
-	 * @return bool
-	 */
-	public function isEventSubmitted()
-	{
-		if ($this->getApplicationStatus() == self::STATUS_SENT) {
-			return true;
-		}
-		return null;
 	}
 
 	/**
@@ -419,6 +406,10 @@ class OphCoTherapyapplication_Processor
 			}
 		}
 
+		if (!$service_info = $this->getElement('Element_OphCoTherapyapplication_MrServiceInformation')) {
+			throw new Exception("MrServiceInformation element is missing");
+		}
+
 		$link_to_attachments = ($attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']));
 
 		$template_data['link_to_attachments'] = $link_to_attachments;
@@ -426,12 +417,31 @@ class OphCoTherapyapplication_Processor
 
 		$message = Yii::app()->mailer->newMessage();
 		$message->setSubject('Therapy Application');
-		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
-		if ($template_data['compliant']) {
-			$message->setTo(Yii::app()->params['OphCoTherapyapplication_compliant_recipient_email']);
-		} else {
-			$message->setTo(Yii::app()->params['OphCoTherapyapplication_noncompliant_recipient_email']);
+
+		$recipient_type = $template_data['compliant'] ? 'Compliant' : 'Non-compliant';
+
+		if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id = ? and type.id is null or type.name = ?',array($service_info->site_id,$recipient_type))) {
+			if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id is null and type.id is null or type.name = ?',array($recipient_type))) {
+				throw new Exception("No email recipient defined for site ".$service_info->site->name.", $recipient_type");
+			}
 		}
+
+		$email_recipients = array();
+
+		foreach ($recipients as $recipient) {
+			if (!$recipient->isAllowed()) {
+				throw new Exception("Recipient email address $recipient->recipient_email is not in the list of allowed domains");
+			}
+
+			$email_recipients[$recipient->recipient_email] = $recipient->recipient_name;
+		}
+
+		$message = Yii::app()->mailer->newMessage();
+		$message->setSubject('Therapy Application');
+
+		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
+		$message->setTo($email_recipients);
+
 		$message->setBody($email_text);
 
 		if (!$link_to_attachments) {
@@ -440,21 +450,25 @@ class OphCoTherapyapplication_Processor
 			}
 		}
 
-		$success = Yii::app()->mailer->sendMessage($message);
-
-		if ($success) {
+		if (Yii::app()->mailer->sendMessage($message)) {
 			$email = new OphCoTherapyapplication_Email;
 			$email->event_id = $this->event->id;
 			$email->eye_id = $eye_id;
 			$email->email_text = $email_text;
-			$email->save();
+
+			if (!$email->save()) {
+				throw new Exception("Unable to save email: ".print_r($email->getErrors(),true));
+			}
 
 			$email->addAttachments($attachments);
 
 			$this->event->audit('therapy-application', 'submit');
 
 			$this->event->info = self::STATUS_SENT;
-			$this->event->save();
+
+			if (!$this->event->save()) {
+				throw new Exception("Unable to save event: ".print_r($this->event->getErrors(),true));
+			}
 
 			return true;
 		} else {

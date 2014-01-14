@@ -17,28 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-
-<?php $this->beginContent('//patient/event_container');?>
-
-	<h2 class="event-title"><?php echo $this->event_type->name ?></h2>
-
-	<?php
-		$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'clinical-create',
-				'enableAjaxValidation'=>false,
-				'layoutColumns' => array(
-				'label' => 2,
-				'field' => 10
-				)
-		));
-		$this->event_actions[] = EventAction::button('Save', 'save', array('level'=>'save'), array('form'=>'clinical-create'));
-		?>
-
-		<?php $this->displayErrors($errors)?>
-		<?php $this->renderOpenElements($this->action->id, $form)?>
-		<?php $this->renderOptionalElements($this->action->id, $form)?>
-		<?php $this->displayErrors($errors, true)?>
-
-	<?php $this->endWidget()?>
-
-<?php $this->endContent() ;?>
+<?php echo $form->dropDownList($model, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- All sites -'))?>
+<?php echo $form->dropDownList($model, 'type_id', CHtml::listData(OphCoTherapyapplication_Email_Recipient_Type::model()->findAll(array('order'=>'display_order asc')),'id','name'), array('empty' => '- Both types -'))?>
+<?php echo $form->textField($model, 'recipient_name')?>
+<?php echo $form->textField($model, 'recipient_email')?>

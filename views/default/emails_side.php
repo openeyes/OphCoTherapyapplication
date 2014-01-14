@@ -15,22 +15,28 @@
 ?>
 <?php if ($emails): ?>
 	<?php foreach ($emails as $email): ?>
-		<div class="eventDetail aligned">
-			<?php if (($files = $email->attachments)): ?>
-				<div class="label">Application files</div>
-				<div class="data">
-					<ul style="margin: 0px;">
-						<?php foreach ($files as $file): ?>
-							<li><a href="<?= $file->getDownloadURL() ?>"><?php echo $file->name; ?></a></li>
-						<?php endforeach ?>
-					</ul>
+		<?php if (($files = $email->attachments)): ?>
+			<div class="row data-row">
+				<div class="large-4 column">
+					<div class="data-label">Application files:</div>
 				</div>
-			<?php endif ?>
-		</div>
-		<div class="metaData">
-			Application sent by <span class="user"><?= $email->user->fullname ?></span> on <?= Helper::convertMySQL2NHS($email->created_date) ?> at <?= date('H:i', strtotime($email->created_date)) ?>
+				<div class="large-8 column">
+					<div class="data-value">
+						<ul class="application-files">
+							<?php foreach ($files as $file): ?>
+								<li><a href="<?= $file->getDownloadURL() ?>"><?php echo $file->name; ?></a></li>
+							<?php endforeach ?>
+						</ul>
+					</div>
+				</div>
+			</div>
+		<?php endif ?>
+		<div class="metadata">
+			<span class="info">
+				Application sent by <span class="user"><?= $email->user->fullname ?></span> on <?= Helper::convertMySQL2NHS($email->created_date) ?> at <?= date('H:i', strtotime($email->created_date)) ?>
+			</span>
 		</div>
 	<?php endforeach ?>
 <?php else: ?>
-	N/A
+	<div class="data-value">N/A</div>
 <?php endif ?>

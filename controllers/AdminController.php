@@ -213,7 +213,8 @@ class AdminController extends ModuleAdminController
 
 		$this->render('update', array(
 				'model' => $model,
-				'title'=>'Treatment'
+				'title' => 'Treatment',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewTreatments',
 		));
 	}
 
@@ -370,6 +371,7 @@ class AdminController extends ModuleAdminController
 
 		$this->render('update', array(
 				'model' => $model,
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewDecisionTrees',
 		));
 	}
 
@@ -632,6 +634,75 @@ class AdminController extends ModuleAdminController
 				}
 			} catch (Exception $e) {
 				Yii::log("couldn't remove file collection $file_collection_id: ".$e->getMessage(), 'error');
+				$result = 0;
+			}
+		}
+
+		echo $result;
+	}
+
+	public function actionViewEmailRecipients()
+	{
+		Audit::add('admin','list',null,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Email_Recipient'));
+
+		$this->render('list_OphCoTherapyapplication_Email_Recipient', array(
+				'model_class' => 'OphCoTherapyapplication_Email_Recipient',
+				'model_list' => OphCoTherapyapplication_Email_Recipient::model()->findAll(array('order'=>'display_order asc')),
+				'title' => 'Email recipients',
+		));
+	}
+
+	public function actionAddEmailRecipient()
+	{
+		$model = new OphCoTherapyapplication_Email_Recipient;
+
+		if (isset($_POST['OphCoTherapyapplication_Email_Recipient'])) {
+			// do the actual create
+			$model->attributes = $_POST['OphCoTherapyapplication_Email_Recipient'];
+
+			if ($model->save()) {
+				Audit::add('admin','create',serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Email_Recipient'));
+				Yii::app()->user->setFlash('success', 'Email recipient created');
+
+				$this->redirect(array('viewEmailRecipients'));
+			}
+		}
+
+		$this->render('create', array(
+				'model' => $model,
+				'title' => 'Email recipient',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewEmailRecipients',
+		));
+	}
+
+	public function actionEditEmailRecipient($id)
+	{
+		$model = OphCoTherapyapplication_Email_Recipient::model()->findByPk((int) $id);
+
+		if (isset($_POST['OphCoTherapyapplication_Email_Recipient'])) {
+			$model->attributes = $_POST['OphCoTherapyapplication_Email_Recipient'];
+
+			if ($model->save()) {
+				Audit::add('admin','update',serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Email_Recipient'));
+				Yii::app()->user->setFlash('success', 'Email recipient updated');
+
+				$this->redirect(array('viewEmailRecipients'));
+			}
+		}
+
+		$this->render('update', array(
+				'model' => $model,
+				'title'=>'Email Recipient',
+				'cancel_uri' => '/OphCoTherapyapplication/admin/viewEmailRecipients',
+		));
+	}
+
+	public function actionDeleteEmailRecipients()
+	{
+		$result = 1;
+
+		foreach (OphCoTherapyapplication_Email_Recipient::model()->findAllByPK($_POST['email_recipients']) as $email_recipient) {
+			if (!$email_recipient->delete()) {
 				$result = 0;
 			}
 		}
