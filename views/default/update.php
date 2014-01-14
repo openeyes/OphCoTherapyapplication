@@ -42,7 +42,7 @@
 			<strong>WARNING: This application has already been sent.  Editing it will allow it to be re-sent.</strong>
 		</div> <?php } ?>
 	<?php $this->displayErrors($errors)?>
-	<?php $this->renderDefaultElements($this->action->id, $form)?>
+	<?php $this->renderOpenElements($this->action->id, $form)?>
 	<?php $this->renderOptionalElements($this->action->id, $form)?>
 	<?php $this->displayErrors($errors)?>
 
