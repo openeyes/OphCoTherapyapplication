@@ -96,7 +96,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_email_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_email_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 			  CONSTRAINT `et_ophcotherapya_email_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophcotherapya_exceptional` (
@@ -155,7 +155,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_exceptional_rinterventions_fk` FOREIGN KEY (`right_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`),
 			  CONSTRAINT `et_ophcotherapya_exceptional_rsi_fk` FOREIGN KEY (`right_standard_intervention_id`) REFERENCES `ophcotherapya_exceptional_standardintervention` (`id`),
 			  CONSTRAINT `et_ophcotherapya_exceptional_rspid_fk` FOREIGN KEY (`right_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophcotherapya_exceptional_intervention` (
@@ -173,7 +173,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `et_ophcotherapya_exceptional_intervention_cui_fk` (`created_user_id`),
 			  CONSTRAINT `et_ophcotherapya_exceptional_intervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophcotherapya_mrservicein` (
@@ -193,7 +193,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_mrservicein_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_mrservicein_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 			  CONSTRAINT `et_ophcotherapya_mrservicein_consultant_id_fk` FOREIGN KEY (`consultant_id`) REFERENCES `firm` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophcotherapya_patientsuit` (
@@ -223,7 +223,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_patientsuit_ltreatment_fk` FOREIGN KEY (`left_treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
 			  CONSTRAINT `et_ophcotherapya_patientsuit_rtreatment_fk` FOREIGN KEY (`right_treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
 			  CONSTRAINT `et_ophcotherapya_patientsuit_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophcotherapya_relativecon` (
@@ -243,7 +243,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_relativecon_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_relativecon_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_relativecon_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophcotherapya_therapydiag` (
@@ -275,7 +275,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_therapydiag_ldiagnosis2_id_fk` FOREIGN KEY (`left_diagnosis2_id`) REFERENCES `disorder` (`id`),
 			  CONSTRAINT `et_ophcotherapya_therapydiag_rdiagnosis2_id_fk` FOREIGN KEY (`right_diagnosis2_id`) REFERENCES `disorder` (`id`),
 			  CONSTRAINT `et_ophcotherapya_therapydiag_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_decisiontree` (
@@ -290,7 +290,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_decisiontree_cui_fk` (`created_user_id`),
 			  CONSTRAINT `et_ophcotherapya_decisiontree_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_decisiontree_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_decisiontreenode` (
@@ -319,7 +319,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_decisiontreenode_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`),
 			  CONSTRAINT `ophcotherapya_decisiontreenode_oi_fk` FOREIGN KEY (`outcome_id`) REFERENCES `ophcotherapya_decisiontreeoutcome` (`id`),
 			  CONSTRAINT `ophcotherapya_decisiontreenode_rti_fk` FOREIGN KEY (`response_type_id`) REFERENCES `ophcotherapya_decisiontreenode_responsetype` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_decisiontreenode_responsetype` (
@@ -335,7 +335,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_decisiontreenode_rtype_cui_fk` (`created_user_id`),
 			  CONSTRAINT `et_ophcotherapya_decisiontreenode_rtype_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_decisiontreenode_rtype_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_decisiontreenodechoice` (
@@ -354,7 +354,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_decisiontreenodechoice_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_decisiontreenodechoice_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_decisiontreenodechoice_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_decisiontreenoderule` (
@@ -373,7 +373,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_decisiontreenoderule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_decisiontreenoderule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_decisiontreenoderule_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_decisiontreeoutcome` (
@@ -389,7 +389,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_decisiontreeoutcome_cui_fk` (`created_user_id`),
 			  CONSTRAINT `et_ophcotherapya_decisiontreeoutcome_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_decisiontreeoutcome_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_email_attachment` (
@@ -412,7 +412,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_email` (`id`),
 			  CONSTRAINT `et_ophcotherapya_email_att_eyei_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`),
 			  CONSTRAINT `et_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_deviationreason` (
@@ -429,7 +429,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_exceptional_deviationreason_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophcotherapya_exceptional_deviationreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_exceptional_deviationreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_deviationreason_ass` (
@@ -450,7 +450,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_except_devrass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_except_devrass_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 			  CONSTRAINT `et_ophcotherapya_except_devrass_ci_fk` FOREIGN KEY (`deviationreason_id`) REFERENCES `ophcotherapya_exceptional_deviationreason` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_filecoll_assignment` (
@@ -471,7 +471,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_except_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 			  CONSTRAINT `et_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_pastintervention` (
@@ -506,7 +506,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_exceptional_previntervention_sri_fk` FOREIGN KEY (`stopreason_id`) REFERENCES `ophcotherapya_exceptional_pastintervention_stopreason` (`id`),
 			  CONSTRAINT `ophcotherapya_exceptional_previntervention_ti_fk` FOREIGN KEY (`treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
 			  CONSTRAINT `ophcotherapya_pastintervention_rtui_fk` FOREIGN KEY (`relevanttreatment_id`) REFERENCES `ophcotherapya_relevanttreatment` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_pastintervention_stopreason` (
@@ -523,7 +523,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_exceptional_previntervention_stopreason_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophcotherapya_exceptional_previntervention_stopreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_exceptional_previntervention_stopreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_standardintervention` (
@@ -540,7 +540,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_exceptional_standardintervention_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophcotherapya_exceptional_standardintervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_exceptional_standardintervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_exceptional_startperiod` (
@@ -559,7 +559,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_exceptional_startperiod_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophcotherapya_exceptional_startperiod_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_exceptional_startperiod_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_filecoll` (
@@ -578,7 +578,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_filecoll_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_filecoll_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_filecoll_zi_fk` FOREIGN KEY (`zipfile_id`) REFERENCES `protected_file` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_filecoll_assignment` (
@@ -598,7 +598,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `et_ophcotherapya_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`),
 			  CONSTRAINT `et_ophcotherapya_filecollass_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_patientsuit_decisiontreenoderesponse` (
@@ -620,7 +620,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`),
 			  CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_patientsuit_dtnoderesponse_psi_fk` FOREIGN KEY (`patientsuit_id`) REFERENCES `et_ophcotherapya_patientsuit` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_relevanttreatment` (
@@ -637,7 +637,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `ophcotherapya_relevanttreatment_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophcotherapya_relevanttreatment_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_relevanttreatment_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_therapydisorder` (
@@ -658,7 +658,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_therapydisorder_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophcotherapya_therapydisorder_di_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`),
 			  CONSTRAINT `ophcotherapya_therapydisorder_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_therapydisorder` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_treatment` (
@@ -693,7 +693,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  CONSTRAINT `ophcotherapya_treatment_dri_fk` FOREIGN KEY (`drug_id`) REFERENCES `ophtrintravitinjection_treatment_drug` (`id`),
 			  CONSTRAINT `ophcotherapya_treatment_ct_fk` FOREIGN KEY (`cost_type_id`) REFERENCES `ophcotherapya_treatment_cost_type` (`id`),
 			  CONSTRAINT `ophcotherapya_treatment_mfp_fk` FOREIGN KEY (`monitoring_frequency_period_id`) REFERENCES `period` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophcotherapya_treatment_cost_type` (
@@ -708,7 +708,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			  KEY `et_ophcotherapya_treatment_cost_type_cui_fk` (`created_user_id`),
 			  CONSTRAINT `et_ophcotherapya_treatment_cost_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophcotherapya_treatment_cost_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$migrations_path = dirname(__FILE__);

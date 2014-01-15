@@ -22,7 +22,7 @@ class m131024_142538_email_rework extends CDbMigration
 				'foreign key ophcotherapya_email_lmui_fk (last_modified_user_id) references user (id)',
 				'foreign key ophcotherapya_email_cui_fk (created_user_id) references user (id)'
 			),
-			'engine=innodb charset=utf8 collate=utf8_bin'
+			'engine=innodb CHARSET=utf8 COLLATE=utf8_unicode_ci'
 		);
 
 		// Populate the above - note that we're throwing away unsent emails
@@ -49,7 +49,7 @@ class m131024_142538_email_rework extends CDbMigration
 				'KEY `et_ophcotherapya_email_att_cui_fk` (`created_user_id`)',
 				'KEY `et_ophcotherapya_email_att_fi_fk` (`file_id`)',
 			),
-			'engine=innodb charset=utf8 collate=utf8_bin'
+			'engine=innodb CHARSET=utf8 COLLATE=utf8_unicode_ci'
 		);
 
 		$this->execute(
@@ -98,7 +98,7 @@ class m131024_142538_email_rework extends CDbMigration
 				'CONSTRAINT `et_ophcotherapya_email_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophcotherapya_email_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
 			),
-			'engine=innodb charset=utf8 collate=utf8_bin'
+			'engine=innodb CHARSET=utf8 COLLATE=utf8_unicode_ci'
 		);
 
 		// NB this does not restore unsent emails because we've scrapped them (and obviously any archived emails will be lost)
@@ -137,7 +137,7 @@ class m131024_142538_email_rework extends CDbMigration
 				'KEY `et_ophcotherapya_email_att_fi_fk` (`file_id`)',
 
 			),
-			'engine=innodb charset=utf8 collate=utf8_bin'
+			'engine=innodb CHARSET=utf8 COLLATE=utf8_unicode_ci'
 		);
 
 		$this->execute(
