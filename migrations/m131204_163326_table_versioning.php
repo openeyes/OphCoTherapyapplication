@@ -13,34 +13,34 @@ CREATE TABLE `et_ophcotherapya_exceptional_version` (
 	`left_standard_intervention_id` int(10) unsigned DEFAULT NULL,
 	`left_standard_previous` tinyint(1) DEFAULT NULL,
 	`left_condition_rare` tinyint(1) DEFAULT NULL,
-	`left_incidence` text COLLATE utf8_bin,
+	`left_incidence` text,
 	`left_intervention_id` int(10) unsigned DEFAULT NULL,
-	`left_description` text COLLATE utf8_bin,
-	`left_patient_different` text COLLATE utf8_bin,
-	`left_patient_gain` text COLLATE utf8_bin,
+	`left_description` text,
+	`left_patient_different` text,
+	`left_patient_gain` text,
 	`left_patient_factors` tinyint(1) unsigned DEFAULT NULL,
-	`left_patient_factor_details` text COLLATE utf8_bin,
+	`left_patient_factor_details` text,
 	`left_start_period_id` int(10) unsigned DEFAULT NULL,
-	`left_urgency_reason` text COLLATE utf8_bin,
+	`left_urgency_reason` text,
 	`right_standard_intervention_exists` tinyint(1) unsigned DEFAULT NULL,
 	`right_standard_intervention_id` int(10) unsigned DEFAULT NULL,
 	`right_standard_previous` tinyint(1) DEFAULT NULL,
 	`right_condition_rare` tinyint(1) DEFAULT NULL,
-	`right_incidence` text COLLATE utf8_bin,
+	`right_incidence` text,
 	`right_intervention_id` int(10) unsigned DEFAULT NULL,
-	`right_description` text COLLATE utf8_bin,
-	`right_patient_different` text COLLATE utf8_bin,
-	`right_patient_gain` text COLLATE utf8_bin,
+	`right_description` text,
+	`right_patient_different` text,
+	`right_patient_gain` text,
 	`right_patient_factors` tinyint(1) unsigned DEFAULT NULL,
-	`right_patient_factor_details` text COLLATE utf8_bin,
+	`right_patient_factor_details` text,
 	`right_start_period_id` int(10) unsigned DEFAULT NULL,
-	`right_urgency_reason` text COLLATE utf8_bin,
+	`right_urgency_reason` text,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
-	`left_patient_expectations` text COLLATE utf8_bin,
-	`right_patient_expectations` text COLLATE utf8_bin,
+	`left_patient_expectations` text,
+	`right_patient_expectations` text,
 	PRIMARY KEY (`id`),
 	KEY `acv_et_ophcotherapya_exceptional_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_et_ophcotherapya_exceptional_cui_fk` (`created_user_id`),
@@ -61,7 +61,7 @@ CREATE TABLE `et_ophcotherapya_exceptional_version` (
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_rinterventions_fk` FOREIGN KEY (`right_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_rsi_fk` FOREIGN KEY (`right_standard_intervention_id`) REFERENCES `ophcotherapya_exceptional_standardintervention` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_rspid_fk` FOREIGN KEY (`right_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophcotherapya_exceptional_version','id','int(10) unsigned NOT NULL');
@@ -79,8 +79,8 @@ CREATE TABLE `et_ophcotherapya_exceptional_version` (
 		$this->execute("
 CREATE TABLE `et_ophcotherapya_exceptional_intervention_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
-	`description_label` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
+	`description_label` varchar(128) NOT NULL,
 	`is_deviation` tinyint(1) NOT NULL DEFAULT '0',
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -92,7 +92,7 @@ CREATE TABLE `et_ophcotherapya_exceptional_intervention_version` (
 	KEY `acv_et_ophcotherapya_exceptional_intervention_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_intervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophcotherapya_exceptional_intervention_version','id','int(10) unsigned NOT NULL');
@@ -128,7 +128,7 @@ CREATE TABLE `et_ophcotherapya_mrservicein_version` (
 	CONSTRAINT `acv_et_ophcotherapya_mrservicein_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_mrservicein_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_mrservicein_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophcotherapya_mrservicein_version','id','int(10) unsigned NOT NULL');
@@ -171,7 +171,7 @@ CREATE TABLE `et_ophcotherapya_patientsuit_version` (
 	CONSTRAINT `acv_et_ophcotherapya_patientsuit_ltreatment_fk` FOREIGN KEY (`left_treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_patientsuit_rtreatment_fk` FOREIGN KEY (`right_treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_patientsuit_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophcotherapya_patientsuit_version','id','int(10) unsigned NOT NULL');
@@ -204,7 +204,7 @@ CREATE TABLE `et_ophcotherapya_relativecon_version` (
 	CONSTRAINT `acv_et_ophcotherapya_relativecon_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_relativecon_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_relativecon_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophcotherapya_relativecon_version','id','int(10) unsigned NOT NULL');
@@ -249,7 +249,7 @@ CREATE TABLE `et_ophcotherapya_therapydiag_version` (
 	CONSTRAINT `acv_et_ophcotherapya_therapydiag_ldiagnosis2_id_fk` FOREIGN KEY (`left_diagnosis2_id`) REFERENCES `disorder` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_therapydiag_rdiagnosis2_id_fk` FOREIGN KEY (`right_diagnosis2_id`) REFERENCES `disorder` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_therapydiag_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophcotherapya_therapydiag_version','id','int(10) unsigned NOT NULL');
@@ -267,7 +267,7 @@ CREATE TABLE `et_ophcotherapya_therapydiag_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_decisiontree_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -277,7 +277,7 @@ CREATE TABLE `ophcotherapya_decisiontree_version` (
 	KEY `acv_ophcotherapya_decisiontree_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_et_ophcotherapya_decisiontree_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_decisiontree_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_decisiontree_version','id','int(10) unsigned NOT NULL');
@@ -297,10 +297,10 @@ CREATE TABLE `ophcotherapya_decisiontreenode_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`decisiontree_id` int(10) unsigned NOT NULL,
 	`parent_id` int(10) unsigned DEFAULT NULL,
-	`question` varchar(256) COLLATE utf8_bin DEFAULT NULL,
+	`question` varchar(256) DEFAULT NULL,
 	`outcome_id` int(10) unsigned DEFAULT NULL,
-	`default_function` varchar(64) COLLATE utf8_bin DEFAULT NULL,
-	`default_value` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+	`default_function` varchar(64) DEFAULT NULL,
+	`default_value` varchar(16) DEFAULT NULL,
 	`response_type_id` int(10) unsigned DEFAULT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -319,7 +319,7 @@ CREATE TABLE `ophcotherapya_decisiontreenode_version` (
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_oi_fk` FOREIGN KEY (`outcome_id`) REFERENCES `ophcotherapya_decisiontreeoutcome` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_rti_fk` FOREIGN KEY (`response_type_id`) REFERENCES `ophcotherapya_decisiontreenode_responsetype` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_decisiontreenode_version','id','int(10) unsigned NOT NULL');
@@ -337,8 +337,8 @@ CREATE TABLE `ophcotherapya_decisiontreenode_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_decisiontreenode_responsetype_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`label` varchar(32) COLLATE utf8_bin NOT NULL,
-	`datatype` varchar(16) COLLATE utf8_bin NOT NULL,
+	`label` varchar(32) NOT NULL,
+	`datatype` varchar(16) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -348,7 +348,7 @@ CREATE TABLE `ophcotherapya_decisiontreenode_responsetype_version` (
 	KEY `acv_ophcotherapya_decisiontreenode_rtype_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_et_ophcotherapya_decisiontreenode_rtype_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_decisiontreenode_rtype_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_decisiontreenode_responsetype_version','id','int(10) unsigned NOT NULL');
@@ -367,7 +367,7 @@ CREATE TABLE `ophcotherapya_decisiontreenode_responsetype_version` (
 CREATE TABLE `ophcotherapya_decisiontreenodechoice_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`node_id` int(10) unsigned NOT NULL,
-	`label` varchar(32) COLLATE utf8_bin NOT NULL,
+	`label` varchar(32) NOT NULL,
 	`display_order` int(10) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -380,7 +380,7 @@ CREATE TABLE `ophcotherapya_decisiontreenodechoice_version` (
 	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_decisiontreenodechoice_version','id','int(10) unsigned NOT NULL');
@@ -399,8 +399,8 @@ CREATE TABLE `ophcotherapya_decisiontreenodechoice_version` (
 CREATE TABLE `ophcotherapya_decisiontreenoderule_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`node_id` int(10) unsigned NOT NULL,
-	`parent_check` varchar(4) COLLATE utf8_bin DEFAULT NULL,
-	`parent_check_value` varchar(16) COLLATE utf8_bin DEFAULT NULL,
+	`parent_check` varchar(4) DEFAULT NULL,
+	`parent_check_value` varchar(16) DEFAULT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -412,7 +412,7 @@ CREATE TABLE `ophcotherapya_decisiontreenoderule_version` (
 	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_decisiontreenoderule_version','id','int(10) unsigned NOT NULL');
@@ -430,8 +430,8 @@ CREATE TABLE `ophcotherapya_decisiontreenoderule_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_decisiontreeoutcome_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(32) COLLATE utf8_bin NOT NULL,
-	`outcome_type` varchar(16) COLLATE utf8_bin NOT NULL,
+	`name` varchar(32) NOT NULL,
+	`outcome_type` varchar(16) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -441,7 +441,7 @@ CREATE TABLE `ophcotherapya_decisiontreeoutcome_version` (
 	KEY `acv_ophcotherapya_decisiontreeoutcome_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_et_ophcotherapya_decisiontreeoutcome_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_decisiontreeoutcome_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_decisiontreeoutcome_version','id','int(10) unsigned NOT NULL');
@@ -461,7 +461,7 @@ CREATE TABLE `ophcotherapya_email_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`event_id` int(10) unsigned NOT NULL,
 	`eye_id` tinyint(4) NOT NULL,
-	`email_text` text COLLATE utf8_bin,
+	`email_text` text,
 	`archived` tinyint(4) NOT NULL DEFAULT '0',
 	`last_modified_user_id` int(10) unsigned NOT NULL,
 	`last_modified_date` datetime NOT NULL,
@@ -475,7 +475,7 @@ CREATE TABLE `ophcotherapya_email_version` (
 	CONSTRAINT `acv_ophcotherapya_email_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 	CONSTRAINT `acv_ophcotherapya_email_ibfk_2` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_email_ibfk_3` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_email_version','id','int(10) unsigned NOT NULL');
@@ -508,7 +508,7 @@ CREATE TABLE `ophcotherapya_email_attachment_version` (
 	CONSTRAINT `acv_et_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`email_id`) REFERENCES `ophcotherapya_email` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_email_att_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_email_attachment_version','id','int(10) unsigned NOT NULL');
@@ -526,7 +526,7 @@ CREATE TABLE `ophcotherapya_email_attachment_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_exceptional_deviationreason_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`enabled` tinyint(1) NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -538,7 +538,7 @@ CREATE TABLE `ophcotherapya_exceptional_deviationreason_version` (
 	KEY `acv_ophcotherapya_exceptional_deviationreason_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_deviationreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_deviationreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_deviationreason_version','id','int(10) unsigned NOT NULL');
@@ -572,7 +572,7 @@ CREATE TABLE `ophcotherapya_exceptional_deviationreason_ass_version` (
 	CONSTRAINT `acv_et_ophcotherapya_except_devrass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_except_devrass_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_except_devrass_ci_fk` FOREIGN KEY (`deviationreason_id`) REFERENCES `ophcotherapya_exceptional_deviationreason` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_deviationreason_ass_version','id','int(10) unsigned NOT NULL');
@@ -606,7 +606,7 @@ CREATE TABLE `ophcotherapya_exceptional_filecoll_assignment_version` (
 	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_filecoll_assignment_version','id','int(10) unsigned NOT NULL');
@@ -633,14 +633,14 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_version` (
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
-	`stopreason_other` text COLLATE utf8_bin,
-	`comments` text COLLATE utf8_bin,
-	`start_va` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-	`end_va` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+	`stopreason_other` text,
+	`comments` text,
+	`start_va` varchar(255) DEFAULT NULL,
+	`end_va` varchar(255) DEFAULT NULL,
 	`end_date` datetime NOT NULL,
 	`is_relevant` tinyint(1) NOT NULL DEFAULT '0',
 	`relevanttreatment_id` int(10) unsigned DEFAULT NULL,
-	`relevanttreatment_other` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+	`relevanttreatment_other` varchar(255) DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `acv_ophcotherapya_exceptional_previntervention_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophcotherapya_exceptional_previntervention_cui_fk` (`created_user_id`),
@@ -654,7 +654,7 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_version` (
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_sri_fk` FOREIGN KEY (`stopreason_id`) REFERENCES `ophcotherapya_exceptional_pastintervention_stopreason` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_ti_fk` FOREIGN KEY (`treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
 	CONSTRAINT `acv_ophcotherapya_pastintervention_rtui_fk` FOREIGN KEY (`relevanttreatment_id`) REFERENCES `ophcotherapya_relevanttreatment` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_pastintervention_version','id','int(10) unsigned NOT NULL');
@@ -672,7 +672,7 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_exceptional_pastintervention_stopreason_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -684,7 +684,7 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_stopreason_version` (
 	KEY `acv_ophcotherapya_exceptional_previntervention_stopreason_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_stopreason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_otherapya_exceptional_previntervention_stopreason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_pastintervention_stopreason_version','id','int(10) unsigned NOT NULL');
@@ -702,7 +702,7 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_stopreason_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_exceptional_standardintervention_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`enabled` tinyint(1) NOT NULL DEFAULT '1',
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -714,7 +714,7 @@ CREATE TABLE `ophcotherapya_exceptional_standardintervention_version` (
 	KEY `acv_ophcotherapya_exceptional_standardintervention_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_standardintervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_standardintervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_standardintervention_version','id','int(10) unsigned NOT NULL');
@@ -732,7 +732,7 @@ CREATE TABLE `ophcotherapya_exceptional_standardintervention_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_exceptional_startperiod_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`urgent` tinyint(1) DEFAULT '0',
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`enabled` tinyint(1) NOT NULL DEFAULT '1',
@@ -740,13 +740,13 @@ CREATE TABLE `ophcotherapya_exceptional_startperiod_version` (
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
-	`application_description` varchar(511) COLLATE utf8_bin DEFAULT NULL,
+	`application_description` varchar(511) DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `acv_ophcotherapya_exceptional_startperiod_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophcotherapya_exceptional_startperiod_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_startperiod_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_startperiod_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_exceptional_startperiod_version','id','int(10) unsigned NOT NULL');
@@ -764,13 +764,13 @@ CREATE TABLE `ophcotherapya_exceptional_startperiod_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_filecoll_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(256) COLLATE utf8_bin NOT NULL,
+	`name` varchar(256) NOT NULL,
 	`zipfile_id` int(10) unsigned DEFAULT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
-	`summary` text COLLATE utf8_bin,
+	`summary` text,
 	PRIMARY KEY (`id`),
 	KEY `acv_et_ophcotherapya_filecoll_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_et_ophcotherapya_filecoll_cui_fk` (`created_user_id`),
@@ -778,7 +778,7 @@ CREATE TABLE `ophcotherapya_filecoll_version` (
 	CONSTRAINT `acv_et_ophcotherapya_filecoll_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_filecoll_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_filecoll_zi_fk` FOREIGN KEY (`zipfile_id`) REFERENCES `protected_file` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_filecoll_version','id','int(10) unsigned NOT NULL');
@@ -811,7 +811,7 @@ CREATE TABLE `ophcotherapya_filecoll_assignment_version` (
 	CONSTRAINT `acv_et_ophcotherapya_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_filecollass_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_filecoll_assignment_version','id','int(10) unsigned NOT NULL');
@@ -832,7 +832,7 @@ CREATE TABLE `ophcotherapya_patientsuit_decisiontreenoderesponse_version` (
 	`patientsuit_id` int(10) unsigned NOT NULL,
 	`eye_id` int(10) unsigned NOT NULL,
 	`node_id` int(10) unsigned NOT NULL,
-	`value` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+	`value` varchar(255) DEFAULT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -846,7 +846,7 @@ CREATE TABLE `ophcotherapya_patientsuit_decisiontreenoderesponse_version` (
 	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`),
 	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_psi_fk` FOREIGN KEY (`patientsuit_id`) REFERENCES `et_ophcotherapya_patientsuit` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_patientsuit_decisiontreenoderesponse_version','id','int(10) unsigned NOT NULL');
@@ -864,7 +864,7 @@ CREATE TABLE `ophcotherapya_patientsuit_decisiontreenoderesponse_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_relevanttreatment_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`other` tinyint(1) NOT NULL DEFAULT '0',
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -876,7 +876,7 @@ CREATE TABLE `ophcotherapya_relevanttreatment_version` (
 	KEY `acv_ophcotherapya_relevanttreatment_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophcotherapya_relevanttreatment_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_relevanttreatment_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_relevanttreatment_version','id','int(10) unsigned NOT NULL');
@@ -910,7 +910,7 @@ CREATE TABLE `ophcotherapya_therapydisorder_version` (
 	CONSTRAINT `acv_ophcotherapya_therapydisorder_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_therapydisorder_di_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`),
 	CONSTRAINT `acv_ophcotherapya_therapydisorder_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_therapydisorder` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_therapydisorder_version','id','int(10) unsigned NOT NULL');
@@ -931,16 +931,16 @@ CREATE TABLE `ophcotherapya_treatment_version` (
 	`drug_id` int(10) unsigned NOT NULL,
 	`decisiontree_id` int(10) unsigned DEFAULT NULL,
 	`contraindications_required` tinyint(1) NOT NULL,
-	`template_code` varchar(8) COLLATE utf8_bin DEFAULT NULL,
-	`intervention_name` varchar(128) COLLATE utf8_bin NOT NULL,
-	`dose_and_frequency` varchar(256) COLLATE utf8_bin NOT NULL,
-	`administration_route` varchar(256) COLLATE utf8_bin NOT NULL,
+	`template_code` varchar(8) DEFAULT NULL,
+	`intervention_name` varchar(128) NOT NULL,
+	`dose_and_frequency` varchar(256) NOT NULL,
+	`administration_route` varchar(256) NOT NULL,
 	`cost` int(10) unsigned NOT NULL,
 	`cost_type_id` int(10) unsigned NOT NULL,
 	`monitoring_frequency` int(10) unsigned NOT NULL,
 	`monitoring_frequency_period_id` int(10) unsigned NOT NULL,
-	`duration` varchar(512) COLLATE utf8_bin NOT NULL,
-	`toxicity` text COLLATE utf8_bin NOT NULL,
+	`duration` varchar(512) NOT NULL,
+	`toxicity` text NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -958,7 +958,7 @@ CREATE TABLE `ophcotherapya_treatment_version` (
 	CONSTRAINT `acv_ophcotherapya_treatment_dri_fk` FOREIGN KEY (`drug_id`) REFERENCES `ophtrintravitinjection_treatment_drug` (`id`),
 	CONSTRAINT `acv_ophcotherapya_treatment_ct_fk` FOREIGN KEY (`cost_type_id`) REFERENCES `ophcotherapya_treatment_cost_type` (`id`),
 	CONSTRAINT `acv_ophcotherapya_treatment_mfp_fk` FOREIGN KEY (`monitoring_frequency_period_id`) REFERENCES `period` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_treatment_version','id','int(10) unsigned NOT NULL');
@@ -976,7 +976,7 @@ CREATE TABLE `ophcotherapya_treatment_version` (
 		$this->execute("
 CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -986,7 +986,7 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 	KEY `acv_et_ophcotherapya_treatment_cost_type_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_et_ophcotherapya_treatment_cost_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_treatment_cost_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophcotherapya_treatment_cost_type_version','id','int(10) unsigned NOT NULL');
