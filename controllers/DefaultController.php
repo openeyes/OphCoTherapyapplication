@@ -29,13 +29,8 @@ class DefaultController extends BaseEventTypeController
 	// TODO: check this is in line with Jamie's change circa 3rd April 2013
 	protected function beforeAction($action)
 	{
-		if (!Yii::app()->getRequest()->getIsAjaxRequest() && !$this->isPrintAction($action->id)) {
-			Yii::app()->getClientScript()->registerScriptFile(Yii::app()->createUrl('js/spliteventtype.js'));
-		}
-
-		$res = parent::beforeAction($action);
-
-		return $res;
+		Yii::app()->assetManager->registerScriptFile('js/spliteventtype.js', null, null, AssetManager::OUTPUT_SCREEN);
+		return parent::beforeAction($action);
 	}
 
 	/**
