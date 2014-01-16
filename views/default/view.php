@@ -46,6 +46,12 @@ $this->beginContent('//patient/event_container');
 
 	<?php $this->renderPartial('//base/_messages'); ?>
 
+	<?php if ($this->event->delete_pending) {?>
+		<div class="alert-box alert with-icon">
+			This event is pending deletion and has been locked.
+		</div>
+	<?php }?>
+
 	<?php
 		if (count($warnings)) {
 			echo "<div class=\"alert-box alert with-icon validation-errors top\"><p>Application cannot be submitted for the following reasons:</p><ul>";
