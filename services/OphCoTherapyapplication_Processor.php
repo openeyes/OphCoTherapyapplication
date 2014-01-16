@@ -226,10 +226,7 @@ class OphCoTherapyapplication_Processor
 	 */
 	public function isEventSubmitted()
 	{
-		if ($this->getApplicationStatus() == self::STATUS_SENT) {
-			return true;
-		}
-		return null;
+		return ($this->getApplicationStatus() == self::STATUS_SENT);
 	}
 
 	/**

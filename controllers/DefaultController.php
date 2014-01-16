@@ -88,7 +88,7 @@ class DefaultController extends BaseEventTypeController
 
 		if ($can_print && $this->event) {
 			$service = new OphCoTherapyapplication_Processor($this->event);
-			if ($service->isEventSubmitted() !== null) {
+			if ($service->isEventSubmitted()) {
 				$can_print = true;
 			}
 			elseif ($service->getProcessWarnings()) {
