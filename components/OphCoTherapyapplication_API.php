@@ -242,15 +242,4 @@ class OphCoTherapyapplication_API extends BaseAPI
 			return $res;
 		}
 	}
-
-	public function canUpdate($event_id)
-	{
-		if (!$event = Event::model()->findByPk($event_id)) {
-			throw new Exception("Event not found: $event_id");
-		}
-
-		$service = new OphCoTherapyapplication_Processor($event);
-
-		return !$service->isEventSubmitted();
-	}
 }
