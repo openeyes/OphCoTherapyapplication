@@ -24,7 +24,7 @@ $service = new OphCoTherapyapplication_Processor($this->event);
 $status = $service->getApplicationStatus();
 $warnings = $service->getProcessWarnings();
 
-if (!$warnings && ($status != $service::STATUS_SENT)) {
+if (!$warnings && !$this->event->isLocked() && ($status != $service::STATUS_SENT)) {
 	if ($service->isEventNonCompliant()) {
 		$submit_button_text = 'Submit Application';
 		$this->event_actions[] = EventAction::link('Preview Application', Yii::app()->createUrl($this->event->eventType->class_name.'/default/previewApplication/?event_id='.$this->event->id),null, array('id' => 'application-preview', 'class' => 'button small'));
