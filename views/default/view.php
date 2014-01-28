@@ -24,7 +24,7 @@ $service = new OphCoTherapyapplication_Processor($this->event);
 $status = $service->getApplicationStatus();
 $warnings = $service->getProcessWarnings();
 
-if (!$warnings) {
+if (!$warnings && !$this->event->isLocked()) {
 	if ($status != $service::STATUS_SENT) {
 		if ($service->isEventNonCompliant()) {
 			$preview_button = EventAction::link(
@@ -63,6 +63,12 @@ $this->beginContent('//patient/event_container');
 	<h2 class="event-title"><?= "{$this->event_type->name} ($status)" ?></h2>
 
 	<?php $this->renderPartial('//base/_messages'); ?>
+
+	<?php if ($this->event->delete_pending) {?>
+		<div class="alert-box alert with-icon">
+			This event is pending deletion and has been locked.
+		</div>
+	<?php }?>
 
 	<?php
 		if (count($warnings)) {
