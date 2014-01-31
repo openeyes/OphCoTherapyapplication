@@ -373,4 +373,14 @@ class DefaultController extends BaseEventTypeController
 			}
 		}
 	}
+
+	public function actionView($id)
+	{
+		$service = new OphCoTherapyapplication_Processor($this->event);
+		$status = $service->getApplicationStatus();
+
+		$this->title = $this->event_type->name.' ('.$status.')';
+
+		return parent::actionView($id);
+	}
 }

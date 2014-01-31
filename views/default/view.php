@@ -60,8 +60,6 @@ if (!$warnings && !$this->event->isLocked()) {
 $this->beginContent('//patient/event_container');
 ?>
 
-	<h2 class="event-title"><?= "{$this->event_type->name} ($status)" ?></h2>
-
 	<?php $this->renderPartial('//base/_messages'); ?>
 
 	<?php if ($this->event->delete_pending) {?>
