@@ -28,7 +28,7 @@
  *
  **/
 
-class OphCoTherapyapplication_RelevantTreatment extends BaseActiveRecordVersioned
+class OphCoTherapyapplication_RelevantTreatment extends BaseActiveRecordVersionedSoftDelete
 {
 	/**
 	 * Returns the static model of the specified AR class.
