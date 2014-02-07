@@ -1,6 +1,10 @@
 Release History
 ===============
 
+1.5.1
+-----
++ Support event locking and delete reason/request
+
 1.5.0
 -----
 + Consolidated migrations
