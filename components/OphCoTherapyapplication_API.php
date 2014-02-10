@@ -19,6 +19,17 @@
 
 class OphCoTherapyapplication_API extends BaseAPI
 {
+
+	/**
+	 * Therapy applications have no locking at the moment
+	 * @param integer $event_id
+	 * @return boolean
+	 */
+	public function canUpdate($event_id)
+	{
+		return true;
+	}
+
 	/**
 	 * Gets the last drug that was applied for for the given patient, episode and side
 	 *
