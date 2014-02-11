@@ -308,9 +308,9 @@ class DefaultController extends BaseEventTypeController
 	/**
 	 * After an update, mark any existing emails as archived
 	 */
-	protected function afterUpdateElements()
+	protected function afterUpdateElements($event)
 	{
-		OphCoTherapyapplication_Email::model()->forEvent($this->event)->archiveAll();
+		OphCoTherapyapplication_Email::model()->forEvent($event)->archiveAll();
 	}
 
 	/**
