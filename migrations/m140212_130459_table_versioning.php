@@ -1,6 +1,6 @@
 <?php
 
-class m131204_163326_table_versioning extends CDbMigration
+class m140212_130459_table_versioning extends CDbMigration
 {
 	public function up()
 	{
@@ -54,11 +54,11 @@ CREATE TABLE `et_ophcotherapya_exceptional_version` (
 	KEY `acv_et_ophcotherapya_exceptional_rspid_fk` (`right_start_period_id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_exceptional_linterventions_fk` FOREIGN KEY (`left_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`),
+	CONSTRAINT `acv_et_ophcotherapya_exceptional_linterventions_fk` FOREIGN KEY (`left_intervention_id`) REFERENCES `ophcotherapya_exceptional_intervention` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_lsi_fk` FOREIGN KEY (`left_standard_intervention_id`) REFERENCES `ophcotherapya_exceptional_standardintervention` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_lspid_fk` FOREIGN KEY (`left_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_exceptional_rinterventions_fk` FOREIGN KEY (`right_intervention_id`) REFERENCES `et_ophcotherapya_exceptional_intervention` (`id`),
+	CONSTRAINT `acv_et_ophcotherapya_exceptional_rinterventions_fk` FOREIGN KEY (`right_intervention_id`) REFERENCES `ophcotherapya_exceptional_intervention` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_rsi_fk` FOREIGN KEY (`right_standard_intervention_id`) REFERENCES `ophcotherapya_exceptional_standardintervention` (`id`),
 	CONSTRAINT `acv_et_ophcotherapya_exceptional_rspid_fk` FOREIGN KEY (`right_start_period_id`) REFERENCES `ophcotherapya_exceptional_startperiod` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -68,7 +68,6 @@ CREATE TABLE `et_ophcotherapya_exceptional_version` (
 		$this->dropPrimaryKey('id','et_ophcotherapya_exceptional_version');
 
 		$this->createIndex('et_ophcotherapya_exceptional_aid_fk','et_ophcotherapya_exceptional_version','id');
-		$this->addForeignKey('et_ophcotherapya_exceptional_aid_fk','et_ophcotherapya_exceptional_version','id','et_ophcotherapya_exceptional','id');
 
 		$this->addColumn('et_ophcotherapya_exceptional_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -77,7 +76,7 @@ CREATE TABLE `et_ophcotherapya_exceptional_version` (
 		$this->alterColumn('et_ophcotherapya_exceptional_version','version_id','int(10) unsigned NOT NULL AUTO_INCREMENT');
 
 		$this->execute("
-CREATE TABLE `et_ophcotherapya_exceptional_intervention_version` (
+CREATE TABLE `ophcotherapya_exceptional_intervention_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(128) NOT NULL,
 	`description_label` varchar(128) NOT NULL,
@@ -88,24 +87,24 @@ CREATE TABLE `et_ophcotherapya_exceptional_intervention_version` (
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_exceptional_intervention_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_exceptional_intervention_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_et_ophcotherapya_exceptional_intervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
+	KEY `acv_ophcotherapya_exceptional_intervention_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_exceptional_intervention_cui_fk` (`created_user_id`),
+	CONSTRAINT `acv_ophcotherapya_exceptional_intervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_exceptional_intervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
-		$this->alterColumn('et_ophcotherapya_exceptional_intervention_version','id','int(10) unsigned NOT NULL');
-		$this->dropPrimaryKey('id','et_ophcotherapya_exceptional_intervention_version');
+		$this->alterColumn('ophcotherapya_exceptional_intervention_version','id','int(10) unsigned NOT NULL');
+		$this->dropPrimaryKey('id','ophcotherapya_exceptional_intervention_version');
 
-		$this->createIndex('et_ophcotherapya_exceptional_intervention_aid_fk','et_ophcotherapya_exceptional_intervention_version','id');
-		$this->addForeignKey('et_ophcotherapya_exceptional_intervention_aid_fk','et_ophcotherapya_exceptional_intervention_version','id','et_ophcotherapya_exceptional_intervention','id');
+		$this->createIndex('ophcotherapya_exceptional_intervention_aid_fk','ophcotherapya_exceptional_intervention_version','id');
+		$this->addForeignKey('ophcotherapya_exceptional_intervention_aid_fk','ophcotherapya_exceptional_intervention_version','id','ophcotherapya_exceptional_intervention','id');
 
-		$this->addColumn('et_ophcotherapya_exceptional_intervention_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
+		$this->addColumn('ophcotherapya_exceptional_intervention_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
-		$this->addColumn('et_ophcotherapya_exceptional_intervention_version','version_id','int(10) unsigned NOT NULL');
-		$this->addPrimaryKey('version_id','et_ophcotherapya_exceptional_intervention_version','version_id');
-		$this->alterColumn('et_ophcotherapya_exceptional_intervention_version','version_id','int(10) unsigned NOT NULL AUTO_INCREMENT');
+		$this->addColumn('ophcotherapya_exceptional_intervention_version','version_id','int(10) unsigned NOT NULL');
+		$this->addPrimaryKey('version_id','ophcotherapya_exceptional_intervention_version','version_id');
+		$this->alterColumn('ophcotherapya_exceptional_intervention_version','version_id','int(10) unsigned NOT NULL AUTO_INCREMENT');
 
 		$this->execute("
 CREATE TABLE `et_ophcotherapya_mrservicein_version` (
@@ -135,7 +134,6 @@ CREATE TABLE `et_ophcotherapya_mrservicein_version` (
 		$this->dropPrimaryKey('id','et_ophcotherapya_mrservicein_version');
 
 		$this->createIndex('et_ophcotherapya_mrservicein_aid_fk','et_ophcotherapya_mrservicein_version','id');
-		$this->addForeignKey('et_ophcotherapya_mrservicein_aid_fk','et_ophcotherapya_mrservicein_version','id','et_ophcotherapya_mrservicein','id');
 
 		$this->addColumn('et_ophcotherapya_mrservicein_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -211,7 +209,6 @@ CREATE TABLE `et_ophcotherapya_relativecon_version` (
 		$this->dropPrimaryKey('id','et_ophcotherapya_relativecon_version');
 
 		$this->createIndex('et_ophcotherapya_relativecon_aid_fk','et_ophcotherapya_relativecon_version','id');
-		$this->addForeignKey('et_ophcotherapya_relativecon_aid_fk','et_ophcotherapya_relativecon_version','id','et_ophcotherapya_relativecon','id');
 
 		$this->addColumn('et_ophcotherapya_relativecon_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -256,7 +253,6 @@ CREATE TABLE `et_ophcotherapya_therapydiag_version` (
 		$this->dropPrimaryKey('id','et_ophcotherapya_therapydiag_version');
 
 		$this->createIndex('et_ophcotherapya_therapydiag_aid_fk','et_ophcotherapya_therapydiag_version','id');
-		$this->addForeignKey('et_ophcotherapya_therapydiag_aid_fk','et_ophcotherapya_therapydiag_version','id','et_ophcotherapya_therapydiag','id');
 
 		$this->addColumn('et_ophcotherapya_therapydiag_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -275,8 +271,8 @@ CREATE TABLE `ophcotherapya_decisiontree_version` (
 	PRIMARY KEY (`id`),
 	KEY `acv_ophcotherapya_decisiontree_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophcotherapya_decisiontree_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_et_ophcotherapya_decisiontree_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_decisiontree_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
+	CONSTRAINT `acv_ophcotherapya_decisiontree_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_decisiontree_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -326,7 +322,6 @@ CREATE TABLE `ophcotherapya_decisiontreenode_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_decisiontreenode_version');
 
 		$this->createIndex('ophcotherapya_decisiontreenode_aid_fk','ophcotherapya_decisiontreenode_version','id');
-		$this->addForeignKey('ophcotherapya_decisiontreenode_aid_fk','ophcotherapya_decisiontreenode_version','id','ophcotherapya_decisiontreenode','id');
 
 		$this->addColumn('ophcotherapya_decisiontreenode_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -346,8 +341,8 @@ CREATE TABLE `ophcotherapya_decisiontreenode_responsetype_version` (
 	PRIMARY KEY (`id`),
 	KEY `acv_ophcotherapya_decisiontreenode_rtype_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophcotherapya_decisiontreenode_rtype_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_et_ophcotherapya_decisiontreenode_rtype_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_decisiontreenode_rtype_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
+	CONSTRAINT `acv_ophcotherapya_decisiontreenode_rtype_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_decisiontreenode_rtype_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -387,7 +382,6 @@ CREATE TABLE `ophcotherapya_decisiontreenodechoice_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_decisiontreenodechoice_version');
 
 		$this->createIndex('ophcotherapya_decisiontreenodechoice_aid_fk','ophcotherapya_decisiontreenodechoice_version','id');
-		$this->addForeignKey('ophcotherapya_decisiontreenodechoice_aid_fk','ophcotherapya_decisiontreenodechoice_version','id','ophcotherapya_decisiontreenodechoice','id');
 
 		$this->addColumn('ophcotherapya_decisiontreenodechoice_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -419,7 +413,6 @@ CREATE TABLE `ophcotherapya_decisiontreenoderule_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_decisiontreenoderule_version');
 
 		$this->createIndex('ophcotherapya_decisiontreenoderule_aid_fk','ophcotherapya_decisiontreenoderule_version','id');
-		$this->addForeignKey('ophcotherapya_decisiontreenoderule_aid_fk','ophcotherapya_decisiontreenoderule_version','id','ophcotherapya_decisiontreenoderule','id');
 
 		$this->addColumn('ophcotherapya_decisiontreenoderule_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -439,8 +432,8 @@ CREATE TABLE `ophcotherapya_decisiontreeoutcome_version` (
 	PRIMARY KEY (`id`),
 	KEY `acv_ophcotherapya_decisiontreeoutcome_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophcotherapya_decisiontreeoutcome_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_et_ophcotherapya_decisiontreeoutcome_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_decisiontreeoutcome_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
+	CONSTRAINT `acv_ophcotherapya_decisiontreeoutcome_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_decisiontreeoutcome_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -482,7 +475,6 @@ CREATE TABLE `ophcotherapya_email_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_email_version');
 
 		$this->createIndex('ophcotherapya_email_aid_fk','ophcotherapya_email_version','id');
-		$this->addForeignKey('ophcotherapya_email_aid_fk','ophcotherapya_email_version','id','ophcotherapya_email','id');
 
 		$this->addColumn('ophcotherapya_email_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -500,14 +492,14 @@ CREATE TABLE `ophcotherapya_email_attachment_version` (
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_email_att_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_email_att_cui_fk` (`created_user_id`),
-	KEY `acv_et_ophcotherapya_email_att_fi_fk` (`file_id`),
-	KEY `acv_et_ophcotherapya_email_att_ei_fk` (`email_id`),
-	CONSTRAINT `acv_et_ophcotherapya_email_att_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`email_id`) REFERENCES `ophcotherapya_email` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_email_att_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
+	KEY `acv_ophcotherapya_email_att_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_email_att_cui_fk` (`created_user_id`),
+	KEY `acv_ophcotherapya_email_att_fi_fk` (`file_id`),
+	KEY `acv_ophcotherapya_email_att_ei_fk` (`email_id`),
+	CONSTRAINT `acv_ophcotherapya_email_att_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`email_id`) REFERENCES `ophcotherapya_email` (`id`),
+	CONSTRAINT `acv_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`),
+	CONSTRAINT `acv_ophcotherapya_email_att_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -515,7 +507,6 @@ CREATE TABLE `ophcotherapya_email_attachment_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_email_attachment_version');
 
 		$this->createIndex('ophcotherapya_email_attachment_aid_fk','ophcotherapya_email_attachment_version','id');
-		$this->addForeignKey('ophcotherapya_email_attachment_aid_fk','ophcotherapya_email_attachment_version','id','ophcotherapya_email_attachment','id');
 
 		$this->addColumn('ophcotherapya_email_attachment_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -564,14 +555,14 @@ CREATE TABLE `ophcotherapya_exceptional_deviationreason_ass_version` (
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_except_devrass_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_except_devrass_cui_fk` (`created_user_id`),
-	KEY `acv_et_ophcotherapya_except_devrass_ei_fk` (`element_id`),
-	KEY `acv_et_ophcotherapya_except_devrass_ci_fk` (`deviationreason_id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_devrass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_devrass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_devrass_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_devrass_ci_fk` FOREIGN KEY (`deviationreason_id`) REFERENCES `ophcotherapya_exceptional_deviationreason` (`id`)
+	KEY `acv_ophcotherapya_except_devrass_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_except_devrass_cui_fk` (`created_user_id`),
+	KEY `acv_ophcotherapya_except_devrass_ei_fk` (`element_id`),
+	KEY `acv_ophcotherapya_except_devrass_ci_fk` (`deviationreason_id`),
+	CONSTRAINT `acv_ophcotherapya_except_devrass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_except_devrass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_except_devrass_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
+	CONSTRAINT `acv_ophcotherapya_except_devrass_ci_fk` FOREIGN KEY (`deviationreason_id`) REFERENCES `ophcotherapya_exceptional_deviationreason` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -579,7 +570,6 @@ CREATE TABLE `ophcotherapya_exceptional_deviationreason_ass_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_exceptional_deviationreason_ass_version');
 
 		$this->createIndex('ophcotherapya_exceptional_deviationreason_ass_aid_fk','ophcotherapya_exceptional_deviationreason_ass_version','id');
-		$this->addForeignKey('ophcotherapya_exceptional_deviationreason_ass_aid_fk','ophcotherapya_exceptional_deviationreason_ass_version','id','ophcotherapya_exceptional_deviationreason_ass','id');
 
 		$this->addColumn('ophcotherapya_exceptional_deviationreason_ass_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -598,14 +588,14 @@ CREATE TABLE `ophcotherapya_exceptional_filecoll_assignment_version` (
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_except_filecollass_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_except_filecollass_cui_fk` (`created_user_id`),
-	KEY `acv_et_ophcotherapya_except_filecollass_ei_fk` (`exceptional_id`),
-	KEY `acv_et_ophcotherapya_except_filecollass_ci_fk` (`collection_id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)
+	KEY `acv_ophcotherapya_except_filecollass_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_except_filecollass_cui_fk` (`created_user_id`),
+	KEY `acv_ophcotherapya_except_filecollass_ei_fk` (`exceptional_id`),
+	KEY `acv_ophcotherapya_except_filecollass_ci_fk` (`collection_id`),
+	CONSTRAINT `acv_ophcotherapya_except_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_except_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
+	CONSTRAINT `acv_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -613,7 +603,6 @@ CREATE TABLE `ophcotherapya_exceptional_filecoll_assignment_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_exceptional_filecoll_assignment_version');
 
 		$this->createIndex('ophcotherapya_exceptional_filecoll_assignment_aid_fk','ophcotherapya_exceptional_filecoll_assignment_version','id');
-		$this->addForeignKey('ophcotherapya_exceptional_filecoll_assignment_aid_fk','ophcotherapya_exceptional_filecoll_assignment_version','id','ophcotherapya_exceptional_filecoll_assignment','id');
 
 		$this->addColumn('ophcotherapya_exceptional_filecoll_assignment_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -661,7 +650,6 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_exceptional_pastintervention_version');
 
 		$this->createIndex('ophcotherapya_exceptional_pastintervention_aid_fk','ophcotherapya_exceptional_pastintervention_version','id');
-		$this->addForeignKey('ophcotherapya_exceptional_pastintervention_aid_fk','ophcotherapya_exceptional_pastintervention_version','id','ophcotherapya_exceptional_pastintervention','id');
 
 		$this->addColumn('ophcotherapya_exceptional_pastintervention_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -691,7 +679,6 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_stopreason_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_exceptional_pastintervention_stopreason_version');
 
 		$this->createIndex('ophcotherapya_exceptional_pastintervention_stopreason_aid_fk','ophcotherapya_exceptional_pastintervention_stopreason_version','id');
-		$this->addForeignKey('ophcotherapya_exceptional_pastintervention_stopreason_aid_fk','ophcotherapya_exceptional_pastintervention_stopreason_version','id','ophcotherapya_exceptional_pastintervention_stopreason','id');
 
 		$this->addColumn('ophcotherapya_exceptional_pastintervention_stopreason_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -772,12 +759,12 @@ CREATE TABLE `ophcotherapya_filecoll_version` (
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`summary` text,
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_filecoll_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_filecoll_cui_fk` (`created_user_id`),
-	KEY `acv_et_ophcotherapya_filecoll_zi_fk` (`zipfile_id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecoll_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecoll_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecoll_zi_fk` FOREIGN KEY (`zipfile_id`) REFERENCES `protected_file` (`id`)
+	KEY `acv_ophcotherapya_filecoll_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_filecoll_cui_fk` (`created_user_id`),
+	KEY `acv_ophcotherapya_filecoll_zi_fk` (`zipfile_id`),
+	CONSTRAINT `acv_ophcotherapya_filecoll_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_filecoll_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_filecoll_zi_fk` FOREIGN KEY (`zipfile_id`) REFERENCES `protected_file` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -803,14 +790,14 @@ CREATE TABLE `ophcotherapya_filecoll_assignment_version` (
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_filecollass_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_filecollass_cui_fk` (`created_user_id`),
-	KEY `acv_et_ophcotherapya_filecollass_ci_fk` (`collection_id`),
-	KEY `acv_et_ophcotherapya_filecollass_fi_fk` (`file_id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_filecollass_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)
+	KEY `acv_ophcotherapya_filecollass_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_filecollass_cui_fk` (`created_user_id`),
+	KEY `acv_ophcotherapya_filecollass_ci_fk` (`collection_id`),
+	KEY `acv_ophcotherapya_filecollass_fi_fk` (`file_id`),
+	CONSTRAINT `acv_ophcotherapya_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`),
+	CONSTRAINT `acv_ophcotherapya_filecollass_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -818,7 +805,6 @@ CREATE TABLE `ophcotherapya_filecoll_assignment_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_filecoll_assignment_version');
 
 		$this->createIndex('ophcotherapya_filecoll_assignment_aid_fk','ophcotherapya_filecoll_assignment_version','id');
-		$this->addForeignKey('ophcotherapya_filecoll_assignment_aid_fk','ophcotherapya_filecoll_assignment_version','id','ophcotherapya_filecoll_assignment','id');
 
 		$this->addColumn('ophcotherapya_filecoll_assignment_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -853,7 +839,6 @@ CREATE TABLE `ophcotherapya_patientsuit_decisiontreenoderesponse_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_patientsuit_decisiontreenoderesponse_version');
 
 		$this->createIndex('ophcotherapya_patientsuit_decisiontreenoderesponse_aid_fk','ophcotherapya_patientsuit_decisiontreenoderesponse_version','id');
-		$this->addForeignKey('ophcotherapya_patientsuit_decisiontreenoderesponse_aid_fk','ophcotherapya_patientsuit_decisiontreenoderesponse_version','id','ophcotherapya_patientsuit_decisiontreenoderesponse','id');
 
 		$this->addColumn('ophcotherapya_patientsuit_decisiontreenoderesponse_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -917,7 +902,6 @@ CREATE TABLE `ophcotherapya_therapydisorder_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_therapydisorder_version');
 
 		$this->createIndex('ophcotherapya_therapydisorder_aid_fk','ophcotherapya_therapydisorder_version','id');
-		$this->addForeignKey('ophcotherapya_therapydisorder_aid_fk','ophcotherapya_therapydisorder_version','id','ophcotherapya_therapydisorder','id');
 
 		$this->addColumn('ophcotherapya_therapydisorder_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -965,7 +949,6 @@ CREATE TABLE `ophcotherapya_treatment_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_treatment_version');
 
 		$this->createIndex('ophcotherapya_treatment_aid_fk','ophcotherapya_treatment_version','id');
-		$this->addForeignKey('ophcotherapya_treatment_aid_fk','ophcotherapya_treatment_version','id','ophcotherapya_treatment','id');
 
 		$this->addColumn('ophcotherapya_treatment_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -982,10 +965,10 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	PRIMARY KEY (`id`),
-	KEY `acv_et_ophcotherapya_treatment_cost_type_lmui_fk` (`last_modified_user_id`),
-	KEY `acv_et_ophcotherapya_treatment_cost_type_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_et_ophcotherapya_treatment_cost_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophcotherapya_treatment_cost_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
+	KEY `acv_ophcotherapya_treatment_cost_type_lmui_fk` (`last_modified_user_id`),
+	KEY `acv_ophcotherapya_treatment_cost_type_cui_fk` (`created_user_id`),
+	CONSTRAINT `acv_ophcotherapya_treatment_cost_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+	CONSTRAINT `acv_ophcotherapya_treatment_cost_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -1001,43 +984,66 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->addPrimaryKey('version_id','ophcotherapya_treatment_cost_type_version','version_id');
 		$this->alterColumn('ophcotherapya_treatment_cost_type_version','version_id','int(10) unsigned NOT NULL AUTO_INCREMENT');
 
-		$this->addColumn('et_ophcotherapya_exceptional','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_exceptional_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_exceptional_intervention','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_exceptional_intervention_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_mrservicein','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_mrservicein_version','deleted','tinyint(1) unsigned not null');
+		$this->execute("CREATE TABLE `ophcotherapya_email_recipient_version` (
+				`id` int(10) unsigned NOT NULL,
+				`site_id` int(10) unsigned DEFAULT NULL,
+				`recipient_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`recipient_email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`type_id` int(10) unsigned DEFAULT NULL,
+				`display_order` tinyint(1) unsigned NOT NULL,
+				`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
+				`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
+				`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
+				`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
+				`version_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
+				`version_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`deleted` tinyint(1) unsigned NOT NULL,
+				PRIMARY KEY (`version_id`),
+				KEY `acv_ophcotherapya_email_recipient_lmui_fk` (`last_modified_user_id`),
+				KEY `acv_ophcotherapya_email_recipient_cui_fk` (`created_user_id`),
+				KEY `acv_ophcotherapya_email_recipient_site_id_fk` (`site_id`),
+				KEY `acv_ophcotherapya_email_recipient_type_id_fk` (`type_id`),
+				KEY `ophcotherapya_email_recipient_aid_fk` (`id`),
+				CONSTRAINT `acv_ophcotherapya_email_recipient_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+				CONSTRAINT `acv_ophcotherapya_email_recipient_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+				CONSTRAINT `acv_ophcotherapya_email_recipient_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
+				CONSTRAINT `acv_ophcotherapya_email_recipient_type_id_fk` FOREIGN KEY (`type_id`) REFERENCES `ophcotherapya_email_recipient_type` (`id`),
+				CONSTRAINT `ophcotherapya_email_recipient_aid_fk` FOREIGN KEY (`id`) REFERENCES `ophcotherapya_email_recipient` (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+		$this->execute("CREATE TABLE `ophcotherapya_email_recipient_type_version` (
+				`id` int(10) unsigned NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`display_order` tinyint(1) unsigned NOT NULL,
+				`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
+				`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
+				`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
+				`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
+				`version_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
+				`version_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`deleted` tinyint(1) unsigned NOT NULL,
+				PRIMARY KEY (`version_id`),
+				KEY `acv_ophcotherapya_email_recipient_type_lmui_fk` (`last_modified_user_id`),
+				KEY `acv_ophcotherapya_email_recipient_type_cui_fk` (`created_user_id`),
+				KEY `ophcotherapya_email_recipient_type_aid_fk` (`id`),
+				CONSTRAINT `acv_ophcotherapya_email_recipient_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
+				CONSTRAINT `acv_ophcotherapya_email_recipient_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
+				CONSTRAINT `ophcotherapya_email_recipient_type_aid_fk` FOREIGN KEY (`id`) REFERENCES `ophcotherapya_email_recipient_type` (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+		$this->addColumn('ophcotherapya_exceptional_intervention','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('ophcotherapya_exceptional_intervention_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_patientsuit','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('et_ophcotherapya_patientsuit_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_relativecon','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_relativecon_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_therapydiag','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_therapydiag_version','deleted','tinyint(1) unsigned not null');
 
 		$this->addColumn('ophcotherapya_decisiontree','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontree_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_decisiontreenode','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_decisiontreenode_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontreenode_responsetype','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontreenode_responsetype_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_decisiontreenodechoice','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_decisiontreenodechoice_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_decisiontreenoderule','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_decisiontreenoderule_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontreeoutcome','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontreeoutcome_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_email','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_email_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_email_attachment','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_email_attachment_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_deviationreason','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_deviationreason_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_exceptional_deviationreason_ass','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_exceptional_deviationreason_ass_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_exceptional_filecoll_assignment','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_exceptional_filecoll_assignment_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_exceptional_pastintervention','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_exceptional_pastintervention_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_pastintervention_stopreason','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_pastintervention_stopreason_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_standardintervention','deleted','tinyint(1) unsigned not null');
@@ -1046,16 +1052,8 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->addColumn('ophcotherapya_exceptional_startperiod_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_filecoll','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_filecoll_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_filecoll_assignment','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_filecoll_assignment_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_patientsuit_decisiontreenoderesponse','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_patientsuit_decisiontreenoderesponse_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_relevanttreatment','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_relevanttreatment_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_therapydisorder','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_therapydisorder_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_treatment','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophcotherapya_treatment_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_treatment_cost_type','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_treatment_cost_type_version','deleted','tinyint(1) unsigned not null');
 	}
@@ -1063,37 +1061,23 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 	public function down()
 	{
 		$this->dropColumn('ophcotherapya_decisiontree','deleted');
-		$this->dropColumn('ophcotherapya_decisiontreenode','deleted');
 		$this->dropColumn('ophcotherapya_decisiontreenode_responsetype','deleted');
-		$this->dropColumn('ophcotherapya_decisiontreenodechoice','deleted');
-		$this->dropColumn('ophcotherapya_decisiontreenoderule','deleted');
 		$this->dropColumn('ophcotherapya_decisiontreeoutcome','deleted');
-		$this->dropColumn('ophcotherapya_email','deleted');
-		$this->dropColumn('ophcotherapya_email_attachment','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_deviationreason','deleted');
-		$this->dropColumn('ophcotherapya_exceptional_deviationreason_ass','deleted');
-		$this->dropColumn('ophcotherapya_exceptional_filecoll_assignment','deleted');
-		$this->dropColumn('ophcotherapya_exceptional_pastintervention','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_pastintervention_stopreason','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_standardintervention','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_startperiod','deleted');
 		$this->dropColumn('ophcotherapya_filecoll','deleted');
-		$this->dropColumn('ophcotherapya_filecoll_assignment','deleted');
-		$this->dropColumn('ophcotherapya_patientsuit_decisiontreenoderesponse','deleted');
 		$this->dropColumn('ophcotherapya_relevanttreatment','deleted');
-		$this->dropColumn('ophcotherapya_therapydisorder','deleted');
-		$this->dropColumn('ophcotherapya_treatment','deleted');
 		$this->dropColumn('ophcotherapya_treatment_cost_type','deleted');
 
-		$this->dropColumn('et_ophcotherapya_exceptional','deleted');
-		$this->dropColumn('et_ophcotherapya_exceptional_intervention','deleted');
-		$this->dropColumn('et_ophcotherapya_mrservicein','deleted');
+		$this->dropColumn('ophcotherapya_exceptional_intervention','deleted');
 		$this->dropColumn('et_ophcotherapya_patientsuit','deleted');
-		$this->dropColumn('et_ophcotherapya_relativecon','deleted');
-		$this->dropColumn('et_ophcotherapya_therapydiag','deleted');
 
+		$this->dropTable('ophcotherapya_email_recipient_type_version');
+		$this->dropTable('ophcotherapya_email_recipient_version');
 		$this->dropTable('et_ophcotherapya_exceptional_version');
-		$this->dropTable('et_ophcotherapya_exceptional_intervention_version');
+		$this->dropTable('ophcotherapya_exceptional_intervention_version');
 		$this->dropTable('et_ophcotherapya_mrservicein_version');
 		$this->dropTable('et_ophcotherapya_patientsuit_version');
 		$this->dropTable('et_ophcotherapya_relativecon_version');
