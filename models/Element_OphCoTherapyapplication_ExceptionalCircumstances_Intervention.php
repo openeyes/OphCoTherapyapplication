@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "et_ophcotherapya_exceptional_interventions".
+ * This is the model class for table "ophcotherapya_exceptional_interventions".
  *
  * The followings are the available columns in table:
  * @property string $id
@@ -49,7 +49,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention exte
 	 */
 	public function tableName()
 	{
-		return 'et_ophcotherapya_exceptional_intervention';
+		return 'ophcotherapya_exceptional_intervention';
 	}
 
 	/**

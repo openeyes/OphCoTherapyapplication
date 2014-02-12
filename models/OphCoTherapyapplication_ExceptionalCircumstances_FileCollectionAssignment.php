@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "et_ophcotherapya_exceptional_interventions".
+ * This is the model class for table "ophcotherapya_exceptional_interventions".
  *
  * The followings are the available columns in table:
  * @property string $id
