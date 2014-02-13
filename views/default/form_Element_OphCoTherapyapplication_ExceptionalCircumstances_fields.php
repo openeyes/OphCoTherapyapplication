@@ -103,7 +103,7 @@
 		}
 	?>
 	<div class="intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
-		<?php echo $form->radioButtons($element, $side . '_intervention_id', 'ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
+		<?php echo $form->radioButtons($element, $side . '_intervention_id', CHtml::listData(Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll(array('order'=>'display_order')),'id','name'), $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
 	</div>
 
 	<div class="row field-row"<?php if (!$intervention_id) { echo ' style="display: none;"'; } ?>>
