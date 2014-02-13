@@ -61,8 +61,8 @@
  * @property User $usermodified
  * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $left_standard_intervention
  * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $right_standard_intervention
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $previnterventions
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $left_previnterventions
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $right_previnterventions
@@ -168,10 +168,10 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 				'OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention',
 				'right_standard_intervention_id'),
 			'left_intervention' => array(self::BELONGS_TO,
-				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'left_intervention_id'),
 			'right_intervention' => array(self::BELONGS_TO,
-				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'right_intervention_id'),
 			'previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
 				'condition' => 'is_relevant = :relevant',
