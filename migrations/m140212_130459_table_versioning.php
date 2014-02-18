@@ -176,7 +176,6 @@ CREATE TABLE `et_ophcotherapya_patientsuit_version` (
 		$this->dropPrimaryKey('id','et_ophcotherapya_patientsuit_version');
 
 		$this->createIndex('et_ophcotherapya_patientsuit_aid_fk','et_ophcotherapya_patientsuit_version','id');
-		$this->addForeignKey('et_ophcotherapya_patientsuit_aid_fk','et_ophcotherapya_patientsuit_version','id','et_ophcotherapya_patientsuit','id');
 
 		$this->addColumn('et_ophcotherapya_patientsuit_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -1033,8 +1032,6 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 
 		$this->addColumn('ophcotherapya_exceptional_intervention','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_intervention_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_patientsuit','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophcotherapya_patientsuit_version','deleted','tinyint(1) unsigned not null');
 
 		$this->addColumn('ophcotherapya_decisiontree','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontree_version','deleted','tinyint(1) unsigned not null');
@@ -1072,7 +1069,6 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->dropColumn('ophcotherapya_treatment_cost_type','deleted');
 
 		$this->dropColumn('ophcotherapya_exceptional_intervention','deleted');
-		$this->dropColumn('et_ophcotherapya_patientsuit','deleted');
 
 		$this->dropTable('ophcotherapya_email_recipient_type_version');
 		$this->dropTable('ophcotherapya_email_recipient_version');
