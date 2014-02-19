@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /** Therapy Application module styles */
 /**
  * OpenEyes
@@ -23,7 +22,7 @@
 }
 /* line 19, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1391005465');
+  background-image: url('../img/watermark.png?1392372888');
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-title {
