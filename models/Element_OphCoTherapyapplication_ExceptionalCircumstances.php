@@ -386,7 +386,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$criteria->condition = 'enabled = true';
 		$criteria->order = 'display_order asc';
 
-		$sis = OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->findAll($criteria);
+		$in_use_intervention_ids = array();
+		foreach ($this->{$side . "_standard_intervention_id"} as $intervention) {
+			$in_use_intervention_ids[] = $intervention->id;
+		}
+
+		$sis = OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->notDeletedOrPk($in_use_intervention_ids)->findAll($criteria);
 
 		if ($curr_id = $this->{$side . "_standard_intervention_id"}) {
 			$seen = false;
@@ -433,7 +438,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$criteria->condition = 'enabled = true';
 		$criteria->order = 'display_order asc';
 
-		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->findAll($criteria);
+		$in_use_reason_ids = array();
+		foreach ($this->{$side . '_deviationreasons'} as $curr) {
+			$in_use_reason_ids[] = $curr->id;
+		}
+
+		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->activeOrPk($in_use_reason_ids)->findAll($criteria);
 
 		$all_risks = array();
 		$r_ids = array();
@@ -463,7 +473,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$criteria->condition = 'enabled = true';
 		$criteria->order = 'display_order asc';
 
-		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->findAll($criteria);
+		$in_use_start_period_ids = array();
+		foreach ($this->{$side . "_start_period_id"} as $start_period) {
+			$in_use_start_period_ids[] = $start_period->id;
+		}
+
+		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->notDeletedOrPk($in_use_start_period_ids)->findAll($criteria);
 
 		if ($curr_id = $this->{$side . "_start_period_id"}) {
 			$seen = false;
@@ -706,5 +721,19 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		foreach ($curr_by_id as $curr) {
 			$curr->delete();
 		}
+	}
+
+	/**
+	 * Get ids of the file collections in use by the element for a given side
+	 */
+	public function getFileCollectionValuesForSide($side)
+	{
+		$file_collection_values = array();
+
+		foreach ($this->{$side.'_filecollections'} as $file_collection) {
+			$file_collection_values[] = $file_collection->id;
+		}
+
+		return $file_collection_values;
 	}
 }

@@ -208,12 +208,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	 *
 	 * @return array $options key,value pair list
 	 */
-	public function getTreatmentOptions() {
+	public function getTreatmentOptions($selected_id) {
 		if ($this->is_relevant) {
-			return OphCoTherapyapplication_RelevantTreatment::model()->findAll();
+			return OphCoTherapyapplication_RelevantTreatment::model()->notDeletedOrPk($selected_id)->findAll();
 		}
 		else {
-			return OphCoTherapyapplication_Treatment::model()->findAll();
+			return OphCoTherapyapplication_Treatment::model()->notDeletedOrPk($selected_id)->findAll();
 		}
 	}
 
