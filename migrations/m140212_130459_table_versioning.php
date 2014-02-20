@@ -948,6 +948,7 @@ CREATE TABLE `ophcotherapya_treatment_version` (
 		$this->dropPrimaryKey('id','ophcotherapya_treatment_version');
 
 		$this->createIndex('ophcotherapya_treatment_aid_fk','ophcotherapya_treatment_version','id');
+		$this->addForeignKey('ophcotherapya_treatment_aid_fk','ophcotherapya_treatment_version','id','ophcotherapya_treatment','id');
 
 		$this->addColumn('ophcotherapya_treatment_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -1051,6 +1052,8 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->addColumn('ophcotherapya_filecoll_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_relevanttreatment','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_relevanttreatment_version','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('ophcotherapya_treatment','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('ophcotherapya_treatment_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_treatment_cost_type','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_treatment_cost_type_version','deleted','tinyint(1) unsigned not null');
 	}
@@ -1066,6 +1069,7 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->dropColumn('ophcotherapya_exceptional_startperiod','deleted');
 		$this->dropColumn('ophcotherapya_filecoll','deleted');
 		$this->dropColumn('ophcotherapya_relevanttreatment','deleted');
+		$this->dropColumn('ophcotherapya_treatment','deleted');
 		$this->dropColumn('ophcotherapya_treatment_cost_type','deleted');
 
 		$this->dropColumn('ophcotherapya_exceptional_intervention','deleted');

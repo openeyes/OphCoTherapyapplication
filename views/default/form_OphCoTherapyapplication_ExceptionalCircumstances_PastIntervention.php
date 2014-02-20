@@ -132,7 +132,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
 		</div>
 		<div class="large-6 column">
 			<?php
-				$all_treatments = $pastintervention->getTreatmentOptions();
+				$all_treatments = $pastintervention->getTreatmentOptions($pastintervention->{$treatmentattribute});
 				$html_options = array(
 					'class' => 'past-treatments',
 					'empty' => '- Please select -',
@@ -202,7 +202,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
 		<div class="large-6 column">
 			<?php
 
-			$reasons = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->findAll();
+			$reasons = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->notDeletedOrPk($pastintervention->stopreason_id)->findAll();
 			$html_options = array(
 					'class' => 'stop-reasons',
 					'empty' => '- Please select -',
@@ -216,9 +216,7 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
 				);
 			}
 
-			echo CHtml::activeDropDownList($pastintervention, 'stopreason_id',
-				CHtml::listData($reasons,'id','name'),
-				$html_options);
+			echo CHtml::activeDropDownList($pastintervention, 'stopreason_id', CHtml::listData($reasons,'id','name'), $html_options);
 			 ?>
 		</div>
 	</div>

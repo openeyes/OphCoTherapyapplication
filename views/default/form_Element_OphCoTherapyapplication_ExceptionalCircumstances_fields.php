@@ -98,12 +98,14 @@
 		$opts = array(
 			'options' => array()
 		);
-		foreach (OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll() as $intervention) {
+		$interventions = OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->notDeletedOrPk($element->{$side.'_intervention_id'})->findAll(array('order'=>'display_order'));
+
+		foreach ($interventions as $intervention) {
 			$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label, 'data-is-deviation' => $intervention->is_deviation);
 		}
 	?>
 	<div class="intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
-		<?php echo $form->radioButtons($element, $side . '_intervention_id', CHtml::listData(OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll(array('order'=>'display_order')),'id','name'), $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
+		<?php echo $form->radioButtons($element, $side . '_intervention_id', CHtml::listData($interventions,'id','name'), $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
 	</div>
 
 	<div class="row field-row"<?php if (!$intervention_id) { echo ' style="display: none;"'; } ?>>
@@ -279,7 +281,7 @@ $html_options = array(
 	'div_id' =>  get_class($element) . '_' . $side . '_filecollections',
 	'div_class' => 'elementField',
 	'label' => 'File Attachments');
-$collections = OphCoTherapyapplication_FileCollection::model()->findAll();
+$collections = OphCoTherapyapplication_FileCollection::model()->notDeletedOrPk($element->getFileCollectionValuesForSide($side))->findAll();
 //TODO: have sorting with display_order when implemented
 /*
 $collections = OphCoTherapyapplication_FileCollection::::model()->findAll(array('order'=>'display_order asc'));
