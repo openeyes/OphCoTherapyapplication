@@ -997,7 +997,6 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 				`created_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 				`version_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
 				`version_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-				`deleted` tinyint(1) unsigned NOT NULL,
 				PRIMARY KEY (`version_id`),
 				KEY `acv_ophcotherapya_email_recipient_lmui_fk` (`last_modified_user_id`),
 				KEY `acv_ophcotherapya_email_recipient_cui_fk` (`created_user_id`),
@@ -1008,7 +1007,6 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 				CONSTRAINT `acv_ophcotherapya_email_recipient_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 				CONSTRAINT `acv_ophcotherapya_email_recipient_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 				CONSTRAINT `acv_ophcotherapya_email_recipient_type_id_fk` FOREIGN KEY (`type_id`) REFERENCES `ophcotherapya_email_recipient_type` (`id`),
-				CONSTRAINT `ophcotherapya_email_recipient_aid_fk` FOREIGN KEY (`id`) REFERENCES `ophcotherapya_email_recipient` (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
 		$this->execute("CREATE TABLE `ophcotherapya_email_recipient_type_version` (
