@@ -1040,6 +1040,7 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->addColumn('ophcotherapya_decisiontreenode_responsetype_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontreeoutcome','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_decisiontreeoutcome_version','deleted','tinyint(1) unsigned not null');
+		$this->addColumn('ophcotherapya_email_recipient_type','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_deviationreason','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_deviationreason_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophcotherapya_exceptional_pastintervention_stopreason','deleted','tinyint(1) unsigned not null');
@@ -1063,6 +1064,7 @@ CREATE TABLE `ophcotherapya_treatment_cost_type_version` (
 		$this->dropColumn('ophcotherapya_decisiontree','deleted');
 		$this->dropColumn('ophcotherapya_decisiontreenode_responsetype','deleted');
 		$this->dropColumn('ophcotherapya_decisiontreeoutcome','deleted');
+		$this->dropColumn('ophcotherapya_email_recipient_type','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_deviationreason','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_pastintervention_stopreason','deleted');
 		$this->dropColumn('ophcotherapya_exceptional_standardintervention','deleted');
