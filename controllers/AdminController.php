@@ -115,7 +115,6 @@ class AdminController extends ModuleAdminController
 			Audit::add('admin','create',serialize($therapy_disorder),false,array(
 				'module' => 'OphCoTherapyapplication',
 				'model' => 'OphCoTherapyapplication_TherapyDisorder',
-				'cancel_uri' => '/OphCoTherapyapplication/admin/viewDiagnoses',
 			));
 		}
 
