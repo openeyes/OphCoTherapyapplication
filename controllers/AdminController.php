@@ -370,6 +370,7 @@ class AdminController extends ModuleAdminController
 
 		$this->render('update', array(
 				'model' => $model,
+				'title' => 'Node Edit'
 		));
 	}
 
