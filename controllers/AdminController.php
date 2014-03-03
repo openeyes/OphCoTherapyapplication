@@ -310,6 +310,7 @@ class AdminController extends ModuleAdminController
 		$this->render('create',array(
 				'model'=>$model,
 				'title'=>'Decision Tree',
+				'cancel_uri' => $this->createUrl('admin/viewDecisionTrees'),
 		));
 
 	}
