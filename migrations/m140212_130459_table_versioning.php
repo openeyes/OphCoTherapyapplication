@@ -311,7 +311,6 @@ CREATE TABLE `ophcotherapya_decisiontreenode_version` (
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_dti_fk` FOREIGN KEY (`decisiontree_id`) REFERENCES `ophcotherapya_decisiontree` (`id`),
-	CONSTRAINT `acv_ophcotherapya_decisiontreenode_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_oi_fk` FOREIGN KEY (`outcome_id`) REFERENCES `ophcotherapya_decisiontreeoutcome` (`id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenode_rti_fk` FOREIGN KEY (`response_type_id`) REFERENCES `ophcotherapya_decisiontreenode_responsetype` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -372,8 +371,7 @@ CREATE TABLE `ophcotherapya_decisiontreenodechoice_version` (
 	KEY `acv_ophcotherapya_decisiontreenodechoice_cui_fk` (`created_user_id`),
 	KEY `acv_ophcotherapya_decisiontreenodechoice_ni_fk` (`node_id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)
+	CONSTRAINT `acv_ophcotherapya_decisiontreenodechoice_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -403,8 +401,7 @@ CREATE TABLE `ophcotherapya_decisiontreenoderule_version` (
 	KEY `acv_ophcotherapya_decisiontreenoderule_cui_fk` (`created_user_id`),
 	KEY `acv_ophcotherapya_decisiontreenoderule_ni_fk` (`node_id`),
 	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_ni_fk` FOREIGN KEY (`node_id`) REFERENCES `ophcotherapya_decisiontreenode` (`id`)
+	CONSTRAINT `acv_ophcotherapya_decisiontreenoderule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -496,7 +493,6 @@ CREATE TABLE `ophcotherapya_email_attachment_version` (
 	KEY `acv_ophcotherapya_email_att_fi_fk` (`file_id`),
 	KEY `acv_ophcotherapya_email_att_ei_fk` (`email_id`),
 	CONSTRAINT `acv_ophcotherapya_email_att_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_email_att_ei_fk` FOREIGN KEY (`email_id`) REFERENCES `ophcotherapya_email` (`id`),
 	CONSTRAINT `acv_ophcotherapya_email_att_fi_fk` FOREIGN KEY (`file_id`) REFERENCES `protected_file` (`id`),
 	CONSTRAINT `acv_ophcotherapya_email_att_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -560,7 +556,6 @@ CREATE TABLE `ophcotherapya_exceptional_deviationreason_ass_version` (
 	KEY `acv_ophcotherapya_except_devrass_ci_fk` (`deviationreason_id`),
 	CONSTRAINT `acv_ophcotherapya_except_devrass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_except_devrass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_except_devrass_ei_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 	CONSTRAINT `acv_ophcotherapya_except_devrass_ci_fk` FOREIGN KEY (`deviationreason_id`) REFERENCES `ophcotherapya_exceptional_deviationreason` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
@@ -593,7 +588,6 @@ CREATE TABLE `ophcotherapya_exceptional_filecoll_assignment_version` (
 	KEY `acv_ophcotherapya_except_filecollass_ci_fk` (`collection_id`),
 	CONSTRAINT `acv_ophcotherapya_except_filecollass_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_except_filecollass_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_except_filecollass_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 	CONSTRAINT `acv_ophcotherapya_except_filecollass_ci_fk` FOREIGN KEY (`collection_id`) REFERENCES `ophcotherapya_filecoll` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
@@ -637,7 +631,6 @@ CREATE TABLE `ophcotherapya_exceptional_pastintervention_version` (
 	KEY `acv_ophcotherapya_exceptional_previntervention_sri_fk` (`stopreason_id`),
 	KEY `acv_ophcotherapya_pastintervention_rtui_fk` (`relevanttreatment_id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_ei_fk` FOREIGN KEY (`exceptional_id`) REFERENCES `et_ophcotherapya_exceptional` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_sri_fk` FOREIGN KEY (`stopreason_id`) REFERENCES `ophcotherapya_exceptional_pastintervention_stopreason` (`id`),
 	CONSTRAINT `acv_ophcotherapya_exceptional_previntervention_ti_fk` FOREIGN KEY (`treatment_id`) REFERENCES `ophcotherapya_treatment` (`id`),
@@ -829,8 +822,7 @@ CREATE TABLE `ophcotherapya_patientsuit_decisiontreenoderesponse_version` (
 	KEY `acv_ophcotherapya_patientsuit_dtnoderesponse_eye_id_fk` (`eye_id`),
 	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`),
-	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_psi_fk` FOREIGN KEY (`patientsuit_id`) REFERENCES `et_ophcotherapya_patientsuit` (`id`)
+	CONSTRAINT `acv_ophcotherapya_patientsuit_dtnoderesponse_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -892,8 +884,7 @@ CREATE TABLE `ophcotherapya_therapydisorder_version` (
 	KEY `acv_ophcotherapya_therapydisorder_pi_fk` (`parent_id`),
 	CONSTRAINT `acv_ophcotherapya_therapydisorder_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophcotherapya_therapydisorder_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophcotherapya_therapydisorder_di_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`),
-	CONSTRAINT `acv_ophcotherapya_therapydisorder_pi_fk` FOREIGN KEY (`parent_id`) REFERENCES `ophcotherapya_therapydisorder` (`id`)
+	CONSTRAINT `acv_ophcotherapya_therapydisorder_di_fk` FOREIGN KEY (`disorder_id`) REFERENCES `disorder` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
