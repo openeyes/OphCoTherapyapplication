@@ -15,16 +15,4 @@
 // * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 
 @import "openeyes/module";
-
-.OphCoTherapyapplication_DecisionTreeNodeRule {
-	float: left;
-	border: 1px dotted black;
-	width: 100px;
-	margin-left: 20px;
-	background-color: #ddd;
-}
-
-.current-files {
-	margin-left: 1.5em;
-	margin-bottom: 0;
-}
+@import "openeyes/components/print/event";
