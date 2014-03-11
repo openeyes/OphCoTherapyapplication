@@ -55,7 +55,11 @@ class AdminController extends ModuleAdminController
 
 		$diagnoses = OphCoTherapyapplication_TherapyDisorder::model()->findAll($criteria);
 
+		$transaction = Yii::app()->db->beginTransaction('List','Diagnoses');
+
 		Audit::add('admin','list',$parent_id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_TherapyDisorder'));
+
+		$transaction->commit();
 
 		$this->render('list_OphCoTherapyapplication_TherapyDisorder', array(
 				'model_class' => 'OphCoTherapyapplication_TherapyDisorder',
@@ -106,9 +110,14 @@ class AdminController extends ModuleAdminController
 				$query .= ' WHERE parent_id = ' . $parent->id;
 			}
 
+			$transaction = Yii::app()->db->beginTransaction('Create','Diagnosis');
+
 			$val = Yii::app()->db->createCommand($query)->queryRow();
 			$therapy_disorder->display_order = $val['maxdisplay']+1;
+
 			if (!$therapy_disorder->save()) {
+				$transaction->rollback();
+
 				throw new Exception('Unable to save new therapy disorder ' . print_r($therapy_disorder->getErrors(), true));
 			}
 			Yii::app()->user->setFlash('success', 'Disorder added');
@@ -116,6 +125,8 @@ class AdminController extends ModuleAdminController
 				'module' => 'OphCoTherapyapplication',
 				'model' => 'OphCoTherapyapplication_TherapyDisorder',
 			));
+
+			$transaction->commit();
 		}
 
 		$this->redirect(array('viewdiagnoses', 'parent_id' => @$_POST['parent_id']));
@@ -131,7 +142,8 @@ class AdminController extends ModuleAdminController
 			$criteria = new CDbCriteria();
 			$criteria->condition = 'parent_id = :pid';
 			$criteria->params = array(':pid' => $diagnosis->id);
-			$transaction = Yii::app()->db->beginTransaction();
+			$transaction = Yii::app()->db->beginTransaction('Delete','Diagnoses');
+
 			try {
 				if ($children = OphCoTherapyapplication_TherapyDisorder::model()->findAll($criteria)) {
 					foreach ($children as $child) {
@@ -164,14 +176,20 @@ class AdminController extends ModuleAdminController
 	public function actionSortDiagnoses()
 	{
 		if (!empty($_POST['order'])) {
+			$transaction = Yii::app()->db->beginTransaction('Sort','Diagnoses');
+
 			foreach ($_POST['order'] as $i => $id) {
 				if ($disorder = OphCoTherapyapplication_TherapyDisorder::model()->findByPk($id)) {
 					$disorder->display_order = $i+1;
 					if (!$disorder->save()) {
+						$transaction->rollback();
+
 						throw new Exception("Unable to save drug: ".print_r($drug->getErrors(),true));
 					}
 				}
 			}
+
+			$transaction->commit();
 		}
 	}
 
@@ -181,7 +199,11 @@ class AdminController extends ModuleAdminController
 	 */
 	public function actionViewTreatments()
 	{
+		$transaction = Yii::app()->db->beginTransaction('View','Treatments');
+
 		Audit::add('admin','list',null,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
+
+		$transaction->commit();
 
 		$this->render('list_OphCoTherapyapplication_Treatment', array(
 				'model_class' => 'OphCoTherapyapplication_Treatment',
@@ -200,13 +222,20 @@ class AdminController extends ModuleAdminController
 		$model = OphCoTherapyapplication_Treatment::model()->findByPk((int) $id);
 
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
+			$transaction = Yii::app()->db->beginTransaction('Update','Treatment');
+
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
 
 			if ($model->save()) {
 				Audit::add('admin','update',$id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Treatment updated');
 
 				$this->redirect(array('viewtreatments'));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -225,14 +254,21 @@ class AdminController extends ModuleAdminController
 		$model = new OphCoTherapyapplication_Treatment();
 
 		if (isset($_POST['OphCoTherapyapplication_Treatment'])) {
+			$transaction = Yii::app()->db->beginTransaction('Create','Treatment');
+
 			// do the actual create
 			$model->attributes = $_POST['OphCoTherapyapplication_Treatment'];
 
 			if ($model->save()) {
 				Audit::add('admin','create',$model->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Treatment'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Treatment created');
 
 				$this->redirect(array('viewtreatments'));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -247,11 +283,17 @@ class AdminController extends ModuleAdminController
 	{
 		$result = 1;
 
+		$transaction = Yii::app()->db->beginTransaction('Delete','Treatments');
+
 		foreach (OphCoTherapyapplication_Treatment::model()->findAllByPK($_POST['treatments']) as $treatment) {
 			if (!$treatment->delete()) {
-				$result = 0;
+				$transaction->rollback();
+
+				throw new Exception("Unable to delete treatment: ".print_r($treatment->getErrors(),true));
 			}
 		}
+
+		$transaction->commit();
 
 		echo $result;
 	}
@@ -262,7 +304,11 @@ class AdminController extends ModuleAdminController
 	{
 		$data_provider=new CActiveDataProvider('OphCoTherapyapplication_DecisionTree');
 
+		$transaction = Yii::app()->db->beginTransaction('View','Decision trees');
+
 		Audit::add('admin','list',null,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTree'));
+
+		$transaction->commit();
 
 		$this->render('list',array(
 				'dataProvider'=>$data_provider,
@@ -283,7 +329,11 @@ class AdminController extends ModuleAdminController
 			$node = $model->getRootNode();
 		}
 
+		$transaction = Yii::app()->db->beginTransaction('View','Decision tree');
+
 		Audit::add('admin','view',$id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTree'));
+
+		$transaction->commit();
 
 		$this->render('view_OphCoTherapyapplication_DecisionTree', array(
 				'model' => $model,
@@ -296,14 +346,21 @@ class AdminController extends ModuleAdminController
 		$model = new OphCoTherapyapplication_DecisionTree();
 
 		if (isset($_POST['OphCoTherapyapplication_DecisionTree'])) {
+			$transaction = Yii::app()->db->beginTransaction('Create','Decision tree');
+
 			// do the actual create
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTree'];
 
 			if ($model->save()) {
 				Audit::add('admin','create',$model->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTree'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Decision Tree created');
 
 				$this->redirect(array('viewdecisiontree','id'=>$model->id));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -328,6 +385,8 @@ class AdminController extends ModuleAdminController
 		$model = new OphCoTherapyapplication_DecisionTreeNode();
 
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNode'])) {
+			$transaction = Yii::app()->db->beginTransaction('Create','Decision tree node');
+
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNode'];
 			$model->decisiontree_id = $id;
 
@@ -337,11 +396,15 @@ class AdminController extends ModuleAdminController
 
 			if ($model->save()) {
 				Audit::add('admin','create',$model->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTreeNode'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Decision Tree node created');
 
 				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
+			} else {
+				$transaction->rollback();
 			}
-
 		}
 
 		$this->renderPartial('create', array(
@@ -358,13 +421,20 @@ class AdminController extends ModuleAdminController
 		$model = OphCoTherapyapplication_DecisionTreeNode::model()->findByPk((int) $id);
 
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNode'])) {
+			$transaction = Yii::app()->db->beginTransaction('Update','Decision tree node');
+
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNode'];
 
 			if ($model->save()) {
 				Audit::add('admin','update',$model->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTreeNode'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Decision Tree node updated');
 
 				$this->popupCloseAndRedirect(Yii::app()->createUrl('OphCoTherapyapplication/admin/viewdecisiontree', array('id'=>$model->decisiontree_id) ) . "/?node_id=" . $model->id );
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -382,14 +452,21 @@ class AdminController extends ModuleAdminController
 		$model->node = $node;
 
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNodeRule'])) {
+			$transaction = Yii::app()->db->beginTransaction('Create','Tree node rule');
+
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
 			$model->node_id = $node->id;
 
 			if ($model->save()) {
 				Audit::add('admin','create',$model->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTreeNodeRule'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Decision Tree Node rule created');
 
 				$this->redirect(array('viewdecisiontree', 'id' => $node->decisiontree_id, 'node_id' => $node->id));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -405,13 +482,20 @@ class AdminController extends ModuleAdminController
 		$model = OphCoTherapyapplication_DecisionTreeNodeRule::model()->findByPk((int) $id);
 
 		if (isset($_POST['OphCoTherapyapplication_DecisionTreeNodeRule'])) {
+			$transaction = Yii::app()->db->beginTransaction('Update','Decision tree node rule');
+
 			$model->attributes = $_POST['OphCoTherapyapplication_DecisionTreeNodeRule'];
 
 			if ($model->save()) {
 				Audit::add('admin','update',$model->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_DecisionTreeNodeRule'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Decision Tree Node Rule updated');
 
 				$this->redirect(array('viewdecisiontree', 'id' => $model->node->decisiontree_id, 'node_id' => $model->node->id));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -426,7 +510,11 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewFileCollections()
 	{
+		$transaction = Yii::app()->db->beginTransaction('List','File collections');
+
 		Audit::add('admin','list',null,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
+
+		$transaction->commit();
 
 		$this->render('list_OphCoTherapyapplication_FileCollection', array(
 				'model_class' => 'OphCoTherapyapplication_FileCollection',
@@ -440,7 +528,11 @@ class AdminController extends ModuleAdminController
 		$model = new OphCoTherapyapplication_FileCollection();
 
 		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
+			$transaction = Yii::app()->db->beginTransaction('Create','File collection');
+
 			$this->processFileCollectionForm($model);
+
+			$transaction->commit();
 		}
 
 		$this->render('create', array(
@@ -454,7 +546,11 @@ class AdminController extends ModuleAdminController
 	{
 		$model = OphCoTherapyapplication_FileCollection::model()->findByPk((int) $id);
 
+		$transaction = Yii::app()->db->beginTransaction('View','File collection');
+
 		Audit::add('admin','view',$id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
+
+		$transaction->commit();
 
 		$this->render('view_' . get_class($model), array(
 				'model' => $model)
@@ -588,9 +684,18 @@ class AdminController extends ModuleAdminController
 		$this->jsVars['filecollection_id'] = $model->id;
 
 		if (isset($_POST['OphCoTherapyapplication_FileCollection'])) {
+			$transaction = Yii::app()->db->beginTransaction('Update','File collection');
+
 			$this->processFileCollectionForm($model, 'update');
+
+			$transaction->commit();
 		}
+
+		$transaction = Yii::app()->db->beginTransaction('Update','View collection');
+
 		Audit::add('admin','view',$id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
+
+		$transaction->commit();
 
 		$this->render('create', array(
 				'model' => $model,
@@ -602,14 +707,19 @@ class AdminController extends ModuleAdminController
 
 	public function actionRemoveFileCollection_File()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Remove','File from collection');
+
 		try {
 			if ($collection = OphCoTherapyapplication_FileCollection::model()->findByPk(@$_GET['filecollection_id'])) {
 				if ($collection->removeFileById(@$_GET['file_id'])) {
 					echo json_encode(array('success' => true));
 				}
 			}
+			$transaction->commit();
 		}
 		catch (Exception $e) {
+			$transaction->rollback();
+
 			Yii::log("couldn't remove file (" . @$_GET['file_id'] . ") from collection (" . @$_GET['filecollection_id'] . ")" . $e->getMessage(), 'error');
 			echo json_encode(array('success' => false));
 		}
@@ -618,6 +728,8 @@ class AdminController extends ModuleAdminController
 	public function actionDeleteFileCollections()
 	{
 		$result = 1;
+
+		$transaction = Yii::app()->db->beginTransaction('Delete','File collections');
 
 		foreach ($_POST['file_collections'] as $file_collection_id) {
 			try {
@@ -631,7 +743,12 @@ class AdminController extends ModuleAdminController
 						$result = 0;
 					}
 				}
+
+				$transaction->commit();
+
 			} catch (Exception $e) {
+				$transaction->rollback();
+
 				Yii::log("couldn't remove file collection $file_collection_id: ".$e->getMessage(), 'error');
 				$result = 0;
 			}
@@ -642,7 +759,11 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewEmailRecipients()
 	{
+		$transaction = Yii::app()->db->beginTransaction('List','Email recipients');
+
 		Audit::add('admin','list',null,false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Email_Recipient'));
+
+		$transaction->commit();
 
 		$this->render('list_OphCoTherapyapplication_Email_Recipient', array(
 				'model_class' => 'OphCoTherapyapplication_Email_Recipient',
@@ -656,14 +777,21 @@ class AdminController extends ModuleAdminController
 		$model = new OphCoTherapyapplication_Email_Recipient;
 
 		if (isset($_POST['OphCoTherapyapplication_Email_Recipient'])) {
+			$transaction = Yii::app()->db->beginTransaction('Create','Email recipient');
+
 			// do the actual create
 			$model->attributes = $_POST['OphCoTherapyapplication_Email_Recipient'];
 
 			if ($model->save()) {
 				Audit::add('admin','create',serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Email_Recipient'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Email recipient created');
 
 				$this->redirect(array('viewEmailRecipients'));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -679,13 +807,20 @@ class AdminController extends ModuleAdminController
 		$model = OphCoTherapyapplication_Email_Recipient::model()->findByPk((int) $id);
 
 		if (isset($_POST['OphCoTherapyapplication_Email_Recipient'])) {
+			$transaction = Yii::app()->db->beginTransaction('Update','Email recipient');
+
 			$model->attributes = $_POST['OphCoTherapyapplication_Email_Recipient'];
 
 			if ($model->save()) {
 				Audit::add('admin','update',serialize($model->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_Email_Recipient'));
+
+				$transaction->commit();
+
 				Yii::app()->user->setFlash('success', 'Email recipient updated');
 
 				$this->redirect(array('viewEmailRecipients'));
+			} else {
+				$transaction->rollback();
 			}
 		}
 
@@ -700,10 +835,16 @@ class AdminController extends ModuleAdminController
 	{
 		$result = 1;
 
-		foreach (OphCoTherapyapplication_Email_Recipient::model()->findAllByPK($_POST['email_recipients']) as $email_recipient) {
-			if (!$email_recipient->delete()) {
-				$result = 0;
+		if (!empty($_POST['email_recipients'])) {
+			$transaction = Yii::app()->db->beginTransaction('Delete','Email recipients');
+
+			foreach (OphCoTherapyapplication_Email_Recipient::model()->findAllByPK($_POST['email_recipients']) as $email_recipient) {
+				if (!$email_recipient->delete()) {
+					$result = 0;
+				}
 			}
+
+			$transaction->commit();
 		}
 
 		echo $result;
