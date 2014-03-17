@@ -382,15 +382,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStandardInterventionsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$in_use_intervention_ids = array($this->{$side . "_standard_intervention_id"});
-
-		$sis = OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->notDeletedOrPk($in_use_intervention_ids)->findAll($criteria);
-
-		return $sis;
+		return OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->activeOrPk($this->{$side . "_standard_intervention_id"})->findAll();
 	}
 
 	/**
@@ -416,32 +408,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getDeviationReasonsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
 		$in_use_reason_ids = array();
 		foreach ($this->{$side . '_deviationreasons'} as $curr) {
 			$in_use_reason_ids[] = $curr->id;
 		}
 
-		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->activeOrPk($in_use_reason_ids)->findAll($criteria);
-
-		$all_risks = array();
-		$r_ids = array();
-
-		foreach ($reasons as $reason) {
-			$all_reasons[] = $reason;
-			$r_ids[] = $reason->id;
-		}
-
-		foreach ($this->{$side . '_deviationreasons'} as $curr) {
-			if (!in_array($curr->id, $r_ids)) {
-				$all_reasons[] = $curr;
-			}
-		}
-
-		return $all_reasons;
+		return OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->activeOrPk($in_use_reason_ids)->findAll();
 	}
 
 	/**
@@ -451,6 +423,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStartPeriodsForSide($side)
 	{
+<<<<<<< HEAD
 		$criteria = new CDbCriteria;
 		$criteria->condition = 'enabled = true';
 		$criteria->order = 'display_order asc';
@@ -460,6 +433,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->notDeletedOrPk($in_use_start_period_ids)->findAll($criteria);
 
 		return $sps;
+=======
+		return OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->activeOrPk($this->{$side . "_start_period_id"})->findAll();
+>>>>>>> Table versioning / soft deletion changes.
 	}
 
 	/**
