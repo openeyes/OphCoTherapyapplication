@@ -20,6 +20,7 @@
 class OphCoTherapyapplication_Processor
 {
 	const SNOMED_INTRAVITREAL_INJECTION = 231755001;
+	const SNOMED_PDT = 257891001;
 
 	const STATUS_PENDING = 'pending';
 	const STATUS_SENT = 'sent';
@@ -111,9 +112,20 @@ class OphCoTherapyapplication_Processor
 			error_log('Therapy application requires OphCIExamination module');
 		}
 		if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
-			$procedure = Procedure::model()->find(array('condition' => 'snomed_code = :snomed', 'params' => array(':snomed' => $this::SNOMED_INTRAVITREAL_INJECTION)));
+			$procedures = Procedure::model()->findAll(
+				array('condition' => 'snomed_code = :snomed or snomed_code = :snomed2 ',
+					'params' => array(':snomed' => $this::SNOMED_INTRAVITREAL_INJECTION, ':snomed2' => $this::SNOMED_PDT,)
+				)
+			);
 			foreach ($sides as $side) {
-				if (!$api->hasConsentForProcedure($this->event->episode, $procedure, $side)) {
+				$sideHasConsent = false;
+				foreach($procedures as $procedure){
+					if ($api->hasConsentForProcedure($this->event->episode, $procedure, $side)) {
+						$sideHasConsent = true;
+						break;
+					}
+				}
+				if(!$sideHasConsent){
 					$warnings[] = 'Consent form is required for ' . $side . ' eye.';
 				}
 			}
