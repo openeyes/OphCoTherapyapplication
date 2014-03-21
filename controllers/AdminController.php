@@ -367,6 +367,7 @@ class AdminController extends ModuleAdminController
 		$this->render('create',array(
 				'model'=>$model,
 				'title'=>'Decision Tree',
+				'cancel_uri' => $this->createUrl('admin/viewDecisionTrees'),
 		));
 
 	}
@@ -441,6 +442,7 @@ class AdminController extends ModuleAdminController
 		$this->render('update', array(
 				'model' => $model,
 				'cancel_uri' => '/OphCoTherapyapplication/admin/viewDecisionTrees',
+				'title' => 'Node Edit'
 		));
 	}
 
