@@ -423,19 +423,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStartPeriodsForSide($side)
 	{
-<<<<<<< HEAD
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$in_use_start_period_ids = array($this->{$side . "_start_period_id"});
-
-		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->notDeletedOrPk($in_use_start_period_ids)->findAll($criteria);
-
-		return $sps;
-=======
 		return OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->activeOrPk($this->{$side . "_start_period_id"})->findAll();
->>>>>>> Table versioning / soft deletion changes.
 	}
 
 	/**
