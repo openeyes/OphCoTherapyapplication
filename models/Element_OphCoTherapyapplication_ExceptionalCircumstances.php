@@ -386,28 +386,10 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$criteria->condition = 'enabled = true';
 		$criteria->order = 'display_order asc';
 
-		$in_use_intervention_ids = array();
-		foreach ($this->{$side . "_standard_intervention_id"} as $intervention) {
-			$in_use_intervention_ids[] = $intervention->id;
-		}
+		$in_use_intervention_ids = array($this->{$side . "_standard_intervention_id"});
 
 		$sis = OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->notDeletedOrPk($in_use_intervention_ids)->findAll($criteria);
 
-		if ($curr_id = $this->{$side . "_standard_intervention_id"}) {
-			$seen = false;
-			$all_sis = array();
-			foreach ($sis as $s) {
-				if ($s->id == $curr_id) {
-					$seen = true;
-					break;
-				}
-				$all_sis[] = $s;
-			}
-			if (!$seen) {
-				$all_sis[] = $this->{$side . '_standard_intervention'};
-				$sis = $all_sis;
-			}
-		}
 		return $sis;
 	}
 
@@ -473,28 +455,10 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		$criteria->condition = 'enabled = true';
 		$criteria->order = 'display_order asc';
 
-		$in_use_start_period_ids = array();
-		foreach ($this->{$side . "_start_period_id"} as $start_period) {
-			$in_use_start_period_ids[] = $start_period->id;
-		}
+		$in_use_start_period_ids = array($this->{$side . "_start_period_id"});
 
 		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->notDeletedOrPk($in_use_start_period_ids)->findAll($criteria);
 
-		if ($curr_id = $this->{$side . "_start_period_id"}) {
-			$seen = false;
-			$all_sps = array();
-			foreach ($sps as $s) {
-				if ($s->id == $curr_id) {
-					$seen = true;
-					break;
-				}
-				$all_sps[] = $s;
-			}
-			if (!$seen) {
-				$all_sps[] = $this->{$side . '_start_period'};
-				$sps = $all_sps;
-			}
-		}
 		return $sps;
 	}
 
