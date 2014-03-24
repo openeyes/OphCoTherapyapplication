@@ -664,4 +664,15 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 
 		return $file_collection_values;
 	}
+
+	/**
+	 * Is this a required element to be displayed in the UI?
+	 * This element is not required by default, but we still want to prevent
+	 * users from removing it in the UI.
+	 * @return boolean
+	 */
+	public function isRequiredInUI()
+	{
+		return true;
+	}
 }

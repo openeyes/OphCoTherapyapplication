@@ -177,4 +177,9 @@ class Element_OphCoTherapyapplication_RelativeContraindications extends BaseEven
 		}
 		return false;
 	}
+
+	public function isHiddenInUI()
+	{
+		return !$this->eventPatientSuitability() || !$this->eventPatientSuitability()->contraindicationsRequired();
+	}
 }
