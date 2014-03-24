@@ -20,8 +20,6 @@
 <div class="element-fields">
 	<?php
 	$subspecialty = Subspecialty::model()->find('ref_spec=:ref_spec', array(':ref_spec' => 'MR'));
-
 	echo $form->dropDownList($element, 'consultant_id', Firm::model()->getList($subspecialty->id,$element->consultant_id),array('empty'=>'- Please select -'),false,array('field'=>3));
-
 	echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- Please select -'),false,array('field'=>3)); ?>
 </div>

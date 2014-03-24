@@ -17,8 +17,20 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="element-fields">
-	<?php echo $form->radioBoolean($element, 'cerebrovascular_accident')?>
-	<?php echo $form->radioBoolean($element, 'ischaemic_attack')?>
-	<?php echo $form->radioBoolean($element, 'myocardial_infarction')?>
-</div>
+
+<?php
+/* FIXME */
+?>
+<section class="element <?php echo $element->elementType->class_name?>"
+	<?php if (!$element->eventPatientSuitability() || !$element->eventPatientSuitability()->contraindicationsRequired()) { echo 'style="display:none;"'; } ?>
+	data-element-type-id="<?php echo $element->elementType->id?>"
+	data-element-type-class="<?php echo $element->elementType->class_name?>"
+	data-element-type-name="<?php echo $element->elementType->name?>"
+	data-element-display-order="<?php echo $element->elementType->display_order?>">
+
+	<div class="element-fields">
+		<?php echo $form->radioBoolean($element, 'cerebrovascular_accident')?>
+		<?php echo $form->radioBoolean($element, 'ischaemic_attack')?>
+		<?php echo $form->radioBoolean($element, 'myocardial_infarction')?>
+	</div>
+</section>
