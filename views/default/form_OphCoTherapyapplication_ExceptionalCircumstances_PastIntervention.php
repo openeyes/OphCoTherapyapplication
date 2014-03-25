@@ -32,7 +32,7 @@ $name_stub .= $inttype_name . ']';
 $show_stop_other = false;
 $show_treatment_other = false;
 if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
-    @$_POST[$element_name][$side . $inttype_name][$key]) {
+		@$_POST[$element_name][$side . $inttype_name][$key]) {
 
 	if ($stop_id = $_POST[$element_name][$side . $inttype_name][$key]['stopreason_id']) {
 		$stopreason = OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason::model()->findByPk((int)$stop_id);
@@ -59,6 +59,16 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
 		$show_treatment_other = true;
 	}
 }
+
+// [OE-3421]
+// This view is used for:
+// 1) Displaying previous interventions on page load.
+// 2) As a script template for dynamically adding new previous interventions.
+//
+// When used as a script template, we don't want to init the datepickers because that will
+// generate a Javascript error, and because we already do that "manually" in Javascript land.
+// So, we can control what widget is used by supplying the 'dateFieldWidget' template var.
+$dateFieldWidget = @$dateFieldWidget ?: 'DatePicker';
 
 /*
  * Am using a bit of a bastardisation of different form field approaches here as this many to many model form is not something that is supported well
@@ -88,15 +98,20 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
 		<div class="large-5 column end">
 			<?php
 				// using direct widget call to allow custom name for the field
-				$form->widget('application.widgets.DatePicker',array(
+				// see comment [OE-3421] above.
+				$options = array(
 					'element' => $pastintervention,
 					'name' => $d_name,
 					'field' => 'start_date',
-					'options' => array('maxDate' => 'today'),
 					'htmlOptions' => array(
 						'id' => $d_id,
 						'nowrapper' => true,
-					)));
+					)
+				);
+				if ($dateFieldWidget === 'DatePicker') {
+					$options['options'] = array('maxDate' => 'today');
+				}
+				$form->widget("application.widgets.{$dateFieldWidget}",$options);
 			?>
 		</div>
 	</div>
@@ -114,12 +129,20 @@ if (@$_POST[$element_name] && @$_POST[$element_name][$side . $inttype_name] &&
 		<div class="large-5 column end">
 			<?php
 				// using direct widget call to allow custom name for the field
-				$form->widget('application.widgets.DatePicker',array(
-						'element' => $pastintervention,
-						'name' => $d_name,
-						'field' => 'end_date',
-						'options' => array('maxDate' => 'today'),
-						'htmlOptions' => array('id' => $d_id, 'nowrapper' => true)));
+				// see comment [OE-3421] above.
+				$options = array(
+					'element' => $pastintervention,
+					'name' => $d_name,
+					'field' => 'end_date',
+					'htmlOptions' => array(
+						'id' => $d_id,
+						'nowrapper' => true
+					)
+				);
+				if ($dateFieldWidget === 'DatePicker') {
+					$options['options'] = array('maxDate' => 'today');
+				}
+				$form->widget("application.widgets.{$dateFieldWidget}",$options);
 			?>
 		</div>
 	</div>

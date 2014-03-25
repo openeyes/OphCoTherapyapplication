@@ -55,6 +55,7 @@
 			'element_name' => get_class($element),
 			'form' => $form,
 			'pastintervention' => $pastintervention,
+			'dateFieldWidget' => 'TextField'
 	));
 	?>
 </script>
@@ -69,6 +70,7 @@
 			'element_name' => get_class($element),
 			'form' => $form,
 			'pastintervention' => $pastintervention,
+			'dateFieldWidget' => 'TextField'
 		));
 	?>
 </script>
