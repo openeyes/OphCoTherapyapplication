@@ -4,7 +4,7 @@ class m140324_131543_exceptional_circumstances_not_required extends CDbMigration
 {
 	public function up()
 	{
-		$this->update('element_type', array('required' => NULL), "class_name = 'Element_OphCoTherapyapplication_ExceptionalCircumstances'");
+		$this->update('element_type', array('required' => 0), "class_name = 'Element_OphCoTherapyapplication_ExceptionalCircumstances'");
 	}
 
 	public function down()
