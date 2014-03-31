@@ -168,7 +168,7 @@ class AdminController extends ModuleAdminController
 				if ($disorder = OphCoTherapyapplication_TherapyDisorder::model()->findByPk($id)) {
 					$disorder->display_order = $i+1;
 					if (!$disorder->save()) {
-						throw new Exception("Unable to save drug: ".print_r($drug->getErrors(),true));
+						throw new Exception("Unable to save drug: ".print_r($disorder->getErrors(),true));
 					}
 				}
 			}
