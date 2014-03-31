@@ -9,6 +9,10 @@ Release History
 + Rename wrongly named tables
 + Admin: cannot add diagnosis
 
+1.5.3
+-----
++ allow either PDT or Intravitreal Injection consent forms for therapy application submission
+
 1.5.2
 -----
 + bugfix for decision tree admin
