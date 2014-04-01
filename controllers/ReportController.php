@@ -117,7 +117,7 @@ class ReportController extends BaseController {
 					'right_compliant' => $this->sideCompliance('right', $row),
 			);
 
-			$this->appendSubmissionValues($record, $row['id']);
+			//$this->appendSubmissionValues($record, $row['id']);
 
 			$results[] = $record;
 		}
@@ -202,8 +202,8 @@ class ReportController extends BaseController {
 			$svc = new OphCoTherapyapplication_Processor($event);
 			$record['submission_status'] = $svc->getApplicationStatus();
 			if ($record['submission_status'] == OphCoTherapyapplication_Processor::STATUS_SENT) {
-				$most_recent = OphCoTherapyapplication_Email::model()->forEvent($event)->unarchived()->order('created_date desc')->limit(1);
-				$record['submission_date'] = Helper::convertDate2NHS($most_recent->created_date);
+				$most_recent = OphCoTherapyapplication_Email::model()->forEvent($event)->unarchived()->findAll(array('limit' => 1));
+				$record['submission_date'] = Helper::convertDate2NHS($most_recent[0]->created_date);
 			}
 			else {
 				$record['submission_date'] = 'N/A';
