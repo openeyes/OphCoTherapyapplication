@@ -49,19 +49,7 @@ class OphCoTherapyapplication_Processor
 	 */
 	public function getApplicationStatus()
 	{
-		$emails = OphCoTherapyapplication_Email::model()->forEvent($this->event);
-		if (!$emails->exists()) {
-			return self::STATUS_PENDING;
-		}
-
-		$diag = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
-
-		if ($diag->hasLeft() && !$emails->leftEye()->unarchived()->exists() ||
-		    $diag->hasRight() && !$emails->rightEye()->unarchived()->exists()) {
-			return self::STATUS_REOPENED;
-		} else {
-			return self::STATUS_SENT;
-		}
+		return OphCoTherapyapplication_Email::model()->getStatusForEvent($this->event);
 	}
 
 	/**
