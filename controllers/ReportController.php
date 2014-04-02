@@ -117,7 +117,7 @@ class ReportController extends BaseController {
 					'right_compliant' => $this->sideCompliance('right', $row),
 			);
 
-			//$this->appendSubmissionValues($record, $row['id']);
+			$this->appendSubmissionValues($record, $row['id']);
 
 			$results[] = $record;
 		}
@@ -191,7 +191,7 @@ class ReportController extends BaseController {
 
 	/**
 	 * Appends information about the submission of the application to the $record
-	 * 
+	 *
 	 * @param array $record
 	 * @param integer $event_id
 	 */

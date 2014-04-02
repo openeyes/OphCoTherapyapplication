@@ -48,7 +48,7 @@
 				))?>
 	</div>
 </div>
-<!--
+
 <h3>Submission Information</h3>
 <div class="row field-row">
 	<div class="large-2 column">
@@ -58,7 +58,7 @@
 		<?php echo CHtml::checkBox('submission'); ?>
 	</div>
 </div>
--->
+
 	<div class="row field-row">
 		<div class="large-2 column">
 			&nbsp;
