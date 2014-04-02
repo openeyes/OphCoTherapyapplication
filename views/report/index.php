@@ -58,7 +58,23 @@
 		<?php echo CHtml::checkBox('submission'); ?>
 	</div>
 </div>
-
+<h3>Injection Information</h3>
+<div class="row field-row">
+	<div class="large-2 column">
+		<?php echo CHtml::label('First Injection', 'first_injection') ?>
+	</div>
+	<div class="large-4 column end">
+		<?php echo CHtml::checkBox('first_injection'); ?>
+	</div>
+</div>
+<div class="row field-row">
+	<div class="large-2 column">
+		<?php echo CHtml::label('Last Injection', 'last_injection') ?>
+	</div>
+	<div class="large-4 column end">
+		<?php echo CHtml::checkBox('last_injection'); ?>
+	</div>
+</div>
 	<div class="row field-row">
 		<div class="large-2 column">
 			&nbsp;

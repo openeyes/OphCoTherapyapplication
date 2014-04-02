@@ -70,7 +70,7 @@ class ReportController extends BaseController {
 	{
 		$command = Yii::app()->db->createCommand()
 				->select(
-						"diag.left_diagnosis1_id, diag.left_diagnosis2_id, diag.right_diagnosis1_id, diag.right_diagnosis2_id, e.id,
+						"p.id as patient_id, diag.left_diagnosis1_id, diag.left_diagnosis2_id, diag.right_diagnosis1_id, diag.right_diagnosis2_id, e.id,
 						c.first_name, c.last_name, e.created_date, p.hos_num,p.gender, p.dob, eye.name AS eye, site.name as site_name,
 						firm.name as firm_name, ps.left_treatment_id, ps.right_treatment_id, ps.left_nice_compliance, ps.right_nice_compliance"
 				)
@@ -118,6 +118,7 @@ class ReportController extends BaseController {
 			);
 
 			$this->appendSubmissionValues($record, $row['id']);
+			$this->appendInjectionValues($record, $row['patient_id'], $row['left_treatment_id'], $row['right_treatment_id']);
 
 			$results[] = $record;
 		}
@@ -168,6 +169,14 @@ class ReportController extends BaseController {
 
 	protected $_treatment_cache = array();
 
+	protected function getTreatment($treatment_id)
+	{
+		if (!@$this->_treatment_cache[$treatment_id]) {
+			$this->_treatment_cache[$treatment_id] = OphCoTherapyapplication_Treatment::model()->findByPk($treatment_id);
+		}
+		return $this->_treatment_cache[$treatment_id];
+	}
+
 	/**
 	 * @param $treatment_id
 	 * @return string
@@ -177,16 +186,11 @@ class ReportController extends BaseController {
 		if (!$treatment_id) {
 			return "N/A";
 		}
-		if (!@$this->_treatment_cache[$treatment_id]) {
-			$treatment = OphCoTherapyapplication_Treatment::model()->findByPk($treatment_id);
-			if ($treatment) {
-				$this->_treatment_cache[$treatment_id] = $treatment->getName();
-			}
-			else {
-				$this->_treatment_cache[$treatment_id] = "REMOVED TREATMENT";
-			}
+		if ($treatment = $this->getTreatment($treatment_id)) {
+			return $treatment->getName();
 		}
-		return $this->_treatment_cache[$treatment_id];
+
+		return "REMOVED TREATMENT";
 	}
 
 	/**
@@ -209,6 +213,92 @@ class ReportController extends BaseController {
 				$record['submission_date'] = 'N/A';
 			}
 		}
-
 	}
+
+	protected $_patient_cache = array();
+
+	protected function getPatient($patient_id)
+	{
+		if (!@$this->_patient_cache[$patient_id]) {
+			$this->_patient_cache[$patient_id] = Patient::model()->noPas()->findByPk($patient_id);
+		}
+
+		return $this->_patient_cache[$patient_id];
+	}
+
+	protected function appendInjectionValues(&$record, $patient_id, $left_treatment_id = null, $right_treatment_id = null)
+	{
+		$last_columns = array('last_injection_site', 'last_injection_date', 'last_injection_number');
+
+		if (@$_GET['last_injection']) {
+			foreach (array('left', 'right') as $side) {
+				#initialise columns
+				foreach ($last_columns as $col) {
+					$record[$side . '_' . $col] = 'N/A';
+				}
+				if ($treatment_id = ${$side . '_treatment_id'}) {
+					$treatment = $this->getTreatment($treatment_id);
+					if (!$treatment || !$treatment->drug_id) {
+						continue;
+					}
+
+					$command = Yii::app()->db->createCommand()
+							->select(
+								"treat." . $side . "_number as last_injection_number, treat.created_date as last_injection_date, site.name as last_injection_site"
+							)
+							->from("et_ophtrintravitinjection_treatment treat")
+							->join("et_ophtrintravitinjection_site insite", "insite.event_id = treat.event_id")
+							->join("site", "insite.site_id = site.id")
+							->join("event e", "e.id = treat.event_id")
+							->join("episode ep", "e.episode_id = ep.id")
+							->where("e.deleted = 0 and ep.deleted = 0 and ep.patient_id = :patient_id and treat." . $side . "_drug_id = :drug_id",
+									array(':patient_id' => $patient_id, ':drug_id' => $treatment->drug_id)
+							)
+							->order('treat.created_date desc')
+							->limit(1);
+
+					$res = $command->queryRow();
+					if ($res) {
+						foreach ($last_columns as $col) {
+							$record[$side . '_' . $col] = Helper::convertMySQL2NHS($res[$col], $res[$col]);
+						}
+					}
+
+				}
+			}
+		}
+		if (@$_GET['last_injection']) {
+			foreach (array('left', 'right') as $side) {
+				$record[$side . '_first_injection_date'] = 'N/A';
+
+				if ($treatment_id = ${$side . '_treatment_id'}) {
+					$treatment = $this->getTreatment($treatment_id);
+					if (!$treatment || !$treatment->drug_id) {
+						continue;
+					}
+
+					$command = Yii::app()->db->createCommand()
+							->select(
+									"treat.created_date as first_injection_date"
+							)
+							->from("et_ophtrintravitinjection_treatment treat")
+							->join("event e", "e.id = treat.event_id")
+							->join("episode ep", "e.episode_id = ep.id")
+							->where("e.deleted = 0 and ep.deleted = 0 and ep.patient_id = :patient_id and treat." . $side . "_drug_id = :drug_id",
+									array(':patient_id' => $patient_id, ':drug_id' => $treatment->drug_id)
+							)
+							->order('treat.created_date asc')
+							->limit(1);
+
+					$res = $command->queryRow();
+					if ($res) {
+						$record[$side . '_first_injection_date'] = Helper::convertMySQL2NHS($res['first_injection_date']);
+					}
+
+				}
+			}
+
+		}
+	}
+
 }
