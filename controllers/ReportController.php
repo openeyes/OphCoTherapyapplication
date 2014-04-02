@@ -50,7 +50,13 @@ class ReportController extends BaseController {
 					throw new CException("Unknown firm $firm_id");
 				}
 			}
-
+			if (@$_GET['date_from'] && date('Y-m-d', strtotime($_GET['date_from']))) {
+				$date_from = date('Y-m-d', strtotime($_GET['date_from']));
+			}
+			if (@$_GET['date_to'] && date('Y-m-d', strtotime($_GET['date_to']))) {
+				$date_to = date('Y-m-d', strtotime($_GET['date_to']));
+			}
+			
 			$results = $this->getApplications($date_from, $date_to, $firm);
 
 			$filename = 'therapyapplication_report_' . date('YmdHis') . '.csv';
@@ -84,7 +90,8 @@ class ReportController extends BaseController {
 				->join("site", "mrinfo.site_id = site.id")
 				->join("firm", "mrinfo.consultant_id = firm.id")
 				->join("et_ophcotherapya_patientsuit ps", "diag.event_id = ps.event_id")
-				->where("e.deleted = 0 and ep.deleted = 0 and e.created_date >= :from_date and e.created_date < :to_date + interval 1 day");
+				->where("e.deleted = 0 and ep.deleted = 0 and e.created_date >= :from_date and e.created_date < (:to_date + interval 1 day)")
+				->order("e.created_date desc");
 		$params = array(':from_date' => $date_from, ':to_date' => $date_to);
 
 		if ($firm) {
