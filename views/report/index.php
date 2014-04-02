@@ -2,7 +2,7 @@
 <div class="row">
 <div class="large-11 small-11 small-centered large-centered column">
 <div class="panel">
-<h2>Operation Report</h2>
+<h2>Therapy Application Report</h2>
 <form>
 <div class="row field-row">
 	<div class="large-2 column">
