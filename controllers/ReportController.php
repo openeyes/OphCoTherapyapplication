@@ -100,7 +100,7 @@ class ReportController extends BaseController {
 				->join("contact c", "p.contact_id = c.id")
 				->join("eye", "eye.id = diag.eye_id")
 				->join("et_ophcotherapya_mrservicein mrinfo", "mrinfo.event_id = diag.event_id")
-				->join("site", "mrinfo.site_id = site.id")
+				->leftJoin("site", "mrinfo.site_id = site.id") // in earlier instances of therapy application, site was not set
 				->join("firm", "mrinfo.consultant_id = firm.id")
 				->join("et_ophcotherapya_patientsuit ps", "diag.event_id = ps.event_id")
 				->where("e.deleted = 0 and ep.deleted = 0 and e.created_date >= :from_date and e.created_date < (:to_date + interval 1 day)")
@@ -125,7 +125,7 @@ class ReportController extends BaseController {
 					"patient_gender" => $row['gender'],
 					"patient_dob" => date('j M Y', strtotime($row['dob'])),
 					"eye" => $row['eye'],
-					"site_name" => $row['site_name'],
+					"site_name" => ($row['site_name']) ? $row['site_name'] : 'N/A',
 					"consultant" => $row['firm_name'],
 					'left_diagnosis' => $this->getDiagnosisString($row['left_diagnosis1_id']),
 					'left_secondary_to' => $this->getDiagnosisString($row['left_diagnosis2_id']),
