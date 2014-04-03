@@ -52,10 +52,10 @@ class ReportController extends BaseController {
 
 	public function actionIndex()
 	{
+		$date_from = date('Y-m-d', strtotime("-1 year"));
+		$date_to = date('Y-m-d');
 		if (isset($_GET['yt0'])) {
 			$firm = null;
-			$date_from = date('Y-m-d', strtotime("-1 year"));
-			$date_to = date('Y-m-d');
 
 			if (@$_GET['firm_id'] && (int)$_GET['firm_id']) {
 				$firm_id = (int)$_GET['firm_id'];
@@ -80,7 +80,11 @@ class ReportController extends BaseController {
 		else {
 			$subspecialty = Subspecialty::model()->find('ref_spec=:ref_spec', array(':ref_spec' => 'MR'));
 
-			$context['firms'] = Firm::model()->getList($subspecialty->id);
+			$context = array(
+					'firms' => Firm::model()->getList($subspecialty->id),
+					'date_from' => $date_from,
+					'date_to' => $date_to,
+			);
 			$this->render('index', $context);
 		}
 	}
@@ -104,7 +108,7 @@ class ReportController extends BaseController {
 				->join("firm", "mrinfo.consultant_id = firm.id")
 				->join("et_ophcotherapya_patientsuit ps", "diag.event_id = ps.event_id")
 				->where("e.deleted = 0 and ep.deleted = 0 and e.created_date >= :from_date and e.created_date < (:to_date + interval 1 day)")
-				->order("e.created_date desc");
+				->order("e.created_date asc");
 		$params = array(':from_date' => $date_from, ':to_date' => $date_to);
 
 		if ($firm) {
