@@ -26,7 +26,7 @@
 								'maxDate'=> 0,
 								'defaultDate' => "-1y"
 						),
-						'value'=>@$_GET['date_from']
+						'value'=> $date_from
 				))?>
 	</div>
 </div>
@@ -44,7 +44,7 @@
 								'maxDate'=> 0,
 								'defaultDate' => 0
 						),
-						'value'=>@$_GET['date_to']
+						'value'=> $date_to
 				))?>
 	</div>
 </div>
