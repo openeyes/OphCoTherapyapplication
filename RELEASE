@@ -1,6 +1,12 @@
 Release History
 ===============
 
+1.5.4
+-----
++ Fixed bug in application status
++ Fixed bug in email archiving
++ Initial report implementation
+
 1.5.3
 -----
 + allow either PDT or Intravitreal Injection consent forms for therapy application submission
