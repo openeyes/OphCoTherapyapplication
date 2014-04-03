@@ -189,7 +189,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 
-	protected function getName()
+	public function getName()
 	{
 		if ($this->drug) {
 			return $this->drug->name;
