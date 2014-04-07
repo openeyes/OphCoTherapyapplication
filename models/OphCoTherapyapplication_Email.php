@@ -71,6 +71,25 @@ class OphCoTherapyapplication_Email extends BaseActiveRecordVersioned
 	}
 
 	/**
+	 * Get the application status based on the emails for the given event
+	 *
+	 * @param Event $event
+	 * @return string One of the OphCoTherapyapplication_Processor STATUS_ constants
+	 */
+	public function getStatusForEvent(Event $event)
+	{
+		if (!$this->forEvent($event)->exists()) {
+			return OphCoTherapyapplication_Processor::STATUS_PENDING;
+		}
+
+		if (!$this->forEvent($event)->unarchived()->exists()) {
+			return OphCoTherapyapplication_Processor::STATUS_REOPENED;
+		}
+
+		return OphCoTherapyapplication_Processor::STATUS_SENT;
+	}
+
+	/**
 	 * @param ProtectedFile[] $attachments
 	 */
 	public function addAttachments(array $attachments)
@@ -85,10 +104,12 @@ class OphCoTherapyapplication_Email extends BaseActiveRecordVersioned
 	}
 
 	/**
-	 * Mark all emails covered by the current scope as archived
+	 * Mark all emails for the specified event as archived
+	 *
+	 * @parm Event $event
 	 */
-	public function archiveAll()
+	public function archiveForEvent(Event $event)
 	{
-		$this->updateAll(array('archived' => 1));
+		$this->updateAll(array('archived' => 1), 'event_id = ?', array($event->id));
 	}
 }
