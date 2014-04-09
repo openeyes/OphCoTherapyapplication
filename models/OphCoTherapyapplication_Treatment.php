@@ -165,8 +165,6 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecordVersioned
 				'criteria' => $criteria,
 			));
 	}
-
-	protected function getName()
 	
 	/**
 	 * Set default values for forms on create
