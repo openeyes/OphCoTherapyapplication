@@ -96,9 +96,8 @@ class OphCoTherapyapplication_Processor
 			if (!$api->getLetterVisualAcuityForEpisodeRight($this->event->episode)) {
 				$warnings[] = 'Visual acuity not found for right eye.';
 			}
-		} else {
-			error_log('Therapy application requires OphCIExamination module');
 		}
+
 		if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
 			$procedures = Procedure::model()->findAll(
 				array('condition' => 'snomed_code = :snomed or snomed_code = :snomed2 ',

@@ -258,8 +258,3 @@ class OphCoTherapyapplication_ProcessorTest extends CTestCase
 		return $this->elements[$class_name];
 	}
 }
-
-class SpoofExaminationAPI extends ModuleAPI
-{
-
-}
