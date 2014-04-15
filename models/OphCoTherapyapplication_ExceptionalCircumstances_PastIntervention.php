@@ -226,7 +226,6 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	public function requiredDependingOnTreatmentType($attribute, $params)
 	{
 		if ($this->is_relevant == $params['relevant'] && $this->$attribute == null) {
-			error_log(gettype($this->is_relevant) . ":::" . print_r($params, true) . "::" . $attribute . ':' . $this->is_relevant . ":" . $params['relevant']);
 			$this->addError($attribute, $this->getAttributeLabel($attribute) . " is required");
 		}
 	}
