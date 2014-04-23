@@ -192,10 +192,11 @@ class OphCoTherapyapplication_Processor
 	 * or not.
 	 *
 	 * @param CController $controller
+	 * @param User $notify_user
 	 * @throws Exception
 	 * @return boolean
 	 */
-	public function processEvent(CController $controller)
+	public function processEvent(CController $controller, User $notify_user = null)
 	{
 		if ($this->getApplicationStatus() == self::STATUS_SENT || $this->getProcessWarnings()) {
 			return false;
@@ -207,11 +208,11 @@ class OphCoTherapyapplication_Processor
 
 		$diag = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
 
-		if ($diag->hasLeft() && !$this->processEventForEye($controller, $template_data, Eye::LEFT)) {
+		if ($diag->hasLeft() && !$this->processEventForEye($controller, $template_data, Eye::LEFT, $notify_user)) {
 			$success = false;
 		}
 
-		if ($diag->hasRight() && !$this->processEventForEye($controller, $template_data, Eye::RIGHT)) {
+		if ($diag->hasRight() && !$this->processEventForEye($controller, $template_data, Eye::RIGHT, $notify_user)) {
 			$success = false;
 		}
 
@@ -372,10 +373,11 @@ class OphCoTherapyapplication_Processor
 	 * @param CController $controller
 	 * @param array $template_data
 	 * @param int $eye_id
+	 * @param User $notify_user
 	 * @throws Exception
 	 * @return boolean
 	 */
-	private function processEventForEye(CController $controller, array $template_data, $eye_id)
+	private function processEventForEye(CController $controller, array $template_data, $eye_id, User $notify_user = null)
 	{
 		switch($eye_id) {
 			case Eye::LEFT:
@@ -440,6 +442,20 @@ class OphCoTherapyapplication_Processor
 
 		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
 		$message->setTo($email_recipients);
+
+		if ($notify_user && $notify_user->email) {
+			$cc = true;
+			if (Yii::app()->params['restrict_email_domains']) {
+				$domain = preg_replace('/^.*?@/','',$notify_user->email);
+				if (!in_array($domain,Yii::app()->params['restrict_email_domains'])) {
+					Yii::app()->user->setFlash('warning.warning','You will not receive a copy of the submission because your email address ' . $notify_user->email . ' is not on a secure domain');
+					$cc = false;
+				}
+			}
+			if ($cc) {
+				$message->setCc($notify_user->email);
+			}
+		}
 
 		$message->setBody($email_text);
 
