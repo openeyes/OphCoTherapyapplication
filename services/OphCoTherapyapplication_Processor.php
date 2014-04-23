@@ -445,7 +445,17 @@ class OphCoTherapyapplication_Processor
 		$message->setTo($email_recipients);
 
 		if ($notify_user && $notify_user->email) {
-			$message->setCc($notify_user->email);
+			$cc = true;
+			if (Yii::app()->params['restrict_email_domains']) {
+				$domain = preg_replace('/^.*?@/','',$notify_user->email);
+				if (!in_array($domain,Yii::app()->params['restrict_email_domains'])) {
+					Yii::app()->user->setFlash('warning.warning','You will not receive a copy of the submission because your email address ' . $notify_user->email . ' is not on a secure domain');
+					$cc = false;
+				}
+			}
+			if ($cc) {
+				$message->setCc($notify_user->email);
+			}
 		}
 
 		$message->setBody($email_text);

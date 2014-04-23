@@ -92,7 +92,7 @@ class DefaultController extends BaseEventTypeController
 		$service = new OphCoTherapyapplication_Processor($this->event);
 		$user = null;
 		if (@Yii::app()->params['OphCoTherapyapplication_cc_applicant']) {
-			$user =  User::model()->findByPk(Yii::app()->user->id);
+			$user = User::model()->findByPk(Yii::app()->user->id);
 		}
 		if ($service->processEvent($this, $user)) {
 			Yii::app()->user->setFlash('success', "Application processed.");
