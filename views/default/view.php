@@ -57,9 +57,6 @@ if (!$warnings && !$this->event->isLocked()) {
 	}
 }
 
-		$this->event_actions[] = EventAction::button('Print', 'print', null, array('class' => 'button small'));
-
-
 $this->beginContent('//patient/event_container');
 ?>
 
