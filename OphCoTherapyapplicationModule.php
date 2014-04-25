@@ -33,11 +33,13 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 		'OphCoTherapyapplication_applicant_email' => 'Applicant Email Address Not Set',
 		'OphCoTherapyapplication_chief_pharmacist' => 'No Chief Pharmacist Set',
 		'OphCoTherapyapplication_chief_pharmacist_contact' => 'No Chief Pharmacist Contact Details Set',
-		'OphCoTherapyapplication_email_size_limit' => '10GB',
-		'OphCoTherapyapplication_sender_email' => false,
+		'OphCoTherapyapplication_email_size_limit' => '10MB',
+		'OphCoTherapyapplication_cc_application' => false,
 	);
-	// left this in place for now in case there are parameters we decide should be required.
-	public $required_parameters = array();
+
+	public $required_parameters = array(
+			'OphCoTherapyapplication_sender_email',
+	);
 
 	public function init()
 	{

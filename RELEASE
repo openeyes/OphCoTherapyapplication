@@ -1,6 +1,10 @@
 Release History
 ===============
 
+1.7
+---
++ set default values for configuration parameters, rather than erroring when not being set.
+
 1.6.1
 -----
 + ability to cc submitting user on submission emails
