@@ -29,6 +29,15 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 	// this property is really only relevant to gii auto-generation, specifically
 	// for updates to the module through gii
 	public $moduleShortSuffix;
+	public $default_parameter_settings = array(
+		'OphCoTherapyapplication_applicant_email' => 'Applicant Email Address Not Set',
+		'OphCoTherapyapplication_chief_pharmacist' => 'No Chief Pharmacist Set',
+		'OphCoTherapyapplication_chief_pharmacist_contact' => 'No Chief Pharmacist Contact Details Set',
+		'OphCoTherapyapplication_email_size_limit' => '10GB',
+		'OphCoTherapyapplication_sender_email' => false,
+	);
+	// left this in place for now in case there are parameters we decide should be required.
+	public $required_parameters = array();
 
 	public function init()
 	{
@@ -48,21 +57,20 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 
 		// check for required configuration variables
 		$missing_config = array();
-		foreach (array(
-				'OphCoTherapyapplication_applicant_email',
-				'OphCoTherapyapplication_chief_pharmacist',
-				'OphCoTherapyapplication_chief_pharmacist_contact',
-				'OphCoTherapyapplication_email_size_limit',
-				'OphCoTherapyapplication_sender_email',
-				'OphCoTherapyapplication_cc_applicant',
-				) as $required_config) {
-
+		foreach ($this->required_parameters as $required_config) {
 			if (!isset(Yii::app()->params[$required_config])) {
 				$missing_config[] = $required_config;
 			}
 		}
+
 		if (count($missing_config)) {
 			throw new Exception('Missing required configuration variables for ' . $this->getName() . ': ' . implode(", ", $missing_config));
+		}
+
+		foreach ($this->default_parameter_settings as $k => $v) {
+			if (!isset(Yii::app()->params[$k])) {
+				Yii::app()->params[$k] = $v;
+			}
 		}
 	}
 
