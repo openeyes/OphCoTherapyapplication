@@ -80,7 +80,7 @@ class OphCoTherapyapplication_Processor
 					$side,
 					$el_diag->{$side . '_diagnosis1_id'},
 					$el_diag->{$side . '_diagnosis2_id'})) {
-					$missing_sides[] = $side;
+						$missing_sides[] = $side;
 				}
 			}
 
@@ -88,12 +88,13 @@ class OphCoTherapyapplication_Processor
 				$warnings[] = 'No Injection Management has been created for ' . $missing . ' diagnosis.';
 			}
 
-			//TODO: the exam api should be consolidated at some point, and these methods may be deprecated
-			if (!$api->getLetterVisualAcuityForEpisodeLeft($this->event->episode)) {
+			// if the application doesn't have a given side, the VA value can be NR (e.g. eye missing etc)
+			// but if it does, then we need an actual VA value.
+			if (!$api->getLetterVisualAcuityForEpisodeLeft($this->event->episode, !$el_diag->hasLeft())) {
 				$warnings[] = 'Visual acuity not found for left eye.';
 			}
 
-			if (!$api->getLetterVisualAcuityForEpisodeRight($this->event->episode)) {
+			if (!$api->getLetterVisualAcuityForEpisodeRight($this->event->episode, !$el_diag->hasRight())) {
 				$warnings[] = 'Visual acuity not found for right eye.';
 			}
 		} else {
