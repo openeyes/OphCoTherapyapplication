@@ -29,6 +29,10 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 	// this property is really only relevant to gii auto-generation, specifically
 	// for updates to the module through gii
 	public $moduleShortSuffix;
+	public $default_parameter_settings = array(
+		'OphCoTherapyapplication_compliant_email_subject' => 'Therapy NOTIFICATION',
+		'OphCoTherapyapplication_noncompliant_email_subject' => 'Therapy APPLICATION',
+	);
 
 	public function init()
 	{
@@ -63,6 +67,12 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 		}
 		if (count($missing_config)) {
 			throw new Exception('Missing required configuration variables for ' . $this->getName() . ': ' . implode(", ", $missing_config));
+		}
+
+		foreach ($this->default_parameter_settings as $k => $v) {
+			if (!isset(Yii::app()->params[$k])) {
+				Yii::app()->params[$k] = $v;
+			}
 		}
 	}
 

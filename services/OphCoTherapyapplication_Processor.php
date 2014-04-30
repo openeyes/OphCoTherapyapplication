@@ -419,7 +419,14 @@ class OphCoTherapyapplication_Processor
 		$email_text = $this->generateEmailForSide($controller, $template_data, $eye_name);
 
 		$message = Yii::app()->mailer->newMessage();
-		$message->setSubject('Therapy Application');
+		if ($template_data['compliant']) {
+			$recipient_type = 'Compliant';
+			$message->setSubject(Yii::app()->params['OphCoTherapyapplication_compliant_email_subject']);
+		}
+		else {
+			$recipient_type = 'Non-compliant';
+			$message->setSubject(Yii::app()->params['OphCoTherapyapplication_noncompliant_email_subject']);
+		}
 
 		$recipient_type = $template_data['compliant'] ? 'Compliant' : 'Non-compliant';
 
@@ -435,12 +442,8 @@ class OphCoTherapyapplication_Processor
 			if (!$recipient->isAllowed()) {
 				throw new Exception("Recipient email address $recipient->recipient_email is not in the list of allowed domains");
 			}
-
 			$email_recipients[$recipient->recipient_email] = $recipient->recipient_name;
 		}
-
-		$message = Yii::app()->mailer->newMessage();
-		$message->setSubject('Therapy Application');
 
 		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
 		$message->setTo($email_recipients);
