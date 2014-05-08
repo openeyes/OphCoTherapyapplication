@@ -35,6 +35,8 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 		'OphCoTherapyapplication_chief_pharmacist_contact' => 'No Chief Pharmacist Contact Details Set',
 		'OphCoTherapyapplication_email_size_limit' => '10MB',
 		'OphCoTherapyapplication_cc_application' => false,
+		'OphCoTherapyapplication_compliant_email_subject' => 'Therapy NOTIFICATION',
+		'OphCoTherapyapplication_noncompliant_email_subject' => 'Therapy APPLICATION',
 	);
 
 	public $required_parameters = array(

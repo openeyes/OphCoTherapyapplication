@@ -307,7 +307,7 @@ Please provide further information below relating to the clinical urgency and / 
 					<td class="row-data">
 					<span class="form-text">&nbsp;Eye affected:</span> <?php echo ucfirst($side) ?><br />
 					<span class="form-text">&nbsp;Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
-					<span class="form-text">&nbsp;Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?><br />
+					<span class="form-text">&nbsp;Visual Acuity:</span> <?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityForEpisodeBoth($event->episode, true)) ) ? $va : "Not measured"; ?><br />
 					<span class="form-text">&nbsp;OCT Thickness:</span>
 					<?php
 						$oct_str = "Not measured";
