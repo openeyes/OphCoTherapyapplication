@@ -23,7 +23,6 @@ class ReportController extends BaseEventTypeController {
 
 	static protected $action_types = array(
 		'index' => self::ACTION_TYPE_REPORT,
-		'operation' => self::ACTION_TYPE_REPORT,
 	);
 
 	public function accessRules()
