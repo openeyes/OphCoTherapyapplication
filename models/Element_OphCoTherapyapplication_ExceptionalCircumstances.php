@@ -84,6 +84,38 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 {
 	public $service;
 
+	protected $_auto_update_relations = true;
+	protected $_relation_defaults = array(
+		'left_previnterventions' => array(
+				'is_relevant' => false,
+				'exceptional_side_id' => Eye::LEFT,
+		),
+		'right_previnterventions' => array(
+				'is_relevant' => false,
+				'exceptional_side_id' => Eye::RIGHT,
+		),
+		'left_relevantinterventions' => array(
+				'is_relevant' => true,
+				'exceptional_side_id' => Eye::LEFT
+		),
+		'right_relevantinterventions' => array(
+				'is_relevant' => true,
+				'exceptional_side_id' => Eye::RIGHT
+		),
+		'left_deviationreasons' => array(
+				'side_id' => Eye::LEFT
+		),
+		'right_deviationreasons' => array(
+				'side_id' => Eye::RIGHT
+		),
+		'left_filecollections' => array(
+				'exceptional_side_id' => Eye::LEFT
+		),
+		'right_filecollections' => array(
+				'exceptional_side_id' =>Eye::RIGHT
+		),
+	);
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -115,7 +147,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 					'right_standard_intervention_exists, right_standard_intervention_id, right_standard_previous,' .
 					'right_condition_rare, right_incidence, right_intervention_id, right_description, ' .
 					'right_patient_different, right_patient_gain, right_patient_factors, right_patient_factor_details, ' .
-					'right_start_period_id, right_urgency_reason', 'safe'),
+					'right_start_period_id, right_urgency_reason left_previnterventions, right_previnterventions,
+					left_relevantinterventions, right_relevantinterventions, left_deviationreasons, right_deviationreasons,
+					left_filecollections, right_filecollections', 'safe'),
 			array('left_standard_intervention_exists, left_patient_different, left_patient_gain, left_patient_factors,' .
 					'left_patient_expectations, left_start_period_id',	'requiredIfSide', 'side' => 'left'),
 			array('right_standard_intervention_exists, right_patient_different, right_patient_gain,  right_patient_factors,' .

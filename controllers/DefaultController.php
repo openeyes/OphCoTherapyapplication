@@ -255,7 +255,7 @@ class DefaultController extends BaseEventTypeController
 	 * (non-phpdoc)
 	 * @see parent::setElementComplexAttributesFromData($element, $data, $index)
 	 */
-	protected function setElementComplexAttributesFromData($element, $data, $index = null)
+	protected function _setElementComplexAttributesFromData($element, $data, $index = null)
 	{
 		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
 			$this->processPastinterventions($data, $element, 'left');
@@ -285,7 +285,9 @@ class DefaultController extends BaseEventTypeController
 						$data['Element_OphCoTherapyapplication_PatientSuitability']['right_DecisionTreeResponse'] :
 						array());
 
-			} elseif (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
+			}
+			/*
+			 elseif (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
 				foreach (array('left' => Eye::LEFT, 'right' => Eye::RIGHT) as $side_str => $side_id) {
 					$el->updateDeviationReasons($side_id,
 							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) ?
@@ -305,6 +307,7 @@ class DefaultController extends BaseEventTypeController
 							array());
 				}
 			}
+			*/
 		}
 	}
 
