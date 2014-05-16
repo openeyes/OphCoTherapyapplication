@@ -141,7 +141,7 @@ EOH;
 				} else {
 					if ($fc->save()) {
 						$fc->updateFiles($pf_ids);
-						Audit::add('admin','create',serialize($fc->attributes),false,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
+						Audit::add('admin','create',$fc->id,null,array('module'=>'OphCoTherapyapplication','model'=>'OphCoTherapyapplication_FileCollection'));
 						$transaction->commit();
 						$created_flag ? $created++ : $modified++;
 					} else {

@@ -80,7 +80,7 @@ class OphCoTherapyapplication_Processor
 					$side,
 					$el_diag->{$side . '_diagnosis1_id'},
 					$el_diag->{$side . '_diagnosis2_id'})) {
-					$missing_sides[] = $side;
+						$missing_sides[] = $side;
 				}
 			}
 
@@ -88,17 +88,17 @@ class OphCoTherapyapplication_Processor
 				$warnings[] = 'No Injection Management has been created for ' . $missing . ' diagnosis.';
 			}
 
-			//TODO: the exam api should be consolidated at some point, and these methods may be deprecated
-			if (!$api->getLetterVisualAcuityForEpisodeLeft($this->event->episode)) {
+			// if the application doesn't have a given side, the VA value can be NR (e.g. eye missing etc)
+			// but if it does, then we need an actual VA value.
+			if (!$api->getLetterVisualAcuityForEpisodeLeft($this->event->episode, !$el_diag->hasLeft())) {
 				$warnings[] = 'Visual acuity not found for left eye.';
 			}
 
-			if (!$api->getLetterVisualAcuityForEpisodeRight($this->event->episode)) {
+			if (!$api->getLetterVisualAcuityForEpisodeRight($this->event->episode, !$el_diag->hasRight())) {
 				$warnings[] = 'Visual acuity not found for right eye.';
 			}
-		} else {
-			error_log('Therapy application requires OphCIExamination module');
 		}
+
 		if ($api = Yii::app()->moduleAPI->get('OphTrConsent')) {
 			$procedures = Procedure::model()->findAll(
 				array('condition' => 'snomed_code = :snomed or snomed_code = :snomed2 ',
@@ -193,10 +193,11 @@ class OphCoTherapyapplication_Processor
 	 * or not.
 	 *
 	 * @param CController $controller
+	 * @param User $notify_user
 	 * @throws Exception
 	 * @return boolean
 	 */
-	public function processEvent(CController $controller)
+	public function processEvent(CController $controller, User $notify_user = null)
 	{
 		if ($this->getApplicationStatus() == self::STATUS_SENT || $this->getProcessWarnings()) {
 			return false;
@@ -208,11 +209,11 @@ class OphCoTherapyapplication_Processor
 
 		$diag = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
 
-		if ($diag->hasLeft() && !$this->processEventForEye($controller, $template_data, Eye::LEFT)) {
+		if ($diag->hasLeft() && !$this->processEventForEye($controller, $template_data, Eye::LEFT, $notify_user)) {
 			$success = false;
 		}
 
-		if ($diag->hasRight() && !$this->processEventForEye($controller, $template_data, Eye::RIGHT)) {
+		if ($diag->hasRight() && !$this->processEventForEye($controller, $template_data, Eye::RIGHT, $notify_user)) {
 			$success = false;
 		}
 
@@ -373,10 +374,11 @@ class OphCoTherapyapplication_Processor
 	 * @param CController $controller
 	 * @param array $template_data
 	 * @param int $eye_id
+	 * @param User $notify_user
 	 * @throws Exception
 	 * @return boolean
 	 */
-	private function processEventForEye(CController $controller, array $template_data, $eye_id)
+	private function processEventForEye(CController $controller, array $template_data, $eye_id, User $notify_user = null)
 	{
 		switch($eye_id) {
 			case Eye::LEFT:
@@ -416,7 +418,14 @@ class OphCoTherapyapplication_Processor
 		$email_text = $this->generateEmailForSide($controller, $template_data, $eye_name);
 
 		$message = Yii::app()->mailer->newMessage();
-		$message->setSubject('Therapy Application');
+		if ($template_data['compliant']) {
+			$recipient_type = 'Compliant';
+			$message->setSubject(Yii::app()->params['OphCoTherapyapplication_compliant_email_subject']);
+		}
+		else {
+			$recipient_type = 'Non-compliant';
+			$message->setSubject(Yii::app()->params['OphCoTherapyapplication_noncompliant_email_subject']);
+		}
 
 		$recipient_type = $template_data['compliant'] ? 'Compliant' : 'Non-compliant';
 
@@ -432,15 +441,25 @@ class OphCoTherapyapplication_Processor
 			if (!$recipient->isAllowed()) {
 				throw new Exception("Recipient email address $recipient->recipient_email is not in the list of allowed domains");
 			}
-
 			$email_recipients[$recipient->recipient_email] = $recipient->recipient_name;
 		}
 
-		$message = Yii::app()->mailer->newMessage();
-		$message->setSubject('Therapy Application');
-
 		$message->setFrom(Yii::app()->params['OphCoTherapyapplication_sender_email']);
 		$message->setTo($email_recipients);
+
+		if ($notify_user && $notify_user->email) {
+			$cc = true;
+			if (Yii::app()->params['restrict_email_domains']) {
+				$domain = preg_replace('/^.*?@/','',$notify_user->email);
+				if (!in_array($domain,Yii::app()->params['restrict_email_domains'])) {
+					Yii::app()->user->setFlash('warning.warning','You will not receive a copy of the submission because your email address ' . $notify_user->email . ' is not on a secure domain');
+					$cc = false;
+				}
+			}
+			if ($cc) {
+				$message->setCc($notify_user->email);
+			}
+		}
 
 		$message->setBody($email_text);
 

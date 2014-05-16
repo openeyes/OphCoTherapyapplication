@@ -191,7 +191,14 @@ class OphCoTherapyapplication_ProcessorTest extends CTestCase
 		$diag->expects($this->any())->method('hasLeft')->will($this->returnValue($eye_id != Eye::RIGHT));
 		$diag->expects($this->any())->method('hasRight')->will($this->returnValue($eye_id != Eye::LEFT));
 
-		$exam_api = $this->getMockBuilder('OphCiExamination_API')->disableOriginalConstructor()->getMock();
+		$exam_api = $this->getMockBuilder('ModuleAPI')
+				->disableOriginalConstructor()
+				->setMethods(array(
+					'getInjectionManagementComplexInEpisodeForDisorder',
+					'getLetterVisualAcuityForEpisodeLeft',
+					'getLetterVisualAcuityForEpisodeRight'
+					))
+				->getMock();
 		$this->moduleAPI->expects($this->any())->method('get')->will($this->returnValueMap(array(array('OphCiExamination', $exam_api))));
 
 		$exam_api->expects($this->any())->method('getInjectionManagementComplexInEpisodeForDisorder')
@@ -200,8 +207,17 @@ class OphCoTherapyapplication_ProcessorTest extends CTestCase
 					 return ($side == 'left' && $injLeft) || ($side == 'right' && $injRight);
 				 }
 			 ));
-		$exam_api->expects($this->any())->method('getLetterVisualAcuityForEpisodeLeft')->will($this->returnValue($acLeft));
-		$exam_api->expects($this->any())->method('getLetterVisualAcuityForEpisodeRight')->will($this->returnValue($acRight));
+		$include_left_nr_values = true;
+		$include_right_nr_values = true;
+		if ($eye_id != Eye::RIGHT) {
+			$include_left_nr_values = false;
+		}
+		if ($eye_id != Eye::LEFT) {
+			$include_right_nr_values = false;
+		}
+
+		$exam_api->expects($this->any())->method('getLetterVisualAcuityForEpisodeLeft')->with($this->event_props['episode'], $include_left_nr_values)->will($this->returnValue($acLeft));
+		$exam_api->expects($this->any())->method('getLetterVisualAcuityForEpisodeRight')->with($this->event_props['episode'], $include_right_nr_values)->will($this->returnValue($acRight));
 
 		$this->assertEquals($warnings, $this->processor->getProcessWarnings());
 	}

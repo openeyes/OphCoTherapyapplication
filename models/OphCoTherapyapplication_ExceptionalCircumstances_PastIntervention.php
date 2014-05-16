@@ -43,7 +43,7 @@
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason $stop_reason
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -208,12 +208,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	 *
 	 * @return array $options key,value pair list
 	 */
-	public function getTreatmentOptions() {
+	public function getTreatmentOptions($selected_id) {
 		if ($this->is_relevant) {
-			return OphCoTherapyapplication_RelevantTreatment::model()->findAll();
+			return OphCoTherapyapplication_RelevantTreatment::model()->activeOrPk($selected_id)->findAll();
 		}
 		else {
-			return OphCoTherapyapplication_Treatment::model()->findAll();
+			return OphCoTherapyapplication_Treatment::model()->availableOrPk($selected_id)->findAll();
 		}
 	}
 
@@ -226,7 +226,6 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	public function requiredDependingOnTreatmentType($attribute, $params)
 	{
 		if ($this->is_relevant == $params['relevant'] && $this->$attribute == null) {
-			error_log(gettype($this->is_relevant) . ":::" . print_r($params, true) . "::" . $attribute . ':' . $this->is_relevant . ":" . $params['relevant']);
 			$this->addError($attribute, $this->getAttributeLabel($attribute) . " is required");
 		}
 	}

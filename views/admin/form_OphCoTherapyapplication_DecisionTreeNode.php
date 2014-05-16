@@ -28,7 +28,7 @@ $form->layoutColumns = array(
 
 <?php echo $form->errorSummary($model); ?>
 <?php echo $form->textField($model,'question',array('maxlength'=>256)); ?>
-<?php echo $form->dropdownlist($model,'outcome_id',CHtml::listData(OphCoTherapyapplication_DecisionTreeOutcome::model()->findAll(),'id','name'),array('empty'=>'- Please select -')); ?>
+<?php echo $form->dropdownlist($model,'outcome_id','OphCoTherapyapplication_DecisionTreeOutcome',array('empty'=>'- Please select -')); ?>
 
 <?php
 $func_list = array();

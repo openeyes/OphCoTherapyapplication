@@ -18,42 +18,31 @@
  */
 ?>
 
-<section class="element <?php echo $element->elementType->class_name?>"
-	data-element-type-id="<?php echo $element->elementType->id?>"
-	data-element-type-class="<?php echo $element->elementType->class_name?>"
-	data-element-type-name="<?php echo $element->elementType->name?>"
-	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<header class="element-header">
-		<h3 class="element-title"><?php echo $element->elementType->name; ?></h3>
-	</header>
-
-
-	<div class="element-fields element-eyes row">
-		<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
-		<div class="element-eye right-eye left side column <?php if (!$element->hasRight()) { ?> inactive<?php } ?>"
-			data-side="right">
-			<div class="active-form">
-				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
-					array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
-			</div>
-			<div class="inactive-form">
-				<div class="eye-message">Only required if Patient Suitability is Non-Compliant</div>
-			</div>
+<div class="element-fields element-eyes row">
+	<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
+	<div class="element-eye right-eye left side column <?php if (!$element->hasRight()) { ?> inactive<?php } ?>"
+		data-side="right">
+		<div class="active-form">
+			<?php $this->renderPartial($element->form_view . '_fields',
+				array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 		</div>
-
-		<div class="element-eye left-eye right side column <?php if (!$element->hasLeft()) { ?> inactive<?php } ?>"
-			data-side="left">
-			<div class="active-form">
-				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
-					array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
-			</div>
-			<div class="inactive-form">
-				<div class="eye-message">Only required if Patient Suitability is Non-Compliant</div>
-			</div>
+		<div class="inactive-form">
+			<div class="eye-message">Only required if Patient Suitability is Non-Compliant</div>
 		</div>
-
 	</div>
-</section>
+
+	<div class="element-eye left-eye right side column <?php if (!$element->hasLeft()) { ?> inactive<?php } ?>"
+		data-side="left">
+		<div class="active-form">
+			<?php $this->renderPartial($element->form_view . '_fields',
+				array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+		</div>
+		<div class="inactive-form">
+			<div class="eye-message">Only required if Patient Suitability is Non-Compliant</div>
+		</div>
+	</div>
+
+</div>
 
 <script id="previntervention_template" type="text/html">
 	<?php
@@ -66,6 +55,7 @@
 			'element_name' => get_class($element),
 			'form' => $form,
 			'pastintervention' => $pastintervention,
+			'dateFieldWidget' => 'TextField'
 	));
 	?>
 </script>
@@ -80,6 +70,7 @@
 			'element_name' => get_class($element),
 			'form' => $form,
 			'pastintervention' => $pastintervention,
+			'dateFieldWidget' => 'TextField'
 		));
 	?>
 </script>

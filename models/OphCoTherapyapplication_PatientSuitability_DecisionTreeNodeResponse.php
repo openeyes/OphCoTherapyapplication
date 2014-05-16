@@ -33,7 +33,7 @@
  * @property Eye eye
  */
 
-class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecord
+class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

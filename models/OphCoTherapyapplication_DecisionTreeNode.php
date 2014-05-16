@@ -37,7 +37,7 @@
  * @property OphCoTherapyapplication_DecisionTreeOutcome $outcome
  **/
 
-class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecord
+class OphCoTherapyapplication_DecisionTreeNode extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

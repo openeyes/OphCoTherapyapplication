@@ -61,8 +61,8 @@
  * @property User $usermodified
  * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $left_standard_intervention
  * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $right_standard_intervention
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $previnterventions
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $left_previnterventions
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $right_previnterventions
@@ -168,10 +168,10 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 				'OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention',
 				'right_standard_intervention_id'),
 			'left_intervention' => array(self::BELONGS_TO,
-				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'left_intervention_id'),
 			'right_intervention' => array(self::BELONGS_TO,
-				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'right_intervention_id'),
 			'previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
 				'condition' => 'is_relevant = :relevant',
@@ -382,28 +382,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStandardInterventionsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$sis = OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->findAll($criteria);
-
-		if ($curr_id = $this->{$side . "_standard_intervention_id"}) {
-			$seen = false;
-			$all_sis = array();
-			foreach ($sis as $s) {
-				if ($s->id == $curr_id) {
-					$seen = true;
-					break;
-				}
-				$all_sis[] = $s;
-			}
-			if (!$seen) {
-				$all_sis[] = $this->{$side . '_standard_intervention'};
-				$sis = $all_sis;
-			}
-		}
-		return $sis;
+		return OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->activeOrPk($this->{$side . "_standard_intervention_id"})->findAll();
 	}
 
 	/**
@@ -429,27 +408,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getDeviationReasonsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->findAll($criteria);
-
-		$all_risks = array();
-		$r_ids = array();
-
-		foreach ($reasons as $reason) {
-			$all_reasons[] = $reason;
-			$r_ids[] = $reason->id;
-		}
-
+		$in_use_reason_ids = array();
 		foreach ($this->{$side . '_deviationreasons'} as $curr) {
-			if (!in_array($curr->id, $r_ids)) {
-				$all_reasons[] = $curr;
-			}
+			$in_use_reason_ids[] = $curr->id;
 		}
 
-		return $all_reasons;
+		return OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->activeOrPk($in_use_reason_ids)->findAll();
 	}
 
 	/**
@@ -459,28 +423,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStartPeriodsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->findAll($criteria);
-
-		if ($curr_id = $this->{$side . "_start_period_id"}) {
-			$seen = false;
-			$all_sps = array();
-			foreach ($sps as $s) {
-				if ($s->id == $curr_id) {
-					$seen = true;
-					break;
-				}
-				$all_sps[] = $s;
-			}
-			if (!$seen) {
-				$all_sps[] = $this->{$side . '_start_period'};
-				$sps = $all_sps;
-			}
-		}
-		return $sps;
+		return OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->activeOrPk($this->{$side . "_start_period_id"})->findAll();
 	}
 
 	/**
@@ -706,5 +649,30 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 		foreach ($curr_by_id as $curr) {
 			$curr->delete();
 		}
+	}
+
+	/**
+	 * Get ids of the file collections in use by the element for a given side
+	 */
+	public function getFileCollectionValuesForSide($side)
+	{
+		$file_collection_values = array();
+
+		foreach ($this->{$side.'_filecollections'} as $file_collection) {
+			$file_collection_values[] = $file_collection->id;
+		}
+
+		return $file_collection_values;
+	}
+
+	/**
+	 * Is this a required element to be displayed in the UI?
+	 * This element is not required by default, but we still want to prevent
+	 * users from removing it in the UI.
+	 * @return boolean
+	 */
+	public function isRequiredInUI()
+	{
+		return true;
 	}
 }

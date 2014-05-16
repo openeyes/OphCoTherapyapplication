@@ -13,43 +13,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="page" id="<?php echo $this->event_type->class_name ?>_print">
-	<div class="header">
-		<div class="title middle">
-			<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_seal.jpg')?>" alt="letterhead_seal" class="seal" width="100" height="83"/>
-			<h1><?php echo $this->event_type->name?></h1>
-		</div>
-		<div class="headerInfo">
-			<div class="patientDetails">
-				<strong><?php echo $this->patient->contact->fullName?></strong>
-				<br />
-				<?= $this->patient->getLetterAddress(array('delimiter' => '<br/>')) ?>
-				<br>
-				<br>
-				<?php echo $this->patient->getAttributeLabel('hos_num')?>: <strong><?php echo $this->patient->hos_num ?></strong>
-				<br>
-				<?php echo $this->patient->getAttributeLabel('nhs_num')?>: <strong><?php echo $this->patient->nhsnum ?></strong>
-				<br>
-				<?php echo $this->patient->getAttributeLabel('dob')?>: <strong><?php echo Helper::convertDate2NHS($this->patient->dob) ?> (<?php echo $this->patient->getAge()?>)</strong>
-			</div>
-			<div class="headerDetails">
-				<?php if ($consultant = $this->event->episode->firm->consultant) { ?>
-					<strong><?php echo $consultant->contact->getFullName() ?></strong>
-					<br>
-				<?php } ?>
-				Service: <strong><?php echo $this->event->episode->firm->getSubspecialtyText() ?></strong>
-			</div>
-			<div class="noteDates">
-				Created: <strong><?php echo Helper::convertDate2NHS($this->event->created_date) ?></strong>
-				<br>
-				Printed: <strong><?php echo Helper::convertDate2NHS(date('Y-m-d')) ?></strong>
-			</div>
-		</div>
-	</div>
-	<div class="body">
-		<?php
-			$this->renderDefaultElements('print');
-			$this->renderEventMetadata('print_event_metadata');
-		?>
-	</div>
-</div>
+<?php $this->renderPartial('//print/event', array(
+	'hide_modified' => @$hide_modified,
+	'hide_created' => @$hide_created
+))?>

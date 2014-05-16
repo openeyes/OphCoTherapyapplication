@@ -17,21 +17,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="element <?php echo $element->elementType->class_name?>"
-	data-element-type-id="<?php echo $element->elementType->id?>"
-	data-element-type-class="<?php echo $element->elementType->class_name?>"
-	data-element-type-name="<?php echo $element->elementType->name?>"
-	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<header class="element-header">
-		<h3 class="element-title"><?php echo $element->elementType->name; ?></h3>
-	</header>
-
-	<div class="element-fields">
-		<?php
-		$subspecialty = Subspecialty::model()->find('ref_spec=:ref_spec', array(':ref_spec' => 'MR'));
-
-		echo $form->dropDownList($element, 'consultant_id', Firm::model()->getList($subspecialty->id),array('empty'=>'- Please select -'),false,array('field'=>3));
-
-		echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- Please select -'),false,array('field'=>3)); ?>
-	</div>
+<div class="element-fields">
+	<?php
+	$subspecialty = Subspecialty::model()->find('ref_spec=:ref_spec', array(':ref_spec' => 'MR'));
+	echo $form->dropDownList($element, 'consultant_id', Firm::model()->getList($subspecialty->id,$element->consultant_id),array('empty'=>'- Please select -'),false,array('field'=>3));
+	echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- Please select -'),false,array('field'=>3)); ?>
 </div>

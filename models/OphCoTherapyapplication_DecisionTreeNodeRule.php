@@ -31,7 +31,7 @@
  * @property OphCoTherapyapplication_DecisionTreeNode $node
  **/
 
-class OphCoTherapyapplication_DecisionTreeNodeRule extends BaseActiveRecord
+class OphCoTherapyapplication_DecisionTreeNodeRule extends BaseActiveRecordVersioned
 {
 	public $COMPARATORS = array(
 			'eq' => '=',
