@@ -365,50 +365,6 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
-	 * extends standard delete method to remove related assignments
-	 *
-	 * (non-PHPdoc)
-	 * @see CActiveRecord::delete()
-	 */
-	public function delete()
-	{
-		$transaction = Yii::app()->db->getCurrentTransaction() === null
-			? Yii::app()->db->beginTransaction()
-			: false;
-
-		try {
-			foreach ($this->previnterventions as $prev) {
-				$prev->delete();
-			}
-			foreach ($this->relevantinterventions as $relv) {
-				$relv->delete();
-			}
-			foreach ($this->deviationreasons as $devr) {
-				$devr->delete();
-			}
-			foreach ($this->filecollection_assignments as $fca) {
-				$fca->delete();
-			}
-			if (parent::delete()) {
-				if ($transaction) {
-					$transaction->commit();
-				}
-				return true;
-			}
-			else {
-				throw new Exception('unable to delete');
-			}
-		}
-		catch (Exception $e) {
-			if ($transaction) {
-				$transaction->rollback();
-			}
-			throw $e;
-		}
-
-	}
-
-	/**
 	 * get list of valid standard interventions for this element on the given side
 	 *
 	 * @param string $side
