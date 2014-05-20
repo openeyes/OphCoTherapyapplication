@@ -197,75 +197,6 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * process the data for past interventions for the given side
-	 *
-	 * @param array $data
-	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
-	 * @param string $side - left or right
-	 */
-	private function processPastinterventions(array $data, $element, $side)
-	{
-		foreach (array('_previnterventions' => false, '_relevantinterventions' => true) as $past_type => $is_relevant) {
-			if (isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type]) ) {
-				$pastinterventions = array();
-				foreach ($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . $past_type] as $idx => $attributes) {
-					// we have 1 or more entries that are just indexed by a counter. They may or may not already be in the db
-					// but at this juncture we don't care, we just want to create a previous intervention for this side and attach to
-					// the element
-					$past = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
-					$past->attributes = Helper::convertNHS2MySQL($attributes);
-					if ($side == 'left') {
-						$past->exceptional_side_id = SplitEventTypeElement::LEFT;
-					} else {
-						$past->exceptional_side_id = SplitEventTypeElement::RIGHT;
-					}
-					$past->is_relevant = $is_relevant;
-
-					$pastinterventions[] = $past;
-				}
-				$element->{$side . $past_type} = $pastinterventions;
-			}
-		}
-	}
-
-	/**
-	 * process the data for deviation reasons for the given side
-	 *
-	 * @param array $data
-	 * @param Element_OphCoTherapyapplication_ExceptionalCircumstances $element
-	 * @param string $side - left or right
-	 */
-	private function processDeviationReasons(array $data, $element, $side)
-	{
-		if (isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons']) ) {
-			$dr_lst = array();
-			foreach ($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side . '_deviationreasons'] as $id) {
-				if ($dr = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->findByPk((int) $id)) {
-					$dr_lst[] = $dr;
-				}
-			}
-			$element->{$side . '_deviationreasons'} = $dr_lst;
-		}
-	}
-
-	/**
-	 * @param BaseEventTypeElement $element
-	 * @param array $data
-	 * @param integer $index
-	 * (non-phpdoc)
-	 * @see parent::setElementComplexAttributesFromData($element, $data, $index)
-	 */
-	protected function _setElementComplexAttributesFromData($element, $data, $index = null)
-	{
-		if (get_class($element) == "Element_OphCoTherapyapplication_ExceptionalCircumstances") {
-			$this->processPastinterventions($data, $element, 'left');
-			$this->processPastinterventions($data, $element, 'right');
-			$this->processDeviationReasons($data, $element, 'left');
-			$this->processDeviationReasons($data, $element, 'right');
-		}
-	}
-
-	/**
 	 * @param $data
 	 * (non-phpdoc)
 	 * @see parent::saveEventComplexAttributesFromData($data)
@@ -286,28 +217,6 @@ class DefaultController extends BaseEventTypeController
 						array());
 
 			}
-			/*
-			 elseif (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
-				foreach (array('left' => Eye::LEFT, 'right' => Eye::RIGHT) as $side_str => $side_id) {
-					$el->updateDeviationReasons($side_id,
-							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) ?
-							Helper::convertNHS2MySQL($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_deviationreasons']) :
-							array());
-					$el->updatePreviousInterventions($side_id,
-							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) ?
-							Helper::convertNHS2MySQL($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_previnterventions']) :
-							array());
-					$el->updateRelevantInterventions($side_id,
-						isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) ?
-							Helper::convertNHS2MySQL($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_relevantinterventions']) :
-							array());
-					$el->updateFileCollections($side_id,
-							isset($data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections']) ?
-							$data['Element_OphCoTherapyapplication_ExceptionalCircumstances'][$side_str . '_filecollections'] :
-							array());
-				}
-			}
-			*/
 		}
 	}
 
