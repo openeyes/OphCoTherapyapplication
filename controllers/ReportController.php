@@ -18,16 +18,18 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class ReportController extends BaseEventTypeController {
+class ReportController extends BaseController
+{
 	public $renderPatientPanel = false;
-
-	static protected $action_types = array(
-		'index' => self::ACTION_TYPE_REPORT,
-	);
 
 	public function accessRules()
 	{
-		return array(array('allow', 'users' => array('@')));
+		return array(
+			array('allow',
+				'actions' => array('index'),
+				'roles' => array('OprnGenerateReport'),
+			)
+		);
 	}
 
 	protected function array2Csv(array $data)
