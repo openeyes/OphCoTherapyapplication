@@ -84,8 +84,8 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 {
 	public $service;
 
-	protected $_auto_update_relations = true;
-	protected $_relation_defaults = array(
+	protected $auto_update_relations = true;
+	protected $relation_defaults = array(
 		'left_previnterventions' => array(
 				'is_relevant' => false,
 				'exceptional_side_id' => Eye::LEFT,
