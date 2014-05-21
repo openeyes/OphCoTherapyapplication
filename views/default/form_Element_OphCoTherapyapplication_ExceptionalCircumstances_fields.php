@@ -138,7 +138,7 @@
 
 			echo $form->multiSelectList(
 				$element,
-				get_class($element) . '[' . $side . '_deviationreasons]',
+				$side . '_deviationreasons',
 				$side . '_deviationreasons',
 				'id',
 				CHtml::listData($element->getDeviationReasonsForSide($side),'id','name'),
@@ -289,5 +289,5 @@ foreach ($collections as $collection) {
 	$html_options['options'][(string) $collection->id] = array('data-order' => $collection->display_order);
 }
 */
-$form->multiSelectList($element, get_class($element) . '[' . $side . '_filecollections]', $side . '_filecollections', 'id', CHtml::listData($collections,'id','name'), array(), $html_options, false, false, null, false, false, array('label' => 4,'field' => 6));
+$form->multiSelectList($element, $side . '_filecollections', $side . '_filecollections', 'id', CHtml::listData($collections,'id','name'), array(), $html_options, false, false, null, false, false, array('label' => 4,'field' => 6));
 ?>
