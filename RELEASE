@@ -1,6 +1,10 @@
 Release History
 ===============
 
+1.6.4
+-----
++ Fix reports auth
+
 1.6.3
 -----
 + Remove debug line
