@@ -70,7 +70,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('start_date, end_date, treatment_id, start_va, end_va, stopreason_id, stopreason_other, comments', 'safe'),
+			array('start_date, end_date, treatment_id, relevanttreatment_id, relevanttreatment_other, start_va, end_va,
+				stopreason_id, stopreason_other, comments, is_relevant, exceptional_side_id', 'safe'),
 			array('start_date, end_date, start_va, end_va, stopreason_id', 'required'),
 			array('treatment_id', 'requiredDependingOnTreatmentType', 'relevant' => false),
 			array('relevanttreatment_id', 'requiredDependingOnTreatmentType', 'relevant' => true),
