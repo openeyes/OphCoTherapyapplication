@@ -1,6 +1,10 @@
 Release History
 ===============
 
+1.6.5
+-----
++ bugfix for editing compliant applications
+
 1.6.4
 -----
 + Fix reports auth
