@@ -2,8 +2,16 @@ Release History
 ===============
 
 1.7
----
+-----
 + set default values for configuration parameters, rather than erroring when not being set.
+
+1.6.4
+-----
++ Fix reports auth
+
+1.6.3
+-----
++ Remove debug line
 
 1.6.2
 -----

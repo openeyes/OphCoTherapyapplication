@@ -18,12 +18,17 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
+class ReportController extends BaseController
+{
+	public $renderPatientPanel = false;
 
-class ReportController extends BaseController {
 	public function accessRules()
 	{
 		return array(
-				array('deny'),
+			array('allow',
+				'actions' => array('index'),
+				'roles' => array('OprnGenerateReport'),
+			)
 		);
 	}
 
