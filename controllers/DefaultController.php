@@ -398,7 +398,7 @@ class DefaultController extends BaseEventTypeController
 			$this->open_elements = $this->getEventElements();
 			$ec_present = false;
 			foreach ($this->open_elements as $el) {
-				if (Helper::getNSShortname($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
+				if (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
 					$ec_present = true;
 				}
 			}
