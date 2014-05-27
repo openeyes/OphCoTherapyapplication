@@ -407,7 +407,6 @@ class DefaultController extends BaseEventTypeController
 
 	/**
 	 * Extend base function to ensure there is always an exceptional circumstances for updates
-	 *
 	 */
 	protected function setOpenElementsFromCurrentEvent($action)
 	{
@@ -418,5 +417,32 @@ class DefaultController extends BaseEventTypeController
 		else {
 			parent::setOpenElementsFromCurrentEvent($action);
 		}
+	}
+
+	/**
+	 * If a partially completed form is submitted, some of the required elements might not be present in the submission
+	 * this extension resolves this
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	protected function setAndValidateElementsFromData($data)
+	{
+		$errors = parent::setAndValidateElementsFromData($data);
+		if (!empty($errors)) {
+			$all = $this->event_type->getDefaultElements();
+			$curr = $this->open_elements;
+			$update = array();
+			foreach ($all as $del) {
+				if (count($curr) && get_class($curr[0]) == get_class($del)) {
+					$update[] = array_shift($curr);
+				}
+				else {
+					$update[] = $del;
+				}
+			}
+			$this->open_elements = $update;
+		}
+		return $errors;
 	}
 }
