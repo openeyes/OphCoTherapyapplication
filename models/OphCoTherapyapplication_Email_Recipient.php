@@ -55,7 +55,10 @@ class OphCoTherapyapplication_Email_Recipient extends BaseActiveRecord
 
 	public function isAllowed()
 	{
-		return in_array(strtolower(preg_replace('/^.*?@/','',$this->recipient_email)),Yii::app()->params['OphCoTherapyapplication_email_allowed_domains']);
+		if (Yii::app()->params['restrict_email_domains']) {
+			return in_array(strtolower(preg_replace('/^.*?@/','',$this->recipient_email)),Yii::app()->params['restrict_email_domains']);
+		}
+		return true;
 	}
 
 	protected function beforeValidate()

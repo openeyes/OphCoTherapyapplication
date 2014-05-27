@@ -90,7 +90,11 @@ class DefaultController extends BaseEventTypeController
 	public function actionProcessApplication()
 	{
 		$service = new OphCoTherapyapplication_Processor($this->event);
-		if ($service->processEvent($this)) {
+		$user = null;
+		if (@Yii::app()->params['OphCoTherapyapplication_cc_applicant']) {
+			$user = User::model()->findByPk(Yii::app()->user->id);
+		}
+		if ($service->processEvent($this, $user)) {
 			Yii::app()->user->setFlash('success', "Application processed.");
 		} else {
 			Yii::app()->user->setFlash('error', "Unable to process the application at this time.");
@@ -382,5 +386,29 @@ class DefaultController extends BaseEventTypeController
 		$this->title = $this->event_type->name.' ('.$status.')';
 
 		return parent::actionView($id);
+	}
+
+	/**
+	 * Extend base function to ensure there is always an exceptional circumstances for updates
+	 *
+	 */
+	protected function setOpenElementsFromCurrentEvent($action)
+	{
+		if ($action == 'update') {
+			$this->open_elements = $this->getEventElements();
+			$ec_present = false;
+			foreach ($this->open_elements as $el) {
+				if (get_class($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
+					$ec_present = true;
+				}
+			}
+			if (!$ec_present) {
+				$this->open_elements[] = new Element_OphCoTherapyapplication_ExceptionalCircumstances();
+			}
+			$this->setElementOptions($action);
+		}
+		else {
+			parent::setOpenElementsFromCurrentEvent($action);
+		}
 	}
 }
