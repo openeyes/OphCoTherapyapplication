@@ -301,26 +301,60 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
+	 * Ensures all the missing element types are set on open_elements for editing
+	 */
+	protected function setRequiredEventElements()
+	{
+		$curr = $this->event->getElements();
+		$all = $this->event_type->getDefaultElements();
+		foreach ($all as $del) {
+			if (count($curr) && get_class($curr[0]) == get_class($del)) {
+				$this->open_elements[] = array_shift($curr);
+			}
+			else {
+				$this->open_elements[] = $del;
+			}
+		}
+	}
+
+	/**
 	 * Extend base function to ensure there is always an exceptional circumstances for updates
-	 *
 	 */
 	protected function setOpenElementsFromCurrentEvent($action)
 	{
 		if ($action == 'update') {
-			$this->open_elements = $this->getEventElements();
-			$ec_present = false;
-			foreach ($this->open_elements as $el) {
-				if (Helper::getNSShortname($el) == 'Element_OphCoTherapyapplication_ExceptionalCircumstances') {
-					$ec_present = true;
-				}
-			}
-			if (!$ec_present) {
-				$this->open_elements[] = new Element_OphCoTherapyapplication_ExceptionalCircumstances();
-			}
+			$this->setRequiredEventElements();
 			$this->setElementOptions($action);
 		}
 		else {
 			parent::setOpenElementsFromCurrentEvent($action);
 		}
+	}
+
+	/**
+	 * If a partially completed form is submitted, some of the required elements might not be present in the submission
+	 * this extension resolves this
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	protected function setAndValidateElementsFromData($data)
+	{
+		$errors = parent::setAndValidateElementsFromData($data);
+		if (!empty($errors)) {
+			$all = $this->event_type->getDefaultElements();
+			$curr = $this->open_elements;
+			$update = array();
+			foreach ($all as $del) {
+				if (count($curr) && get_class($curr[0]) == get_class($del)) {
+					$update[] = array_shift($curr);
+				}
+				else {
+					$update[] = $del;
+				}
+			}
+			$this->open_elements = $update;
+		}
+		return $errors;
 	}
 }

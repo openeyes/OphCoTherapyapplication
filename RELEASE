@@ -5,6 +5,14 @@ Release History
 -----
 + set default values for configuration parameters, rather than erroring when not being set.
 
+1.6.6
+-----
++ further bugfixes for issues with missing elements during creation and editing
+
+1.6.5
+-----
++ bugfix for editing compliant applications
+
 1.6.4
 -----
 + Fix reports auth
