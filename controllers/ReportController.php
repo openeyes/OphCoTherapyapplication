@@ -57,8 +57,8 @@ class ReportController extends BaseController
 
 	public function actionIndex()
 	{
-		$date_from = date('Y-m-d', strtotime("-1 year"));
-		$date_to = date('Y-m-d');
+		$date_from = date(Helper::NHS_DATE_FORMAT, strtotime("-1 year"));
+		$date_to = date(Helper::NHS_DATE_FORMAT);
 		if (isset($_GET['yt0'])) {
 			$firm = null;
 
