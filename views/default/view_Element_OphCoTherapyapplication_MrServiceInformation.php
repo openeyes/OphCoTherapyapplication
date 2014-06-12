@@ -35,5 +35,5 @@
 				<div class="data-value"><?php echo $site->name ?></div>
 			</div>
 		</div>
-	<? } ?>
+	<?php } ?>
 </div>
