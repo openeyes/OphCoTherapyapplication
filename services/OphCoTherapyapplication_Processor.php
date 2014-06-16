@@ -380,17 +380,7 @@ class OphCoTherapyapplication_Processor
 	 */
 	private function processEventForEye(CController $controller, array $template_data, $eye_id, User $notify_user = null)
 	{
-		switch($eye_id) {
-			case Eye::LEFT:
-				$eye_name = 'left';
-				break;
-			case Eye::RIGHT:
-				$eye_name = 'right';
-				break;
-			default:
-				throw new Exception("Invalid eye ID: '$eye_id'");
-		}
-
+		$eye_name = $this->getEyeNameById($eye_id);
 		$template_data += $this->getSideSpecificTemplateData($eye_name);
 
 		$attachments = array();
@@ -408,9 +398,7 @@ class OphCoTherapyapplication_Processor
 			}
 		}
 
-		if (!$service_info = $this->getElement('Element_OphCoTherapyapplication_MrServiceInformation')) {
-			throw new Exception("MrServiceInformation element is missing");
-		}
+		$service_info = $this->getServiceInfo();
 
 		$link_to_attachments = ($attach_size > Helper::convertToBytes(Yii::app()->params['OphCoTherapyapplication_email_size_limit']));
 
@@ -429,16 +417,12 @@ class OphCoTherapyapplication_Processor
 
 		$recipient_type = $template_data['compliant'] ? 'Compliant' : 'Non-compliant';
 
-		if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id = ? and type.id is null or type.name = ?',array($service_info->site_id,$recipient_type))) {
-			try{
-				if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id is null and type.id is null or type.name = ?',array($recipient_type))) {
-					throw new Exception("No email recipient defined for site ".$service_info->site->name.", $recipient_type");
-				}
-			}
-			catch(Exception $e){
-				Yii::app()->user->setFlash('error',$e->getMessage());
-				$controller->redirect('/OphCoTherapyapplication/default/view/' . $this->event->id);
-			}
+		try{
+			$recipients = $this->getEmailRecipients($service_info, $recipient_type);
+		}
+		catch(Exception $e){
+			Yii::app()->user->setFlash('error',$e->getMessage());
+			$controller->redirect('/OphCoTherapyapplication/default/view/' . $this->event->id);
 		}
 
 		$email_recipients = array();
@@ -504,5 +488,56 @@ class OphCoTherapyapplication_Processor
 
 			return false;
 		}
+	}
+
+	/**
+	 * @param $eye_id
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getEyeNameById($eye_id){
+		switch($eye_id) {
+			case Eye::LEFT:
+				$eye_name = 'left';
+				break;
+			case Eye::RIGHT:
+				$eye_name = 'right';
+				break;
+			default:
+				throw new Exception("Invalid eye ID: '$eye_id'");
+		}
+		return $eye_name;
+	}
+
+	private function getServiceInfo(){
+		if (!$service_info = $this->getElement('Element_OphCoTherapyapplication_MrServiceInformation')) {
+			throw new Exception("MrServiceInformation element is missing");
+		}
+		return $service_info;
+	}
+
+	private function getEmailRecipients($service_info , $recipient_type){
+		if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id = ? and type.id is null or type.name = ?',array($service_info->site_id,$recipient_type))) {
+				if (!$recipients = OphCoTherapyapplication_Email_Recipient::model()->with('type')->findAll('site_id is null and type.id is null or type.name = ?',array($recipient_type))) {
+					throw new Exception("No email recipient defined for site ".$service_info->site->name.", $recipient_type");
+				}
+		}
+		return $recipients;
+	}
+
+	public function hasEmailRecipients(){
+		try{
+			$recipient_type = (!$this->isEventNonCompliant()) ? 'Compliant' : 'Non-compliant';
+			$this->getEmailRecipients($this->getServiceInfo(), $recipient_type);
+			return true;
+		}
+		catch(Exception $e){
+			return false;
+		}
+	}
+
+	public function getSiteName(){
+		$service_info = $this->getServiceInfo();
+		return $service_info->site->name;
 	}
 }
