@@ -181,8 +181,11 @@ class OphCoTherapyapplication_Processor
 		$pdfwrapper->SetTitle('Therapy application preview');
 		$pdfwrapper->SetSubject('Therapy application');
 
+		$max_execution_time = ini_get ( 'max_execution_time');
+
 		foreach($pdfbodies as $body) {
 			$body->render($pdfwrapper);
+			set_time_limit( $max_execution_time );
 		}
 
 		return $pdfwrapper;
