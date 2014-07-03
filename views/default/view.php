@@ -26,7 +26,8 @@ $warnings = $service->getProcessWarnings();
 
 if (!$warnings && !$this->event->isLocked()) {
 	if ($status != $service::STATUS_SENT) {
-		if ($service->isEventNonCompliant()) {
+		$nonCompliant = $service->isEventNonCompliant();
+		if ($nonCompliant) {
 			$preview_button = EventAction::link(
 				'Preview Application', $this->createUrl('previewApplication', array('event_id' => $this->event->id)),
 				null, array('id' => 'application-preview', 'class' => 'button small')
@@ -45,9 +46,18 @@ if (!$warnings && !$this->event->isLocked()) {
 		}
 
 		if ($this->checkEditAccess()) {
+			$url = '#';
+			if($service->hasEmailRecipients()){
+				$submitButtonStyles = array('class' => 'button small');
+				$url = $this->createUrl('processApplication', array('event_id' => $this->event->id));
+			}
+			else{
+				$submitButtonStyles = array('class' => 'button small noEmailRecipient disabled');
+				$warnings[]= "No application recipient configured for " . $status .  " application at " . $service->getSiteName() .  ", please contact support to resolve this.";
+			}
+
 			$this->event_actions[] = EventAction::link(
-				$submit_button_text, $this->createUrl('processApplication', array('event_id' => $this->event->id)),
-				null, array('class' => 'button small')
+				$submit_button_text, $url, null, $submitButtonStyles
 			);
 		}
 	}

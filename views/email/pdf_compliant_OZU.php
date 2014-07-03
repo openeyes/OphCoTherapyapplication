@@ -75,7 +75,7 @@ $gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($cbody_ty
 
 <tr>
 <td>Patient VA</td>
-<td colspan="5"><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? $va : "Not measured"; ?></td>
+<td colspan="5"><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? Yii::app()->format->Ntext($va) : "Not measured"; ?></td>
 </tr>
 
 <tr>
