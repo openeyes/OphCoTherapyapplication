@@ -26,13 +26,6 @@ class DefaultController extends BaseEventTypeController
 		'getDecisionTree' => self::ACTION_TYPE_FORM,
 	);
 
-	// TODO: check this is in line with Jamie's change circa 3rd April 2013
-	protected function beforeAction($action)
-	{
-		Yii::app()->assetManager->registerScriptFile('js/spliteventtype.js', null, null, AssetManager::OUTPUT_SCREEN);
-		return parent::beforeAction($action);
-	}
-
 	/**
 	 * function to define the js vars needed in editing a therapy application
 	 *

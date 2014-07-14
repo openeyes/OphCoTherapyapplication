@@ -39,4 +39,13 @@ return array(
 		// whether the user submitting the application should receive a copy of the submission email
 		//'OphCoTherapyapplication_cc_applicant' => true,
 	),
+	'components' => array(
+		'clientScript' => array(
+			'packages' => array(
+				'OphCoTherapyapplication' => array(
+					'depends' => array('split_event')
+				)
+			)
+		)
+	)
 );
