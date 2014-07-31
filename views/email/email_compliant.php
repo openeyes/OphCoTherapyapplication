@@ -54,7 +54,7 @@ if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
 Patient Details:
 Full Name: <?php echo $patient->getFullName() . "\n" ?>
 Number:<?php echo $patient->hos_num . "\n" ?>
-NHS Number: <?php echo $patient->nhs_num . "\n" ?>
+<?php echo $patient->getAttributeLabel('nhs_num')?>: <?php echo $patient->nhs_num . "\n" ?>
 DoB: <?php echo $patient->NHSDate('dob') . "\n" ?>
 Gender: <?php echo $patient->getGenderString() . "\n" ?>
 Address: <?php echo ($address = $patient->getLetterAddress(array('delimiter' => ', '))) ? $address . "\n" : "Unknown\n"; ?>
