@@ -218,11 +218,11 @@ Please provide further information below relating to the clinical urgency and / 
 				<table class="inner">
 					<tbody>
 						<tr>
-							<th>NHS No.</th>
+							<th><?php echo $patient->getAttributeLabel('nhs_num')?></th>
 							<td><?php echo $patient->nhs_num ?></td>
 						</tr>
 						<tr>
-							<th>Hospital ID No.</th>
+							<th><?php echo $patient->getAttributeLabel('hos_num')?></th>
 							<td><?php echo $patient->hos_num ?></td>
 						</tr>
 						<tr>
