@@ -31,7 +31,7 @@
  * @property OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason $deviationreason
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

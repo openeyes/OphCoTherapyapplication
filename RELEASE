@@ -1,6 +1,13 @@
 Release History
 ===============
 
+1.7
+-----
++ set default values for configuration parameters, rather than erroring when not being set.
++ show warning messages when not configured correctly
++ admin tweaks
++ compatibility with 1.7 core
+
 1.6.8
 -----
 + Further report tweaks

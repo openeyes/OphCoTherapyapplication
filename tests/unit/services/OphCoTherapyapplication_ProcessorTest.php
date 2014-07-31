@@ -191,7 +191,14 @@ class OphCoTherapyapplication_ProcessorTest extends CTestCase
 		$diag->expects($this->any())->method('hasLeft')->will($this->returnValue($eye_id != Eye::RIGHT));
 		$diag->expects($this->any())->method('hasRight')->will($this->returnValue($eye_id != Eye::LEFT));
 
-		$exam_api = $this->getMockBuilder('OphCiExamination_API')->disableOriginalConstructor()->getMock();
+		$exam_api = $this->getMockBuilder('ModuleAPI')
+				->disableOriginalConstructor()
+				->setMethods(array(
+					'getInjectionManagementComplexInEpisodeForDisorder',
+					'getLetterVisualAcuityForEpisodeLeft',
+					'getLetterVisualAcuityForEpisodeRight'
+					))
+				->getMock();
 		$this->moduleAPI->expects($this->any())->method('get')->will($this->returnValueMap(array(array('OphCiExamination', $exam_api))));
 
 		$exam_api->expects($this->any())->method('getInjectionManagementComplexInEpisodeForDisorder')

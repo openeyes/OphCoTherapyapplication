@@ -41,7 +41,12 @@
 			'form' => $form,
 	))?>
 
-	<?php echo $form->formActions(array('cancel-uri'=>$cancel_uri))?>
+	<?php
+	$actions = array();
+	if (@$cancel_uri) {
+		$actions['cancel-uri']  = $cancel_uri;
+	}
+	echo $form->formActions($actions)?>
 
 	<?php $this->endWidget()?>
 </div>

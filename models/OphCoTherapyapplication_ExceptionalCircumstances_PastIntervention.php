@@ -43,7 +43,7 @@
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention_StopReason $stop_reason
  */
 
-class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecord
+class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -70,7 +70,8 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('start_date, end_date, treatment_id, start_va, end_va, stopreason_id, stopreason_other, comments', 'safe'),
+			array('start_date, end_date, treatment_id, relevanttreatment_id, relevanttreatment_other, start_va, end_va,
+				stopreason_id, stopreason_other, comments, is_relevant, exceptional_side_id', 'safe'),
 			array('start_date, end_date, start_va, end_va, stopreason_id', 'required'),
 			array('treatment_id', 'requiredDependingOnTreatmentType', 'relevant' => false),
 			array('relevanttreatment_id', 'requiredDependingOnTreatmentType', 'relevant' => true),
@@ -208,12 +209,12 @@ class OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention extends 
 	 *
 	 * @return array $options key,value pair list
 	 */
-	public function getTreatmentOptions() {
+	public function getTreatmentOptions($selected_id) {
 		if ($this->is_relevant) {
-			return OphCoTherapyapplication_RelevantTreatment::model()->findAll();
+			return OphCoTherapyapplication_RelevantTreatment::model()->activeOrPk($selected_id)->findAll();
 		}
 		else {
-			return OphCoTherapyapplication_Treatment::model()->findAll();
+			return OphCoTherapyapplication_Treatment::model()->availableOrPk($selected_id)->findAll();
 		}
 	}
 

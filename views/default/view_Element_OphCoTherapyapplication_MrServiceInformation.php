@@ -17,31 +17,23 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-
-<section class="element">
-	<header class="element-header">
-		<h3 class="element-title"><?php echo $element->elementType->name?></h3>
-	</header>
-
-	<div class="element-data">
+<div class="element-data">
+	<div class="row data-row">
+		<div class="large-2 column">
+			<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?></div>
+		</div>
+		<div class="large-10 column">
+			<div class="data-value"><?php echo $element->consultant ? $element->consultant->name : 'None'?></div>
+		</div>
+	</div>
+	<?php if ($site = $element->site) { ?>
 		<div class="row data-row">
 			<div class="large-2 column">
-				<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('consultant_id'))?></div>
+				<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?>:</div>
 			</div>
 			<div class="large-10 column">
-				<div class="data-value"><?php echo $element->consultant ? $element->consultant->name : 'None'?></div>
+				<div class="data-value"><?php echo $site->name ?></div>
 			</div>
 		</div>
-		<?php if ($site = $element->site) { ?>
-			<div class="row data-row">
-				<div class="large-2 column">
-					<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?>:</div>
-				</div>
-				<div class="large-10 column">
-					<div class="data-value"><?php echo $site->name ?></div>
-				</div>
-			</div>
-		<? } ?>
-	</div>
-
-</section>
+	<?php } ?>
+</div>

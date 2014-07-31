@@ -46,7 +46,7 @@
  * @property User $usermodified
  */
 
-class OphCoTherapyapplication_Treatment extends BaseActiveRecord
+class OphCoTherapyapplication_Treatment extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -69,14 +69,17 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	* scope to only get treatments where the drug is available
 	*
 	*/
-	public function availableScope()
+	public function availableOrPk($id)
 	{
-		$this->resetScope()->getDbCriteria()->mergeWith(array(
-				'with' => array(
-					"drug" => array(
-						'condition' => 'drug.available = true', 'order' => 'drug.display_order ASC'),
-					),
-				'condition' => 'decisiontree_id IS NOT NULL'));
+		$alias = $this->getTableAlias(true);
+
+		$criteria = new CDbCriteria;
+		$criteria->compare('drug.active', true);
+		$criteria->compare("${alias}.active", true);
+		$criteria->addCondition("{$alias}.decisiontree_id is not null");
+		$criteria->compare("${alias}." . $this->metadata->tableSchema->primaryKey, $id, false, 'OR');
+
+		$this->dbCriteria->mergeWith($criteria);
 
 		return $this;
 	}
@@ -89,11 +92,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 	 */
 	public function defaultScope()
 	{
-		return array(
-			'with' => array(
-				"drug" => array(
-					'order' => 'drug.display_order ASC'))
-		);
+		return array('with' => array('drug'));
 	}
 
 	/**
@@ -166,7 +165,7 @@ class OphCoTherapyapplication_Treatment extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
-
+	
 	/**
 	 * Set default values for forms on create
 	 */

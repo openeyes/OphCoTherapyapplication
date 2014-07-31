@@ -27,7 +27,7 @@
  *
  **/
 
-class OphCoTherapyapplication_DecisionTree extends BaseActiveRecord
+class OphCoTherapyapplication_DecisionTree extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

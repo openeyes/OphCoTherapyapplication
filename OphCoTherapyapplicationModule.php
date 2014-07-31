@@ -30,8 +30,17 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 	// for updates to the module through gii
 	public $moduleShortSuffix;
 	public $default_parameter_settings = array(
+		'OphCoTherapyapplication_applicant_email' => 'Applicant Email Address Not Set',
+		'OphCoTherapyapplication_chief_pharmacist' => 'No Chief Pharmacist Set',
+		'OphCoTherapyapplication_chief_pharmacist_contact' => 'No Chief Pharmacist Contact Details Set',
+		'OphCoTherapyapplication_email_size_limit' => '10MB',
+		'OphCoTherapyapplication_cc_application' => false,
 		'OphCoTherapyapplication_compliant_email_subject' => 'Therapy NOTIFICATION',
 		'OphCoTherapyapplication_noncompliant_email_subject' => 'Therapy APPLICATION',
+	);
+
+	public $required_parameters = array(
+			'OphCoTherapyapplication_sender_email',
 	);
 
 	public function init()
@@ -52,19 +61,12 @@ class OphCoTherapyapplicationModule extends BaseEventTypeModule
 
 		// check for required configuration variables
 		$missing_config = array();
-		foreach (array(
-				'OphCoTherapyapplication_applicant_email',
-				'OphCoTherapyapplication_chief_pharmacist',
-				'OphCoTherapyapplication_chief_pharmacist_contact',
-				'OphCoTherapyapplication_email_size_limit',
-				'OphCoTherapyapplication_sender_email',
-				'OphCoTherapyapplication_cc_applicant',
-				) as $required_config) {
-
+		foreach ($this->required_parameters as $required_config) {
 			if (!isset(Yii::app()->params[$required_config])) {
 				$missing_config[] = $required_config;
 			}
 		}
+
 		if (count($missing_config)) {
 			throw new Exception('Missing required configuration variables for ' . $this->getName() . ': ' . implode(", ", $missing_config));
 		}

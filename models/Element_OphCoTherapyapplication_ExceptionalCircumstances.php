@@ -61,8 +61,8 @@
  * @property User $usermodified
  * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $left_standard_intervention
  * @property OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention $right_standard_intervention
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
- * @property Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_Intervention $left_intervention
+ * @property OphCoTherapyapplication_ExceptionalCircumstances_Intervention $right_intervention
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $previnterventions
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $left_previnterventions
  * @property OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention[] $right_previnterventions
@@ -83,6 +83,38 @@
 class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEventTypeElement
 {
 	public $service;
+
+	protected $auto_update_relations = true;
+	protected $relation_defaults = array(
+		'left_previnterventions' => array(
+				'is_relevant' => false,
+				'exceptional_side_id' => Eye::LEFT,
+		),
+		'right_previnterventions' => array(
+				'is_relevant' => false,
+				'exceptional_side_id' => Eye::RIGHT,
+		),
+		'left_relevantinterventions' => array(
+				'is_relevant' => true,
+				'exceptional_side_id' => Eye::LEFT
+		),
+		'right_relevantinterventions' => array(
+				'is_relevant' => true,
+				'exceptional_side_id' => Eye::RIGHT
+		),
+		'left_deviationreasons' => array(
+				'side_id' => Eye::LEFT
+		),
+		'right_deviationreasons' => array(
+				'side_id' => Eye::RIGHT
+		),
+		'left_filecollections' => array(
+				'exceptional_side_id' => Eye::LEFT
+		),
+		'right_filecollections' => array(
+				'exceptional_side_id' =>Eye::RIGHT
+		),
+	);
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -115,7 +147,9 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 					'right_standard_intervention_exists, right_standard_intervention_id, right_standard_previous,' .
 					'right_condition_rare, right_incidence, right_intervention_id, right_description, ' .
 					'right_patient_different, right_patient_gain, right_patient_factors, right_patient_factor_details, ' .
-					'right_start_period_id, right_urgency_reason', 'safe'),
+					'right_start_period_id, right_urgency_reason left_previnterventions, right_previnterventions,
+					left_relevantinterventions, right_relevantinterventions, left_deviationreasons, right_deviationreasons,
+					left_filecollections, right_filecollections', 'safe'),
 			array('left_standard_intervention_exists, left_patient_different, left_patient_gain, left_patient_factors,' .
 					'left_patient_expectations, left_start_period_id',	'requiredIfSide', 'side' => 'left'),
 			array('right_standard_intervention_exists, right_patient_different, right_patient_gain,  right_patient_factors,' .
@@ -168,10 +202,10 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 				'OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention',
 				'right_standard_intervention_id'),
 			'left_intervention' => array(self::BELONGS_TO,
-				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'left_intervention_id'),
 			'right_intervention' => array(self::BELONGS_TO,
-				'Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
+				'OphCoTherapyapplication_ExceptionalCircumstances_Intervention',
 				'right_intervention_id'),
 			'previnterventions' => array(self::HAS_MANY, 'OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', 'exceptional_id',
 				'condition' => 'is_relevant = :relevant',
@@ -331,50 +365,6 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
-	 * extends standard delete method to remove related assignments
-	 *
-	 * (non-PHPdoc)
-	 * @see CActiveRecord::delete()
-	 */
-	public function delete()
-	{
-		$transaction = Yii::app()->db->getCurrentTransaction() === null
-			? Yii::app()->db->beginTransaction()
-			: false;
-
-		try {
-			foreach ($this->previnterventions as $prev) {
-				$prev->delete();
-			}
-			foreach ($this->relevantinterventions as $relv) {
-				$relv->delete();
-			}
-			foreach ($this->deviationreasons as $devr) {
-				$devr->delete();
-			}
-			foreach ($this->filecollection_assignments as $fca) {
-				$fca->delete();
-			}
-			if (parent::delete()) {
-				if ($transaction) {
-					$transaction->commit();
-				}
-				return true;
-			}
-			else {
-				throw new Exception('unable to delete');
-			}
-		}
-		catch (Exception $e) {
-			if ($transaction) {
-				$transaction->rollback();
-			}
-			throw $e;
-		}
-
-	}
-
-	/**
 	 * get list of valid standard interventions for this element on the given side
 	 *
 	 * @param string $side
@@ -382,28 +372,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStandardInterventionsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$sis = OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->findAll($criteria);
-
-		if ($curr_id = $this->{$side . "_standard_intervention_id"}) {
-			$seen = false;
-			$all_sis = array();
-			foreach ($sis as $s) {
-				if ($s->id == $curr_id) {
-					$seen = true;
-					break;
-				}
-				$all_sis[] = $s;
-			}
-			if (!$seen) {
-				$all_sis[] = $this->{$side . '_standard_intervention'};
-				$sis = $all_sis;
-			}
-		}
-		return $sis;
+		return OphCoTherapyapplication_ExceptionalCircumstances_StandardIntervention::model()->activeOrPk($this->{$side . "_standard_intervention_id"})->findAll();
 	}
 
 	/**
@@ -429,27 +398,12 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getDeviationReasonsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$reasons = OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->findAll($criteria);
-
-		$all_risks = array();
-		$r_ids = array();
-
-		foreach ($reasons as $reason) {
-			$all_reasons[] = $reason;
-			$r_ids[] = $reason->id;
-		}
-
+		$in_use_reason_ids = array();
 		foreach ($this->{$side . '_deviationreasons'} as $curr) {
-			if (!in_array($curr->id, $r_ids)) {
-				$all_reasons[] = $curr;
-			}
+			$in_use_reason_ids[] = $curr->id;
 		}
 
-		return $all_reasons;
+		return OphCoTherapyapplication_ExceptionalCircumstances_DeviationReason::model()->activeOrPk($in_use_reason_ids)->findAll();
 	}
 
 	/**
@@ -459,28 +413,7 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	 */
 	public function getStartPeriodsForSide($side)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$sps = OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->findAll($criteria);
-
-		if ($curr_id = $this->{$side . "_start_period_id"}) {
-			$seen = false;
-			$all_sps = array();
-			foreach ($sps as $s) {
-				if ($s->id == $curr_id) {
-					$seen = true;
-					break;
-				}
-				$all_sps[] = $s;
-			}
-			if (!$seen) {
-				$all_sps[] = $this->{$side . '_start_period'};
-				$sps = $all_sps;
-			}
-		}
-		return $sps;
+		return OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->activeOrPk($this->{$side . "_start_period_id"})->findAll();
 	}
 
 	/**
@@ -561,150 +494,27 @@ class Element_OphCoTherapyapplication_ExceptionalCircumstances extends SplitEven
 	}
 
 	/**
-	 * update the Deviation reasons for the given eye
-	 *
-	 * @param int $side - Eye::LEFT or Eye::RIGHT
-	 * @param int[] $reason_ids
+	 * Get ids of the file collections in use by the element for a given side
 	 */
-	public function updateDeviationReasons($side, $reason_ids)
+	public function getFileCollectionValuesForSide($side)
 	{
-		$curr_by_id = array();
-		$save = array();
+		$file_collection_values = array();
 
-		foreach ($this->deviationreasons as $d) {
-			if ($d->side_id == $side) {
-				$curr_by_id[$d->deviationreason_id] = $d;
-			}
+		foreach ($this->{$side.'_filecollections'} as $file_collection) {
+			$file_collection_values[] = $file_collection->id;
 		}
 
-		foreach ($reason_ids as $r_id) {
-			if (!array_key_exists($r_id, $curr_by_id)) {
-				$ass = new OphCoTherapyapplication_ExceptionalCircumstances_DeviationReasonAssignment();
-				$ass->attributes = array('element_id' => $this->id, 'side_id' => $side, 'deviationreason_id' => $r_id);
-				$save[] = $ass;
-			} else {
-				unset($curr_by_id[$r_id]);
-			}
-
-			foreach ($save as $s) {
-				$s->save();
-			}
-
-			foreach ($curr_by_id as $curr) {
-				$curr->delete();
-			}
-		}
+		return $file_collection_values;
 	}
 
 	/**
-	 * set the past interventions for the specified side and type
-	 *
-	 * @param integer $side - SplitEventTypeElement::LEFT or SplitEventTypeElement::RIGHT
-	 * @param array $interventions - array of arrays(attributes for OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention)
-	 * @param boolean $relevant
+	 * Is this a required element to be displayed in the UI?
+	 * This element is not required by default, but we still want to prevent
+	 * users from removing it in the UI.
+	 * @return boolean
 	 */
-	protected function updatePastInterventions($side, $interventions, $relevant = false)
+	public function isRequiredInUI()
 	{
-		$curr_by_id = array();
-		$save = array();
-
-		// note we operate on previnterventions relation here, so that we avoid any custom assignment
-		// that might have taken place for the purposes of validation
-		// TODO: when looking at OE-2927 it might be better if we update the interventions in a different way
-		// where the changes are stored when set for validation, and then afterSave is used to do the actual database changes
-		if ($relevant) {
-			$curr_objs = $this->relevantinterventions;
-		}
-		else {
-			$curr_objs = $this->previnterventions;
-		}
-
-		foreach ($curr_objs as $curr) {
-			if ($curr->exceptional_side_id == $side) {
-				$curr_by_id[$curr->id] = $curr;
-			}
-		}
-
-		foreach ($interventions as $intervention) {
-			if (isset($intervention['id'])) {
-				$curr_by_id[$intervention['id']]->attributes = $intervention;
-				$save[] = $curr_by_id[$intervention['id']];
-				unset($curr_by_id[$intervention['id']]);
-			} else {
-				$prev = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
-				$prev->attributes = $intervention;
-				$prev->is_relevant = $relevant;
-				$prev->exceptional_id = $this->id;
-				$prev->exceptional_side_id = $side;
-				$save[] = $prev;
-			}
-		}
-
-		foreach ($save as $s) {
-			$s->save();
-		}
-
-		foreach ($curr_by_id as $id => $del) {
-			$del->delete();
-		}
-	}
-
-	/**
-	 * update previous interventions - wrapper for updatePastInterventions
-	 *
-	 * @param integer $side
-	 * @param array $interventions
-	 *
-	 */
-	public function updatePreviousInterventions($side, $interventions)
-	{
-		$this->updatePastInterventions($side, $interventions, false);
-	}
-
-	/**
-	 * update relevant interventions - wrapper for updatePastInterventions
-	 *
-	 * @param integer $side
-	 * @param array $interventions
-	 */
-	public function updateRelevantInterventions($side, $interventions)
-	{
-		$this->updatePastInterventions($side, $interventions, true);
-	}
-
-	/**
-	 * update the file collections to support the exceptional circumstances of this application for the given side
-	 *
-	 * @param int $side - Eye::LEFT or Eye::RIGHT
-	 * @param int[] $collection_ids - uids of the file collections to be used for this side.
-	 */
-	public function updateFileCollections($side, $collection_ids)
-	{
-		$curr_by_id = array();
-		$save = array();
-
-		foreach ($this->filecollection_assignments as $f) {
-			if ($f->exceptional_side_id == $side) {
-				$curr_by_id[$f->collection_id] = $f;
-			}
-		}
-
-		foreach ($collection_ids as $coll_id) {
-			if (!array_key_exists($coll_id, $curr_by_id)) {
-				$ass = new OphCoTherapyapplication_ExceptionalCircumstances_FileCollectionAssignment();
-				$ass->attributes = array('exceptional_id' => $this->id, 'exceptional_side_id' => $side, 'collection_id' => $coll_id);
-				$save[] = $ass;
-			} else {
-				unset($curr_by_id[$coll_id]);
-			}
-		}
-
-		foreach ($save as $s) {
-			$s->save();
-		}
-
-		foreach ($curr_by_id as $curr) {
-			$curr->delete();
-		}
+		return true;
 	}
 }

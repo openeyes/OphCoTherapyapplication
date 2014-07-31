@@ -37,7 +37,7 @@
 		$intervention_id = $_POST[get_class($element)][$side . '_intervention_id'];
 		if ($_POST[get_class($element)][$side . '_standard_previous'] == '0') {
 			if ($id = $_POST[get_class($element)][$side . '_intervention_id']) {
-				$intervention = Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int) $id);
+				$intervention = OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int) $id);
 				if ($intervention->is_deviation) {
 					$need_reason = true;
 				}
@@ -98,19 +98,21 @@
 		$opts = array(
 			'options' => array()
 		);
-		foreach (Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll() as $intervention) {
+		$interventions = OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findAll();
+
+		foreach ($interventions as $intervention) {
 			$opts['options'][$intervention->id] = array('data-description-label' => $intervention->description_label, 'data-is-deviation' => $intervention->is_deviation);
 		}
 	?>
 	<div class="intervention" id="<?php echo get_class($element) . "_" . $side;?>_intervention">
-		<?php echo $form->radioButtons($element, $side . '_intervention_id', 'ophcotherapya_exceptional_intervention', $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
+		<?php echo $form->radioButtons($element, $side . '_intervention_id', CHtml::listData($interventions,'id','name'), $element->{$side . '_intervention_id'}, 1, false, false, false, $opts, $layoutColumns)?>
 	</div>
 
 	<div class="row field-row"<?php if (!$intervention_id) { echo ' style="display: none;"'; } ?>>
 		<div class="large-<?php echo $layoutColumns['label'];?> column">
 			<label for="<?php echo get_class($element).'_'.$side.'_description';?>">
 				<?php if ($intervention_id) {
-					echo Element_OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int)$intervention_id)->description_label;
+					echo OphCoTherapyapplication_ExceptionalCircumstances_Intervention::model()->findByPk((int)$intervention_id)->description_label;
 				} else {
 					$element->getAttributeLabel($side . '_description');
 				}?>
@@ -279,7 +281,7 @@ $html_options = array(
 	'div_id' =>  get_class($element) . '_' . $side . '_filecollections',
 	'div_class' => 'elementField',
 	'label' => 'File Attachments');
-$collections = OphCoTherapyapplication_FileCollection::model()->findAll();
+$collections = OphCoTherapyapplication_FileCollection::model()->activeOrPk($element->getFileCollectionValuesForSide($side))->findAll();
 //TODO: have sorting with display_order when implemented
 /*
 $collections = OphCoTherapyapplication_FileCollection::::model()->findAll(array('order'=>'display_order asc'));

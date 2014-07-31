@@ -1,5 +1,8 @@
 /**
- * (C) OpenEyes Foundation, 2013
+ * OpenEyes
+ *
+ * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+ * (C) OpenEyes Foundation, 2011-2013
  * This file is part of OpenEyes.
  * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -8,124 +11,49 @@
  * @package OpenEyes
  * @link http://www.openeyes.org.uk
  * @author OpenEyes <info@openeyes.org.uk>
- * @copyright Copyright (C) 2013, OpenEyes Foundation
+ * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+/*
+ * This file contains print CSS used to style an event print layout.
+ */
+@media print {
+  /* line 22, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  h2 {
+    margin: 20px 0 10px 0;
+  }
 
-.clearfix:after {
-	visibility: hidden;
-	display: block;
-	font-size: 0;
-	content: " ";
-	clear: both;
-	height: 0;
-}
+  /* line 25, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  h3 {
+    margin: 10px 0 5px 0;
+  }
 
-.page {
-	padding: 0 30px;
-	font-size: 12pt;
-	width: 1000px;
-}
+  /* line 28, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  .header {
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #000;
+    margin-bottom: 15px;
+  }
 
-.header {
-	clear: both;
-	padding: 0 0 10px 0;
-	border-bottom: 1px solid #000;
-	margin-bottom: 15px;
-}
+  /* line 33, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  .title {
+    margin: 0 auto;
+    text-align: center;
+  }
+  /* line 36, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  .title img {
+    float: right;
+  }
+  /* line 39, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  .title h1 {
+    margin: 30px 0 15px 0;
+    display: inline-block;
+  }
 
-.headerInfo {
-	position: relative;
-}
-
-.seal {
-	float: right;
-	clear: both;
-}
-
-.patientDetails {
-	border: 1px solid #000;
-	padding: 5px 10px;
-	display: inline-block;
-	width: 350px;
-}
-
-.headerDetails {
-	display: inline-block;
-	position: absolute;
-	top: 10px;
-	left: 40%;
-	font-size: 15px;
-}
-
-.noteDates {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-}
-
-.element {
-	border: 1px solid #000;
-	margin-bottom: 20px;
-}
-
-#OphCoTherapyapplication_print .left { clear: left; float: left; width: 48%; position: relative; }
-#OphCoTherapyapplication_print .right { clear: right; float: right; width: 48%; position: relative; }
-
-.eventDetail {
-	margin: 5px;
-}
-
-.eventDetail:after {
-	visibility: hidden;
-	display: block;
-	font-size: 0;
-	content: " ";
-	clear: both;
-	height: 0;
-}
-
-.label {
-	float: left;
-	width: 200px;
-	margin-right: 10px;
-}
-
-.data {
-	display: inline-block;
-	width: 250px;
-}
-
-.pastintervention-view {
-	margin-bottom: 5px;
-}
-
-.pastintervention-view div:after {
-	visibility: hidden;
-	display: block;
-	font-size: 0;
-	content: " ";
-	clear: both;
-	height: 0;
-}
-
-.pastintervention-view .label {
-	display: inline-block;
-	width: 120px;
-}
-
-.pastintervention-view .data {
-	display: inline-block;
-	width: 120px;
-}
-
-a {
-	color: #000;
-	text-decoration: none;
-}
-
-.metaData span.info {
-	font-style: italic;
-	display: inline-block;
-	width: 100%;
+  /* line 44, ../../../../assets/sass/openeyes/components/print/_event.scss */
+  .patient {
+    border: 1px solid #000;
+    padding: 5px 10px;
+  }
 }

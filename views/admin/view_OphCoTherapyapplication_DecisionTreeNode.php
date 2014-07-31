@@ -26,22 +26,22 @@
 if ($model->rules) {
 ?>
 
-	<div class="rules curvybox blue">
+	<div class="rules curvybox blue column end">
 		<h4>Rules</h4>
 		<?php foreach ($model->rules as $rule) {
 			$this->renderPartial('view_OphCoTherapyapplication_DecisionTreeNodeRule', array(
 					'model' => $rule,
 			));
-		}?>
+		}
+		if ($model->canAddRule()) {?>
+			<div>
+				<a href="#" class="add_rule" data-node_id="<?php echo $model->id ?>">Add rule</a>
+			</div>
+		<?php } ?>
 	</div>
 <?php
 }
 ?>
-<?php if ($model->canAddRule()) {?>
-<div>
-	<a href="#" class="add_rule" data-node_id="<?php echo $model->id ?>">Add rule</a>
-</div>
-<?php } ?>
 
 <div class="node curvybox white">
 <?php if ($model->question) { ?>
@@ -64,7 +64,7 @@ if ($model->rules) {
 if ($model->children) {
 ?>
 <div class="children curvybox blue">
-	<h4>Children	</h4>
+	<h4>Children</h4>
 	<?php foreach ($model->children as $child) {
 	?>
 		<div class="child curvybox">

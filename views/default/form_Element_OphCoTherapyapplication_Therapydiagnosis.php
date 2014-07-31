@@ -36,55 +36,18 @@ foreach ($l1_disorders as $disorder) {
 }
 
 ?>
-<section class="element <?php echo $element->elementType->class_name?>"
-	data-element-type-id="<?php echo $element->elementType->id?>"
-	data-element-type-class="<?php echo $element->elementType->class_name?>"
-	data-element-type-name="<?php echo $element->elementType->name?>"
-	data-element-display-order="<?php echo $element->elementType->display_order?>">
+<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
 
-	<header class="element-header">
-		<h3 class="element-title"><?php echo $element->elementType->name; ?></h3>
-	</header>
+<div class="element-fields element-eyes row">
+	<div
+		class="element-eye right-eye column side left eventDetail<?php if (!$element->hasRight()) { ?> inactive<?php } ?>"
+		data-side="right">
 
-	<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
-
-	<div class="element-fields element-eyes row">
-		<div
-			class="element-eye right-eye column side left eventDetail<?php if (!$element->hasRight()) { ?> inactive<?php } ?>"
-			data-side="right">
-
-			<div class="active-form">
-				<a href="#" class="icon-remove-side remove-side">Remove side</a>
-					<?php $this->renderPartial('form_' . get_class($element) . '_fields',
-						array(
-							'side' => 'right',
-							'element' => $element,
-							'form' => $form,
-							'l1_disorders' => $l1_disorders,
-							'l1_opts' => $l1_options,
-							'l2_disorders' => $l2_disorders,
-							'data' => $data
-						)
-					);?>
-			</div>
-			<div class="inactive-form">
-				<div class="add-side">
-					<a href="#">
-						Add right side
-						<span class="icon-add-side"></span>
-					</a>
-				</div>
-			</div>
-		</div>
-
-		<div
-			class="element-eye left-eye column side right eventDetail<?php if (!$element->hasLeft()) { ?> inactive<?php } ?>"
-			data-side="left">
-			<div class="active-form">
-				<a href="#" class="icon-remove-side remove-side">Remove side</a>
-				<?php $this->renderPartial('form_' . get_class($element) . '_fields',
+		<div class="active-form">
+			<a href="#" class="icon-remove-side remove-side">Remove side</a>
+				<?php $this->renderPartial($element->form_view . '_fields',
 					array(
-						'side' => 'left',
+						'side' => 'right',
 						'element' => $element,
 						'form' => $form,
 						'l1_disorders' => $l1_disorders,
@@ -92,16 +55,42 @@ foreach ($l1_disorders as $disorder) {
 						'l2_disorders' => $l2_disorders,
 						'data' => $data
 					)
-				); ?>
-			</div>
-			<div class="inactive-form">
-				<div class="add-side">
-					<a href="#">
-						Add left side
-						<span class="icon-add-side"></span>
-					</a>
-				</div>
+				);?>
+		</div>
+		<div class="inactive-form">
+			<div class="add-side">
+				<a href="#">
+					Add right side
+					<span class="icon-add-side"></span>
+				</a>
 			</div>
 		</div>
 	</div>
-</section>
+
+	<div
+		class="element-eye left-eye column side right eventDetail<?php if (!$element->hasLeft()) { ?> inactive<?php } ?>"
+		data-side="left">
+		<div class="active-form">
+			<a href="#" class="icon-remove-side remove-side">Remove side</a>
+			<?php $this->renderPartial($element->form_view . '_fields',
+				array(
+					'side' => 'left',
+					'element' => $element,
+					'form' => $form,
+					'l1_disorders' => $l1_disorders,
+					'l1_opts' => $l1_options,
+					'l2_disorders' => $l2_disorders,
+					'data' => $data
+				)
+			); ?>
+		</div>
+		<div class="inactive-form">
+			<div class="add-side">
+				<a href="#">
+					Add left side
+					<span class="icon-add-side"></span>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
