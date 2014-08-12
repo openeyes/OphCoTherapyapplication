@@ -57,8 +57,8 @@ class ReportController extends BaseController
 
 	public function actionIndex()
 	{
-		$date_from = date('Y-m-d', strtotime("-1 year"));
-		$date_to = date('Y-m-d');
+		$date_from = date(Helper::NHS_DATE_FORMAT, strtotime("-1 year"));
+		$date_to = date(Helper::NHS_DATE_FORMAT);
 		if (isset($_GET['yt0'])) {
 			$firm = null;
 
@@ -100,10 +100,13 @@ class ReportController extends BaseController
 				->select(
 						"p.id as patient_id, diag.left_diagnosis1_id, diag.left_diagnosis2_id, diag.right_diagnosis1_id, diag.right_diagnosis2_id, e.id,
 						c.first_name, c.last_name, e.created_date, p.hos_num,p.gender, p.dob, eye.name AS eye, site.name as site_name,
-						firm.name as firm_name, ps.left_treatment_id, ps.right_treatment_id, ps.left_nice_compliance, ps.right_nice_compliance"
+						firm.name as firm_name, concat(uc.first_name, ' ', uc.last_name) as created_user,
+						ps.left_treatment_id, ps.right_treatment_id, ps.left_nice_compliance, ps.right_nice_compliance"
 				)
 				->from("et_ophcotherapya_therapydiag diag")
 				->join("event e", "e.id = diag.event_id")
+				->join("user u", "u.id = e.created_user_id")
+				->join("contact uc", "uc.id = u.contact_id")
 				->join("episode ep", "e.episode_id = ep.id")
 				->join("patient p", "ep.patient_id = p.id")
 				->join("contact c", "p.contact_id = c.id")
@@ -136,6 +139,7 @@ class ReportController extends BaseController
 					"eye" => $row['eye'],
 					"site_name" => ($row['site_name']) ? $row['site_name'] : 'N/A',
 					"consultant" => $row['firm_name'],
+					"created_user" => $row['created_user'],
 					'left_diagnosis' => $this->getDiagnosisString($row['left_diagnosis1_id']),
 					'left_secondary_to' => $this->getDiagnosisString($row['left_diagnosis2_id']),
 					'right_diagnosis' => $this->getDiagnosisString($row['right_diagnosis1_id']),

@@ -57,6 +57,7 @@ if ($treatment && $treatment->decisiontree) {
 						<input type="text"
 							id="Element_OphCoTherapyapplication_PatientSuitability_<?php echo $side; ?>_DecisionTreeResponse_<?php echo $node->id; ?>"
 							name="Element_OphCoTherapyapplication_PatientSuitability[<?php echo $side; ?>_DecisionTreeResponse][<?php echo $node->id; ?>]"
+							autocomplete="<?php echo Yii::app()->params['html_autocomplete']?>"
 							value="<?php echo $val; ?>" />
 					<?php }?>
 				<?php } ?>
