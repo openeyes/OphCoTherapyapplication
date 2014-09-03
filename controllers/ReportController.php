@@ -18,7 +18,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class ReportController extends BaseController
+class ReportController extends BaseReportController
 {
 	public $renderPatientPanel = false;
 
@@ -27,7 +27,7 @@ class ReportController extends BaseController
 		return array(
 			array('allow',
 				'actions' => array('index'),
-				'roles' => array('OprnGenerateReport'),
+				'roles' => array('OprnGenerateReport','admin'),
 			)
 		);
 	}

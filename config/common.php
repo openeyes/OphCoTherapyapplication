@@ -27,6 +27,9 @@ return array(
 			'File Collections' => '/OphCoTherapyapplication/admin/viewFileCollections',
 			'Email Recipients' => '/OphCoTherapyapplication/admin/viewEmailRecipients',
 		),
+		'reports' => array(
+			'Therapy applications' => '/OphCoTherapyapplication/report/index',
+		),
 		// The email address that sends therapy applications (key/value pair of address to name)
 		// 'OphCoTherapyapplication_sender_email' => array('email@test.com' => 'Test'),
 		// The email address displayed in the standard non-compliant form
