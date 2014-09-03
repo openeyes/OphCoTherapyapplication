@@ -26,7 +26,7 @@ class ReportController extends BaseReportController
 	{
 		return array(
 			array('allow',
-				'actions' => array('index'),
+				'actions' => array('applications'),
 				'roles' => array('OprnGenerateReport','admin'),
 			)
 		);
@@ -55,7 +55,7 @@ class ReportController extends BaseReportController
 		header("Expires: 0");
 	}
 
-	public function actionIndex()
+	public function actionApplications()
 	{
 		$date_from = date(Helper::NHS_DATE_FORMAT, strtotime("-1 year"));
 		$date_to = date(Helper::NHS_DATE_FORMAT);

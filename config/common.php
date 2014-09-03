@@ -28,7 +28,7 @@ return array(
 			'Email Recipients' => '/OphCoTherapyapplication/admin/viewEmailRecipients',
 		),
 		'reports' => array(
-			'Therapy applications' => '/OphCoTherapyapplication/report/index',
+			'Therapy applications' => '/OphCoTherapyapplication/report/applications',
 		),
 		// The email address that sends therapy applications (key/value pair of address to name)
 		// 'OphCoTherapyapplication_sender_email' => array('email@test.com' => 'Test'),
