@@ -90,7 +90,7 @@ class ReportController extends BaseReportController
 					'date_from' => $date_from,
 					'date_to' => $date_to,
 			);
-			$this->render('index', $context);
+			$this->render('applications', $context);
 		}
 	}
 
