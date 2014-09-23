@@ -41,7 +41,7 @@
 			<div class="data-label"><?php echo CHtml::encode($element->getAttributeLabel('patient_sharedata_consent'))?>:</div>
 		</div>
 		<div class="large-10 column">
-			<div class="data-value"><?php echo $element->patient_sharedata_consent ? 'Yes' : 'No'?></div>
+			<div class="data-value"><?php echo is_null($element->patient_sharedata_consent) ? 'Not recorded' : ($element->patient_sharedata_consent ? 'Yes' : 'No')?></div>
 		</div>
 	</div>
 </div>
