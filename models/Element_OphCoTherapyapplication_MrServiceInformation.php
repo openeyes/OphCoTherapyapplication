@@ -66,8 +66,8 @@ class Element_OphCoTherapyapplication_MrServiceInformation extends BaseEventType
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, consultant_id, site_id', 'safe'),
-			array('consultant_id, site_id', 'required'),
+			array('event_id, consultant_id, site_id, patient_sharedata_consent', 'safe'),
+			array('consultant_id, site_id, patient_sharedata_consent', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, consultant_id, site_id', 'safe', 'on' => 'search'),
@@ -102,6 +102,7 @@ class Element_OphCoTherapyapplication_MrServiceInformation extends BaseEventType
 			'event_id' => 'Event',
 			'consultant_id' => 'Consultant',
 			'site_id' => 'Intended Site',
+			'patient_sharedata_consent' => 'Patient consents to share data',
 		);
 	}
 

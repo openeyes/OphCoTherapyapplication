@@ -118,7 +118,7 @@ $ccg = $patient->getCommissioningBodyOfType($cbody_type);
 ?>
 	<tr>
 		<td class="label">&nbsp;<?php echo $period->application_description ?></td>
-		<td class="selector"><?php if ($exceptional->{$side . '_start_period_id'} == $period->id) { echo "X"; } else {echo "&nbsp;";} ?></td>
+		<td class="selector"><?php if ($exceptional->{$side . '_start_period_id'} == $period->id) { echo "X"; } else {echo "&nbsp;";}?></td>
 	</tr>
 
 <?php
@@ -246,6 +246,10 @@ Please provide further information below relating to the clinical urgency and / 
 							?></td>
 						</tr>
 						<tr>
+							<td>Patient consents to share data:</td>
+							<td><?php echo is_null($service_info) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No')?></td>
+						</tr>
+						<tr>
 							<th>Referred By (other than GP)</th>
 							<td>N/A</td>
 						</tr>
@@ -257,7 +261,6 @@ Please provide further information below relating to the clinical urgency and / 
 							<th>Date of Referral</th>
 							<td>N/A</td>
 						</tr>
-
 					</tbody>
 				</table>
 			</td>
@@ -410,7 +413,7 @@ Please provide further information below relating to the clinical urgency and / 
 				<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {?>
 					The standard intervention is <?php echo $exceptional->{$side . '_standard_intervention'}->name;?>.<br /><br />
 					This intervention has <?php if (!$exceptional->{$side . '_standard_previous'}) { echo "not"; }?> been applied previously.<br /><br />
-				<?php } else { ?>
+				<?php } else {?>
 					There is no standard intervention<br /><br />
 					This is <?php if (!$exceptional->{$side . '_condition_rare'}) { echo 'not'; }?> a rare condition.<br />
 					The incidence of it is: <?php echo Yii::app()->format->Ntext($exceptional->{$side . '_incidence'}); ?>
@@ -424,7 +427,7 @@ Please provide further information below relating to the clinical urgency and / 
 					<br /><br />
 					<?php
 						echo $exceptional->{$side . '_description'};
-						if ($exceptional->needDeviationReasonForSide($side)) { ?>
+						if ($exceptional->needDeviationReasonForSide($side)) {?>
 							<br /><br />The standard intervention cannot be used because of
 							<?php
 							$reason_count = count($exceptional->{$side . '_deviationreasons'});
@@ -489,7 +492,7 @@ Please provide further information below relating to the clinical urgency and / 
 								<td><?php
 									echo "Start VA: " . $previntervention->start_va . "<br />";
 									echo "End VA: " . $previntervention->end_va . "<br />";
-									if ($previntervention->comments) { echo Yii::app()->format->Ntext($previntervention->comments); } ?></td>
+									if ($previntervention->comments) { echo Yii::app()->format->Ntext($previntervention->comments); }?></td>
 							</tr>
 						<?php
 						}
@@ -532,7 +535,7 @@ Please provide further information below relating to the clinical urgency and / 
 								<td><?php
 									echo "Start VA: " . $relevantintervention->start_va . "<br />";
 									echo "End VA: " . $relevantintervention->end_va . "<br />";
-									if ($relevantintervention->comments) { echo Yii::app()->format->Ntext($relevantintervention->comments); } ?></td>
+									if ($relevantintervention->comments) { echo Yii::app()->format->Ntext($relevantintervention->comments); }?></td>
 							</tr>
 						<?php
 						}

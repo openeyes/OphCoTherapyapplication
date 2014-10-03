@@ -23,14 +23,14 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 
 This email was generated from an OpenEyes Therapy Application event
 
-<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; } ?>
+<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; }?>
 
 AMD EC-Form this patient sent to Contracts for PCT approval.
 AMD EC-Form document sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
-Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
+Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)	. "\n" ?>
 <?php
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
 		$patient,
@@ -51,6 +51,7 @@ Urgent: <?php echo ((isset($exceptional) && $exceptional->{$side . '_start_perio
 <?php if ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent)) {?>
 Reason for urgency: <?php echo $exceptional->{$side . '_urgency_reason'}."\n"?>
 <?php }?>
+Patient consents to share data: <?php echo (is_null($service_info->patient_sharedata_consent) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No'))."\n"?>
 
 Patient Details:
 Full Name: <?php echo $patient->fullname . "\n" ?>

@@ -25,7 +25,7 @@ $gp_cb = ($patient->gp && $patient->practice) ? $patient->practice->getCommissio
 
 This email was generated from the OpenEyes Therapy Application event
 
-<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; } ?>
+<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; }?>
 
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
@@ -50,6 +50,7 @@ if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
 	echo "Comments: " . $exam_info->{$side . '_comments'} . "\n";
 }
 ?>
+Patient consents to share data: <?php echo (is_null($service_info->patient_sharedata_consent) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No'))."\n"?>
 
 Patient Details:
 Full Name: <?php echo $patient->getFullName() . "\n" ?>
