@@ -504,7 +504,7 @@ $(document).ready(function() {
 
 	handleButton($('#et_print'),function(e) {
 		e.preventDefault();
-		printEvent();
+		printEvent(null);
 	});
 
 	$('select.populate_textarea').unbind('change').change(function() {
