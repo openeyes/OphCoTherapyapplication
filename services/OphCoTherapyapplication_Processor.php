@@ -159,6 +159,9 @@ class OphCoTherapyapplication_Processor
 	 */
 	public function generatePreviewPdf($controller)
 	{
+		Yii::app()->params['wkhtmltopdf_left_margin'] = '10mm';
+		Yii::app()->params['wkhtmltopdf_right_margin'] = '10mm';
+
 		$ec = $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances');
 		if (!$ec) throw new Exception("Exceptional circumstances not found for event ID {$this->event->id}");
 

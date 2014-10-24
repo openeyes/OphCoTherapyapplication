@@ -179,9 +179,10 @@ td.row-title {
   background-color: #ccffcc;
   width: 200px;
   font-size: 14px;
+  vertical-align: top;
 }
 
-/* line 102, ../sass/print.scss */
+/* line 103, ../sass/print.scss */
 table.inner td,
 table.inner th {
   border-bottom: 1px solid #ccc;
@@ -189,55 +190,55 @@ table.inner th {
   text-align: left;
 }
 
-/* line 108, ../sass/print.scss */
+/* line 109, ../sass/print.scss */
 .inner th {
   color: #666;
 }
 
-/* line 113, ../sass/print.scss */
+/* line 114, ../sass/print.scss */
 table.inner tr.last td,
 table.inner tr.last th {
   border-bottom: none;
 }
 
-/* line 117, ../sass/print.scss */
+/* line 118, ../sass/print.scss */
 .banner {
   height: 5em;
 }
 
-/* line 121, ../sass/print.scss */
+/* line 122, ../sass/print.scss */
 .banner .seal {
   float: left;
 }
 
-/* line 125, ../sass/print.scss */
+/* line 126, ../sass/print.scss */
 .banner .seal img {
   width: 80px;
 }
 
-/* line 129, ../sass/print.scss */
+/* line 130, ../sass/print.scss */
 .banner .logo {
   float: right;
 }
 
-/* line 133, ../sass/print.scss */
+/* line 134, ../sass/print.scss */
 .banner .logo img {
   width: 350px;
 }
 
-/* line 137, ../sass/print.scss */
+/* line 138, ../sass/print.scss */
 .banner.compact .logo img {
   width: 250px;
 }
 
-/* line 141, ../sass/print.scss */
+/* line 142, ../sass/print.scss */
 .therapy-application-wrapper {
   padding: 10px;
   font-family: Arial;
   font-size: 14px;
 }
 
-/* line 147, ../sass/print.scss */
+/* line 148, ../sass/print.scss */
 table.newpage {
   margin-top: 4em;
 }
