@@ -61,7 +61,7 @@ class OphCoTherapyapplication_Processor
 	{
 		$warnings = array();
 
-		$el_diag  = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
+		$el_diag	= $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
 		$sides = array();
 		if ($el_diag->hasLeft()) {
 			$sides[] = 'left';
@@ -164,31 +164,73 @@ class OphCoTherapyapplication_Processor
 
 		$template_data = $this->getTemplateData();
 
-		$pdfbodies = array();
+		$html = '<link rel="stylesheet" type="text/css" href="'.$controller->assetPath.'/css/print.css" />';
 
 		if ($ec->hasLeft()) {
 			$left_template_data = $template_data + $this->getSideSpecificTemplateData('left');
-			$pdfbodies[] = $this->generatePdfForSide($controller, $left_template_data, 'left');
+			$html .= $this->getPDFContentForSide($controller, $left_template_data, 'left');
 		}
 
 		if ($ec->hasRight()) {
 			$right_template_data = $template_data + $this->getSideSpecificTemplateData('right');
-			$pdfbodies[] = $this->generatePdfForSide($controller, $right_template_data, 'right');
+			$html .= $this->getPDFContentForSide($controller, $right_template_data, 'right');
 		}
 
-		$pdfwrapper = new OETCPDF();
-		$pdfwrapper->SetAuthor($ec->usermodified->fullName);
-		$pdfwrapper->SetTitle('Therapy application preview');
-		$pdfwrapper->SetSubject('Therapy application');
+		$this->event->lock();
 
-		$max_execution_time = ini_get ( 'max_execution_time');
+		if (!$this->event->hasPDF('therapy_application') || @$_GET['html']) {
+			$wk = new WKHtmlToPDF;
+			
+			$wk->setDocuments(1);
+			$wk->setDocRef($this->event->docref);
+			$wk->setPatient($this->event->episode->patient);
+			$wk->setBarcode($this->event->barcodeHTML);
 
-		foreach($pdfbodies as $body) {
-			$body->render($pdfwrapper);
-			set_time_limit( $max_execution_time );
+			$wk->generatePDF($this->event->imageDirectory, "event", "therapy_application", $html, (boolean)@$_GET['html'], false);
 		}
 
-		return $pdfwrapper;
+		$this->event->unlock();
+
+		$html .= "</div>";
+
+		if (@$_GET['html']) {
+			return Yii::app()->end();
+		}
+
+		$pdf = $this->event->getPDF("therapy_application");
+
+		header('Content-Type: application/pdf');
+		header('Content-Length: '.filesize($pdf));
+
+		readfile($pdf);
+	}
+
+	public function getPDFContentForSide($controller, $template_data, $side)
+	{
+		if ($template_data['suitability']->{$side . "_nice_compliance"}) {
+			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_compliant';
+		} else {
+			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_noncompliant';
+		}
+
+		$template_code = $template_data['treatment']->template_code;
+
+		if ($template_code) {
+			$specific = $file . "_" . $template_code . ".php";
+			if (file_exists($specific)) {
+				$file = $specific;
+			} else {
+				$file .= ".php";
+			}
+		} else {
+			$file .= ".php";
+		}
+
+		if (file_exists($file)) {
+			return $controller->renderInternal($file, $template_data, true);
+		}
+
+		return null;
 	}
 
 	/**
