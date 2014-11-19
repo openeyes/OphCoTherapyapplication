@@ -22,15 +22,22 @@
 }
 /* line 19, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1392372888');
+  background-image: url('../img/watermark.png?1389618130');
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-title {
-  background-image: url('../img/medium.png?1383822470');
+  background-image: url('../img/medium.png?1382439347');
 }
 /* line 26, ../sass/components/_event.scss */
 .event .application-files {
   margin-bottom: 0;
+}
+
+/* line 32, ../sass/components/_event.scss */
+.element-fields .sideHeaders h4 {
+  margin-left: auto;
+  margin-right: auto;
+  width: 5em;
 }
 
 /* line 18, ../sass/components/_panels.scss */
