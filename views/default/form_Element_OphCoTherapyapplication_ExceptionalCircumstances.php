@@ -17,10 +17,17 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-
+<div class="element-fields element-eyes row">
+	<div class="element-eye right-eye column side left eventDetail sideHeaders">
+		<h4>Right side</h4>
+	</div>
+	<div class="element-eye left-eye column side right eventDetail sideHeaders">
+		<h4>Left side</h4>
+	</div>
+</div>
 <div class="element-fields element-eyes row">
 	<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
-	<div class="element-eye right-eye left side column <?php if (!$element->hasRight()) { ?> inactive<?php } ?>"
+	<div class="element-eye right-eye left side column <?php if (!$element->hasRight()) {?> inactive<?php }?>"
 		data-side="right">
 		<div class="active-form">
 			<?php $this->renderPartial($element->form_view . '_fields',
@@ -31,7 +38,7 @@
 		</div>
 	</div>
 
-	<div class="element-eye left-eye right side column <?php if (!$element->hasLeft()) { ?> inactive<?php } ?>"
+	<div class="element-eye left-eye right side column <?php if (!$element->hasLeft()) {?> inactive<?php }?>"
 		data-side="left">
 		<div class="active-form">
 			<?php $this->renderPartial($element->form_view . '_fields',
