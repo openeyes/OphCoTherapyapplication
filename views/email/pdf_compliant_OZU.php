@@ -17,7 +17,14 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 ?>
-
+<div class="banner clearfix">
+	<div class="seal">
+		<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_seal.jpg')?>" alt="letterhead_seal" />
+	</div>
+	<div class="logo">
+		<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_Moorfields_NHS.jpg')?>" alt="letterhead_Moorfields_NHS" />
+	</div>
+</div>
 <style>
 td, p {
 	font-size: 8pt;
@@ -71,6 +78,8 @@ $gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($cbody_ty
 <td>TBD</td>
 <td>GP Post Code:</td>
 <td><?php echo ($patient->practice && $patient->practice->contact->correspondAddress) ? $patient->practice->contact->correspondAddress->postcode : 'Unknown' ?></td>
+<td>Patient consents to share data:</td>
+<td><?php echo is_null($service_info) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No')?></td>
 </tr>
 
 <tr>
