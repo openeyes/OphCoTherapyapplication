@@ -181,7 +181,9 @@ class OphCoTherapyapplication_Processor
 
 		$this->event->lock();
 
-		if (!$this->event->hasPDF('therapy_application') || @$_GET['html']) {
+		$pdf_suffix = 'therapy_application' . Yii::app()->user->id.'_'.rand();
+
+		if (!$this->event->hasPDF($pdf_suffix) || @$_GET['html']) {
 			$wk = new WKHtmlToPDF;
 			
 			$wk->setDocuments(1);
@@ -189,7 +191,7 @@ class OphCoTherapyapplication_Processor
 			$wk->setPatient($this->event->episode->patient);
 			$wk->setBarcode($this->event->barcodeHTML);
 
-			$wk->generatePDF($this->event->imageDirectory, "event", "therapy_application", $html, (boolean)@$_GET['html'], false);
+			$wk->generatePDF($this->event->imageDirectory, "event", $pdf_suffix, $html, (boolean)@$_GET['html'], false);
 		}
 
 		$this->event->unlock();
@@ -198,12 +200,13 @@ class OphCoTherapyapplication_Processor
 			return Yii::app()->end();
 		}
 
-		$pdf = $this->event->getPDF("therapy_application");
+		$pdf = $this->event->getPDF($pdf_suffix);
 
 		header('Content-Type: application/pdf');
 		header('Content-Length: '.filesize($pdf));
 
 		readfile($pdf);
+		@unlink($pdf);
 	}
 
 	public function getPDFContentForSide($controller, $template_data, $side)
