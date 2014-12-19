@@ -184,7 +184,7 @@ $dateFieldWidget = @$dateFieldWidget ?: 'DatePicker';
 			</label>
 		</div>
 		<div class="large-6 column">
-			<?php echo CHtml::activeTextField($pastintervention, 'relevanttreatment_other',array('name' => $name_stub . "[$key][relevanttreatment_other]")); ?>
+			<?php echo CHtml::activeTextField($pastintervention, 'relevanttreatment_other',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'name' => $name_stub . "[$key][relevanttreatment_other]")); ?>
 		</div>
 	</div>
 

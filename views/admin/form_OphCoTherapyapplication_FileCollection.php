@@ -18,7 +18,7 @@
  */
 ?>
 
-<?php echo $form->textField($model, 'name', array('maxlength'=>40))?>
+<?php echo $form->textField($model, 'name', array('autocomplete' => Yii::app()->params['html_autocomplete'], 'maxlength'=>40))?>
 <?php	echo $form->textArea($model, 'summary', array(), false, array(), array('field' => 10))?>
 
 <?php	if ($model->files) {?>

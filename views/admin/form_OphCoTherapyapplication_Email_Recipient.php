@@ -19,5 +19,5 @@
 ?>
 <?php echo $form->dropDownList($model, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty' => '- All sites -'))?>
 <?php echo $form->dropDownList($model, 'type_id', CHtml::listData(OphCoTherapyapplication_Email_Recipient_Type::model()->findAll(array('order'=>'display_order asc')),'id','name'), array('empty' => '- Both types -'))?>
-<?php echo $form->textField($model, 'recipient_name')?>
-<?php echo $form->textField($model, 'recipient_email')?>
+<?php echo $form->textField($model, 'recipient_name', array('autocomplete' => Yii::app()->params['html_autocomplete']))?>
+<?php echo $form->textField($model, 'recipient_email', array('autocomplete' => Yii::app()->params['html_autocomplete']))?>

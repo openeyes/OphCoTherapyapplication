@@ -20,7 +20,7 @@
 <?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData($model->getTreatmentDrugs(), 'id', 'name'), array('empty' => '- Please select -', 'class' => 'clearfix'))?>
 <?php echo $form->dropdownlist($model, 'decisiontree_id', 'OphCoTherapyapplication_DecisionTree',array('empty'=>'- Please select -'))?>
 <?php echo $form->radioBoolean($model, 'contraindications_required', array(1 => 'Yes', 0 => 'No'), array('field' => 9))?>
-<?php echo $form->textField($model, 'template_code', array(), array(), array('field' => 5))?>
+<?php echo $form->textField($model, 'template_code', array('autocomplete' => Yii::app()->params['html_autocomplete']), array(), array('field' => 5))?>
 <div class="row field-row">
 	<div class="large-10 large-offset-2 column">
 		<span class="field-info">The template code is used to determine what form is attached to application email. Leave blank for the default behaviour.</span>
@@ -29,9 +29,9 @@
 
 <hr />
 
-<?php echo $form->textfield($model, 'intervention_name')?>
-<?php echo $form->textField($model, 'dose_and_frequency')?>
-<?php echo $form->textField($model, 'administration_route')?>
+<?php echo $form->textField($model, 'intervention_name', array('autocomplete' => Yii::app()->params['html_autocomplete']))?>
+<?php echo $form->textField($model, 'dose_and_frequency', array('autocomplete' => Yii::app()->params['html_autocomplete']))?>
+<?php echo $form->textField($model, 'administration_route', array('autocomplete' => Yii::app()->params['html_autocomplete']))?>
 
 <div class="row field-row">
 	<div class="large-2 column">
@@ -40,7 +40,7 @@
 		</label>
 	</div>
 	<div class="large-2 column">
-		<?php echo $form->textField($model, 'cost',  array('nowrapper' => true))?>
+		<?php echo $form->textField($model, 'cost',  array('autocomplete' => Yii::app()->params['html_autocomplete'], 'nowrapper' => true))?>
 	</div>
 	<div class="large-1 column">
 		<label for="<?php echo get_class($model).'_cost_type_id';?>">per</label>
@@ -60,7 +60,7 @@
 		</label>
 	</div>
 	<div class="large-1 column">
-		<?php echo $form->textField($model, 'monitoring_frequency',  array('nowrapper' => true))?>
+		<?php echo $form->textField($model, 'monitoring_frequency',  array('autocomplete' => Yii::app()->params['html_autocomplete'], 'nowrapper' => true))?>
 	</div>
 	<div class="large-3 column end">
 		<?php echo $form->dropDownList($model, 'monitoring_frequency_period_id', CHtml::listData(Period::model()->findAll(), 'id', 'name'), array('nowrapper' => true))?>

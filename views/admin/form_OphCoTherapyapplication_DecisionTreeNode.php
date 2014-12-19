@@ -27,7 +27,7 @@ $form->layoutColumns = array(
 <p class="note">Fields with <span class="required">*</span> are required.</p>
 
 <?php echo $form->errorSummary($model); ?>
-<?php echo $form->textField($model,'question',array('maxlength'=>256)); ?>
+<?php echo $form->textField($model,'question',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'maxlength'=>256)); ?>
 <?php echo $form->dropdownlist($model,'outcome_id','OphCoTherapyapplication_DecisionTreeOutcome',array('empty'=>'- Please select -')); ?>
 
 <?php

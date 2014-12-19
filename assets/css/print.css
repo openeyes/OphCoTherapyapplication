@@ -94,16 +94,6 @@ h5 {
   font-size: 0.9375rem;
 }
 
-/* line 29, ../sass/print.scss */
-body {
-  font-size: 32px;
-}
-
-/* line 33, ../sass/print.scss */
-p {
-  font-size: 24px;
-}
-
 /* line 37, ../sass/print.scss */
 table {
   width: 100%;
