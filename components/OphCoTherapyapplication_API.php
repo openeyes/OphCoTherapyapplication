@@ -134,7 +134,7 @@ class OphCoTherapyapplication_API extends BaseAPI
 	 */
 	public function getLetterApplicationDiagnosisForSide($patient, $episode, $side)
 	{
-		if ($el = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphCoTherapyapplication_Therapydiagnosis')) {
+		if ($el = $this->getElementForLatestEventInEpisode($episode, 'Element_OphCoTherapyapplication_Therapydiagnosis')) {
 			return $el->getDiagnosisStringForSide($side);
 		}
 	}
@@ -198,7 +198,7 @@ class OphCoTherapyapplication_API extends BaseAPI
 	 */
 	public function getLetterApplicationTreatmentForSide($patient, $episode, $side)
 	{
-		if ($el = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphCoTherapyapplication_PatientSuitability')) {
+		if ($el = $this->getElementForLatestEventInEpisode($episode, 'Element_OphCoTherapyapplication_PatientSuitability')) {
 			if ($drug = $el->{$side . '_treatment'}) {
 				return $drug->name;
 			}

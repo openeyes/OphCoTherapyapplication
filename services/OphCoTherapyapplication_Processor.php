@@ -61,7 +61,7 @@ class OphCoTherapyapplication_Processor
 	{
 		$warnings = array();
 
-		$el_diag  = $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
+		$el_diag	= $this->getElement('Element_OphCoTherapyapplication_Therapydiagnosis');
 		$sides = array();
 		if ($el_diag->hasLeft()) {
 			$sides[] = 'left';
@@ -159,36 +159,79 @@ class OphCoTherapyapplication_Processor
 	 */
 	public function generatePreviewPdf($controller)
 	{
+		Yii::app()->params['wkhtmltopdf_left_margin'] = '10mm';
+		Yii::app()->params['wkhtmltopdf_right_margin'] = '10mm';
+
 		$ec = $this->getElement('Element_OphCoTherapyapplication_ExceptionalCircumstances');
 		if (!$ec) throw new Exception("Exceptional circumstances not found for event ID {$this->event->id}");
 
 		$template_data = $this->getTemplateData();
 
-		$pdfbodies = array();
+		$html = '<link rel="stylesheet" type="text/css" href="'.$controller->assetPath.'/css/print.css" />';
 
 		if ($ec->hasLeft()) {
 			$left_template_data = $template_data + $this->getSideSpecificTemplateData('left');
-			$pdfbodies[] = $this->generatePdfForSide($controller, $left_template_data, 'left');
+			$html .= $this->getPDFContentForSide($controller, $left_template_data, 'left');
 		}
 
 		if ($ec->hasRight()) {
 			$right_template_data = $template_data + $this->getSideSpecificTemplateData('right');
-			$pdfbodies[] = $this->generatePdfForSide($controller, $right_template_data, 'right');
+			$html .= $this->getPDFContentForSide($controller, $right_template_data, 'right');
 		}
 
-		$pdfwrapper = new OETCPDF();
-		$pdfwrapper->SetAuthor($ec->usermodified->fullName);
-		$pdfwrapper->SetTitle('Therapy application preview');
-		$pdfwrapper->SetSubject('Therapy application');
+		$this->event->lock();
 
-		$max_execution_time = ini_get ( 'max_execution_time');
+		if (!$this->event->hasPDF('therapy_application') || @$_GET['html']) {
+			$wk = new WKHtmlToPDF;
+			
+			$wk->setDocuments(1);
+			$wk->setDocRef($this->event->docref);
+			$wk->setPatient($this->event->episode->patient);
+			$wk->setBarcode($this->event->barcodeHTML);
 
-		foreach($pdfbodies as $body) {
-			$body->render($pdfwrapper);
-			set_time_limit( $max_execution_time );
+			$wk->generatePDF($this->event->imageDirectory, "event", "therapy_application", $html, (boolean)@$_GET['html'], false);
 		}
 
-		return $pdfwrapper;
+		$this->event->unlock();
+
+		if (@$_GET['html']) {
+			return Yii::app()->end();
+		}
+
+		$pdf = $this->event->getPDF("therapy_application");
+
+		header('Content-Type: application/pdf');
+		header('Content-Length: '.filesize($pdf));
+
+		readfile($pdf);
+	}
+
+	public function getPDFContentForSide($controller, $template_data, $side)
+	{
+		if ($template_data['suitability']->{$side . "_nice_compliance"}) {
+			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_compliant';
+		} else {
+			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_noncompliant';
+		}
+
+		$template_code = $template_data['treatment']->template_code;
+
+		if ($template_code) {
+			$specific = $file . "_" . $template_code . ".php";
+			if (file_exists($specific)) {
+				$file = $specific;
+			} else {
+				$file .= ".php";
+			}
+		} else {
+			$file .= ".php";
+		}
+
+		if (file_exists($file)) {
+			return $controller->renderInternal($file, $template_data, true);
+		}
+
+		return null;
 	}
 
 	/**
@@ -247,45 +290,6 @@ class OphCoTherapyapplication_Processor
 	}
 
 	/**
-	 * Generate PDF for the given side, if applicable, otherwise return null
-	 *
-	 * @param CController $controller
-	 * @param array $template_data
-	 * @param string $side
-	 * @return OETCPDF|null
-	 */
-	private function generatePdfForSide(CController $controller, array $template_data, $side)
-	{
-		if ($template_data['suitability']->{$side . "_nice_compliance"}) {
-			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_compliant';
-		} else {
-			$file = $this->getViewPath() . DIRECTORY_SEPARATOR . 'pdf_noncompliant';
-		}
-
-		$template_code = $template_data['treatment']->template_code;
-		if ($template_code) {
-			$specific = $file . "_" . $template_code . ".php";
-			if (file_exists($specific)) {
-				$file = $specific;
-			} else {
-				$file .= ".php";
-			}
-		} else {
-			$file .= ".php";
-		}
-
-		if (file_exists($file)) {
-			$body = $controller->renderInternal($file, $template_data, true);
-
-			$letter = new OELetter();
-			$letter->setBarcode("E:" . $this->event->id);
-			$letter->addBody($body);
-			return $letter;
-		}
-		return null;
-	}
-
-	/**
 	 * create the PDF file as a ProtectedFile for the given side
 	 *
 	 * @param CController $controller
@@ -296,25 +300,42 @@ class OphCoTherapyapplication_Processor
 	 */
 	protected function createAndSavePdfForSide(CController $controller, array $template_data, $side)
 	{
-		$pdfdoc = $this->generatePdfForSide($controller, $template_data, $side);
-		if ($pdfdoc) {
-			$pdf = new OETCPDF();
-			$pdf->setAuthor('OpenEyes');
-			$pdf->setTitle('Therapy Application');
-			$pdf->SetSubject('Therapy Application');
+		if ($html = $this->getPDFContentForSide($controller, $template_data, $side)) {
+			$html = '<link rel="stylesheet" type="text/css" href="'.$controller->assetPath.'/css/print.css" />' . "\n" . $html;
 
-			$pdfdoc->render($pdf);
+			$this->event->lock();
+
+			if (!$this->event->hasPDF('therapy_application')) {
+				$wk = new WKHtmlToPDF;
+
+				$wk->setDocuments(1);
+				$wk->setDocRef($this->event->docref);
+				$wk->setPatient($this->event->episode->patient);
+				$wk->setBarcode($this->event->barcodeHTML);
+
+				$wk->generatePDF($this->event->imageDirectory, "event", "therapy_application", $html, false, false);
+			}
+
+			$this->event->unlock();
+
+			if (@$_GET['html']) {
+				return Yii::app()->end();
+			}
 
 			$pfile = ProtectedFile::createForWriting('ECForm - ' . $side . ' - ' . $template_data['patient']->hos_num . '.pdf');
-			$pdf->Output($pfile->getPath(), "F");
+
+			if (!@copy($this->event->getPDF('therapy_application'), $pfile->getPath())) {
+				throw new Exception("Unable to write to file: ".$pfile->getPath());
+			}
+
 			if (!$pfile->save()) {
-				throw new Exception('unable to save protected file');
+				throw new Exception("Unable to save file: ".print_r($pfile->errors,true));
 			}
 
 			return $pfile;
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 
 	/**

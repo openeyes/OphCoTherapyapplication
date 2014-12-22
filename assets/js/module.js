@@ -503,7 +503,8 @@ $(document).ready(function() {
 	handleButton($('#et_canceldelete'));
 
 	handleButton($('#et_print'),function(e) {
-		printIFrameUrl(OE_print_url);
+		e.preventDefault();
+		printEvent(null);
 	});
 
 	$('select.populate_textarea').unbind('change').change(function() {

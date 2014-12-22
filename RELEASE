@@ -1,6 +1,14 @@
 Release History
 ===============
 
+1.8.0
+-----
++ fixed print layout when using wkhtmltopdf
+
+1.7.2
+-----
++ added support for PDF printing using wkhtmltopdf
+
 1.7.1
 -----
 + add consent obtained field
