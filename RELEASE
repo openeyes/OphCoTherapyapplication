@@ -1,6 +1,10 @@
 Release History
 ===============
 
+1.8.1
+-----
++ reports updates
+
 1.8.0
 -----
 + fixed print layout when using wkhtmltopdf
