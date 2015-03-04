@@ -18,7 +18,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class ReportController extends BaseController
+class ReportController extends BaseReportController
 {
 	public $renderPatientPanel = false;
 
@@ -26,8 +26,8 @@ class ReportController extends BaseController
 	{
 		return array(
 			array('allow',
-				'actions' => array('index'),
-				'roles' => array('OprnGenerateReport'),
+				'actions' => array('applications'),
+				'roles' => array('OprnGenerateReport','admin'),
 			)
 		);
 	}
@@ -55,7 +55,7 @@ class ReportController extends BaseController
 		header("Expires: 0");
 	}
 
-	public function actionIndex()
+	public function actionApplications()
 	{
 		$date_from = date(Helper::NHS_DATE_FORMAT, strtotime("-1 year"));
 		$date_to = date(Helper::NHS_DATE_FORMAT);
@@ -90,7 +90,7 @@ class ReportController extends BaseController
 					'date_from' => $date_from,
 					'date_to' => $date_to,
 			);
-			$this->render('index', $context);
+			$this->render('applications', $context);
 		}
 	}
 
