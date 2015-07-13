@@ -21,9 +21,9 @@ class OphCoTherapyapplication_EmailTest extends CDbTestCase
 	}
 
 	public $fixtures = array(
-		'ep' => 'Episode',
-		'ev' => 'Event',
-		'email' => 'OphCoTherapyapplication_Email',
+		'episode' => 'Episode',
+		'event' => 'Event',
+		'ophcotherapya_email' => 'OphCoTherapyapplication_Email',
 	);
 
 	private $event_type;
@@ -37,6 +37,7 @@ class OphCoTherapyapplication_EmailTest extends CDbTestCase
 
 	public function testGetStatusForEvent_Pending()
 	{
+
 		$event = $this->createEvent();
 		$this->assertEquals(OphCoTherapyapplication_Processor::STATUS_PENDING, OphCoTherapyapplication_Email::model()->getStatusForEvent($event));
 	}
@@ -114,7 +115,7 @@ class OphCoTherapyapplication_EmailTest extends CDbTestCase
 	private function createEvent()
 	{
 		$event = new Event;
-		$event->episode_id = $this->ep('episode1')->id;
+		$event->episode_id = $this->episode('episode1')->id;
 		$event->event_type_id = $this->event_type->id;
 		$event->save();
 		return $event;

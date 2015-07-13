@@ -58,7 +58,7 @@ class m130913_000008_consolidation_for_ophcotherapyapplication extends OEMigrati
 			return false;
 			//throw new Exception("OphTrIntravitrealinjection is required for this module to work");
 		}
-
+		Yii::app()->db->schema->refresh();
 		if (!in_array('ophtrintravitinjection_treatment_drug',$this->dbConnection->getSchema()->tableNames)) {
 			echo "
 			-----------------------------------
