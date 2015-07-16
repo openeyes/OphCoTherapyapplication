@@ -23,35 +23,39 @@ $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
 
 This email was generated from an OpenEyes Therapy Application event
 
-<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; }?>
+<?php if ($site = $service_info->site) {
+    echo 'Intended Site: ' . $site->name;
+}?>
 
 AMD EC-Form this patient sent to Contracts for PCT approval.
 AMD EC-Form document sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
-Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)	. "\n" ?>
+Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)    . "\n" ?>
 <?php
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
-		$patient,
-		$event->episode,
-		$side,
-		$diagnosis->{$side . '_diagnosis1_id'},
-		$diagnosis->{$side . '_diagnosis2_id'})) {
-	foreach ($exam_info->{$side . '_answers'} as $answer) {
-		echo $answer->question->question . ": ";
-		echo ($answer->answer) ? "Yes\n" : "No\n";
-	}
-	echo "Comments: " . $exam_info->{$side . '_comments'} . "\n";
+        $patient,
+        $event->episode,
+        $side,
+        $diagnosis->{$side . '_diagnosis1_id'},
+        $diagnosis->{$side . '_diagnosis2_id'})) {
+    foreach ($exam_info->{$side . '_answers'} as $answer) {
+        echo $answer->question->question . ": ";
+        echo ($answer->answer) ? "Yes\n" : "No\n";
+    }
+    echo "Comments: " . $exam_info->{$side . '_comments'} . "\n";
 }
 ?>
 
-NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'COMPLIANT' : 'NON-COMPLIANT')."\n" ?>
-Urgent: <?php echo ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent) ? 'Yes' : 'No')."\n" ?>
-<?php if ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent)) {?>
+NICE Status: <?php echo($suitability->{$side . '_nice_compliance'} ? 'COMPLIANT' : 'NON-COMPLIANT')."\n" ?>
+Urgent: <?php echo((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent) ? 'Yes' : 'No')."\n" ?>
+<?php if ((isset($exceptional) && $exceptional->{$side . '_start_period'}->urgent)) {
+    ?>
 Reason for urgency: <?php echo $exceptional->{$side . '_urgency_reason'}."\n"?>
-<?php }?>
-Patient consents to share data: <?php echo (is_null($service_info->patient_sharedata_consent) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No'))."\n"?>
+<?php 
+}?>
+Patient consents to share data: <?php echo(is_null($service_info->patient_sharedata_consent) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No'))."\n"?>
 
 Patient Details:
 Full Name: <?php echo $patient->fullname . "\n" ?>
@@ -66,7 +70,8 @@ Address: <?php echo ($patient->practice && $address = $patient->practice->getLet
 
 <?php
 if ($link_to_attachments) {
-?>
+    ?>
 The application files can be found on openeyes. Please enter the following text into the search box to reach download links:
 	E:<?php echo $suitability->event_id ?>
-<?php }
+<?php 
+}

@@ -33,108 +33,106 @@
 
 class OphCoTherapyapplication_DecisionTreeNodeRule extends BaseActiveRecordVersioned
 {
-	public $COMPARATORS = array(
-			'eq' => '=',
-			'lt' => '<',
-			'gt' => '>',
-			'lte' => '<=',
-			'gte' => '>=',
-	);
+    public $COMPARATORS = array(
+            'eq' => '=',
+            'lt' => '<',
+            'gt' => '>',
+            'lte' => '<=',
+            'gte' => '>=',
+    );
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_decisiontreenoderule';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_decisiontreenoderule';
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		return array(
-			'node' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        return array(
+            'node' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
+        );
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('parent_check, parent_check_value', 'safe'),
-				array('node_id, parent_check, parent_check_value', 'required'),
-				// TODO add rule to check that the value matches the response type of the node this rule belongs to
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('parent_check, parent_check_value', 'safe'),
+                array('node_id, parent_check, parent_check_value', 'required'),
+                // TODO add rule to check that the value matches the response type of the node this rule belongs to
+        );
+    }
 
-	public function displayParentCheck()
-	{
-		return CHtml::encode(@$this->COMPARATORS[$this->parent_check]);
-	}
+    public function displayParentCheck()
+    {
+        return CHtml::encode(@$this->COMPARATORS[$this->parent_check]);
+    }
 
-	/**
-	 * generate the display value of the parent check value on this rule
-	 *
-	 * @return string display value
-	 */
-	public function displayParentCheckValue()
-	{
-		if ($choices = $this->node->parent->response_type->getChoices()) {
-			if (key_exists($this->parent_check_value, $choices)) {
-				return $choices[$this->parent_check_value];
-			}
-		}
-		// default to just displaying the check value
-		return $this->parent_check_value;
-	}
+    /**
+     * generate the display value of the parent check value on this rule
+     *
+     * @return string display value
+     */
+    public function displayParentCheckValue()
+    {
+        if ($choices = $this->node->parent->response_type->getChoices()) {
+            if (key_exists($this->parent_check_value, $choices)) {
+                return $choices[$this->parent_check_value];
+            }
+        }
+        // default to just displaying the check value
+        return $this->parent_check_value;
+    }
 
-	/*
-	 * Works out a full abstract definition of the rule.
-	*
-	* @return array - associative array of details of the rule
-	*/
-	public function getDefinition()
-	{
-		return array(
-			'parent_check' => $this->parent_check,
-			'parent_check_value' => $this->parent_check_value,
-		);
-	}
+    /*
+     * Works out a full abstract definition of the rule.
+    *
+    * @return array - associative array of details of the rule
+    */
+    public function getDefinition()
+    {
+        return array(
+            'parent_check' => $this->parent_check,
+            'parent_check_value' => $this->parent_check_value,
+        );
+    }
 
-	public function checkValue($val)
-	{
-		//TODO: cast $val and $this->parent_check_val to the same datatype for accurate comparisons
-		switch ($this->parent_check) {
-			case 'eq':
-				return $val == $this->parent_check_val;
-				break;
-			case 'lt':
-				return $val < $this->parent_check_val;
-				break;
-			case 'gt';
-				return $val > $this->parent_check_val;
-				break;
-			case 'lte':
-				return $val <= $this->parent_check_value;
-				break;
-			case 'gte':
-				return $val >= $this->parent_check_value;
-				break;
-		}
-
-	}
-
+    public function checkValue($val)
+    {
+        //TODO: cast $val and $this->parent_check_val to the same datatype for accurate comparisons
+        switch ($this->parent_check) {
+            case 'eq':
+                return $val == $this->parent_check_val;
+                break;
+            case 'lt':
+                return $val < $this->parent_check_val;
+                break;
+            case 'gt';
+                return $val > $this->parent_check_val;
+                break;
+            case 'lte':
+                return $val <= $this->parent_check_value;
+                break;
+            case 'gte':
+                return $val >= $this->parent_check_value;
+                break;
+        }
+    }
 }

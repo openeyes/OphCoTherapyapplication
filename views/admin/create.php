@@ -22,25 +22,25 @@
 	<h2>Add <?php echo $title?></h2>
 
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'adminform',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array(
-				'enctype' => 'multipart/form-data'
-		),
-		'layoutColumns' => array(
-			'label' => 2,
-			'field' => 5
-		)
-	))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+        'id'=>'adminform',
+        'enableAjaxValidation'=>false,
+        'htmlOptions' => array(
+                'enctype' => 'multipart/form-data'
+        ),
+        'layoutColumns' => array(
+            'label' => 2,
+            'field' => 5
+        )
+    ))?>
 
 	<?php echo $form->errorSummary($model)?>
 
 	<?php
-	$this->renderPartial('form_'.get_class($model), array(
-			'model' => $model,
-			'form' => $form,
-	))?>
+    $this->renderPartial('form_'.get_class($model), array(
+            'model' => $model,
+            'form' => $form,
+    ))?>
 
 	<?php echo $form->formActions(array('cancel-uri'=>@$cancel_uri))?>
 

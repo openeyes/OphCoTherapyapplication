@@ -20,21 +20,21 @@
 
 <?php
 
-	$layoutColumns = array('label'=>4, 'field'=>8);
+    $layoutColumns = array('label'=>4, 'field'=>8);
 
-	$treatments = $element->getTreatments($side);
+    $treatments = $element->getTreatments($side);
 
-	$treat_opts = array(
-		'options' => array(),
-		'empty'=>'- Please select -',
-	);
-	foreach ($treatments as $treatment) {
-		$treat_opts['options'][(string) $treatment->id] = array('data-treeid' => $treatment->decisiontree_id, 'data-contraindications' => $treatment->contraindications_required);
-	}
+    $treat_opts = array(
+        'options' => array(),
+        'empty'=>'- Please select -',
+    );
+    foreach ($treatments as $treatment) {
+        $treat_opts['options'][(string) $treatment->id] = array('data-treeid' => $treatment->decisiontree_id, 'data-contraindications' => $treatment->contraindications_required);
+    }
 ?>
 
-<?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments,'id','name'),$treat_opts, false,array_merge($layoutColumns, array('field' => 5))); ?>
-<?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array(),array_merge($layoutColumns, array('field' => 3)))?>
+<?php echo $form->dropDownList($element, $side . '_treatment_id', CHtml::listData($treatments, 'id', 'name'), $treat_opts, false, array_merge($layoutColumns, array('field' => 5))); ?>
+<?php echo $form->datePicker($element, $side . '_angiogram_baseline_date', array('maxDate' => 'today'), array(), array_merge($layoutColumns, array('field' => 3)))?>
 
 <div id="nice_compliance_<?php echo $side?>" class="row field-row">
 	<div class="large-<?php echo $layoutColumns['label']?> column">
@@ -43,10 +43,10 @@
 	<div class="large-5 column end">
 		<div class="compliance-container">
 			<?php $this->renderPartial(
-				'form_OphCoTherapyapplication_DecisionTree',
-				array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),
-				false, false
-			)?>
+                'form_OphCoTherapyapplication_DecisionTree',
+                array('element' => $element, 'data' => $data, 'form' => $form, 'side' => $side),
+                false, false
+            )?>
 		</div>
 	</div>
 </div>

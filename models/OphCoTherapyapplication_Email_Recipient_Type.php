@@ -15,21 +15,21 @@
 
 class OphCoTherapyapplication_Email_Recipient_Type extends BaseActiveRecordVersioned
 {
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName()
-	{
-		return 'ophcotherapya_email_recipient_type';
-	}
+    public function tableName()
+    {
+        return 'ophcotherapya_email_recipient_type';
+    }
 
-	public function rules()
-	{
-		return array(
-			array('name, display_order', 'safe'),
-			array('name', 'required'),
-		);
-	}
+    public function rules()
+    {
+        return array(
+            array('name, display_order', 'safe'),
+            array('name', 'required'),
+        );
+    }
 }

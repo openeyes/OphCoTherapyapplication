@@ -25,14 +25,14 @@ $l1_options = array();
 $l2_disorders = array();
 
 foreach ($l1_disorders as $disorder) {
-	if ($td_l2 = $element->getLevel2Disorders($disorder)) {
-		$jsn_arry = array();
-		foreach ($td_l2 as $l2) {
-			$jsn_arry[] = array('id' => $l2->id, 'term' => $l2->term);
-		}
-		$l1_options[$disorder->id] = array('data-level2' => $jsn_arry);
-		$l2_disorders[$disorder->id] = $td_l2;
-	}
+    if ($td_l2 = $element->getLevel2Disorders($disorder)) {
+        $jsn_arry = array();
+        foreach ($td_l2 as $l2) {
+            $jsn_arry[] = array('id' => $l2->id, 'term' => $l2->term);
+        }
+        $l1_options[$disorder->id] = array('data-level2' => $jsn_arry);
+        $l2_disorders[$disorder->id] = $td_l2;
+    }
 }
 
 ?>
@@ -48,20 +48,22 @@ foreach ($l1_disorders as $disorder) {
 </div>
 
 <div class="element-fields element-eyes row">
-	<div class="element-eye right-eye column side left eventDetail<?php if (!$element->hasRight()) {?> inactive<?php }?>" data-side="right">
+	<div class="element-eye right-eye column side left eventDetail<?php if (!$element->hasRight()) {
+    ?> inactive<?php 
+}?>" data-side="right">
 		<div class="active-form">
 			<a href="#" class="icon-remove-side remove-side">Remove side</a>
 				<?php $this->renderPartial($element->form_view . '_fields',
-					array(
-						'side' => 'right',
-						'element' => $element,
-						'form' => $form,
-						'l1_disorders' => $l1_disorders,
-						'l1_opts' => $l1_options,
-						'l2_disorders' => $l2_disorders,
-						'data' => $data
-					)
-				);?>
+                    array(
+                        'side' => 'right',
+                        'element' => $element,
+                        'form' => $form,
+                        'l1_disorders' => $l1_disorders,
+                        'l1_opts' => $l1_options,
+                        'l2_disorders' => $l2_disorders,
+                        'data' => $data
+                    )
+                );?>
 		</div>
 		<div class="inactive-form">
 			<div class="add-side">
@@ -74,21 +76,23 @@ foreach ($l1_disorders as $disorder) {
 	</div>
 
 	<div
-		class="element-eye left-eye column side right eventDetail<?php if (!$element->hasLeft()) {?> inactive<?php }?>"
+		class="element-eye left-eye column side right eventDetail<?php if (!$element->hasLeft()) {
+    ?> inactive<?php 
+}?>"
 		data-side="left">
 		<div class="active-form">
 			<a href="#" class="icon-remove-side remove-side">Remove side</a>
 			<?php $this->renderPartial($element->form_view . '_fields',
-				array(
-					'side' => 'left',
-					'element' => $element,
-					'form' => $form,
-					'l1_disorders' => $l1_disorders,
-					'l1_opts' => $l1_options,
-					'l2_disorders' => $l2_disorders,
-					'data' => $data
-				)
-			); ?>
+                array(
+                    'side' => 'left',
+                    'element' => $element,
+                    'form' => $form,
+                    'l1_disorders' => $l1_disorders,
+                    'l1_opts' => $l1_options,
+                    'l2_disorders' => $l2_disorders,
+                    'data' => $data
+                )
+            ); ?>
 		</div>
 		<div class="inactive-form">
 			<div class="add-side">

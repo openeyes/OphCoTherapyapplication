@@ -27,19 +27,23 @@
 </div>
 <div class="element-eyes element-fields row">
 	<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
-	<div class="element-eye right-eye left side column<?php if (!$element->hasRight()) {?> inactive<?php }?>" data-side="right">
+	<div class="element-eye right-eye left side column<?php if (!$element->hasRight()) {
+    ?> inactive<?php 
+}?>" data-side="right">
 		<div class="active-form">
 			<?php $this->renderPartial($element->form_view . '_fields',
-				array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+                array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 		</div>
 		<div class="inactive-form">
 			<div class="eye-message">Select a diagnosis</div>
 		</div>
 	</div>
-	<div class="element-eye left-eye right side column<?php if (!$element->hasLeft()) {?> inactive<?php }?>" data-side="left">
+	<div class="element-eye left-eye right side column<?php if (!$element->hasLeft()) {
+    ?> inactive<?php 
+}?>" data-side="left">
 		<div class="active-form">
 			<?php $this->renderPartial($element->form_view . '_fields',
-				array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+                array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 		</div>
 		<div class="inactive-form">
 			<div class="eye-message">Select a diagnosis</div>

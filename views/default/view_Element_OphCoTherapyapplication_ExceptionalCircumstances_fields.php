@@ -27,7 +27,8 @@
 	</div>
 </div>
 
-<?php if ($element->{$side . '_standard_intervention_exists'}) { ?>
+<?php if ($element->{$side . '_standard_intervention_exists'}) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_standard_intervention_id') ?>:</div>
@@ -64,7 +65,8 @@
 		</div>
 	</div>
 
-	<?php if ($element->needDeviationReasonForSide($side)) { ?>
+	<?php if ($element->needDeviationReasonForSide($side)) {
+    ?>
 		<div class="row data-row">
 			<div class="large-4 column">
 				<div class="data-label"><?php echo $element->getAttributeLabel($side . '_deviationreasons') ?>:</div>
@@ -73,14 +75,19 @@
 				<div class="data-value">
 					<ul>
 						<?php foreach ($element->{$side . '_deviationreasons'} as $dr) {
-							echo "<li>" . $dr->name . "</li>";
-						}?>
+    echo "<li>" . $dr->name . "</li>";
+}
+    ?>
 					</ul>
 				</div>
 			</div>
 		</div>
-	<?php }?>
-<?php } else { ?>
+	<?php 
+}
+    ?>
+<?php 
+} else {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_condition_rare') ?>:</div>
@@ -98,7 +105,8 @@
 			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_incidence'}) ?></div>
 		</div>
 	</div>
-<?php }?>
+<?php 
+}?>
 
 <div class="row data-row">
 	<div class="large-4 column">
@@ -118,39 +126,43 @@
 	</div>
 </div>
 
-<?php if ($element->{$side . '_previnterventions'}) { ?>
+<?php if ($element->{$side . '_previnterventions'}) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_previnterventions') ?>:</div>
 		</div>
 		<div class="large-8 column">
 			<?php
-				foreach ($element->{$side . '_previnterventions'} as $previntervention) {
-					$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
-						'pastintervention' => $previntervention,
-					));
-				}
-			?>
+                foreach ($element->{$side . '_previnterventions'} as $previntervention) {
+                    $this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+                        'pastintervention' => $previntervention,
+                    ));
+                }
+    ?>
 		</div>
 	</div>
-<?php } ?>
+<?php 
+} ?>
 
-<?php if ($element->{$side . '_relevantinterventions'}) { ?>
+<?php if ($element->{$side . '_relevantinterventions'}) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_relevantinterventions') ?>:</div>
 		</div>
 		<div class="large-8 column">
 			<?php
-			foreach ($element->{$side . '_relevantinterventions'} as $relevantintervention) {
-				$this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
-						'pastintervention' => $relevantintervention,
-					));
-			}
-			?>
+            foreach ($element->{$side . '_relevantinterventions'} as $relevantintervention) {
+                $this->renderPartial('view_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+                        'pastintervention' => $relevantintervention,
+                    ));
+            }
+    ?>
 		</div>
 	</div>
-<?php } ?>
+<?php 
+} ?>
 
 <div class="row data-row">
 	<div class="large-4 column">
@@ -161,7 +173,8 @@
 	</div>
 </div>
 
-<?php if ($element->{$side . '_patient_factors'}) { ?>
+<?php if ($element->{$side . '_patient_factors'}) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_patient_factor_details') ?>:</div>
@@ -170,7 +183,8 @@
 			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_patient_factor_details'}) ?></div>
 		</div>
 	</div>
-<?php } ?>
+<?php 
+} ?>
 
 <div class="row data-row">
 	<div class="large-4 column">
@@ -190,7 +204,8 @@
 	</div>
 </div>
 
-<?php if ($element->{$side . "_start_period"}->urgent) { ?>
+<?php if ($element->{$side . "_start_period"}->urgent) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_urgency_reason') ?>:</div>
@@ -199,9 +214,11 @@
 			<div class="data-value"><?php echo Yii::app()->format->Ntext($element->{$side . '_urgency_reason'}) ?></div>
 		</div>
 	</div>
-<?php } ?>
+<?php 
+} ?>
 
-<?php if ($element->{$side . '_filecollections'} && (isset($status) && ($status != OphCoTherapyapplication_Processor::STATUS_SENT))) { ?>
+<?php if ($element->{$side . '_filecollections'} && (isset($status) && ($status != OphCoTherapyapplication_Processor::STATUS_SENT))) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_filecollections') ?>:</div>
@@ -209,10 +226,14 @@
 		<div class="large-8 column">
 			<div class="data-value">
 				<ul style="display: inline-block">
-		<?php foreach ($element->{$side . '_filecollections'} as $filecoll) { ?>
+		<?php foreach ($element->{$side . '_filecollections'} as $filecoll) {
+    ?>
 		<li><a href="<?php echo $filecoll->getDownloadURL() ?>"><?php echo $filecoll->name ?></a></li>
-		<?php } ?>
+		<?php 
+}
+    ?>
 		</ul></div>
 		</div>
 	</div>
-<?php } ?>
+<?php 
+} ?>

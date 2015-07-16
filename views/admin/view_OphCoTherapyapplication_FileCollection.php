@@ -26,9 +26,10 @@
 <ul>
 <?php
 foreach ($model->files as $file) {
-?>
+    ?>
 <li><a href="<?php echo $file->getDownloadURL() ?>"><?php echo $file->name ?></a></li>
 <?php
+
 }
 ?>
 </ul>

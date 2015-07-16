@@ -23,37 +23,37 @@
 <?php echo $form->errorSummary($model); ?>
 
 <div class="row outcomeAdmin parent_check eventDetail">
-	<div class="label"><?php echo $form->labelEx($model,'parent_check'); ?></div>
-	<div class="data"><?php echo $form->dropdownlist($model,'parent_check',$model->COMPARATORS,array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
-	<?php echo $form->error($model,'parent_check'); ?>
+	<div class="label"><?php echo $form->labelEx($model, 'parent_check'); ?></div>
+	<div class="data"><?php echo $form->dropdownlist($model, 'parent_check', $model->COMPARATORS, array('empty'=>'- Please select -', 'nowrapper' => true)); ?></div>
+	<?php echo $form->error($model, 'parent_check'); ?>
 </div>
 
 <div class="row parent_check_value eventDetail">
-	<div class="label"><?php echo $form->labelEx($model,'parent_check_value');?></div>
+	<div class="label"><?php echo $form->labelEx($model, 'parent_check_value');?></div>
 	<div class="data">
 	<?php
-	$rtype = $model->node->parent->response_type;
+    $rtype = $model->node->parent->response_type;
 
-	if ($rtype && $rtype->datatype == 'bool') {
-		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
-				array('name' => get_class($model) . '[parent_check_value]',
-						'id' => get_class($model) . '_parent_check_value',
-						'val'=> $model->parent_check_value
-				));
-	} elseif ($rtype && $rtype->datatype == 'va') {
-		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_va',
-				array('name' => get_class($model) . '[parent_check_value]',
-						'id' => get_class($model) . '_parent_check_value',
-						'val'=> $model->parent_check_value
-				));
-	} else {
-		$this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_default',
-				array('name' => get_class($model) . '[parent_check_value]',
-						'id' => get_class($model) . '_parent_check_value',
-						'val'=> $model->parent_check_value
-				));
-	}
-	?>
+    if ($rtype && $rtype->datatype == 'bool') {
+        $this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_bool',
+                array('name' => get_class($model) . '[parent_check_value]',
+                        'id' => get_class($model) . '_parent_check_value',
+                        'val'=> $model->parent_check_value
+                ));
+    } elseif ($rtype && $rtype->datatype == 'va') {
+        $this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_va',
+                array('name' => get_class($model) . '[parent_check_value]',
+                        'id' => get_class($model) . '_parent_check_value',
+                        'val'=> $model->parent_check_value
+                ));
+    } else {
+        $this->renderPartial('template_OphCoTherapyapplication_DecisionTreeNode_default_value_default',
+                array('name' => get_class($model) . '[parent_check_value]',
+                        'id' => get_class($model) . '_parent_check_value',
+                        'val'=> $model->parent_check_value
+                ));
+    }
+    ?>
 	</div>
-	<?php echo $form->error($model,'parent_check_value'); ?>
+	<?php echo $form->error($model, 'parent_check_value'); ?>
 </div>

@@ -21,32 +21,32 @@
 	<h2>Edit <?php echo $title?></h2>
 
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'OphCoTherapyapplication_adminform',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array(
-			'enctype' => 'multipart/form-data',
-		),
-		'layoutColumns' => array(
-			'label' => 2,
-			'field' => 5,
-		),
-	))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+        'id'=>'OphCoTherapyapplication_adminform',
+        'enableAjaxValidation'=>false,
+        'htmlOptions' => array(
+            'enctype' => 'multipart/form-data',
+        ),
+        'layoutColumns' => array(
+            'label' => 2,
+            'field' => 5,
+        ),
+    ))?>
 
 	<?php echo $form->errorSummary($model)?>
 
 	<?php
-	$this->renderPartial('form_'.get_class($model), array(
-			'model' => $model,
-			'form' => $form,
-	))?>
+    $this->renderPartial('form_'.get_class($model), array(
+            'model' => $model,
+            'form' => $form,
+    ))?>
 
 	<?php
-	$actions = array();
-	if (@$cancel_uri) {
-		$actions['cancel-uri']  = $cancel_uri;
-	}
-	echo $form->formActions($actions)?>
+    $actions = array();
+    if (@$cancel_uri) {
+        $actions['cancel-uri']  = $cancel_uri;
+    }
+    echo $form->formActions($actions)?>
 
 	<?php $this->endWidget()?>
 </div>

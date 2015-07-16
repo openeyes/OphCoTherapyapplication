@@ -21,27 +21,34 @@
 <?php echo $form->textField($model, 'name', array('autocomplete' => Yii::app()->params['html_autocomplete'], 'maxlength'=>40))?>
 <?php	echo $form->textArea($model, 'summary', array(), false, array(), array('field' => 10))?>
 
-<?php	if ($model->files) {?>
+<?php	if ($model->files) {
+    ?>
 	<div class="row field-row">
-		<div class="<?php echo $form->columns('label');?>">
+		<div class="<?php echo $form->columns('label');
+    ?>">
 			<div class="field-label">
 				Uploaded files:
 			</div>
 		</div>
-		<div class="<?php echo $form->columns('field');?>">
+		<div class="<?php echo $form->columns('field');
+    ?>">
 			<div class="field-value field-row">
 				<a href="<?php echo Yii::app()->createUrl('/OphCoTherapyapplication/Default/downloadFileCollection', array('id' => $model->id)) ?>">Download zip</a>
 			</div>
 			<ul id="currentFiles" class="current-files">
-				<?php foreach ($model->files as $file) { ?>
+				<?php foreach ($model->files as $file) {
+    ?>
 					<li data-file-id="<?php echo $file->id ?>">
 						<a href="<?php echo $file->getDownloadURL() ?>"><?php echo $file->name ?></a> | <a href="#" class="removeFile">delete</a>
 					</li>
-				<?php } ?>
+				<?php 
+}
+    ?>
 			</ul>
 		</div>
 	</div>
-<?php }?>
+<?php 
+}?>
 
 <?php
 /**
@@ -51,15 +58,14 @@
  * @param $size_str
  * @return int
  */
-function return_bytes ($size_str)
+function return_bytes($size_str)
 {
-	switch (substr ($size_str, -1))
-	{
-		case 'M': case 'm': return (int)$size_str * 1048576;
-		case 'K': case 'k': return (int)$size_str * 1024;
-		case 'G': case 'g': return (int)$size_str * 1073741824;
-		default: return $size_str;
-	}
+    switch (substr($size_str, -1)) {
+        case 'M': case 'm': return (int)$size_str * 1048576;
+        case 'K': case 'k': return (int)$size_str * 1024;
+        case 'G': case 'g': return (int)$size_str * 1073741824;
+        default: return $size_str;
+    }
 }
 ?>
 

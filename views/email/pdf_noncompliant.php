@@ -28,24 +28,30 @@
 	</div>
 	<body>
 	<?php
-	$exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
-	$ccg = $patient->getCommissioningBodyOfType($cbody_type);
-	?>
+    $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
+    $ccg = $patient->getCommissioningBodyOfType($cbody_type);
+    ?>
 
 	<h5>Individual Treatment Funding Request (IFR) Application</h5>
 
 	<table nobr="true" class="urgency" cellpadding="5">
 	<?php
-		foreach (OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->active()->findAll() as $period) {
-	?>
+        foreach (OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod::model()->active()->findAll() as $period) {
+            ?>
 		<tr>
 			<td class="label">&nbsp;<?php echo $period->application_description ?></td>
-			<td class="selector"><?php if ($exceptional->{$side . '_start_period_id'} == $period->id) { echo "X"; } else {echo "&nbsp;";}?></td>
+			<td class="selector"><?php if ($exceptional->{$side . '_start_period_id'} == $period->id) {
+    echo "X";
+} else {
+    echo "&nbsp;";
+}
+            ?></td>
 		</tr>
 
 	<?php
-		}
-	?>
+
+        }
+    ?>
 
 	</table>
 	<br />&nbsp;<br />
@@ -55,10 +61,10 @@
 		<tr>
 			<td>
 				<?php
-					if ($exceptional->{$side . '_urgency_reason'}) {
-						echo Yii::app()->format->Ntext($exceptional->{$side . '_urgency_reason'});
-					}
-				?>
+                    if ($exceptional->{$side . '_urgency_reason'}) {
+                        echo Yii::app()->format->Ntext($exceptional->{$side . '_urgency_reason'});
+                    }
+                ?>
 				&nbsp;
 			</td>
 		</tr>
@@ -76,11 +82,11 @@
 					<td class="row-title">&nbsp;<?php echo $cbody_type->shortname ?> Code &amp; Name</td>
 					<td class="row-data">
 					<?php if ($ccg) {
-						echo '<span class="form-text">' . $cbody_type->shortname . " Code:</span> " . $ccg->code . "<br />";
-						echo '<span class="form-text">' . $cbody_type->shortname . " Name:</span> " . $ccg->name;
-					} else {
-						echo " Unknown";
-					}?>
+    echo '<span class="form-text">' . $cbody_type->shortname . " Code:</span> " . $ccg->code . "<br />";
+    echo '<span class="form-text">' . $cbody_type->shortname . " Name:</span> " . $ccg->name;
+} else {
+    echo " Unknown";
+}?>
 					</td>
 				</tr>
 				</tbody>
@@ -96,10 +102,10 @@
 				<td class="row-title"><?php echo $cbody_type->shortname ?> Address</td>
 				<td class="row-data">
 				<?php if ($ccg) {
-					echo $ccg->getLetterAddress(array('delimiter' => ', '));
-				} else {
-					echo "Unknown";
-				}?>
+    echo $ccg->getLetterAddress(array('delimiter' => ', '));
+} else {
+    echo "Unknown";
+}?>
 				</td>
 			</tr>
 			<tr nobr="true">
@@ -119,10 +125,10 @@
 								<th>Telephone No.</th>
 								<td>
 									<?php if ($contact = $diagnosis->user->contact) {
-										echo $contact->primary_phone;
-									} else {
-										echo "Unavailable";
-									}?>
+    echo $contact->primary_phone;
+} else {
+    echo "Unavailable";
+}?>
 								</td>
 							</tr>
 							<tr class="last">
@@ -161,10 +167,10 @@
 							<tr>
 								<th>Registered GP Address</th>
 								<td><?php echo ($patient->practice &&
-										$address = $patient->practice->getLetterAddress(array('delimiter' => ', '))) ?
-										$address :
-										'Unknown';
-								?></td>
+                                        $address = $patient->practice->getLetterAddress(array('delimiter' => ', '))) ?
+                                        $address :
+                                        'Unknown';
+                                ?></td>
 							</tr>
 							<tr>
 								<td>Patient consents to share data:</td>
@@ -230,15 +236,15 @@
 						<td class="row-data">
 						<span class="form-text">&nbsp;Eye affected:</span> <?php echo ucfirst($side) ?><br />
 						<span class="form-text">&nbsp;Diagnosis:</span> <?php echo $diagnosis->getDiagnosisStringForSide($side); ?><br />
-						<span class="form-text">&nbsp;Visual Acuity:</span><?php echo ( $exam_api && ($va = $exam_api->getLetterVisualAcuityForEpisodeBoth($event->episode, true)) ) ? Yii::app()->format->Ntext($va) : "Not measured"; ?><br />
+						<span class="form-text">&nbsp;Visual Acuity:</span><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityForEpisodeBoth($event->episode, true))) ? Yii::app()->format->Ntext($va) : "Not measured"; ?><br />
 						<span class="form-text">&nbsp;OCT Thickness:</span>
 						<?php
-							$oct_str = "Not measured";
-							if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
-								$oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
-							}
-							echo $oct_str;
-						?>
+                            $oct_str = "Not measured";
+                            if ($exam_api && $oct = $exam_api->getOCTForSide($patient, $event->episode, $side)) {
+                                $oct_str = "Maximum CRT: " . $oct[0] . "&micro;m, Central SFT: " . $oct[1] . "&micro;m";
+                            }
+                            echo $oct_str;
+                        ?>
 						</td>
 					</tr>
 				</tbody>
@@ -281,12 +287,12 @@
 			<tr nobr="true">
 				<td class="row-title">Are there any patient factors (clinical or personal) that need to be considered?</td>
 				<td class="row-data"><?php
-					if ($exceptional->{$side . '_patient_factors'}) {
-						echo "Yes <br /><br />" . Yii::app()->format->Ntext($exceptional->{$side . '_patient_factor_details'});
-					} else {
-						echo "No";
-					}
-					?></td>
+                    if ($exceptional->{$side . '_patient_factors'}) {
+                        echo "Yes <br /><br />" . Yii::app()->format->Ntext($exceptional->{$side . '_patient_factor_details'});
+                    } else {
+                        echo "No";
+                    }
+                    ?></td>
 			</tr>
 
 			<tr nobr="true">
@@ -303,18 +309,18 @@
 				<td class="row-title">Details of the papers submitted</td>
 				<td>
 					<?php if ($exceptional->{$side . '_filecollections'}) {
-						echo "Please see attached papers and supporting documents.<br /><br />";
-						foreach ($exceptional->{$side . '_filecollections'} as $fc) {
-							echo $fc->summary;
-							echo "<ul>";
-							foreach ($fc->files as $f) {
-								echo "<li>" . $f->name . "</li>";
-							}
-							echo "</ul>";
-						}
-					} else {
-						echo "None";
-					}?>
+    echo "Please see attached papers and supporting documents.<br /><br />";
+    foreach ($exceptional->{$side . '_filecollections'} as $fc) {
+        echo $fc->summary;
+        echo "<ul>";
+        foreach ($fc->files as $f) {
+            echo "<li>" . $f->name . "</li>";
+        }
+        echo "</ul>";
+    }
+} else {
+    echo "None";
+}?>
 				</td>
 			</tr>
 
@@ -330,43 +336,56 @@
 			<tr nobr="true">
 				<td class="row-title">Is there a standard intervention at this stage?</td>
 				<td class="row-data">
-					<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {?>
-						The standard intervention is <?php echo $exceptional->{$side . '_standard_intervention'}->name;?>.<br /><br />
-						This intervention has <?php if (!$exceptional->{$side . '_standard_previous'}) { echo "not"; }?> been applied previously.<br /><br />
-					<?php } else {?>
+					<?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
+    ?>
+						The standard intervention is <?php echo $exceptional->{$side . '_standard_intervention'}->name;
+    ?>.<br /><br />
+						This intervention has <?php if (!$exceptional->{$side . '_standard_previous'}) {
+    echo "not";
+}
+    ?> been applied previously.<br /><br />
+					<?php 
+} else {
+    ?>
 						There is no standard intervention<br /><br />
-						This is <?php if (!$exceptional->{$side . '_condition_rare'}) { echo 'not'; }?> a rare condition.<br />
-						The incidence of it is: <?php echo Yii::app()->format->Ntext($exceptional->{$side . '_incidence'}); ?>
-					<?php }?></td>
+						This is <?php if (!$exceptional->{$side . '_condition_rare'}) {
+    echo 'not';
+}
+    ?> a rare condition.<br />
+						The incidence of it is: <?php echo Yii::app()->format->Ntext($exceptional->{$side . '_incidence'});
+    ?>
+					<?php 
+}?></td>
 			</tr>
 
 			<tr nobr="true">
 				<td class="row-title">Is the requested intervention additional to the standard intervention(s) or a deviation from the standard?</td>
 				<td class="row-data"><?php if ($exceptional->{$side . '_standard_intervention_exists'}) {
-						echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;?>
+    echo $exceptional->getAttributeLabel($side . '_intervention_id') . " " . $exceptional->{$side . '_intervention'}->name;
+    ?>
 						<br /><br />
 						<?php
-							echo $exceptional->{$side . '_description'};
-							if ($exceptional->needDeviationReasonForSide($side)) {?>
+                            echo $exceptional->{$side . '_description'};
+    if ($exceptional->needDeviationReasonForSide($side)) {
+        ?>
 								<br /><br />The standard intervention cannot be used because of
 								<?php
-								$reason_count = count($exceptional->{$side . '_deviationreasons'});
-								foreach ($exceptional->{$side . '_deviationreasons'} as $i => $dr) {
-									echo $dr->name;
-									if ($i == $reason_count - 1) {
-										echo ".";
-									} elseif ($i == $reason_count - 2) {
-										echo " and ";
-									} else {
-										echo ", ";
-									}
-								}
-							}
-						}
-						else {
-							echo "N/A";
-						}
-					?>
+                                $reason_count = count($exceptional->{$side . '_deviationreasons'});
+        foreach ($exceptional->{$side . '_deviationreasons'} as $i => $dr) {
+            echo $dr->name;
+            if ($i == $reason_count - 1) {
+                echo ".";
+            } elseif ($i == $reason_count - 2) {
+                echo " and ";
+            } else {
+                echo ", ";
+            }
+        }
+    }
+} else {
+                            echo "N/A";
+                        }
+                    ?>
 				</td>
 			</tr>
 
@@ -388,8 +407,8 @@
 					</ul></td>
 				<td class="row-data">
 					<?php
-					if ($exceptional->{$side . '_previnterventions'}) {
-						?>
+                    if ($exceptional->{$side . '_previnterventions'}) {
+                        ?>
 						<table class="inner">
 							<thead>
 							<tr>
@@ -402,28 +421,33 @@
 							</thead>
 							<tbody>
 							<?php
-							foreach ($exceptional->{$side . '_previnterventions'} as $previntervention) {
-								?>
+                            foreach ($exceptional->{$side . '_previnterventions'} as $previntervention) {
+                                ?>
 								<tr>
 									<td><?php echo Helper::convertDate2NHS($previntervention->start_date) ?></td>
 									<td><?php echo Helper::convertDate2NHS($previntervention->end_date) ?></td>
 									<td><?php echo $previntervention->getTreatmentName() ?></td>
 									<td><?php echo Yii::app()->format->Ntext($previntervention->getStopReasonText()) ?></td>
 									<td><?php
-										echo "Start VA: " . $previntervention->start_va . "<br />";
-										echo "End VA: " . $previntervention->end_va . "<br />";
-										if ($previntervention->comments) { echo Yii::app()->format->Ntext($previntervention->comments); }?></td>
+                                        echo "Start VA: " . $previntervention->start_va . "<br />";
+                                echo "End VA: " . $previntervention->end_va . "<br />";
+                                if ($previntervention->comments) {
+                                    echo Yii::app()->format->Ntext($previntervention->comments);
+                                }
+                                ?></td>
 								</tr>
 							<?php
-							}
-							?>
+
+                            }
+                        ?>
 							</tbody>
 						</table>
 					<?php
-					} else {
-						echo "None";
-					}
-					?>
+
+                    } else {
+                        echo "None";
+                    }
+                    ?>
 				</td>
 			</tr>
 
@@ -431,8 +455,8 @@
 				<td class="row-title">Please provide details of other relevant treatment</td>
 				<td class="row-data">
 					<?php
-					if ($exceptional->{$side . '_relevantinterventions'}) {
-						?>
+                    if ($exceptional->{$side . '_relevantinterventions'}) {
+                        ?>
 						<table class="inner">
 							<thead>
 							<tr>
@@ -445,28 +469,33 @@
 							</thead>
 							<tbody>
 							<?php
-							foreach ($exceptional->{$side . '_relevantinterventions'} as $relevantintervention) {
-								?>
+                            foreach ($exceptional->{$side . '_relevantinterventions'} as $relevantintervention) {
+                                ?>
 								<tr>
 									<td><?php echo Helper::convertDate2NHS($relevantintervention->start_date) ?></td>
 									<td><?php echo Helper::convertDate2NHS($relevantintervention->end_date) ?></td>
 									<td><?php echo $relevantintervention->getTreatmentName() ?></td>
 									<td><?php echo Yii::app()->format->Ntext($relevantintervention->getStopReasonText()) ?></td>
 									<td><?php
-										echo "Start VA: " . $relevantintervention->start_va . "<br />";
-										echo "End VA: " . $relevantintervention->end_va . "<br />";
-										if ($relevantintervention->comments) { echo Yii::app()->format->Ntext($relevantintervention->comments); }?></td>
+                                        echo "Start VA: " . $relevantintervention->start_va . "<br />";
+                                echo "End VA: " . $relevantintervention->end_va . "<br />";
+                                if ($relevantintervention->comments) {
+                                    echo Yii::app()->format->Ntext($relevantintervention->comments);
+                                }
+                                ?></td>
 								</tr>
 							<?php
-							}
-							?>
+
+                            }
+                        ?>
 							</tbody>
 						</table>
 					<?php
-					} else {
-						echo "None";
-					}
-					?>
+
+                    } else {
+                        echo "None";
+                    }
+                    ?>
 				</td>
 			</tr>
 
@@ -478,14 +507,14 @@
 							<th>What is the patient's clinical severity? (Where possible use standard scoring systems e.g. WHO, DAS scores, walk test, cardiac index etc)</th>
 							<td>Visual Acuity in the affected eye is:
 								<?php if ($exam_api) {
-									if ($side == 'left') {
-										$va = $exam_api->getLetterVisualAcuityLeft($patient);
-									} else {
-										$va = $exam_api->getLetterVisualAcuityRight($patient);
-									}
-									echo $va ? $va : "Not measured";
-								}
-								?></td>
+    if ($side == 'left') {
+        $va = $exam_api->getLetterVisualAcuityLeft($patient);
+    } else {
+        $va = $exam_api->getLetterVisualAcuityRight($patient);
+    }
+    echo $va ? $va : "Not measured";
+}
+                                ?></td>
 						</tr>
 					</table>
 				</td>

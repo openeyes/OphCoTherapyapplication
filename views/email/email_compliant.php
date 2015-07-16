@@ -18,39 +18,43 @@
 */
 
 $exam_api = Yii::app()->moduleAPI->get('OphCiExamination');
-$ccg = CommissioningBodyType::model()->find('shortname=?',array('CCG'));
+$ccg = CommissioningBodyType::model()->find('shortname=?', array('CCG'));
 $cb = $patient->getCommissioningBodyOfType($ccg);
 $gp_cb = ($patient->gp && $patient->practice) ? $patient->practice->getCommissioningBodyOfType($ccg) : null;
 ?>
 
 This email was generated from the OpenEyes Therapy Application event
 
-<?php if ($site = $service_info->site) { echo 'Intended Site: ' . $site->name; }?>
+<?php if ($site = $service_info->site) {
+    echo 'Intended Site: ' . $site->name;
+}?>
 
 Request for AMD Injection booking sent by: <?php echo $diagnosis->user->getReportDisplay() . "\n" ?>
 The Eye to inject is: <?php echo $side . "\n" ?>
 Drug to use is: <?php echo $treatment->drug->name . "\n" ?>
 VA: Right eye: <?php echo $exam_api->getLetterVisualAcuityRight($patient)?>, left eye: <?php echo $exam_api->getLetterVisualAcuityLeft($patient) . "\n" ?>
-<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {?>
+<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {
+    ?>
 <?php echo "$question: $answer\n" ?>
-<?php }?>
-NICE Status: <?php echo ($suitability->{$side . '_nice_compliance'} ? 'COMPLIANT' : 'NON-COMPLIANT')."\n" ?>
+<?php 
+}?>
+NICE Status: <?php echo($suitability->{$side . '_nice_compliance'} ? 'COMPLIANT' : 'NON-COMPLIANT')."\n" ?>
 Diagnosis: <?php echo $diagnosis->getDiagnosisStringForSide($side)  . "\n" ?>
 <?php
 if ($exam_info = $exam_api->getInjectionManagementComplexInEpisodeForDisorder(
-		$patient,
-		$event->episode,
-		$side,
-		$diagnosis->{$side . '_diagnosis1_id'},
-		$diagnosis->{$side . '_diagnosis2_id'})) {
-	foreach ($exam_info->{$side . '_answers'} as $answer) {
-		echo $answer->question->question . ": ";
-		echo ($answer->answer) ? "Yes\n" : "No\n";
-	}
-	echo "Comments: " . $exam_info->{$side . '_comments'} . "\n";
+        $patient,
+        $event->episode,
+        $side,
+        $diagnosis->{$side . '_diagnosis1_id'},
+        $diagnosis->{$side . '_diagnosis2_id'})) {
+    foreach ($exam_info->{$side . '_answers'} as $answer) {
+        echo $answer->question->question . ": ";
+        echo ($answer->answer) ? "Yes\n" : "No\n";
+    }
+    echo "Comments: " . $exam_info->{$side . '_comments'} . "\n";
 }
 ?>
-Patient consents to share data: <?php echo (is_null($service_info->patient_sharedata_consent) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No'))."\n"?>
+Patient consents to share data: <?php echo(is_null($service_info->patient_sharedata_consent) ? 'Not recorded' : ($service_info->patient_sharedata_consent ? 'Yes' : 'No'))."\n"?>
 
 Patient Details:
 Full Name: <?php echo $patient->getFullName() . "\n" ?>

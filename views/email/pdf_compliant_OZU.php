@@ -84,7 +84,7 @@ $gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($cbody_ty
 
 <tr>
 <td>Patient VA</td>
-<td colspan="5"><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient)) ) ? Yii::app()->format->Ntext($va) : "Not measured"; ?></td>
+<td colspan="5"><?php echo ($exam_api && ($va = $exam_api->getLetterVisualAcuityBoth($patient))) ? Yii::app()->format->Ntext($va) : "Not measured"; ?></td>
 </tr>
 
 <tr>
@@ -95,12 +95,14 @@ $gp_cb = $patient->gp ? $patient->practice->getCommissioningBodyOfType($cbody_ty
 <tr>
 <td colspan="6"><b>Please indicate which aspect of NICE TA229 applies for the patient:</b></td>
 </tr>
-<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {?>
+<?php foreach ($suitability->getDecisionTreeAnswersForDisplay($side) as $question => $answer) {
+    ?>
 <tr>
 	<td colspan="3"><?php echo $question ?></td>
 	<td colspan="3"><?php echo $answer ?></td>
 </tr>
-<?php }?>
+<?php 
+}?>
 <tr>
 	<td colspan="3">Which eye is the treatment for?</td>
 	<td colspan="3"><?php echo ucfirst($side) ?></td>

@@ -35,44 +35,44 @@
 
 class OphCoTherapyapplication_PatientSuitability_DecisionTreeNodeResponse extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_patientsuit_decisiontreenoderesponse';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_patientsuit_decisiontreenoderesponse';
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('patientsuit_id, node_id, eye_id, value', 'safe'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('patientsuit_id, node_id, eye_id, value', 'safe'),
+        );
+    }
 
-	/**
-	 * @return array
-	 * @see parent::relations()
-	 */
-	public function relations()
-	{
-		return array(
-			'patientsuitability' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_PatientSuitability', 'patientsuit_id'),
-			// note that this should only ever be a side, not both
-			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'node' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
-		);
-	}
+    /**
+     * @return array
+     * @see parent::relations()
+     */
+    public function relations()
+    {
+        return array(
+            'patientsuitability' => array(self::HAS_ONE, 'Element_OphCoTherapyapplication_PatientSuitability', 'patientsuit_id'),
+            // note that this should only ever be a side, not both
+            'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
+            'node' => array(self::BELONGS_TO, 'OphCoTherapyapplication_DecisionTreeNode', 'node_id'),
+        );
+    }
 }

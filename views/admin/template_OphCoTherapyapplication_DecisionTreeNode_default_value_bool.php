@@ -18,12 +18,16 @@
  */
 ?>
 <?php
-if (!isset($val) ) {
-	$val = null;
+if (!isset($val)) {
+    $val = null;
 }
 ?>
 <select name="<?php echo $name ?>" id="<?php echo $id ?>">
 	<option>- Please select -</option>
-	<option value="0" <?php if ($val == '0') { echo 'selected'; } ?>>No</option>
-	<option value="1" <?php if ($val == '1') { echo 'selected'; } ?>>Yes</option>
+	<option value="0" <?php if ($val == '0') {
+    echo 'selected';
+} ?>>No</option>
+	<option value="1" <?php if ($val == '1') {
+    echo 'selected';
+} ?>>Yes</option>
 </select>

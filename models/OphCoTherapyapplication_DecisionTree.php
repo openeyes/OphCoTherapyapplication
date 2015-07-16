@@ -29,62 +29,61 @@
 
 class OphCoTherapyapplication_DecisionTree extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_decisiontree';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_decisiontree';
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		return array(
-				'nodes' => array(self::HAS_MANY, 'OphCoTherapyapplication_DecisionTreeNode', 'decisiontree_id'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        return array(
+                'nodes' => array(self::HAS_MANY, 'OphCoTherapyapplication_DecisionTreeNode', 'decisiontree_id'),
+        );
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('name', 'safe'),
-				array('name', 'required'),
-				// The following rule is used by search().
-				// Please remove those attributes that should not be searched.
-				array('id, name', 'safe', 'on' => 'search'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('name', 'safe'),
+                array('name', 'required'),
+                // The following rule is used by search().
+                // Please remove those attributes that should not be searched.
+                array('id, name', 'safe', 'on' => 'search'),
+        );
+    }
 
-	public function getRootNode()
-	{
-		$criteria = new CDbCriteria();
-		$criteria->addColumnCondition(array('decisiontree_id' => $this->id, 'parent_id' => null));
-		$node = OphCoTherapyapplication_DecisionTreeNode::model()->find($criteria);
-		return $node;
-	}
+    public function getRootNode()
+    {
+        $criteria = new CDbCriteria();
+        $criteria->addColumnCondition(array('decisiontree_id' => $this->id, 'parent_id' => null));
+        $node = OphCoTherapyapplication_DecisionTreeNode::model()->find($criteria);
+        return $node;
+    }
 
-	public function getDefinition()
-	{
-		$definition = array();
-		if ($root = $this->getRootNode()) {
-			$definition['root_id'] = $root->id;
-		}
-		return $definition;
-	}
-
+    public function getDefinition()
+    {
+        $definition = array();
+        if ($root = $this->getRootNode()) {
+            $definition['root_id'] = $root->id;
+        }
+        return $definition;
+    }
 }

@@ -31,28 +31,28 @@
 
 class OphCoTherapyapplication_DecisionTreeOutcome extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_decisiontreeoutcome';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_decisiontreeoutcome';
+    }
 
-	public function isCompliant()
-	{
-		if ($this->outcome_type == 'COMP') {
-			return true;
-		}
-		return false;
-	}
+    public function isCompliant()
+    {
+        if ($this->outcome_type == 'COMP') {
+            return true;
+        }
+        return false;
+    }
 }

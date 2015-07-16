@@ -27,13 +27,16 @@
 	</div>
 </div>
 
-<?php if ($element->{$side . '_diagnosis2_id'}) {?>
+<?php if ($element->{$side . '_diagnosis2_id'}) {
+    ?>
 	<div class="row data-row">
 		<div class="large-4 column">
 			<div class="data-label"><?php echo $element->getAttributeLabel($side . '_diagnosis2_id') ?>:</div>
 		</div>
 		<div class="large-8 column">
-			<div class="data-value"><?php echo $element->{$side . '_diagnosis2'}->term; ?></div>
+			<div class="data-value"><?php echo $element->{$side . '_diagnosis2'}->term;
+    ?></div>
 		</div>
 	</div>
-<?php } ?>
+<?php 
+} ?>

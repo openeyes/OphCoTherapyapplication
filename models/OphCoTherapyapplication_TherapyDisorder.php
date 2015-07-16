@@ -19,59 +19,59 @@
 
 class OphCoTherapyapplication_TherapyDisorder extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_therapydisorder';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_therapydisorder';
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		return array(
-				'disorder' => array(self::BELONGS_TO, 'Disorder', 'disorder_id'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        return array(
+                'disorder' => array(self::BELONGS_TO, 'Disorder', 'disorder_id'),
+        );
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('disorder_id, display_order', 'safe'),
-				array('disorder_id, display_order', 'required'),
-				// The following rule is used by search().
-				// Please remove those attributes that should not be searched.
-				array('id, disorder_id, display_order', 'safe', 'on' => 'search'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('disorder_id, display_order', 'safe'),
+                array('disorder_id, display_order', 'required'),
+                // The following rule is used by search().
+                // Please remove those attributes that should not be searched.
+                array('id, disorder_id, display_order', 'safe', 'on' => 'search'),
+        );
+    }
 
-	public function getLevel2Disorders()
-	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'parent_id = :pid';
-		$criteria->params = array('pid' => $this->id);
-		$criteria->order = 'display_order asc';
-		$disorders = array();
+    public function getLevel2Disorders()
+    {
+        $criteria = new CDbCriteria;
+        $criteria->condition = 'parent_id = :pid';
+        $criteria->params = array('pid' => $this->id);
+        $criteria->order = 'display_order asc';
+        $disorders = array();
 
-		foreach (OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria) as $therapy_disorder) {
-			$disorders[] = $therapy_disorder->disorder;
-		}
+        foreach (OphCoTherapyapplication_TherapyDisorder::model()->with('disorder')->findAll($criteria) as $therapy_disorder) {
+            $disorders[] = $therapy_disorder->disorder;
+        }
 
-		return $disorders;
-	}
+        return $disorders;
+    }
 }

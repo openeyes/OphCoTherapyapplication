@@ -34,93 +34,93 @@
 
 class OphCoTherapyapplication_FileCollectionAssignment extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_filecoll_assignment';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_filecoll_assignment';
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-			array('collection_id, file_id', 'safe'),
-			array('collection_id, file_id', 'required'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+            array('collection_id, file_id', 'safe'),
+            array('collection_id, file_id', 'required'),
+        );
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'collection' => array(self::BELONGS_TO, 'OphCoTherapyapplication_FileCollection', 'collection_id'),
-			'file' => array(self::BELONGS_TO, 'ProtectedFile', 'file_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            'collection' => array(self::BELONGS_TO, 'OphCoTherapyapplication_FileCollection', 'collection_id'),
+            'file' => array(self::BELONGS_TO, 'ProtectedFile', 'file_id'),
+            'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+            'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+        );
+    }
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'ID',
-		);
-	}
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels()
+    {
+        return array(
+            'id' => 'ID',
+        );
+    }
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		$criteria = new CDbCriteria;
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+     */
+    public function search()
+    {
+        $criteria = new CDbCriteria;
 
-		$criteria->compare('id', $this->id, true);
+        $criteria->compare('id', $this->id, true);
 
-		return new CActiveDataProvider(get_class($this), array(
-				'criteria' => $criteria,
-			));
-	}
+        return new CActiveDataProvider(get_class($this), array(
+                'criteria' => $criteria,
+            ));
+    }
 
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-	}
+    /**
+     * Set default values for forms on create
+     */
+    public function setDefaultOptions()
+    {
+    }
 
-	protected function beforeSave()
-	{
-		return parent::beforeSave();
-	}
+    protected function beforeSave()
+    {
+        return parent::beforeSave();
+    }
 
-	protected function afterSave()
-	{
-		return parent::afterSave();
-	}
+    protected function afterSave()
+    {
+        return parent::afterSave();
+    }
 
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
-	}
+    protected function beforeValidate()
+    {
+        return parent::beforeValidate();
+    }
 }

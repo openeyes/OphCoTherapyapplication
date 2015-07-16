@@ -21,7 +21,7 @@ $right_emails = $service->getRightSentEmails();
 $left_emails = $service->getLeftSentEmails();
 
 if ($right_emails || $left_emails) {
-?>
+    ?>
 <section class="element">
 	<header class="element-header">
 		<h3 class="element-title">Application</h3>
@@ -29,12 +29,15 @@ if ($right_emails || $left_emails) {
 
 	<div class="element-data element-eyes row">
 		<div class="element-eye right-eye column">
-			<?php $this->renderPartial('emails_side', array('emails' => $right_emails)); ?>
+			<?php $this->renderPartial('emails_side', array('emails' => $right_emails));
+    ?>
 		</div>
 		<div class="element-eye left-eye column">
-			<?php $this->renderPartial('emails_side', array('emails' => $left_emails)); ?>
+			<?php $this->renderPartial('emails_side', array('emails' => $left_emails));
+    ?>
 		</div>
 	</div>
 </section>
 <?php
+
 }

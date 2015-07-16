@@ -19,35 +19,34 @@
 
 class OphCoTherapyapplication_Treatment_CostType extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_treatment_cost_type';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_treatment_cost_type';
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('name', 'safe'),
-				array('name', 'required'),
-				// The following rule is used by search().
-				// Please remove those attributes that should not be searched.
-				array('id, name', 'safe', 'on' => 'search'),
-		);
-	}
-
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('name', 'safe'),
+                array('name', 'required'),
+                // The following rule is used by search().
+                // Please remove those attributes that should not be searched.
+                array('id, name', 'safe', 'on' => 'search'),
+        );
+    }
 }

@@ -24,44 +24,44 @@
 
 class OphCoTherapyapplication_Disorder_Category extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_disorder_category';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_disorder_category';
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		return array(
-				'therapydisorders' => array(self::MANY_MANY, 'OphCoTherapyapplication_TherapyDisorder', 'ophcotherapya_therapydisorder_category(category_id,therapydisorder_id)'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        return array(
+                'therapydisorders' => array(self::MANY_MANY, 'OphCoTherapyapplication_TherapyDisorder', 'ophcotherapya_therapydisorder_category(category_id,therapydisorder_id)'),
+        );
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('label', 'safe'),
-				array('label', 'required'),
-				// The following rule is used by search().
-				// Please remove those attributes that should not be searched.
-				array('id, label', 'safe', 'on' => 'search'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('label', 'safe'),
+                array('label', 'required'),
+                // The following rule is used by search().
+                // Please remove those attributes that should not be searched.
+                array('id, label', 'safe', 'on' => 'search'),
+        );
+    }
 }

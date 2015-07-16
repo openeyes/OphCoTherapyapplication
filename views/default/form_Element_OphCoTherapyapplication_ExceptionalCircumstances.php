@@ -27,22 +27,26 @@
 </div>
 <div class="element-fields element-eyes row">
 	<?php echo $form->hiddenInput($element, 'eye_id', false, array('class' => 'sideField')); ?>
-	<div class="element-eye right-eye left side column <?php if (!$element->hasRight()) {?> inactive<?php }?>"
+	<div class="element-eye right-eye left side column <?php if (!$element->hasRight()) {
+    ?> inactive<?php 
+}?>"
 		data-side="right">
 		<div class="active-form">
 			<?php $this->renderPartial($element->form_view . '_fields',
-				array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+                array('side' => 'right', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 		</div>
 		<div class="inactive-form">
 			<div class="eye-message">Only required if Patient Suitability is Non-Compliant</div>
 		</div>
 	</div>
 
-	<div class="element-eye left-eye right side column <?php if (!$element->hasLeft()) {?> inactive<?php }?>"
+	<div class="element-eye left-eye right side column <?php if (!$element->hasLeft()) {
+    ?> inactive<?php 
+}?>"
 		data-side="left">
 		<div class="active-form">
 			<?php $this->renderPartial($element->form_view . '_fields',
-				array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
+                array('side' => 'left', 'element' => $element, 'form' => $form, 'data' => $data)); ?>
 		</div>
 		<div class="inactive-form">
 			<div class="eye-message">Only required if Patient Suitability is Non-Compliant</div>
@@ -53,31 +57,31 @@
 
 <script id="previntervention_template" type="text/html">
 	<?php
-	$pastintervention = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
-	$pastintervention->setDefaultOptions();
+    $pastintervention = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
+    $pastintervention->setDefaultOptions();
 
-	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
-			'key' => '{{key}}',
-			'side' => '{{side}}',
-			'element_name' => get_class($element),
-			'form' => $form,
-			'pastintervention' => $pastintervention,
-			'dateFieldWidget' => 'TextField'
-	));
-	?>
+    $this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+            'key' => '{{key}}',
+            'side' => '{{side}}',
+            'element_name' => get_class($element),
+            'form' => $form,
+            'pastintervention' => $pastintervention,
+            'dateFieldWidget' => 'TextField'
+    ));
+    ?>
 </script>
 <script id="relevantintervention_template" type="text/html">
 	<?php
-	$pastintervention = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
-	$pastintervention->setDefaultOptions();
-	$pastintervention->is_relevant = true;
-	$this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
-			'key' => '{{key}}',
-			'side' => '{{side}}',
-			'element_name' => get_class($element),
-			'form' => $form,
-			'pastintervention' => $pastintervention,
-			'dateFieldWidget' => 'TextField'
-		));
-	?>
+    $pastintervention = new OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention();
+    $pastintervention->setDefaultOptions();
+    $pastintervention->is_relevant = true;
+    $this->renderPartial('form_OphCoTherapyapplication_ExceptionalCircumstances_PastIntervention', array(
+            'key' => '{{key}}',
+            'side' => '{{side}}',
+            'element_name' => get_class($element),
+            'form' => $form,
+            'pastintervention' => $pastintervention,
+            'dateFieldWidget' => 'TextField'
+        ));
+    ?>
 </script>

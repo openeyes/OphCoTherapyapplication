@@ -28,7 +28,7 @@ $this->renderPartial('_menu_main');
 		</div>
 	</header>
 	<?php $this->widget('zii.widgets.CListView', array(
-		'dataProvider'=>$dataProvider,
-		'itemView'=>'list_' . $dataProvider->modelClass,
-	)); ?>
+        'dataProvider'=>$dataProvider,
+        'itemView'=>'list_' . $dataProvider->modelClass,
+    )); ?>
 </div>

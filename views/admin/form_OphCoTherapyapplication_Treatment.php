@@ -18,7 +18,7 @@
  */
 ?>
 <?php echo $form->dropdownlist($model, 'drug_id', CHtml::listData($model->getTreatmentDrugs(), 'id', 'name'), array('empty' => '- Please select -', 'class' => 'clearfix'))?>
-<?php echo $form->dropdownlist($model, 'decisiontree_id', 'OphCoTherapyapplication_DecisionTree',array('empty'=>'- Please select -'))?>
+<?php echo $form->dropdownlist($model, 'decisiontree_id', 'OphCoTherapyapplication_DecisionTree', array('empty'=>'- Please select -'))?>
 <?php echo $form->radioBoolean($model, 'contraindications_required', array(1 => 'Yes', 0 => 'No'), array('field' => 9))?>
 <?php echo $form->textField($model, 'template_code', array('autocomplete' => Yii::app()->params['html_autocomplete']), array(), array('field' => 5))?>
 <div class="row field-row">

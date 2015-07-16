@@ -29,20 +29,28 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($model_list as $i => $model) {?>
+				<?php foreach ($model_list as $i => $model) {
+    ?>
 					<tr class="clickable" data-id="<?php echo $model->id?>">
 						<td><input type="checkbox" name="diagnoses[]" value="<?php echo $model->id?>" /></td>
 						<td>
-							<?php if (!$parent_id) {?>
+							<?php if (!$parent_id) {
+    ?>
 								<a href="<?php echo Yii::app()->createUrl($this->module->getName().'/admin/viewDiagnoses', array('parent_id'=> $model->id))?>">
-							<?php }?>
+							<?php 
+}
+    ?>
 							<?php echo $model->disorder->term?>
-							<?php if (!$parent_id) {?>
+							<?php if (!$parent_id) {
+    ?>
 								</a>
-							<?php }?>
+							<?php 
+}
+    ?>
 						</td>
 					</tr>
-				<?php }?>
+				<?php 
+}?>
 			</tbody>
 			<tfoot class="pagination-container">
 				<tr>
@@ -57,26 +65,26 @@
 </div>
 <div class="hidden" id="add-new-form" style="margin-bottom: 10px">
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'clinical-create',
-			'enableAjaxValidation'=>false,
-			'action' => Yii::app()->createURL($this->module->getName() . '/admin/addDiagnosis')
-	));
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'clinical-create',
+            'enableAjaxValidation'=>false,
+            'action' => Yii::app()->createURL($this->module->getName() . '/admin/addDiagnosis')
+    ));
 
-	if ($parent_id) {
-		echo CHtml::hiddenField('parent_id', $parent_id);
-	}
+    if ($parent_id) {
+        echo CHtml::hiddenField('parent_id', $parent_id);
+    }
 
-	$form->widget('application.widgets.DiagnosisSelection',array(
-			'field' => 'new_disorder_id',
-			'layout' => 'minimal',
-			'default' => false,
-			'callback' => 'OphCoTherapyapplication_AddDiagnosis',
-			'placeholder' => 'type the first few characters to search',
-	));
+    $form->widget('application.widgets.DiagnosisSelection', array(
+            'field' => 'new_disorder_id',
+            'layout' => 'minimal',
+            'default' => false,
+            'callback' => 'OphCoTherapyapplication_AddDiagnosis',
+            'placeholder' => 'type the first few characters to search',
+    ));
 
-	echo CHtml::hiddenField('disorder_id', '', array('id' => 'disorder_id'));
+    echo CHtml::hiddenField('disorder_id', '', array('id' => 'disorder_id'));
 
-	$this->endWidget();
-	?>
+    $this->endWidget();
+    ?>
 </div>

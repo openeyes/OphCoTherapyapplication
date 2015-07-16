@@ -19,14 +19,14 @@
 ?>
 <div class="hidden" id="add-new-form" style="margin-bottom: 10px">
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'clinical-create',
-			'enableAjaxValidation'=>false,
-			'htmlOptions' => array('class'=>'sliding'),
-			'action' => Yii::app()->createURL($this->module->getName() . '/admin/addFileCollection')
-	));
-	$this->endWidget();
-	?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'clinical-create',
+            'enableAjaxValidation'=>false,
+            'htmlOptions' => array('class'=>'sliding'),
+            'action' => Yii::app()->createURL($this->module->getName() . '/admin/addFileCollection')
+    ));
+    $this->endWidget();
+    ?>
 </div>
 <div class="box admin">
 	<h2><?php echo $title ?></h2>
@@ -40,14 +40,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($model_list as $i => $model) {?>
+				<?php foreach ($model_list as $i => $model) {
+    ?>
 					<tr class="clickable" data-id="<?php echo $model->id?>" data-uri="OphCoTherapyapplication/admin/editFileCollection/<?php echo $model->id?>">
 						<td><input type="checkbox" name="file_collections[]" value="<?php echo $model->id?>" /></td>
 						<td>
 							<?php echo $model->name?>
 						</td>
 					</tr>
-				<?php }?>
+				<?php 
+}?>
 			</tbody>
 			<tfoot class="pagination-container">
 				<tr>

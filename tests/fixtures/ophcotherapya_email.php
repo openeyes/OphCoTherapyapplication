@@ -18,9 +18,9 @@
  */
 
 return array(
-	'email1' => array(
-		'event_id' => 1,
-		'eye_id' => 1,
-		'email_text' => 'test'
-	)
+    'email1' => array(
+        'event_id' => 1,
+        'eye_id' => 1,
+        'email_text' => 'test'
+    )
 );

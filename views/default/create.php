@@ -21,16 +21,16 @@
 <?php $this->beginContent('//patient/event_container');?>
 
 	<?php
-		$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'clinical-create',
-				'enableAjaxValidation'=>false,
-				'layoutColumns' => array(
-				'label' => 2,
-				'field' => 10
-				)
-		));
-		$this->event_actions[] = EventAction::button('Save', 'save', array('level'=>'save'), array('form'=>'clinical-create'));
-		?>
+        $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+                'id'=>'clinical-create',
+                'enableAjaxValidation'=>false,
+                'layoutColumns' => array(
+                'label' => 2,
+                'field' => 10
+                )
+        ));
+        $this->event_actions[] = EventAction::button('Save', 'save', array('level'=>'save'), array('form'=>'clinical-create'));
+        ?>
 
 		<?php $this->displayErrors($errors)?>
 		<?php $this->renderOpenElements($this->action->id, $form)?>

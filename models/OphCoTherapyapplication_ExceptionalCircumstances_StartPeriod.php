@@ -19,46 +19,46 @@
 
 class OphCoTherapyapplication_ExceptionalCircumstances_StartPeriod extends BaseActiveRecordVersioned
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'ophcotherapya_exceptional_startperiod';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'ophcotherapya_exceptional_startperiod';
+    }
 
-	public function defaultScope()
-	{
-		return array('order' => $this->getTableAlias(true, false) . '.display_order');
-	}
+    public function defaultScope()
+    {
+        return array('order' => $this->getTableAlias(true, false) . '.display_order');
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		return array(
-				array('name, urgent, enabled, display_order', 'safe'),
-				array('name, display_order', 'required'),
-				// The following rule is used by search().
-				// Please remove those attributes that should not be searched.
-				array('id, name, urgent, enabled, display_order', 'safe', 'on' => 'search'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+                array('name, urgent, enabled, display_order', 'safe'),
+                array('name, display_order', 'required'),
+                // The following rule is used by search().
+                // Please remove those attributes that should not be searched.
+                array('id, name, urgent, enabled, display_order', 'safe', 'on' => 'search'),
+        );
+    }
 
-	public function behaviors()
-	{
-		return array(
-			'LookupTable' => 'LookupTable',
-		);
-	}
+    public function behaviors()
+    {
+        return array(
+            'LookupTable' => 'LookupTable',
+        );
+    }
 }
