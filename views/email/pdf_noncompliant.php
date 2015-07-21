@@ -383,8 +383,8 @@
         }
     }
 } else {
-                            echo "N/A";
-                        }
+    echo "N/A";
+}
                     ?>
 				</td>
 			</tr>
